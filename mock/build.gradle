@@ -1,0 +1,12 @@
+apply plugin: 'java'
+apply plugin: 'kotlin'
+
+dependencies {
+    implementation 'com.google.zxing:core:3.4.0'
+    implementation 'com.google.code.gson:gson:2.8.5'
+    implementation 'com.squareup.okio:okio:2.4.1'
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+}
+
+sourceCompatibility = "8"
+targetCompatibility = "8"
