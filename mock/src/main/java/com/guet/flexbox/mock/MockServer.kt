@@ -42,8 +42,10 @@ private constructor(executor: Executor,
             try {
                 httpExchange.sendResponseHeaders(200, 0)
                 val os = httpExchange.responseBody
-                os.sink().buffer()
-                        .writeAll(files[0].source().buffer())
+                os.sink().buffer().apply {
+                    writeAll(files[0].source())
+                    flush()
+                }
                 os.close()
                 httpExchange.close()
             } catch (e: Exception) {
@@ -55,8 +57,10 @@ private constructor(executor: Executor,
             try {
                 httpExchange.sendResponseHeaders(200, 0)
                 val os = httpExchange.responseBody
-                os.sink().buffer()
-                        .writeAll(files[1].source().buffer())
+                os.sink().buffer().apply {
+                    writeAll(files[1].source())
+                    flush()
+                }
                 os.close()
                 httpExchange.close()
             } catch (e: Exception) {

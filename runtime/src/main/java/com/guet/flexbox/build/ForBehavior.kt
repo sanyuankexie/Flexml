@@ -16,12 +16,11 @@ internal object ForBehavior: Behavior {
         val to = c.getValue(attrs["to"]!!, Int::class.java)
         val elements = element.elements()
         return (from..to).map {
-            c.enterScope(Collections.singletonMap(name, it))
-            val list = elements.map { item ->
-                Factory.createFromElement(c, item)
-            }.flatten()
-            c.exitScope()
-            return@map list
+            return@map c.scope(Collections.singletonMap(name, it)) {
+                elements.map { item ->
+                    BuildContext.createFromElement(c, item)
+                }.flatten()
+            }
         }.flatten()
     }
 }

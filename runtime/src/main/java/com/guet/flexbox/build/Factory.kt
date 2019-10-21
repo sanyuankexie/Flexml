@@ -1,17 +1,18 @@
 package com.guet.flexbox.build
 
 import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
+import android.graphics.drawable.Drawable
 import androidx.collection.ArrayMap
-import com.facebook.litho.Border
 import com.facebook.litho.Component
-import com.facebook.litho.ComponentContext
 import com.facebook.yoga.YogaAlign
 import com.facebook.yoga.YogaEdge
 import com.guet.flexbox.DynamicBox
 import com.guet.flexbox.el.ELException
 import com.guet.flexbox.widget.AsyncDrawable
+import com.guet.flexbox.widget.BorderDrawable
+import com.guet.flexbox.widget.NoOpDrawable
 import org.dom4j.Attribute
-import org.dom4j.Document
 import org.dom4j.Element
 import java.util.*
 
@@ -103,7 +104,8 @@ internal abstract class Factory<T : Component.Builder<*>> : Behavior {
     protected open fun T.applyChildren(
             c: BuildContext,
             attrs: List<Attribute>,
-            children: List<Component.Builder<*>>) {}
+            children: List<Component.Builder<*>>) {
+    }
 
     private fun T.applyEvent(c: BuildContext, attrs: List<Attribute>) {
         var clickUrlValue: String? = null
@@ -142,33 +144,45 @@ internal abstract class Factory<T : Component.Builder<*>> : Behavior {
     private fun T.applyBackground(
             c: BuildContext,
             attrs: List<Attribute>) {
-        val borderRadius = c.getValue(attrs["borderRadius"], Int::class.java, 0).toPx()
-        val borderWidth = c.getValue(attrs["borderWidth"], Int::class.java, 0)
-        val borderColor = c.getColor(attrs["borderColor"], Color.TRANSPARENT)
-        if (borderRadius > 0) {
-            border(Border.create(c.componentContext)
-                    .color(YogaEdge.ALL, borderColor)
-                    .radiusPx(borderRadius)
-                    .widthPx(YogaEdge.ALL, borderWidth)
-                    .build())
-        }
-        attrs["background"]?.let {
+        val borderRadius = c.getValue(attrs["borderRadius"],
+                Int::class.java, 0).toPx()
+        val borderWidth = c.getValue(attrs["borderWidth"],
+                Int::class.java, 0).toPx()
+        val borderColor = c.getColor(attrs["borderColor"],
+                Color.TRANSPARENT)
+        var background: Drawable? = null
+        val backgroundValue = attrs["background"]
+        if (backgroundValue != null) {
             try {
-                val color = c.getColor(it)
-                backgroundColor(color)
+                background = BorderDrawable(
+                        ColorDrawable(c.getColor(backgroundValue)),
+                        borderRadius.toFloat(),
+                        borderWidth.toFloat(),
+                        borderColor
+                )
             } catch (e: Exception) {
-                val url = c.getValue(it, String::class.java, "")
+                val url = c.getValue(backgroundValue, String::class.java, "")
                 if (url.isNotEmpty()) {
-                    @Suppress("DEPRECATION")
-                    background(AsyncDrawable(
+                    background = AsyncDrawable(
                             c.componentContext.androidContext,
                             url,
-                            borderRadius.toFloat()
-                    ))
+                            borderRadius.toFloat(),
+                            borderWidth.toFloat(),
+                            borderColor
+                    )
                 }
             }
-            return
         }
+        if (background == null) {
+            background = BorderDrawable(
+                    NoOpDrawable,
+                    borderRadius.toFloat(),
+                    borderWidth.toFloat(),
+                    borderColor
+            )
+        }
+        @Suppress("DEPRECATION")
+        this.background(background)
     }
 
     protected fun <V : Any> bound(
@@ -222,44 +236,6 @@ internal abstract class Factory<T : Component.Builder<*>> : Behavior {
             crossinline action: T.(Int) -> Unit) {
         mappings[name] = { c, value ->
             action(c.getColor(value, fallback))
-        }
-    }
-
-    companion object {
-
-        private val behaviors = ArrayMap<String, Behavior>()
-
-        init {
-            behaviors["Image"] = ImageFactory
-            behaviors["Flex"] = FlexFactory
-            behaviors["Text"] = TextFactory
-            behaviors["Frame"] = FrameFactory
-            behaviors["for"] = ForBehavior
-        }
-
-        internal fun createFromElement(
-                c: BuildContext,
-                element: Element): List<Component.Builder<*>> {
-            val behavior = behaviors.getValue(element.name)
-            return behavior.apply(
-                    c,
-                    element,
-                    element.attributes(),
-                    element.elements().map {
-                        createFromElement(c, it)
-                    }.flatten())
-        }
-
-        @JvmStatic
-        fun createFromTreeRoot(
-                c: ComponentContext,
-                document: Document,
-                bind: Any?
-        ): Component {
-            return createFromElement(
-                    BuildContext(c, bind),
-                    document.rootElement
-            )[0].build()
         }
     }
 }

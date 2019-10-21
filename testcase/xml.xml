@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Flex
+    width="360"
+    height="600"
+    justifyContent="center"
+    alignItems="center"
+    borderWidth="2"
+    borderRadius="30"
+    borderColor="red"
+    background="${image1}"
+    flexDirection="column">
+    <Text
+        textColor="white"
+        textSize="30"
+        text="加载中">
+    </Text>
+    <Image
+        scaleType="fitStart"
+        borderWidth="2"
+        borderRadius="30"
+        borderColor="red"
+        background="${image1}"
+        source="${image1}">
+    </Image>
+</Flex>

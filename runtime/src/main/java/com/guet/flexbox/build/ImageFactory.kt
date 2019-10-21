@@ -1,14 +1,14 @@
 package com.guet.flexbox.build
 
 import android.widget.ImageView.ScaleType.*
-import com.facebook.litho.widget.Image
+import com.guet.flexbox.widget.AsyncImage
 import org.dom4j.Attribute
 
-internal object ImageFactory : Factory<Image.Builder>() {
+internal object ImageFactory : Factory<AsyncImage.Builder>() {
 
     init {
         text("source") {
-
+            url(it)
         }
         bound("scaleType", FIT_CENTER,
                 mapOf(
@@ -22,12 +22,21 @@ internal object ImageFactory : Factory<Image.Builder>() {
         ) {
             scaleType(it)
         }
+        value("borderRadius") {
+            borderRadius(it.toPx().toFloat())
+        }
+        value("borderWidth") {
+            borderWidth(it.toPx().toFloat())
+        }
+        color("borderColor") {
+            borderColor(it)
+        }
     }
 
     override fun create(
             c: BuildContext,
-            attrs: List<Attribute>): Image.Builder {
-        return Image.create(c.componentContext).apply {
+            attrs: List<Attribute>): AsyncImage.Builder {
+        return AsyncImage.create(c.componentContext).apply {
             applyDefault(c, attrs)
         }
     }

@@ -9,11 +9,11 @@ import androidx.core.os.HandlerCompat;
 
 import com.facebook.litho.LithoHandler;
 
-public class SimpleLithoHandler
+public class SimpleHandler
         extends Handler
         implements LithoHandler {
 
-    SimpleLithoHandler(String name) {
+    SimpleHandler(String name) {
         super(((Function<Void, Looper>) input -> {
             HandlerThread handlerThread = new HandlerThread(name);
             handlerThread.start();

@@ -3,11 +3,14 @@ package com.guet.flexbox.build
 import android.graphics.Color.*
 import androidx.annotation.ColorInt
 import androidx.collection.ArrayMap
+import com.facebook.litho.Component
 import com.facebook.litho.ComponentContext
 import com.guet.flexbox.el.ELException
 import com.guet.flexbox.el.ELManager
 import com.guet.flexbox.el.ELProcessor
 import lite.beans.Introspector
+import org.dom4j.Document
+import org.dom4j.Element
 import java.io.*
 import java.lang.reflect.Method
 import java.lang.reflect.Modifier
@@ -44,7 +47,8 @@ class BuildContext(
                         type
                 )
         val v = ve.getValue(el.elManager.elContext) ?: throw ELException()
-        return type.cast(v)!!
+        @Suppress("UNCHECKED_CAST")
+        return v as T
     }
 
     @ColorInt
@@ -54,11 +58,8 @@ class BuildContext(
             return parseColor(expr)
         } catch (e: IllegalArgumentException) {
             @Suppress("UNCHECKED_CAST")
-            try {
-                enterScope(colorNameMap)
-                return getValue(expr, Int::class.java)
-            } finally {
-                exitScope()
+            return scope(colorNameMap) {
+                getValue(expr, Int::class.java)
             }
         }
     }
@@ -67,7 +68,11 @@ class BuildContext(
 
         private val colorNameMap = ArrayMap<String, Any>()
 
-        private val functions: List<Method>
+        private val functions: List<Method> = Func::class.java.declaredMethods
+                .filter {
+                    val mod = it.modifiers
+                    Modifier.isPublic(mod) && Modifier.isStatic(mod)
+                }
 
         init {
             colorNameMap["black"] = BLACK
@@ -93,15 +98,45 @@ class BuildContext(
             colorNameMap["purple"] = 0xFF800080
             colorNameMap["silver"] = 0xFFC0C0C0
             colorNameMap["teal"] = 0xFF008080
-            functions = Companion::class.java.declaredMethods
-                    .filter {
-                        val mod = it.modifiers
-                        Modifier.isPublic(mod) && Modifier.isStatic(mod)
-                    }
         }
 
         private const val GOSN_CLASS_NAME = "com.google.gson.Gson"
 
+
+        private val behaviors = ArrayMap<String, Behavior>()
+
+        init {
+            behaviors["Image"] = ImageFactory
+            behaviors["Flex"] = FlexFactory
+            behaviors["Text"] = TextFactory
+            behaviors["Frame"] = FrameFactory
+            behaviors["for"] = ForBehavior
+        }
+
+        internal fun createFromElement(
+                c: BuildContext,
+                element: Element): List<Component.Builder<*>> {
+            val behavior = behaviors.getValue(element.name)
+            return behavior.apply(
+                    c,
+                    element,
+                    element.attributes(),
+                    element.elements().map {
+                        createFromElement(c, it)
+                    }.flatten())
+        }
+
+        @JvmStatic
+        fun build(
+                c: ComponentContext,
+                document: Document,
+                bind: Any?
+        ): Component {
+            return createFromElement(
+                    BuildContext(c, bind),
+                    document.rootElement
+            ).single().build()
+        }
 
         private fun toMap(o: Any): Map<String, Any> {
             return if (o is Map<*, *> && o.keys.all { it is String }) {
@@ -146,14 +181,5 @@ class BuildContext(
             }
         }
 
-        @JvmStatic
-        fun check(o: Any?): Boolean {
-            return when (o) {
-                is String -> o.isNotEmpty()
-                is Collection<*> -> !o.isEmpty()
-                is Number -> o.toInt() != 0
-                else -> o != null
-            }
-        }
     }
 }

@@ -26,12 +26,13 @@ import com.facebook.litho.LithoView;
 import com.facebook.litho.widget.Text;
 import com.facebook.litho.widget.VerticalScroll;
 import com.facebook.yoga.YogaAlign;
+import com.facebook.yoga.YogaEdge;
 import com.guet.flexbox.DynamicBox;
 import com.guet.flexbox.EventListener;
 import com.guet.flexbox.EventType;
+import com.guet.flexbox.build.UtilsKt;
 
 import org.dom4j.Document;
-import org.dom4j.DocumentException;
 import org.dom4j.io.SAXReader;
 
 import java.io.ByteArrayInputStream;
@@ -40,86 +41,69 @@ import java.util.Map;
 import ch.ielse.view.SwitchView;
 import es.dmoral.toasty.Toasty;
 import okhttp3.OkHttpClient;
-import retrofit2.Call;
-import retrofit2.Callback;
+import okhttp3.ResponseBody;
 import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
-public class PreviewActivity
+public class OverviewActivity
         extends AppCompatActivity
         implements View.OnClickListener,
-        Runnable,
         EventListener,
+        Runnable,
         NestedScrollView.OnScrollChangeListener,
         SwipeRefreshLayout.OnRefreshListener {
 
-    private class DataCallback implements Callback<Map<String,Object>> {
-
-        @Override
-        public void onResponse(
-                @NonNull Call<Map<String, Object>> call,
-                @NonNull Response<Map<String, Object>> response) {
-            mCacheData = response.body();
-        }
-
-        @Override
-        public void onFailure(
-                @NonNull Call<Map<String, Object>> call,
-                @NonNull Throwable t) {
-            t.printStackTrace();
-            runOnUiThread(() -> Toasty.error(PreviewActivity.this,
-                    "网络连接失败！").show());
-        }
-    }
 
     private SwipeRefreshLayout mSwipeRefreshLayout;
     private LithoView mLithoView;
-    private Handler mMain = new Handler();
-    private SwitchView mIsOpenEdge;
     private SwitchView mIsLiveReload;
     private SwitchView mIsOpenConsole;
     private ListView mConsole;
 
 
+    private Handler mMainThread = new Handler();
+    private SimpleHandler mNetwork = new SimpleHandler("network");
     private SAXReader mSAXReader = new SAXReader();
-    private DataCallback mDataCallback = new DataCallback();
-    private Callback<byte[]> mLayoutCallback = new Callback<byte[]>() {
+    private MockService mMockService;
+    private ArrayAdapter<String> mAdapter;
+    private Document mDocument;
+    private Map<String, Object> mData;
+    private Runnable mReload = new Runnable() {
         @Override
-        public void onResponse(
-                @NonNull Call<byte[]> call,
-                @NonNull Response<byte[]> response) {
-            byte[] bytes = response.body();
-            if (bytes != null) {
-                try {
-                    mDocument = mSAXReader.read(new ByteArrayInputStream(bytes));
-                } catch (DocumentException e) {
-                    e.printStackTrace();
-                    runOnUiThread(() -> Toasty.error(PreviewActivity.this,
-                            "解析Xml失败！").show());
-                }
+        public void run() {
+            try {
+                Response<Map<String, Object>> dataResponse = mMockService.data().execute();
+                Response<ResponseBody> layoutResponse = mMockService.layout().execute();
+                Map<String, Object> dataBody = dataResponse.body();
+                byte[] layoutBody = layoutResponse.body() == null ? null : layoutResponse.body().bytes();
+                Document document = layoutBody == null ? null : mSAXReader.read(new ByteArrayInputStream(layoutBody));
+                runOnUiThread(() -> {
+                    if (document != null) {
+                        mDocument = document;
+                    }
+                    if (dataBody != null) {
+                        mData = dataBody;
+                    }
+                    apply();
+                    if (mSwipeRefreshLayout.isRefreshing()) {
+                        mSwipeRefreshLayout.setRefreshing(false);
+                    }
+                });
+            } catch (Exception e) {
+                e.printStackTrace();
+                runOnUiThread(()->{
+                    Toasty.error(getApplicationContext(), "刷新失败").show();
+                    if (mSwipeRefreshLayout.isRefreshing()) {
+                        mSwipeRefreshLayout.setRefreshing(false);
+                    }
+                });
             }
         }
-
-        @Override
-        public void onFailure(
-                @NonNull Call<byte[]> call,
-                @NonNull Throwable t) {
-            t.printStackTrace();
-            runOnUiThread(() -> Toasty.error(PreviewActivity.this,
-                    "网络连接失败！").show());
-        }
     };
-    private MockService mMockService;
-    private Call<Map<String, Object>> mDataCall;
-    private Call<byte[]> mLayoutCall;
-    private ArrayAdapter<String> mAdapter;
-    private volatile Document mDocument;
-    private volatile Map<String, Object> mCacheData;
 
-    private void reload() {
-        Map<String, Object> node = mCacheData;
-        if (node != null) {
+    private void apply() {
+        if (mDocument != null) {
             ComponentContext c = mLithoView.getComponentContext();
             ComponentTree componentTree = mLithoView.getComponentTree();
             if (componentTree != null) {
@@ -129,20 +113,22 @@ public class PreviewActivity
                                 .clipChildren(false)
                                 .childComponent(
                                         Column.create(c)
-//                                                .widthPx(UtilsKt.pt2Px(360))
+                                                .widthPx(UtilsKt.toPx(360))
                                                 .alignItems(YogaAlign.CENTER)
                                                 .child(DynamicBox.create(c)
-//                                                        .marginPx(YogaEdge.TOP, UtilsKt.pt2Px(20))
+                                                        .bind(mData)
+                                                        .layout(mDocument)
+                                                        .marginPx(YogaEdge.TOP, UtilsKt.toPx(20))
                                                         .eventListener(this))
                                                 .child(Text.create(c)
-//                                                        .widthPx(UtilsKt.pt2Px(360))
-//                                                        .heightPx(UtilsKt.pt2Px(40))
+                                                        .widthPx(UtilsKt.toPx(360))
+                                                        .heightPx(UtilsKt.toPx(40))
                                                         .backgroundColor(getResources()
                                                                 .getColor(R.color.colorPrimary))
                                                         .textAlignment(Layout.Alignment.ALIGN_CENTER)
                                                         .text("这里是布局的下边界")
                                                         .textColor(Color.WHITE)
-//                                                        .textSizePx(UtilsKt.pt2Px(25))
+                                                        .textSizePx(UtilsKt.toPx(25))
                                                         .typeface(Typeface.defaultFromStyle(Typeface.BOLD)))
                                 ).build()
                 );
@@ -153,25 +139,24 @@ public class PreviewActivity
     @Override
     protected void onStart() {
         super.onStart();
-        mMain.removeCallbacks(this);
-        mMain.post(this);
+        mNetwork.removeCallbacks(this);
+        mNetwork.post(this);
     }
 
     @Override
     protected void onStop() {
         super.onStop();
-        mMain.removeCallbacks(this);
+        mNetwork.removeCallbacks(this);
     }
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_preview);
+        setContentView(R.layout.activity_overview);
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        SimpleLithoHandler mWorker = new SimpleLithoHandler("layout");
+        SimpleHandler mWorker = new SimpleHandler("layout");
         mLithoView = findViewById(R.id.host);
-        mIsOpenEdge = findViewById(R.id.is_open_edge);
         mSwipeRefreshLayout = findViewById(R.id.pull);
         mIsLiveReload = findViewById(R.id.is_live_reload);
         mIsOpenConsole = findViewById(R.id.is_open_console);
@@ -184,7 +169,6 @@ public class PreviewActivity
                 }));
         mSwipeRefreshLayout.setOnRefreshListener(this);
         mIsOpenConsole.setOnClickListener(this);
-        mIsOpenEdge.setOnClickListener(this);
         mLithoView.setComponentTree(
                 ComponentTree.create(mLithoView.getComponentContext())
                         .layoutThreadHandler(mWorker)
@@ -215,40 +199,15 @@ public class PreviewActivity
     }
 
     @Override
-    public void run() {
-        if (mDataCall != null) {
-            mDataCall.cancel();
-        }
-        if (mLayoutCall != null) {
-            mLayoutCall.cancel();
-        }
-        if (mIsLiveReload.isOpened()) {
-            reload();
-            mLayoutCall = mMockService.layout();
-            mDataCall = mMockService.data();
-            mLayoutCall.enqueue(mLayoutCallback);
-            mDataCall.enqueue(mDataCallback);
-        }
-        mMain.postDelayed(this, 1000);
-    }
-
-    @Override
     public void onClick(View v) {
-        switch (v.getId()) {
-            case R.id.is_open_edge: {
-                reload();
-            }
-            break;
-            case R.id.is_open_console: {
-                mConsole.setVisibility(mIsOpenConsole.isOpened() ? View.VISIBLE : View.GONE);
-            }
-            break;
+        if (v.getId() == R.id.is_open_console) {
+            mConsole.setVisibility(mIsOpenConsole.isOpened() ? View.VISIBLE : View.GONE);
         }
     }
 
 
     @Override
-    public void onEvent(EventType type,
+    public void onEvent(@NonNull EventType type,
                         @Nullable String action) {
         mAdapter.add("event type=" + type.name() + " : event action=" + action);
     }
@@ -269,31 +228,15 @@ public class PreviewActivity
 
     @Override
     public void onRefresh() {
-//        mMockService.data().enqueue(new Callback<Map<String, Object>>() {
-//            @Override
-//            public void onResponse(
-//                    @NonNull Call<Map<String, Object>> call,
-//                    @NonNull Response<Map<String, Object>> response) {
-//                PreviewActivity.this.onResponse(call, response);
-//                runOnUiThread(() -> {
-//                    reload();
-//                    if (mSwipeRefreshLayout.isRefreshing()) {
-//                        mSwipeRefreshLayout.setRefreshing(false);
-//                    }
-//                });
-//            }
-//
-//            @Override
-//            public void onFailure(
-//                    @NonNull Call<Map<String, Object>> call,
-//                    @NonNull Throwable t) {
-//                PreviewActivity.this.onFailure(call, t);
-//                runOnUiThread(() -> {
-//                    if (mSwipeRefreshLayout.isRefreshing()) {
-//                        mSwipeRefreshLayout.setRefreshing(false);
-//                    }
-//                });
-//            }
-//        });
+        mNetwork.remove(mReload);
+        mNetwork.post(mReload);
+    }
+
+    @Override
+    public void run() {
+        if (mIsLiveReload.isOpened()) {
+            onRefresh();
+        }
+        mMainThread.postDelayed(this, 1000);
     }
 }

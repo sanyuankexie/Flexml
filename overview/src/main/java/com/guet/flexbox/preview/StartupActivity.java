@@ -15,7 +15,6 @@ import androidx.core.app.ActivityCompat;
 
 import com.didichuxing.doraemonkit.DoraemonKit;
 import com.facebook.soloader.SoLoader;
-import com.luke.flexbox.preview.R;
 import com.yzq.zxinglibrary.android.CaptureActivity;
 import com.yzq.zxinglibrary.bean.ZxingConfig;
 import com.yzq.zxinglibrary.common.Constant;
@@ -96,7 +95,7 @@ public class StartupActivity extends AppCompatActivity {
                     String content = data.getStringExtra(Constant.CODED_CONTENT);
                     Toasty.success(this, "扫码成功", Toast.LENGTH_LONG)
                             .show();
-                    Intent intent = new Intent(this, PreviewActivity.class);
+                    Intent intent = new Intent(this, OverviewActivity.class);
                     intent.putExtra("url", content);
                     startActivity(intent);
                 } else {

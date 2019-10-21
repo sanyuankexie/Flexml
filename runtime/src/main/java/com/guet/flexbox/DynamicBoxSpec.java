@@ -13,7 +13,7 @@ import com.facebook.litho.annotations.OnCreateLayout;
 import com.facebook.litho.annotations.OnEvent;
 import com.facebook.litho.annotations.Param;
 import com.facebook.litho.annotations.Prop;
-import com.guet.flexbox.build.Factory;
+import com.guet.flexbox.build.BuildContext;
 
 import org.dom4j.Document;
 
@@ -24,7 +24,7 @@ final class DynamicBoxSpec {
     static Component onCreateLayout(ComponentContext c,
                                     @Prop Document layout,
                                     @Prop(optional = true) Object bind) {
-        return Factory.createFromTreeRoot(c, layout, bind);
+        return BuildContext.build(c, layout, bind);
     }
 
     @OnEvent(VisibleEvent.class)
