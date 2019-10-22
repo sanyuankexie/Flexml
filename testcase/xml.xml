@@ -4,22 +4,9 @@
     height="600"
     justifyContent="center"
     alignItems="center"
-    borderWidth="2"
+    borderWidth="20"
     borderRadius="30"
     borderColor="red"
-    background="${image1}"
+    background="${fn:gradient(t2b,red,blue)}"
     flexDirection="column">
-    <Text
-        textColor="white"
-        textSize="30"
-        text="加载中">
-    </Text>
-    <Image
-        scaleType="fitStart"
-        borderWidth="2"
-        borderRadius="30"
-        borderColor="red"
-        background="${image1}"
-        source="${image1}">
-    </Image>
 </Flex>

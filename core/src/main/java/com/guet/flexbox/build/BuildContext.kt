@@ -59,7 +59,7 @@ class BuildContext(val componentContext: ComponentContext, data: Any?) {
             return parseColor(expr)
         } catch (e: IllegalArgumentException) {
             @Suppress("UNCHECKED_CAST")
-            return scope(colorNameMap) {
+            return scope(colorMap) {
                 parseColor(getValue(expr, String::class.java))
             }
         }
@@ -83,7 +83,7 @@ class BuildContext(val componentContext: ComponentContext, data: Any?) {
 
     companion object {
 
-        private val colorNameMap = HashMap<String, Any>()
+        internal val colorMap = HashMap<String, Any>()
 
         private fun Long.toColorString(): String {
             return "#" + this.toInt().toString(16)
@@ -100,29 +100,29 @@ class BuildContext(val componentContext: ComponentContext, data: Any?) {
                 }
 
         init {
-            colorNameMap["black"] = BLACK.toColorString()
-            colorNameMap["darkgray"] = DKGRAY.toColorString()
-            colorNameMap["gray"] = GRAY.toColorString()
-            colorNameMap["lightgray"] = LTGRAY.toColorString()
-            colorNameMap["white"] = WHITE.toColorString()
-            colorNameMap["red"] = RED.toColorString()
-            colorNameMap["green"] = GREEN.toColorString()
-            colorNameMap["blue"] = BLUE.toColorString()
-            colorNameMap["yellow"] = YELLOW.toColorString()
-            colorNameMap["cyan"] = CYAN.toColorString()
-            colorNameMap["magenta"] = MAGENTA.toColorString()
-            colorNameMap["aqua"] = 0xFF00FFFF.toColorString()
-            colorNameMap["fuchsia"] = 0xFFFF00FF.toColorString()
-            colorNameMap["darkgrey"] = DKGRAY.toColorString()
-            colorNameMap["grey"] = GRAY.toColorString()
-            colorNameMap["lightgrey"] = LTGRAY.toColorString()
-            colorNameMap["lime"] = 0xFF00FF00.toColorString()
-            colorNameMap["maroon"] = 0xFF800000.toColorString()
-            colorNameMap["navy"] = 0xFF000080.toColorString()
-            colorNameMap["olive"] = 0xFF808000.toColorString()
-            colorNameMap["purple"] = 0xFF800080.toColorString()
-            colorNameMap["silver"] = 0xFFC0C0C0.toColorString()
-            colorNameMap["teal"] = 0xFF008080.toColorString()
+            colorMap["black"] = BLACK.toColorString()
+            colorMap["darkgray"] = DKGRAY.toColorString()
+            colorMap["gray"] = GRAY.toColorString()
+            colorMap["lightgray"] = LTGRAY.toColorString()
+            colorMap["white"] = WHITE.toColorString()
+            colorMap["red"] = RED.toColorString()
+            colorMap["green"] = GREEN.toColorString()
+            colorMap["blue"] = BLUE.toColorString()
+            colorMap["yellow"] = YELLOW.toColorString()
+            colorMap["cyan"] = CYAN.toColorString()
+            colorMap["magenta"] = MAGENTA.toColorString()
+            colorMap["aqua"] = 0xFF00FFFF.toColorString()
+            colorMap["fuchsia"] = 0xFFFF00FF.toColorString()
+            colorMap["darkgrey"] = DKGRAY.toColorString()
+            colorMap["grey"] = GRAY.toColorString()
+            colorMap["lightgrey"] = LTGRAY.toColorString()
+            colorMap["lime"] = 0xFF00FF00.toColorString()
+            colorMap["maroon"] = 0xFF800000.toColorString()
+            colorMap["navy"] = 0xFF000080.toColorString()
+            colorMap["olive"] = 0xFF808000.toColorString()
+            colorMap["purple"] = 0xFF800080.toColorString()
+            colorMap["silver"] = 0xFFC0C0C0.toColorString()
+            colorMap["teal"] = 0xFF008080.toColorString()
         }
 
         private const val GOSN_CLASS_NAME = "com.google.gson.Gson"

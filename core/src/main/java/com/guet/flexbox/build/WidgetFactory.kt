@@ -163,7 +163,9 @@ internal abstract class WidgetFactory<T : Component.Builder<*>> : Transform {
                 )
             } catch (e: Exception) {
                 val backgroundRaw = c.scope(orientations) {
-                    c.getValue(backgroundValue, Any::class.java, Unit)
+                    c.scope(colorNameMap) {
+                        c.getValue(backgroundValue, Any::class.java, Unit)
+                    }
                 }
                 if (backgroundRaw is Drawable) {
                     background = BorderDrawable(
@@ -250,6 +252,11 @@ internal abstract class WidgetFactory<T : Component.Builder<*>> : Transform {
     }
 
     companion object {
+
+        private val colorNameMap = BuildContext.colorMap.keys.map {
+            it to it
+        }.toMap()
+
         private val orientations: Map<String, GradientDrawable.Orientation> = mapOf(
                 "t2b" to GradientDrawable.Orientation.TOP_BOTTOM,
                 "tr2bl" to GradientDrawable.Orientation.TR_BL,
