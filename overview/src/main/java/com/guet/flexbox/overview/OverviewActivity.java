@@ -1,4 +1,4 @@
-package com.guet.flexbox.preview;
+package com.guet.flexbox.overview;
 
 import android.content.Intent;
 import android.graphics.Color;

@@ -8,7 +8,7 @@ import com.facebook.yoga.YogaJustify.*
 import com.facebook.yoga.YogaWrap.*
 import org.dom4j.Attribute
 
-internal object FlexFactory : Factory<Component.ContainerBuilder<*>>() {
+internal object FlexFactory : WidgetFactory<Component.ContainerBuilder<*>>() {
 
     init {
         bound("flexWrap", NO_WRAP,

@@ -6,7 +6,7 @@ import android.text.Layout.Alignment.valueOf
 import com.facebook.litho.widget.Text
 import org.dom4j.Attribute
 
-internal object TextFactory : Factory<Text.Builder>() {
+internal object TextFactory : WidgetFactory<Text.Builder>() {
 
     init {
         bound("textAlign",

@@ -4,7 +4,7 @@ import android.widget.ImageView.ScaleType.*
 import com.guet.flexbox.widget.AsyncImage
 import org.dom4j.Attribute
 
-internal object ImageFactory : Factory<AsyncImage.Builder>() {
+internal object ImageFactory : WidgetFactory<AsyncImage.Builder>() {
 
     init {
         text("source") {

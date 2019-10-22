@@ -5,8 +5,8 @@ import org.dom4j.Attribute
 import org.dom4j.Element
 import java.util.*
 
-internal object ForBehavior: Behavior {
-    override fun apply(
+internal object ForTransform: Transform {
+    override fun transform(
             c: BuildContext,
             element: Element,
             attrs: List<Attribute>,
@@ -18,7 +18,7 @@ internal object ForBehavior: Behavior {
         return (from..to).map {
             return@map c.scope(Collections.singletonMap(name, it)) {
                 elements.map { item ->
-                    BuildContext.createFromElement(c, item)
+                    c.createFromElement(item)
                 }.flatten()
             }
         }.flatten()

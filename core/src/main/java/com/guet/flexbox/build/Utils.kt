@@ -6,11 +6,9 @@ import androidx.annotation.RestrictTo
 import com.guet.flexbox.el.ELException
 import org.dom4j.Attribute
 
-private var metrics = Resources.getSystem().displayMetrics
-
 @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
 fun Number.toPx(): Int {
-    return (this.toDouble() * metrics.widthPixels / 360).toInt()
+    return (this.toDouble() * Resources.getSystem().displayMetrics.widthPixels / 360).toInt()
 }
 
 internal operator fun List<Attribute>.get(name: String): String? {
@@ -41,7 +39,6 @@ internal fun BuildContext.getColor(expr: String?, @ColorInt fallback: Int): Int 
         fallback
     }
 }
-
 
 inline fun <T> BuildContext.scope(scope: Map<String, Any>, action: () -> T): T {
     enterScope(scope)

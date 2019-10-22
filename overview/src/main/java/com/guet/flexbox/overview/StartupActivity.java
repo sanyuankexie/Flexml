@@ -1,4 +1,4 @@
-package com.guet.flexbox.preview;
+package com.guet.flexbox.overview;
 
 import android.Manifest;
 import android.content.Intent;

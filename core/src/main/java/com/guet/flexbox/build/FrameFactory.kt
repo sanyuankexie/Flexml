@@ -6,7 +6,7 @@ import com.facebook.yoga.YogaEdge
 import com.facebook.yoga.YogaPositionType
 import org.dom4j.Attribute
 
-internal object FrameFactory : Factory<Row.Builder>() {
+internal object FrameFactory : WidgetFactory<Row.Builder>() {
 
     init {
         value("flexGrow") {
