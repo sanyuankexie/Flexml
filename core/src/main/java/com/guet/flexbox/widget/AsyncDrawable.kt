@@ -20,8 +20,7 @@ internal class AsyncDrawable(
                 if (placeholder != null) {
                     onResourceReady(placeholder, null)
                 } else {
-                    wrappedDrawable = NoOpDrawable
-                    invalidateSelf()
+                    onResourceReady(NoOpDrawable, null)
                 }
             }
 

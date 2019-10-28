@@ -1,20 +1,32 @@
+@file:JvmName("-Utils")
+
 package com.guet.flexbox.build
 
 import android.content.res.Resources
 import androidx.annotation.ColorInt
-import androidx.annotation.RestrictTo
+import com.guet.flexbox.WidgetInfo
 import com.guet.flexbox.el.ELException
-import org.dom4j.Attribute
+import java.util.*
+import kotlin.collections.HashMap
 
-@RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
-fun Number.toPx(): Int {
-    return (this.toDouble() * Resources.getSystem().displayMetrics.widthPixels / 360).toInt()
+internal fun Long.toPx(): Int {
+    return (this * Resources.getSystem().displayMetrics.widthPixels / 360).toInt()
 }
 
-internal operator fun List<Attribute>.get(name: String): String? {
-    return this.filter {
-        it.name == name
-    }.map { it.value }.firstOrNull()
+internal fun Double.toPx(): Int {
+    return (this * Resources.getSystem().displayMetrics.widthPixels / 360).toInt()
+}
+
+internal fun Short.toPx(): Int {
+    return (this * Resources.getSystem().displayMetrics.widthPixels / 360)
+}
+
+internal fun Int.toPx(): Int {
+    return (this * Resources.getSystem().displayMetrics.widthPixels / 360)
+}
+
+internal fun Float.toPx(): Int {
+    return (this * Resources.getSystem().displayMetrics.widthPixels / 360).toInt()
 }
 
 internal fun <T> BuildContext.getValue(expr: String?, type: Class<T>, fallback: T): T {
@@ -47,4 +59,25 @@ inline fun <T> BuildContext.scope(scope: Map<String, Any>, action: () -> T): T {
     } finally {
         exitScope()
     }
+}
+
+class Builder internal constructor(private val type: String) {
+    private val attrs = HashMap<String, String>()
+    private val children = LinkedList<Builder>()
+
+    fun widget(name: String, action: Builder.() -> Unit = {}) {
+        children.add(Builder(name).apply(action))
+    }
+
+    fun attr(name: String, action: () -> Any = { "" }) {
+        attrs[name] = action().toString()
+    }
+
+    fun build(): WidgetInfo {
+        return WidgetInfo(type, attrs, children.map { it.build() })
+    }
+}
+
+fun rootWidget(name: String, action: Builder.() -> Unit = {}): WidgetInfo {
+    return Builder(name).apply(action).build()
 }

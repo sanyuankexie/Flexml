@@ -9,4 +9,7 @@
     borderColor="red"
     background="${fn:gradient(t2b,red,blue)}"
     flexDirection="column">
+    <Image
+        source="${image1}">
+    </Image>
 </Flex>

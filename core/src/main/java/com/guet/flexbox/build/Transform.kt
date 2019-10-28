@@ -1,13 +1,11 @@
 package com.guet.flexbox.build
 
 import com.facebook.litho.Component
-import org.dom4j.Attribute
-import org.dom4j.Element
+import com.guet.flexbox.WidgetInfo
 
 internal interface Transform {
     fun transform(c: BuildContext,
-                  element: Element,
-                  attrs: List<Attribute>,
+                  widgetInfo: WidgetInfo,
                   children: List<Component.Builder<*>>)
             : List<Component.Builder<*>>
 }

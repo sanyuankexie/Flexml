@@ -6,7 +6,6 @@ import com.facebook.litho.Row
 import com.facebook.yoga.YogaAlign
 import com.facebook.yoga.YogaJustify.*
 import com.facebook.yoga.YogaWrap.*
-import org.dom4j.Attribute
 
 internal object FlexFactory : WidgetFactory<Component.ContainerBuilder<*>>() {
 
@@ -57,7 +56,7 @@ internal object FlexFactory : WidgetFactory<Component.ContainerBuilder<*>>() {
 
     override fun create(
             c: BuildContext,
-            attrs: List<Attribute>)
+            attrs: Map<String, String>)
             : Component.ContainerBuilder<*> {
         val component: Component.ContainerBuilder<*>
         val type = attrs["flexDirection"]
@@ -75,8 +74,7 @@ internal object FlexFactory : WidgetFactory<Component.ContainerBuilder<*>>() {
     }
 
     override fun Component.ContainerBuilder<*>.applyChildren(
-            c: BuildContext, attrs:
-            List<Attribute>,
+            c: BuildContext, attrs: Map<String, String>,
             children: List<Component.Builder<*>>
     ) {
         children.forEach {

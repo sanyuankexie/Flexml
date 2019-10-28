@@ -35,7 +35,6 @@ dependencies {
     implementation 'com.github.panga:lite-beans:1.0.0'
     implementation project(':el')
 
-    api 'org.dom4j:dom4j:2.1.1'
     api 'com.facebook.litho:litho-core:0.31.0'
     api 'com.facebook.litho:litho-widget:0.31.0'
     api 'com.facebook.soloader:soloader:0.5.1'

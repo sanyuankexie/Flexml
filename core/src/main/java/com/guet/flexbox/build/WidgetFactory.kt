@@ -8,12 +8,11 @@ import com.facebook.litho.Component
 import com.facebook.yoga.YogaAlign
 import com.facebook.yoga.YogaEdge
 import com.guet.flexbox.DynamicBox
+import com.guet.flexbox.WidgetInfo
 import com.guet.flexbox.el.ELException
 import com.guet.flexbox.widget.AsyncDrawable
 import com.guet.flexbox.widget.BorderDrawable
 import com.guet.flexbox.widget.NoOpDrawable
-import org.dom4j.Attribute
-import org.dom4j.Element
 import java.util.*
 import kotlin.collections.HashMap
 
@@ -66,7 +65,7 @@ internal abstract class WidgetFactory<T : Component.Builder<*>> : Transform {
 
     private fun create(
             c: BuildContext,
-            attrs: List<Attribute>,
+            attrs: Map<String,String>,
             children: List<Component.Builder<*>>): T {
         val builder = create(c, attrs)
         builder.applyChildren(c, attrs, children)
@@ -79,36 +78,32 @@ internal abstract class WidgetFactory<T : Component.Builder<*>> : Transform {
 
     override fun transform(
             c: BuildContext,
-            element: Element,
-            attrs: List<Attribute>,
+            widgetInfo: WidgetInfo,
             children: List<Component.Builder<*>>): List<Component.Builder<*>> {
-        return Collections.singletonList(create(c, attrs, children))
+        return Collections.singletonList(create(c, widgetInfo.attrs, children))
     }
 
     protected fun T.applyDefault(
             c: BuildContext,
-            attrs: List<Attribute>) {
+            attrs: Map<String,String>) {
         if (!attrs.isNullOrEmpty()) {
-            for (attr in attrs) {
-                val mapping = mappings[attr.name]
-                if (mapping != null && attr.value != null) {
-                    mapping.invoke(this, c, attr.value)
-                }
+            for ((key, value) in attrs) {
+                mappings[key]?.invoke(this, c, value)
             }
         }
     }
 
     protected abstract fun create(
             c: BuildContext,
-            attrs: List<Attribute>): T
+            attrs: Map<String,String>): T
 
     protected open fun T.applyChildren(
             c: BuildContext,
-            attrs: List<Attribute>,
+            attrs: Map<String,String>,
             children: List<Component.Builder<*>>) {
     }
 
-    private fun T.applyEvent(c: BuildContext, attrs: List<Attribute>) {
+    private fun T.applyEvent(c: BuildContext, attrs: Map<String,String>) {
         var clickUrlValue: String? = null
         val clickUrl = attrs["clickUrl"]
         if (clickUrl != null) {
@@ -144,7 +139,7 @@ internal abstract class WidgetFactory<T : Component.Builder<*>> : Transform {
 
     private fun T.applyBackground(
             c: BuildContext,
-            attrs: List<Attribute>) {
+            attrs: Map<String,String>) {
         val borderRadius = c.getValue(attrs["borderRadius"],
                 Int::class.java, 0).toPx()
         val borderWidth = c.getValue(attrs["borderWidth"],

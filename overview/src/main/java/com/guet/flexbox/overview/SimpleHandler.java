@@ -13,9 +13,12 @@ public class SimpleHandler
         extends Handler
         implements LithoHandler {
 
-    SimpleHandler(String name) {
+    SimpleHandler() {
         super(((Function<Void, Looper>) input -> {
-            HandlerThread handlerThread = new HandlerThread(name);
+            HandlerThread handlerThread = new HandlerThread(
+                    Thread.currentThread().getStackTrace()[2]
+                            .getClassName()
+            );
             handlerThread.start();
             return handlerThread.getLooper();
         }).apply(null));

@@ -1,8 +1,9 @@
 package com.guet.flexbox.overview;
 
+import com.guet.flexbox.WidgetInfo;
+
 import java.util.Map;
 
-import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.http.GET;
 
@@ -11,5 +12,5 @@ public interface MockService {
     Call<Map<String, Object>> data();
 
     @GET("/layout")
-    Call<ResponseBody> layout();
+    Call<WidgetInfo> layout();
 }

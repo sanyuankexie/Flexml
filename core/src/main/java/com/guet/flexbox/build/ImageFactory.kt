@@ -2,7 +2,6 @@ package com.guet.flexbox.build
 
 import android.widget.ImageView.ScaleType.*
 import com.guet.flexbox.widget.AsyncImage
-import org.dom4j.Attribute
 
 internal object ImageFactory : WidgetFactory<AsyncImage.Builder>() {
 
@@ -35,7 +34,7 @@ internal object ImageFactory : WidgetFactory<AsyncImage.Builder>() {
 
     override fun create(
             c: BuildContext,
-            attrs: List<Attribute>): AsyncImage.Builder {
+            attrs: Map<String, String>): AsyncImage.Builder {
         return AsyncImage.create(c.componentContext).apply {
             applyDefault(c, attrs)
         }

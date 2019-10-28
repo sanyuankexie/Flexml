@@ -20,7 +20,10 @@
             android:layout_height="?attr/actionBarSize">
         </androidx.appcompat.widget.Toolbar>
         <androidx.cardview.widget.CardView
-            app:cardUseCompatPadding="true"
+            android:layout_marginTop="10dp"
+            android:layout_marginRight="10dp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginBottom="5dp"
             app:cardBackgroundColor="@android:color/white"
             android:elevation="10dp"
             app:cardCornerRadius="20dp"

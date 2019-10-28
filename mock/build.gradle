@@ -1,10 +1,15 @@
 apply plugin: 'java'
 apply plugin: 'kotlin'
+apply plugin: 'com.github.dcendents.android-maven'
+group='com.guet.flexbox'
 
 dependencies {
     implementation 'com.google.zxing:core:3.4.0'
     implementation 'com.google.code.gson:gson:2.8.5'
     implementation 'com.squareup.okio:okio:2.4.1'
+    implementation 'org.dom4j:dom4j:2.1.1'
+    implementation 'com.google.code.gson:gson:2.8.5'
+
     testImplementation 'junit:junit:4.12'
     implementation fileTree(dir: 'libs', include: ['*.jar'])
 }

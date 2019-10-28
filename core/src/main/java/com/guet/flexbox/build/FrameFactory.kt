@@ -4,7 +4,6 @@ import com.facebook.litho.Component
 import com.facebook.litho.Row
 import com.facebook.yoga.YogaEdge
 import com.facebook.yoga.YogaPositionType
-import org.dom4j.Attribute
 
 internal object FrameFactory : WidgetFactory<Row.Builder>() {
 
@@ -16,7 +15,7 @@ internal object FrameFactory : WidgetFactory<Row.Builder>() {
 
     override fun create(
             c: BuildContext,
-            attrs: List<Attribute>): Row.Builder {
+            attrs: Map<String, String>): Row.Builder {
         return Row.create(c.componentContext).apply {
             applyDefault(c, attrs)
         }
@@ -24,7 +23,7 @@ internal object FrameFactory : WidgetFactory<Row.Builder>() {
 
     override fun Row.Builder
             .applyChildren(c: BuildContext,
-                           attrs: List<Attribute>,
+                           attrs: Map<String, String>,
                            children: List<Component.Builder<*>>) {
         children.forEach {
             child(it.positionType(YogaPositionType.ABSOLUTE)

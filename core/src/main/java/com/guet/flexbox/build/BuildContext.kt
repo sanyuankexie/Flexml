@@ -6,12 +6,11 @@ import androidx.annotation.ColorInt
 import androidx.annotation.RestrictTo
 import com.facebook.litho.Component
 import com.facebook.litho.ComponentContext
+import com.guet.flexbox.WidgetInfo
 import com.guet.flexbox.el.ELException
 import com.guet.flexbox.el.ELManager
 import com.guet.flexbox.el.ELProcessor
 import lite.beans.Introspector
-import org.dom4j.Document
-import org.dom4j.Element
 import java.io.*
 import java.lang.reflect.Method
 import java.lang.reflect.Modifier
@@ -66,17 +65,16 @@ class BuildContext(val componentContext: ComponentContext, data: Any?) {
     }
 
     @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
-    fun createLayout(document: Document): Component {
-        return createFromElement(document.rootElement).single().build()
+    fun createLayout(root: WidgetInfo): Component {
+        return createFromElement(root).single().build()
     }
 
-    internal fun createFromElement(element: Element): List<Component.Builder<*>> {
-        val behavior = behaviors.getValue(element.name)
+    internal fun createFromElement(element: WidgetInfo): List<Component.Builder<*>> {
+        val behavior = transforms.getValue(element.type)
         return behavior.transform(
                 this,
                 element,
-                element.attributes(),
-                element.elements().map {
+                element.children.map {
                     createFromElement(it)
                 }.flatten())
     }
@@ -97,6 +95,10 @@ class BuildContext(val componentContext: ComponentContext, data: Any?) {
                 .filter {
                     val mod = it.modifiers
                     Modifier.isPublic(mod) && Modifier.isStatic(mod)
+                }.map {
+                    it.apply {
+                        it.isAccessible = true
+                    }
                 }
 
         init {
@@ -127,14 +129,14 @@ class BuildContext(val componentContext: ComponentContext, data: Any?) {
 
         private const val GOSN_CLASS_NAME = "com.google.gson.Gson"
 
-        private val behaviors = HashMap<String, Transform>()
+        private val transforms = HashMap<String, Transform>()
 
         init {
-            behaviors["Image"] = ImageFactory
-            behaviors["Flex"] = FlexFactory
-            behaviors["Text"] = TextFactory
-            behaviors["Frame"] = FrameFactory
-            behaviors["for"] = ForTransform
+            transforms["Image"] = ImageFactory
+            transforms["Flex"] = FlexFactory
+            transforms["Text"] = TextFactory
+            transforms["Frame"] = FrameFactory
+            transforms["for"] = ForTransform
         }
 
         private fun toMap(o: Any): Map<String, Any> {
@@ -185,8 +187,7 @@ class BuildContext(val componentContext: ComponentContext, data: Any?) {
 
     }
 
-    @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
-    object Functions {
+    private object Functions {
         @JvmName("check")
         @JvmStatic
         fun check(o: Any?): Boolean {

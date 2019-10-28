@@ -4,7 +4,6 @@ import android.graphics.Typeface
 import android.text.Layout.Alignment.ALIGN_CENTER
 import android.text.Layout.Alignment.valueOf
 import com.facebook.litho.widget.Text
-import org.dom4j.Attribute
 
 internal object TextFactory : WidgetFactory<Text.Builder>() {
 
@@ -49,7 +48,7 @@ internal object TextFactory : WidgetFactory<Text.Builder>() {
 
     override fun create(
             c: BuildContext,
-            attrs: List<Attribute>): Text.Builder {
+            attrs: Map<String, String>): Text.Builder {
         return Text.create(c.componentContext).apply {
             applyDefault(c, attrs)
         }

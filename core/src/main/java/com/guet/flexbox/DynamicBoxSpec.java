@@ -15,18 +15,14 @@ import com.facebook.litho.annotations.Param;
 import com.facebook.litho.annotations.Prop;
 import com.guet.flexbox.build.BuildContext;
 
-import org.dom4j.Document;
-
 @LayoutSpec
 final class DynamicBoxSpec {
 
     @OnCreateLayout
     static Component onCreateLayout(ComponentContext c,
-                                    @Prop Document layout,
-                                    @Prop(optional = true) Object bind,
-                                    @Prop(optional = true) BuildContext buildContext) {
-        return (buildContext != null ? buildContext : new BuildContext(c, bind))
-                .createLayout(layout);
+                                    @Prop WidgetInfo layout,
+                                    @Prop(optional = true) Object bind) {
+        return new BuildContext(c, bind).createLayout(layout);
     }
 
     @OnEvent(VisibleEvent.class)

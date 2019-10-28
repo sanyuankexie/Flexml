@@ -1,6 +1,7 @@
 package com.guet.flexbox.overview;
 
 import android.content.Intent;
+import android.content.res.Resources;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.graphics.drawable.GradientDrawable;
@@ -30,18 +31,13 @@ import com.facebook.yoga.YogaEdge;
 import com.guet.flexbox.DynamicBox;
 import com.guet.flexbox.EventListener;
 import com.guet.flexbox.EventType;
-import com.guet.flexbox.build.UtilsKt;
+import com.guet.flexbox.WidgetInfo;
 
-import org.dom4j.Document;
-import org.dom4j.io.SAXReader;
-
-import java.io.ByteArrayInputStream;
 import java.util.Map;
 
 import ch.ielse.view.SwitchView;
 import es.dmoral.toasty.Toasty;
 import okhttp3.OkHttpClient;
-import okhttp3.ResponseBody;
 import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
@@ -63,24 +59,22 @@ public class OverviewActivity
 
 
     private Handler mMainThread = new Handler();
-    private SimpleHandler mNetwork = new SimpleHandler("network");
-    private SAXReader mSAXReader = new SAXReader();
+    private SimpleHandler mNetwork = new SimpleHandler();
     private MockService mMockService;
     private ArrayAdapter<String> mAdapter;
-    private Document mDocument;
+    private WidgetInfo mLayout;
     private Map<String, Object> mData;
     private Runnable mReload = new Runnable() {
         @Override
         public void run() {
             try {
                 Response<Map<String, Object>> dataResponse = mMockService.data().execute();
-                Response<ResponseBody> layoutResponse = mMockService.layout().execute();
+                Response<WidgetInfo> layout = mMockService.layout().execute();
                 Map<String, Object> dataBody = dataResponse.body();
-                byte[] layoutBody = layoutResponse.body() == null ? null : layoutResponse.body().bytes();
-                Document document = layoutBody == null ? null : mSAXReader.read(new ByteArrayInputStream(layoutBody));
+                WidgetInfo layoutBody = layout.body();
                 runOnUiThread(() -> {
-                    if (document != null) {
-                        mDocument = document;
+                    if (layoutBody != null) {
+                        mLayout = layoutBody;
                     }
                     if (dataBody != null) {
                         mData = dataBody;
@@ -103,7 +97,7 @@ public class OverviewActivity
     };
 
     private void apply() {
-        if (mDocument != null) {
+        if (mLayout != null) {
             ComponentContext c = mLithoView.getComponentContext();
             ComponentTree componentTree = mLithoView.getComponentTree();
             if (componentTree != null) {
@@ -113,27 +107,35 @@ public class OverviewActivity
                                 .clipChildren(false)
                                 .childComponent(
                                         Column.create(c)
-                                                .widthPx(UtilsKt.toPx(360))
+                                                .widthPx(toPx(360))
                                                 .alignItems(YogaAlign.CENTER)
                                                 .child(DynamicBox.create(c)
                                                         .bind(mData)
-                                                        .layout(mDocument)
-                                                        .marginPx(YogaEdge.TOP, UtilsKt.toPx(20))
+                                                        .layout(mLayout)
+                                                        .marginPx(YogaEdge.TOP, dp2px(20))
                                                         .eventListener(this))
                                                 .child(Text.create(c)
-                                                        .widthPx(UtilsKt.toPx(360))
-                                                        .heightPx(UtilsKt.toPx(40))
+                                                        .widthPx(toPx(360))
+                                                        .heightPx(toPx(40))
                                                         .backgroundColor(getResources()
                                                                 .getColor(R.color.colorPrimary))
                                                         .textAlignment(Layout.Alignment.ALIGN_CENTER)
                                                         .text("这里是布局的下边界")
                                                         .textColor(Color.WHITE)
-                                                        .textSizePx(UtilsKt.toPx(25))
+                                                        .textSizePx(toPx(25))
                                                         .typeface(Typeface.defaultFromStyle(Typeface.BOLD)))
                                 ).build()
                 );
             }
         }
+    }
+
+    private static int toPx(float value) {
+        return (int) (Resources.getSystem().getDisplayMetrics().widthPixels / 360f * value);
+    }
+
+    public static int dp2px(float dpValue) {
+        return (int) (0.5f + dpValue * Resources.getSystem().getDisplayMetrics().density);
     }
 
     @Override
@@ -155,7 +157,7 @@ public class OverviewActivity
         setContentView(R.layout.activity_overview);
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        SimpleHandler mWorker = new SimpleHandler("layout");
+        SimpleHandler mWorker = new SimpleHandler();
         mLithoView = findViewById(R.id.host);
         mSwipeRefreshLayout = findViewById(R.id.pull);
         mIsLiveReload = findViewById(R.id.is_live_reload);

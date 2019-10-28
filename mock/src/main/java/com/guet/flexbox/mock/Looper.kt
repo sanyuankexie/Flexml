@@ -11,12 +11,10 @@ internal class Looper : Executor {
     fun loop() {
         while (true) {
             try {
-                val runnable = queue.take()
-                runnable.run()
+                queue.take().run()
             } catch (e: InterruptedException) {
                 Thread.currentThread().interrupt()
             }
-
         }
     }
 
