@@ -14,6 +14,7 @@ import android.widget.ListView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.annotation.WorkerThread;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
@@ -65,6 +66,7 @@ public class OverviewActivity
     private WidgetInfo mLayout;
     private Map<String, Object> mData;
     private Runnable mReload = new Runnable() {
+        @WorkerThread
         @Override
         public void run() {
             try {
@@ -86,7 +88,7 @@ public class OverviewActivity
                 });
             } catch (Exception e) {
                 e.printStackTrace();
-                runOnUiThread(()->{
+                runOnUiThread(() -> {
                     Toasty.error(getApplicationContext(), "刷新失败").show();
                     if (mSwipeRefreshLayout.isRefreshing()) {
                         mSwipeRefreshLayout.setRefreshing(false);
@@ -209,17 +211,20 @@ public class OverviewActivity
 
 
     @Override
-    public void onEvent(@NonNull EventType type,
-                        @Nullable String action) {
+    public void onEvent(
+            @NonNull EventType type,
+            @Nullable String action
+    ) {
         mAdapter.add("event type=" + type.name() + " : event action=" + action);
     }
 
     @Override
-    public void onScrollChange(NestedScrollView v,
-                               int scrollX,
-                               int scrollY,
-                               int oldScrollX,
-                               int oldScrollY
+    public void onScrollChange(
+            NestedScrollView v,
+            int scrollX,
+            int scrollY,
+            int oldScrollX,
+            int oldScrollY
     ) {
         if (!mSwipeRefreshLayout.isRefreshing()) {
             mSwipeRefreshLayout.setEnabled(scrollY <= 0);

@@ -89,7 +89,7 @@ final class ConsoleQRCode {
         int provisionalBitsNeeded = calculateBitsNeeded(mode, headerBits, dataBits, Version.getVersionForNumber(1));
         for (int versionNum = 1; versionNum <= 40; versionNum++) {
             Version version = Version.getVersionForNumber(versionNum);
-            if (willFit(provisionalBitsNeeded, version, ErrorCorrectionLevel.L)) {
+            if (willFit(provisionalBitsNeeded, version)) {
                 return version.getVersionNumber() * 4 + 17;
             }
         }
@@ -103,12 +103,12 @@ final class ConsoleQRCode {
         */
     }
 
-    private static boolean willFit(int numInputBits, Version version, ErrorCorrectionLevel ecLevel) {
+    private static boolean willFit(int numInputBits, Version version) {
         // In the following comments, we use numbers of Version 7-H.
         // numBytes = 196
         int numBytes = version.getTotalCodewords();
         // getNumECBytes = 130
-        Version.ECBlocks ecBlocks = version.getECBlocksForLevel(ecLevel);
+        Version.ECBlocks ecBlocks = version.getECBlocksForLevel(ErrorCorrectionLevel.L);
         int numEcBytes = ecBlocks.getTotalECCodewords();
         // getNumDataBytes = 196 - 130 = 66
         int numDataBytes = numBytes - numEcBytes;

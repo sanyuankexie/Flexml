@@ -1,6 +1,7 @@
 package com.guet.flexbox.build
 
-import android.graphics.Color.*
+import android.graphics.Color
+import android.graphics.Color.parseColor
 import android.graphics.drawable.GradientDrawable
 import androidx.annotation.ColorInt
 import androidx.annotation.RestrictTo
@@ -79,15 +80,7 @@ class BuildContext(val componentContext: ComponentContext, data: Any?) {
 
     companion object {
 
-        internal val colorMap = HashMap<String, Any>()
-
-        private fun Long.toColorString(): String {
-            return "#" + this.toInt().toString(16)
-        }
-
-        private fun Int.toColorString(): String {
-            return "#" + this.toString(16)
-        }
+        internal val colorMap: Map<String, Any>
 
         private val functions: List<Method> = Functions::class.java.declaredMethods
                 .filter {
@@ -99,35 +92,18 @@ class BuildContext(val componentContext: ComponentContext, data: Any?) {
                     }
                 }
 
-        init {
-            colorMap["black"] = BLACK.toColorString()
-            colorMap["darkgray"] = DKGRAY.toColorString()
-            colorMap["gray"] = GRAY.toColorString()
-            colorMap["lightgray"] = LTGRAY.toColorString()
-            colorMap["white"] = WHITE.toColorString()
-            colorMap["red"] = RED.toColorString()
-            colorMap["green"] = GREEN.toColorString()
-            colorMap["blue"] = BLUE.toColorString()
-            colorMap["yellow"] = YELLOW.toColorString()
-            colorMap["cyan"] = CYAN.toColorString()
-            colorMap["magenta"] = MAGENTA.toColorString()
-            colorMap["aqua"] = 0xFF00FFFF.toColorString()
-            colorMap["fuchsia"] = 0xFFFF00FF.toColorString()
-            colorMap["darkgrey"] = DKGRAY.toColorString()
-            colorMap["grey"] = GRAY.toColorString()
-            colorMap["lightgrey"] = LTGRAY.toColorString()
-            colorMap["lime"] = 0xFF00FF00.toColorString()
-            colorMap["maroon"] = 0xFF800000.toColorString()
-            colorMap["navy"] = 0xFF000080.toColorString()
-            colorMap["olive"] = 0xFF808000.toColorString()
-            colorMap["purple"] = 0xFF800080.toColorString()
-            colorMap["silver"] = 0xFFC0C0C0.toColorString()
-            colorMap["teal"] = 0xFF008080.toColorString()
-        }
 
         private val transforms = HashMap<String, Transform>()
 
         init {
+            @Suppress("UNCHECKED_CAST")
+            colorMap = (Color::class.java
+                    .getDeclaredField("sColorNameMap")
+                    .apply { isAccessible = true }
+                    .get(null) as Map<String, Int>)
+                    .map {
+                        it.key to it.value.toColorString()
+                    }.toMap()
             transforms["Image"] = ImageFactory
             transforms["Flex"] = FlexFactory
             transforms["Text"] = TextFactory

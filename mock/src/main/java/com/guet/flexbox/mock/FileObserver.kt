@@ -10,13 +10,13 @@ import org.dom4j.Element
 import org.dom4j.io.SAXReader
 import java.io.File
 import java.io.IOException
-import java.io.OutputStreamWriter
 import java.net.InetAddress
 import java.net.InetSocketAddress
 import java.util.concurrent.Executor
 import java.util.concurrent.Executors
 
-class FileObserver @Throws(IOException::class)
+class FileObserver
+@Throws(IOException::class)
 private constructor(
         executor: Executor,
         port: Int,
@@ -34,12 +34,8 @@ private constructor(
             val obj = JsonObject()
             val attrs = JsonObject()
             val children = JsonArray()
-            element.elements().map { toJson(it) }.forEach {
-                children.add(it)
-            }
-            element.attributes().forEach {
-                attrs.addProperty(it.name, it.value)
-            }
+            element.elements().map { toJson(it) }.forEach { children.add(it) }
+            element.attributes().forEach { attrs.addProperty(it.name, it.value) }
             obj.addProperty("type", element.name)
             obj.add("attrs", attrs)
             obj.add("children", children)
@@ -78,7 +74,7 @@ private constructor(
     init {
         files = arrayOf(template, json)
         val address = InetAddress.getLocalHost()
-        val url = "http://" + address.hostAddress + ":" + port
+        val url = "http://${address.hostAddress}:$port"
         ConsoleQRCode.print(url)
         println("布局地址：$url/layout")
         println("数据地址：$url/data")
@@ -90,10 +86,7 @@ private constructor(
                 httpExchange.sendResponseHeaders(200, 0)
                 val os = httpExchange.responseBody
                 val string = toJson(sax.read(files[0]).rootElement).toString()
-                OutputStreamWriter(os).apply {
-                    write(string)
-                    flush()
-                }
+                os.write(string.toByteArray())
                 httpExchange.close()
             } catch (e: Exception) {
                 throw IOException(e)

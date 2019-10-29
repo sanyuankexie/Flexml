@@ -63,6 +63,10 @@ inline fun <T> BuildContext.scope(scope: Map<String, Any>, action: () -> T): T {
     }
 }
 
+internal fun Int.toColorString(): String {
+    return "#" + this.toString(16)
+}
+
 private typealias FromJson<T> = (T) -> Map<String, Any>
 
 internal object GsonMirror {
@@ -160,7 +164,7 @@ class Builder internal constructor(private val type: String) {
         attrs[name] = action().toString()
     }
 
-    fun build(): WidgetInfo {
+    internal fun build(): WidgetInfo {
         return WidgetInfo(type,
                 Collections.unmodifiableMap(attrs),
                 Collections.unmodifiableList(children.map { it.build() })
