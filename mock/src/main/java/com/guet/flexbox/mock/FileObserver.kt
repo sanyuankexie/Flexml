@@ -16,7 +16,7 @@ import java.net.InetSocketAddress
 import java.util.concurrent.Executor
 import java.util.concurrent.Executors
 
-class MockServer @Throws(IOException::class)
+class FileObserver @Throws(IOException::class)
 private constructor(
         executor: Executor,
         port: Int,
@@ -52,7 +52,7 @@ private constructor(
                 val xml = File(args[0])
                 val json = File(args[1])
                 val looper = Looper()
-                MockServer(looper, DEFAULT_PORT, xml, json)
+                FileObserver(looper, DEFAULT_PORT, xml, json)
                 looper.loop()
             } catch (e: Exception) {
                 e.printStackTrace()
@@ -61,7 +61,7 @@ private constructor(
     }
 
     @Volatile
-    private lateinit var files: Array<File>
+    private var files: Array<File>
 
     @Throws(IOException::class)
     constructor(
@@ -76,7 +76,7 @@ private constructor(
     )
 
     init {
-        change(template, json)
+        files = arrayOf(template, json)
         val address = InetAddress.getLocalHost()
         val url = "http://" + address.hostAddress + ":" + port
         ConsoleQRCode.print(url)

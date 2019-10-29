@@ -10,8 +10,6 @@ import com.guet.flexbox.WidgetInfo
 import com.guet.flexbox.el.ELException
 import com.guet.flexbox.el.ELManager
 import com.guet.flexbox.el.ELProcessor
-import lite.beans.Introspector
-import java.io.*
 import java.lang.reflect.Method
 import java.lang.reflect.Modifier
 
@@ -21,7 +19,7 @@ class BuildContext(val componentContext: ComponentContext, data: Any?) {
 
     init {
         if (data != null) {
-            enterScope(toMap(data))
+            enterScope(tryToMap(data))
         }
         functions.forEach {
             el.defineFunction("fn", it.name, it)
@@ -127,8 +125,6 @@ class BuildContext(val componentContext: ComponentContext, data: Any?) {
             colorMap["teal"] = 0xFF008080.toColorString()
         }
 
-        private const val GOSN_CLASS_NAME = "com.google.gson.Gson"
-
         private val transforms = HashMap<String, Transform>()
 
         init {
@@ -138,53 +134,6 @@ class BuildContext(val componentContext: ComponentContext, data: Any?) {
             transforms["Frame"] = FrameFactory
             transforms["for"] = ForTransform
         }
-
-        private fun toMap(o: Any): Map<String, Any> {
-            return if (o is Map<*, *> && o.keys.all { it is String }) {
-                @Suppress("UNCHECKED_CAST")
-                return o as Map<String, Any>
-            } else if (o is InputStream
-                    || o is ByteArray
-                    || o is File
-                    || o is Reader
-                    || o is String) {
-                val gsonType = Class.forName(GOSN_CLASS_NAME)
-                val gson = gsonType.newInstance()
-                var type: Class<*> = o.javaClass
-                val input: Any
-                when (o) {
-                    is InputStream -> {
-                        input = InputStreamReader(o)
-                        type = Reader::class.java
-                    }
-                    is ByteArray -> {
-                        input = InputStreamReader(ByteArrayInputStream(o))
-                        type = Reader::class.java
-                    }
-                    is File -> {
-                        input = InputStreamReader(FileInputStream(o))
-                        type = Reader::class.java
-                    }
-                    else -> input = o
-                }
-                @Suppress("UNCHECKED_CAST")
-                return gsonType.getMethod("fromJson", type, Class::class.java)
-                        .invoke(gson, input, Map::class.java) as Map<String, Any>
-            } else if (o.javaClass.declaredMethods.isEmpty()) {
-                o.javaClass.declaredFields.map {
-                    it.name to it[o]
-                }.toMap()
-            } else {
-                Introspector.getBeanInfo(o.javaClass)
-                        .propertyDescriptors
-                        .filter {
-                            it.propertyType != Class::class.java
-                        }.map {
-                            it.name to it.readMethod.invoke(o)
-                        }.toMap()
-            }
-        }
-
     }
 
     private object Functions {

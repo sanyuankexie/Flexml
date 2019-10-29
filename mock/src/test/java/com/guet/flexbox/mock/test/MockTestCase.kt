@@ -1,7 +1,7 @@
 package com.guet.flexbox.mock.test
 
 
-import com.guet.flexbox.mock.MockServer
+import com.guet.flexbox.mock.FileObserver
 
 import org.junit.Test
 
@@ -15,7 +15,7 @@ class MockTestCase {
         for (i in args.indices) {
             args[i] = path + args[i]
         }
-        MockServer.main(args)
+        FileObserver.main(args)
     }
 
 }
