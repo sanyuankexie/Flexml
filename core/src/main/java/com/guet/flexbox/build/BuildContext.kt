@@ -80,7 +80,14 @@ class BuildContext(val componentContext: ComponentContext, data: Any?) {
 
     companion object {
 
-        internal val colorMap: Map<String, Any>
+        @Suppress("UNCHECKED_CAST")
+        internal val colorMap = (Color::class.java
+                .getDeclaredField("sColorNameMap")
+                .apply { isAccessible = true }
+                .get(null) as Map<String, Int>)
+                .map {
+                    it.key to it.value.toColorString()
+                }.toMap()
 
         private val functions: List<Method> = Functions::class.java.declaredMethods
                 .filter {
@@ -92,24 +99,14 @@ class BuildContext(val componentContext: ComponentContext, data: Any?) {
                     }
                 }
 
-
         private val transforms = HashMap<String, Transform>()
-
-        init {
-            @Suppress("UNCHECKED_CAST")
-            colorMap = (Color::class.java
-                    .getDeclaredField("sColorNameMap")
-                    .apply { isAccessible = true }
-                    .get(null) as Map<String, Int>)
-                    .map {
-                        it.key to it.value.toColorString()
-                    }.toMap()
-            transforms["Image"] = ImageFactory
-            transforms["Flex"] = FlexFactory
-            transforms["Text"] = TextFactory
-            transforms["Frame"] = FrameFactory
-            transforms["for"] = ForTransform
-        }
+                .apply {
+                    this["Image"] = ImageFactory
+                    this["Flex"] = FlexFactory
+                    this["Text"] = TextFactory
+                    this["Frame"] = FrameFactory
+                    this["for"] = ForTransform
+                }
     }
 
     private object Functions {

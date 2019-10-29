@@ -46,12 +46,6 @@ internal abstract class WidgetFactory<T : Component.Builder<*>> : Transform {
         value("flexShrink") {
             this.flexShrink(it.toFloat())
         }
-        text("clickUrl") {
-
-        }
-        value("borderRadius") {
-
-        }
         bound("alignSelf", YogaAlign.FLEX_START,
                 mapOf(
                         "flexStart" to YogaAlign.FLEX_START,
