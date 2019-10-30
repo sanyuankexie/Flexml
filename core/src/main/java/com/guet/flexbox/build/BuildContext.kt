@@ -27,13 +27,11 @@ class BuildContext(val componentContext: ComponentContext, data: Any?) {
         }
     }
 
-    @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
-    fun enterScope(scope: Map<String, Any>) {
+    private fun enterScope(scope: Map<String, Any>) {
         el.elManager.elContext.enterLambdaScope(scope)
     }
 
-    @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
-    fun exitScope() {
+    private fun exitScope() {
         el.elManager.elContext.exitLambdaScope();
     }
 
@@ -63,6 +61,15 @@ class BuildContext(val componentContext: ComponentContext, data: Any?) {
         }
     }
 
+    fun <T> scope(scope: Map<String, Any>, action: () -> T): T {
+        enterScope(scope)
+        try {
+            return action()
+        } finally {
+            exitScope()
+        }
+    }
+
     @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
     fun createLayout(root: WidgetInfo): Component {
         return createFromElement(root).single().build()
@@ -81,7 +88,7 @@ class BuildContext(val componentContext: ComponentContext, data: Any?) {
     companion object {
 
         @Suppress("UNCHECKED_CAST")
-        internal val colorMap = (Color::class.java
+        private val colorMap = (Color::class.java
                 .getDeclaredField("sColorNameMap")
                 .apply { isAccessible = true }
                 .get(null) as Map<String, Int>)
@@ -99,14 +106,13 @@ class BuildContext(val componentContext: ComponentContext, data: Any?) {
                     }
                 }
 
-        private val transforms = HashMap<String, Transform>()
-                .apply {
-                    this["Image"] = ImageFactory
-                    this["Flex"] = FlexFactory
-                    this["Text"] = TextFactory
-                    this["Frame"] = FrameFactory
-                    this["for"] = ForTransform
-                }
+        private val transforms = mapOf(
+                "Image" to ImageFactory,
+                "Flex" to FlexFactory,
+                "Text" to TextFactory,
+                "Frame" to FrameFactory,
+                "for" to ForTransform
+        )
     }
 
     private object Functions {

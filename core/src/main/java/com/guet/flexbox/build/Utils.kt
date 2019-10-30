@@ -54,15 +54,6 @@ internal fun BuildContext.getColor(expr: String?, @ColorInt fallback: Int): Int 
     }
 }
 
-inline fun <T> BuildContext.scope(scope: Map<String, Any>, action: () -> T): T {
-    enterScope(scope)
-    try {
-        return action()
-    } finally {
-        exitScope()
-    }
-}
-
 internal fun Int.toColorString(): String {
     return "#" + this.toString(16)
 }

@@ -7,7 +7,7 @@
     borderWidth="20"
     borderRadius="30"
     borderColor="red"
-    background="${fn:gradient(t2b,red,blue)}"
+    background="${fn:gradient(TOP_BOTTOM,red,blue)}"
     flexDirection="column">
     <Image
         source="${image1}">

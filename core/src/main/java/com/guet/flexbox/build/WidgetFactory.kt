@@ -59,7 +59,7 @@ internal abstract class WidgetFactory<T : Component.Builder<*>> : Transform {
 
     private fun create(
             c: BuildContext,
-            attrs: Map<String,String>,
+            attrs: Map<String, String>,
             children: List<Component.Builder<*>>): T {
         val builder = create(c, attrs)
         builder.applyChildren(c, attrs, children)
@@ -79,7 +79,7 @@ internal abstract class WidgetFactory<T : Component.Builder<*>> : Transform {
 
     protected fun T.applyDefault(
             c: BuildContext,
-            attrs: Map<String,String>) {
+            attrs: Map<String, String>) {
         if (!attrs.isNullOrEmpty()) {
             for ((key, value) in attrs) {
                 mappings[key]?.invoke(this, c, value)
@@ -89,15 +89,15 @@ internal abstract class WidgetFactory<T : Component.Builder<*>> : Transform {
 
     protected abstract fun create(
             c: BuildContext,
-            attrs: Map<String,String>): T
+            attrs: Map<String, String>): T
 
     protected open fun T.applyChildren(
             c: BuildContext,
-            attrs: Map<String,String>,
+            attrs: Map<String, String>,
             children: List<Component.Builder<*>>) {
     }
 
-    private fun T.applyEvent(c: BuildContext, attrs: Map<String,String>) {
+    private fun T.applyEvent(c: BuildContext, attrs: Map<String, String>) {
         var clickUrlValue: String? = null
         val clickUrl = attrs["clickUrl"]
         if (clickUrl != null) {
@@ -133,7 +133,7 @@ internal abstract class WidgetFactory<T : Component.Builder<*>> : Transform {
 
     private fun T.applyBackground(
             c: BuildContext,
-            attrs: Map<String,String>) {
+            attrs: Map<String, String>) {
         val borderRadius = c.getValue(attrs["borderRadius"],
                 Int::class.java, 0).toPx()
         val borderWidth = c.getValue(attrs["borderWidth"],
@@ -242,19 +242,18 @@ internal abstract class WidgetFactory<T : Component.Builder<*>> : Transform {
 
     companion object {
 
-        private val colorNameMap = BuildContext.colorMap.keys.map {
-            it to it
-        }.toMap()
+        @Suppress("UNCHECKED_CAST")
+        private val colorNameMap = (Color::class.java
+                .getDeclaredField("sColorNameMap")
+                .apply { isAccessible = true }
+                .get(null) as Map<String, Int>)
+                .map {
+                    it.key to it.key as Any
+                }.toMap()
 
-        private val orientations: Map<String, GradientDrawable.Orientation> = mapOf(
-                "t2b" to GradientDrawable.Orientation.TOP_BOTTOM,
-                "tr2bl" to GradientDrawable.Orientation.TR_BL,
-                "r2l" to GradientDrawable.Orientation.RIGHT_LEFT,
-                "br2tl" to GradientDrawable.Orientation.BR_TL,
-                "b2t" to GradientDrawable.Orientation.BOTTOM_TOP,
-                "bl2tr" to GradientDrawable.Orientation.BL_TR,
-                "l2r" to GradientDrawable.Orientation.LEFT_RIGHT,
-                "tl2br" to GradientDrawable.Orientation.TL_BR
-        )
+        private val orientations: Map<String, Any> = GradientDrawable.Orientation.values()
+                .map {
+                    it.name to it as Any
+                }.toMap()
     }
 }
