@@ -54,10 +54,12 @@ abstract class MockSession {
                 try {
                     httpExchange.sendResponseHeaders(200, 0)
                     val os = httpExchange.responseBody
+                    val source = File(data).source()
                     os.sink().buffer().apply {
-                        writeAll(File(data).source())
+                        writeAll(source)
                         flush()
                     }
+                    source.close()
                     os.close()
                     httpExchange.close()
                 } catch (e: Exception) {
@@ -80,7 +82,10 @@ abstract class MockSession {
         @JvmStatic
         fun compile(layout: String, path: String) {
             val string = toJson(sax.read(layout).rootElement).toString()
-            FileWriter(path).write(string)
+            FileWriter(path).apply {
+                write(string)
+                close()
+            }
         }
 
         private fun toJson(element: Element): JsonObject {

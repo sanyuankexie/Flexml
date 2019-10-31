@@ -10,8 +10,8 @@ class MockTestCase {
     fun mock() {
         val root = System.getProperty("user.dir")
         val files = arrayOf(
-                "xml.xml",
-                "json.json"
+                "testcase${File.separator}xml.xml",
+                "testcase${File.separator}json.json"
         ).map {
             root + File.separator + it
         }

@@ -29,7 +29,7 @@ internal fun Float.toPx(): Int {
     return (this * Resources.getSystem().displayMetrics.widthPixels / 360).toInt()
 }
 
-internal fun <T> BuildContext.getValue(expr: String?, type: Class<T>, fallback: T): T {
+internal fun <T> BuildContext.tryGetValue(expr: String?, type: Class<T>, fallback: T): T {
     if (expr == null) {
         return fallback
     }
@@ -41,7 +41,7 @@ internal fun <T> BuildContext.getValue(expr: String?, type: Class<T>, fallback: 
 }
 
 @ColorInt
-internal fun BuildContext.getColor(expr: String?, @ColorInt fallback: Int): Int {
+internal fun BuildContext.tryGetColor(expr: String?, @ColorInt fallback: Int): Int {
     if (expr == null) {
         return fallback
     }

@@ -134,11 +134,11 @@ internal abstract class WidgetFactory<T : Component.Builder<*>> : Transform {
     private fun T.applyBackground(
             c: BuildContext,
             attrs: Map<String, String>) {
-        val borderRadius = c.getValue(attrs["borderRadius"],
+        val borderRadius = c.tryGetValue(attrs["borderRadius"],
                 Int::class.java, 0).toPx()
-        val borderWidth = c.getValue(attrs["borderWidth"],
+        val borderWidth = c.tryGetValue(attrs["borderWidth"],
                 Int::class.java, 0).toPx()
-        val borderColor = c.getColor(attrs["borderColor"],
+        val borderColor = c.tryGetColor(attrs["borderColor"],
                 Color.TRANSPARENT)
         var background: Drawable? = null
         val backgroundValue = attrs["background"]
@@ -153,7 +153,7 @@ internal abstract class WidgetFactory<T : Component.Builder<*>> : Transform {
             } catch (e: Exception) {
                 val backgroundRaw = c.scope(orientations) {
                     c.scope(colorNameMap) {
-                        c.getValue(backgroundValue, Any::class.java, Unit)
+                        c.tryGetValue(backgroundValue, Any::class.java, Unit)
                     }
                 }
                 if (backgroundRaw is Drawable) {
@@ -186,11 +186,11 @@ internal abstract class WidgetFactory<T : Component.Builder<*>> : Transform {
         this.background(background)
     }
 
-    protected fun <V : Any> bound(
+    protected inline fun <V : Any> bound(
             name: String,
             fallback: V,
             map: Map<String, V>,
-            action: T.(V) -> Unit
+            crossinline action: T.(V) -> Unit
     ) {
         mappings[name] = { c, value ->
             try {
@@ -210,7 +210,7 @@ internal abstract class WidgetFactory<T : Component.Builder<*>> : Transform {
             fallback: String = "",
             crossinline action: T.(String) -> Unit) {
         mappings[name] = { c, value ->
-            action(c.getValue(value, String::class.java, fallback))
+            action(c.tryGetValue(value, String::class.java, fallback))
         }
     }
 
@@ -219,7 +219,7 @@ internal abstract class WidgetFactory<T : Component.Builder<*>> : Transform {
             fallback: Boolean = false,
             crossinline action: T.(Boolean) -> Unit) {
         mappings[name] = { c, value ->
-            action(c.getValue(value, Boolean::class.java, fallback))
+            action(c.tryGetValue(value, Boolean::class.java, fallback))
         }
     }
 
@@ -227,7 +227,7 @@ internal abstract class WidgetFactory<T : Component.Builder<*>> : Transform {
             name: String, fallback: Double = 0.0,
             crossinline action: T.(Double) -> Unit) {
         mappings[name] = { c, value ->
-            action(c.getValue(value, Double::class.java, fallback))
+            action(c.tryGetValue(value, Double::class.java, fallback))
         }
     }
 
@@ -236,7 +236,7 @@ internal abstract class WidgetFactory<T : Component.Builder<*>> : Transform {
             fallback: Int = Color.TRANSPARENT,
             crossinline action: T.(Int) -> Unit) {
         mappings[name] = { c, value ->
-            action(c.getColor(value, fallback))
+            action(c.tryGetColor(value, fallback))
         }
     }
 

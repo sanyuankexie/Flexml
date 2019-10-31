@@ -10,7 +10,7 @@ internal object ForTransform : Transform {
             widgetInfo: WidgetInfo,
             children: List<Component.Builder<*>>): List<Component.Builder<*>> {
         val attrs = widgetInfo.attrs ?: emptyMap()
-        val name = c.getValue(attrs["type"] ?: error("must has attr 'type'"), String::class.java)
+        val name = c.getValue(attrs["name"] ?: error("must has attr 'name'"), String::class.java)
         val from = c.getValue(attrs["from"] ?: error("must has attr 'from'"), Int::class.java)
         val to = c.getValue(attrs["to"] ?: error("must has attr 'to'"), Int::class.java)
         val elements = widgetInfo.children

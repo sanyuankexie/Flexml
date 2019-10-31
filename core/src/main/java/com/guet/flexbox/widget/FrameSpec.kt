@@ -14,11 +14,13 @@ import kotlin.math.max
 
 @LayoutSpec
 object FrameSpec {
+
     @OnCreateLayoutWithSizeSpec
     fun onCreateLayoutWithSizeSpec(
             c: ComponentContext,
             widthSpec: Int,
             heightSpec: Int,
+            @Prop(optional = true) gravity: Int,
             @Prop(optional = true, varArg = "child") children: List<Component>?
     ): Component {
         var maxWidth = 0
@@ -38,8 +40,8 @@ object FrameSpec {
             Row.create(c).positionType(YogaPositionType.ABSOLUTE)
                     .widthPx(size.width)
                     .heightPx(size.height)
-                    .positionPx(YogaEdge.TOP, 0)
                     .positionPx(YogaEdge.LEFT, 0)
+                    .positionPx(YogaEdge.TOP, 0)
                     .child(it)
         }
         return Row.create(c)

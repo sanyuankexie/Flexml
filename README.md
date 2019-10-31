@@ -1,5 +1,5 @@
 ### 特性
-* 使用facebook的litho编写的core模块，异步计算布局，解放主线程，并且直接使用Drawable进行渲染比WebView相比有更大的性能优势
+* 使用litho编写的core模块，异步计算布局，解放主线程，并且直接使用Drawable进行渲染，与WebView相比有更大的性能优势
 * 所有图片均可以从网络异步加载，并且不会触发litho的视图树的状态更新
 * 前后端分离，后端下发布局+数据的json，可集成在数据接口下发，本地自主解析渲染解析渲染布局
 * 单View接入，基本无入侵性，可用于替换现有的任意一个静态展示型的View,并支持曝光埋点、点击埋点、点击时间处理等事件
@@ -68,8 +68,7 @@ flex风格的布局容器
 ### Banner
 【TODO】
 ### Frame
-【TODO】
-实现跟Android中FrameLayout一样的效果
+与Android中FrameLayout一样的效果
 ### Timer
 【TODO】
 倒计时的文本，使用独立于系统的字体黑体
@@ -118,7 +117,7 @@ flex风格的布局容器
 ## 运行测试用例
 * 在手机上安装overview
 * 确保手机与电脑在同一网络环境下
-* 运行mock模块下的src/test/java/下的MockTestCase（mac上路径可能会出点问题）
+* 运行mock模块下test文件夹下的MockTestCase（mac上路径可能会出点问题）
 * 用overview扫描控制台出现的二维码，即可开始测试
 * Ctrl+S保存后会刷新手机上的布局（开启LiveReload时）
 * 您可参照mock模块与overview模块进行快速集成
