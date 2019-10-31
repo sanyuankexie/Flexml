@@ -1,6 +1,10 @@
 package com.guet.flexbox.widget
 
-import com.facebook.litho.*
+import android.view.ViewGroup
+import com.facebook.litho.Component
+import com.facebook.litho.ComponentContext
+import com.facebook.litho.Row
+import com.facebook.litho.Size
 import com.facebook.litho.annotations.LayoutSpec
 import com.facebook.litho.annotations.OnCreateLayoutWithSizeSpec
 import com.facebook.litho.annotations.Prop
@@ -20,28 +24,31 @@ object FrameSpec {
         var maxWidth = 0
         var maxHeight = 0
         val size = Size()
-        (children ?: emptyList()).forEach {
+        val list = (children ?: emptyList()).map {
             it.measure(
                     c,
-                    SizeSpec.makeSizeSpec(0, widthSpec),
-                    SizeSpec.makeSizeSpec(0, heightSpec),
+                    ViewGroup.getChildMeasureSpec(widthSpec,
+                            0, ViewGroup.LayoutParams.WRAP_CONTENT),
+                    ViewGroup.getChildMeasureSpec(heightSpec,
+                            0, ViewGroup.LayoutParams.WRAP_CONTENT),
                     size
             )
             maxHeight = max(maxHeight, size.height)
             maxWidth = max(maxWidth, size.width)
+            Row.create(c).positionType(YogaPositionType.ABSOLUTE)
+                    .widthPx(size.width)
+                    .heightPx(size.height)
+                    .positionPx(YogaEdge.TOP, 0)
+                    .positionPx(YogaEdge.LEFT, 0)
+                    .child(it)
         }
         return Row.create(c)
                 .widthPx(maxWidth)
                 .heightPx(maxHeight)
                 .apply {
-                    (children ?: emptyList()).forEach {
-                        child(Row.create(c)
-                                .positionType(YogaPositionType.ABSOLUTE)
-                                .positionPx(YogaEdge.TOP, 0)
-                                .positionPx(YogaEdge.LEFT, 0)
-                                .child(it))
+                    list.forEach {
+                        child(it)
                     }
-                }
-                .build()
+                }.build()
     }
 }

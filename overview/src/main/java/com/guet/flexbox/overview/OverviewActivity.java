@@ -51,13 +51,11 @@ public class OverviewActivity
         NestedScrollView.OnScrollChangeListener,
         SwipeRefreshLayout.OnRefreshListener {
 
-
     private SwipeRefreshLayout mSwipeRefreshLayout;
     private LithoView mLithoView;
     private SwitchView mIsLiveReload;
     private SwitchView mIsOpenConsole;
     private ListView mConsole;
-
 
     private Handler mMainThread = new Handler();
     private SimpleHandler mNetwork = new SimpleHandler();

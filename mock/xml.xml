@@ -7,9 +7,22 @@
     borderWidth="20"
     borderRadius="30"
     borderColor="red"
-    background="${fn:gradient(TOP_BOTTOM,red,blue)}"
     flexDirection="column">
-    <Image
-        source="${image1}">
-    </Image>
+
+    <Frame>
+        <Flex
+            background="blue"
+            width="360"
+            height="360"/>
+        <Flex
+            background="red"
+            width="160"
+            height="260"/>
+        <Image
+            width="160"
+            height="160"
+            source="${image1}">
+        </Image>
+    </Frame>
+
 </Flex>
