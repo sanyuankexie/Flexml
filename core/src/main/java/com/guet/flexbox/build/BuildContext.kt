@@ -80,9 +80,9 @@ class BuildContext(val componentContext: ComponentContext, data: Any?) {
         return behavior.transform(
                 this,
                 element,
-                element.children.map {
+                element.children?.map {
                     createFromElement(it)
-                }.flatten())
+                }?.flatten() ?: emptyList())
     }
 
     companion object {

@@ -74,7 +74,7 @@ internal abstract class WidgetFactory<T : Component.Builder<*>> : Transform {
             c: BuildContext,
             widgetInfo: WidgetInfo,
             children: List<Component.Builder<*>>): List<Component.Builder<*>> {
-        return Collections.singletonList(create(c, widgetInfo.attrs, children))
+        return Collections.singletonList(create(c, widgetInfo.attrs ?: emptyMap(), children))
     }
 
     protected fun T.applyDefault(

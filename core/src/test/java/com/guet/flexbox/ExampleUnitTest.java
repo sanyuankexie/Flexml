@@ -14,5 +14,6 @@ public class ExampleUnitTest {
     public void addition_isCorrect() {
         System.out.println(Integer.toHexString(0xFF000000));
         assertEquals(4, 2 + 2);
+        throw new RuntimeException();
     }
 }

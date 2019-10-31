@@ -4,12 +4,10 @@ package com.guet.flexbox.build
 
 import android.content.res.Resources
 import androidx.annotation.ColorInt
-import com.guet.flexbox.WidgetInfo
 import com.guet.flexbox.el.ELException
 import lite.beans.Introspector
 import java.io.*
-import java.util.*
-import kotlin.collections.HashMap
+import java.lang.reflect.Type
 
 internal fun Long.toPx(): Int {
     return (this * Resources.getSystem().displayMetrics.widthPixels / 360).toInt()
@@ -58,7 +56,7 @@ internal fun Int.toColorString(): String {
     return "#" + this.toString(16)
 }
 
-private typealias FromJson<T> = (T) -> Map<String, Any>
+private typealias FromJson<T> = (T, Type) -> Any
 
 internal object GsonMirror {
     private val calls: Map<Class<*>, FromJson<*>>
@@ -70,38 +68,29 @@ internal object GsonMirror {
             val readerMethod = gsonType.getMethod(
                     "fromJson",
                     Reader::class.java,
-                    Class::class.java
+                    Type::class.java
             )
             val stringMethod = gsonType.getMethod(
                     "fromJson",
                     String::class.java,
-                    Class::class.java
+                    Type::class.java
             )
             val map = HashMap<Class<*>, FromJson<*>>()
-            map.add<Reader> {
-                @Suppress("UNCHECKED_CAST")
-                readerMethod.invoke(gson, it, Map::class.java)
-                        as Map<String, Any>
+            val inputStreamFunc: FromJson<InputStream> = { data, type ->
+                readerMethod.invoke(gson, InputStreamReader(data), type)
             }
-            map.add<InputStream> {
-                @Suppress("UNCHECKED_CAST")
-                readerMethod.invoke(gson, InputStreamReader(it), Map::class.java)
-                        as Map<String, Any>
+            map.add<Reader> { data, type ->
+                readerMethod.invoke(gson, data, type)
             }
-            map.add<ByteArray> {
-                @Suppress("UNCHECKED_CAST")
-                readerMethod.invoke(gson, ByteArrayInputStream(it), Map::class.java)
-                        as Map<String, Any>
+            map.add(inputStreamFunc)
+            map.add<ByteArray> { data, type ->
+                inputStreamFunc(ByteArrayInputStream(data), type)
             }
-            map.add<File> {
-                @Suppress("UNCHECKED_CAST")
-                readerMethod.invoke(gson, FileInputStream(it), Map::class.java)
-                        as Map<String, Any>
+            map.add<File> { data, type ->
+                inputStreamFunc(FileInputStream(data), type)
             }
-            map.add<String> {
-                @Suppress("UNCHECKED_CAST")
-                stringMethod.invoke(gson, it, Map::class.java)
-                        as Map<String, Any>
+            map.add<String> { data, type ->
+                stringMethod.invoke(gson, data, type)
             }
             map
         } catch (e: Exception) {
@@ -110,10 +99,10 @@ internal object GsonMirror {
         }
     }
 
-    internal fun fromJson(data: Any): Map<String, Any>? {
+    internal fun <T> fromJson(data: Any, type: Type): T? {
         return calls[data::class.java]?.let {
             @Suppress("UNCHECKED_CAST")
-            return@let (it as FromJson<Any>).invoke(data)
+            return@let (it as FromJson<Any>).invoke(data, type) as T
         }
     }
 
@@ -127,7 +116,8 @@ internal fun tryToMap(o: Any): Map<String, Any> {
         @Suppress("UNCHECKED_CAST")
         return o as Map<String, Any>
     } else {
-        GsonMirror.fromJson(o) ?: if (o.javaClass.declaredMethods.isEmpty()) {
+        @Suppress("UNCHECKED_CAST")
+        GsonMirror.fromJson(o, Map::class.java) ?: if (o.javaClass.declaredMethods.isEmpty()) {
             o.javaClass.declaredFields.map {
                 it.name to it[o]
             }.toMap()
@@ -141,28 +131,4 @@ internal fun tryToMap(o: Any): Map<String, Any> {
                     }.toMap()
         }
     }
-}
-
-class Builder internal constructor(private val type: String) {
-    private val attrs = HashMap<String, String>()
-    private val children = LinkedList<Builder>()
-
-    fun widget(name: String, action: Builder.() -> Unit = {}) {
-        children.add(Builder(name).apply(action))
-    }
-
-    fun attr(name: String, action: () -> Any = { "" }) {
-        attrs[name] = action().toString()
-    }
-
-    internal fun build(): WidgetInfo {
-        return WidgetInfo(type,
-                Collections.unmodifiableMap(attrs),
-                Collections.unmodifiableList(children.map { it.build() })
-        )
-    }
-}
-
-fun rootWidget(name: String, action: Builder.() -> Unit = {}): WidgetInfo {
-    return Builder(name).apply(action).build()
 }
