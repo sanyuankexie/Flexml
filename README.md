@@ -1,5 +1,6 @@
+![](https://jitpack.io/v/LukeXeon/flexbox.svg)
 ### 适用的业务范围
-* 适用于要求强展示、无动画、轻交互且要求随时上线、局部动态化，同时还要兼顾性能的应用场景，这些页面由于性能问题RN和WebView显得太重，例如首页feed流卡片，一级页面的活动页等
+适用于要求强展示、无动画、轻交互且要求随时上线、局部动态化，同时还要兼顾性能的应用场景，这些页面由于性能问题RN和WebView显得太重，例如首页feed流卡片，一级页面的活动页等
 ### 特性
 * 基于facebook开源的litho，异步计算布局，解放主线程，并且直接使用Drawable进行渲染，与WebView相比有更大的性能优势
 * 使用Glide作为图片加载引擎，所有图片均可以从网络异步加载，异步图片的加载不会触发litho的视图树的状态更新
@@ -120,12 +121,27 @@ orientation 水平或者垂直（vertical，horizontal）
 * 用overview扫描控制台出现的二维码，即可开始测试
 * Ctrl+S保存后会刷新手机上的布局（开启LiveReload时）
 * 您可参照mock模块与overview模块进行快速集成
+### 利用jitpack集成
+```
+//Add it in your root build.gradle at the end of repositories:
+	allprojects {
+		repositories {
+			...
+			maven { url 'https://jitpack.io' }
+		}
+	}
+ 
+//Add the dependency
+    dependencies {
+	        implementation 'com.github.LukeXeon.flexbox:core:Tag'
+	}
+```
 ### 项目中所使用的开源框架
-#### mock模块
+#### mock
 * google zxing 二维码
 * google gson json解析
-#### core模块
+#### core
 * apache el 数据绑定
 * facebook litho 渲染
-#### overview模块
+#### overview
 * squareup retrofit2 网络请求
