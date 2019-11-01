@@ -15,6 +15,6 @@ class MockTestCase {
         ).map {
             root + File.separator + it
         }
-        MockSession.run(files[0], files[1]);
+        MockSession.open(files[0], files[1]);
     }
 }

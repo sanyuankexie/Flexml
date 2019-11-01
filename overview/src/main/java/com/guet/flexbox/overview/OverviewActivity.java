@@ -58,7 +58,7 @@ public class OverviewActivity
     private ListView mConsole;
 
     private Handler mMainThread = new Handler();
-    private SimpleHandler mNetwork = new SimpleHandler();
+    private SimpleHandler mNetwork = new SimpleHandler("network");
     private MockService mMockService;
     private ArrayAdapter<String> mAdapter;
     private WidgetInfo mLayout;
@@ -157,7 +157,6 @@ public class OverviewActivity
         setContentView(R.layout.activity_overview);
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        SimpleHandler mWorker = new SimpleHandler();
         mLithoView = findViewById(R.id.host);
         mSwipeRefreshLayout = findViewById(R.id.pull);
         mIsLiveReload = findViewById(R.id.is_live_reload);
@@ -173,7 +172,7 @@ public class OverviewActivity
         mIsOpenConsole.setOnClickListener(this);
         mLithoView.setComponentTree(
                 ComponentTree.create(mLithoView.getComponentContext())
-                        .layoutThreadHandler(mWorker)
+                        .layoutThreadHandler(new SimpleLithoHandler(this))
                         .build()
         );
         mAdapter = new ArrayAdapter<>(this, R.layout.console_item, R.id.text);
@@ -233,7 +232,7 @@ public class OverviewActivity
 
     @Override
     public void onRefresh() {
-        mNetwork.remove(mReload);
+        mNetwork.removeCallbacks(mReload);
         mNetwork.post(mReload);
     }
 

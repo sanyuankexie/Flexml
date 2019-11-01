@@ -20,13 +20,12 @@ object FrameSpec {
             c: ComponentContext,
             widthSpec: Int,
             heightSpec: Int,
-            @Prop(optional = true) gravity: Int,
             @Prop(optional = true, varArg = "child") children: List<Component>?
     ): Component {
         var maxWidth = 0
         var maxHeight = 0
         val size = Size()
-        val list = (children ?: emptyList()).map {
+        val list = children?.map {
             it.measure(
                     c,
                     ViewGroup.getChildMeasureSpec(widthSpec,
@@ -48,7 +47,7 @@ object FrameSpec {
                 .widthPx(maxWidth)
                 .heightPx(maxHeight)
                 .apply {
-                    list.forEach {
+                    list?.forEach {
                         child(it)
                     }
                 }.build()

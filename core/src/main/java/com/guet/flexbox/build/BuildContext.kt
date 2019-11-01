@@ -4,6 +4,7 @@ import android.graphics.Color
 import android.graphics.Color.parseColor
 import android.graphics.drawable.GradientDrawable
 import androidx.annotation.ColorInt
+import androidx.annotation.Keep
 import androidx.annotation.RestrictTo
 import com.facebook.litho.Component
 import com.facebook.litho.ComponentContext
@@ -85,7 +86,7 @@ class BuildContext(val componentContext: ComponentContext, data: Any?) {
                 }?.flatten() ?: emptyList())
     }
 
-    companion object {
+    private companion object {
 
         @Suppress("UNCHECKED_CAST")
         private val colorMap = (Color::class.java
@@ -98,8 +99,9 @@ class BuildContext(val componentContext: ComponentContext, data: Any?) {
 
         private val functions: List<Method> = Functions::class.java.declaredMethods
                 .filter {
-                    val mod = it.modifiers
-                    Modifier.isPublic(mod) && Modifier.isStatic(mod)
+                    it.modifiers.let { mod ->
+                        Modifier.isPublic(mod) && Modifier.isStatic(mod)
+                    }
                 }.map {
                     it.apply {
                         it.isAccessible = true
@@ -111,10 +113,13 @@ class BuildContext(val componentContext: ComponentContext, data: Any?) {
                 "Flex" to FlexFactory,
                 "Text" to TextFactory,
                 "Frame" to FrameFactory,
+                "Legacy" to LegacyFactory,
+                "Scroller" to ScrollerFactory,
                 "for" to ForTransform
         )
     }
 
+    @Keep
     private object Functions {
         @JvmName("check")
         @JvmStatic

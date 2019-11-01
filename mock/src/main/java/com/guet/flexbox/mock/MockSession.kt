@@ -13,70 +13,88 @@ import java.io.FileWriter
 import java.io.IOException
 import java.net.InetAddress
 import java.net.InetSocketAddress
+import java.util.concurrent.Executor
+import java.util.concurrent.Executors
 
-abstract class MockSession {
 
-    abstract fun close();
+class MockSession private constructor(
+        executor: Executor,
+        private var layout: String,
+        private var data: String
+) {
+
+    constructor(layout: String, data: String)
+            : this(Executors.newSingleThreadExecutor(), layout, data)
+
+    private val server: HttpServer
+
+    init {
+        val address = InetAddress.getLocalHost()
+        val url = "http://${address.hostAddress}:$DEFAULT_PORT"
+        ConsoleQRCode.print(url)
+        println("布局地址：$url/layout")
+        println("数据地址：$url/data")
+        server = HttpServer.create(InetSocketAddress(DEFAULT_PORT), 0)
+        server.executor = executor
+        server.createContext("/layout") { httpExchange ->
+            println(httpExchange.remoteAddress.toString() + " request layout")
+            try {
+                httpExchange.sendResponseHeaders(200, 0)
+                val os = httpExchange.responseBody
+                val string = toJson(synchronized(server) {
+                    sax.read(layout)
+                }.rootElement).toString()
+                os.write(string.toByteArray())
+                httpExchange.close()
+            } catch (e: Exception) {
+                throw IOException(e)
+            }
+        }
+        server.createContext("/data") { httpExchange ->
+            println(httpExchange.remoteAddress.toString() + " request data")
+            try {
+                httpExchange.sendResponseHeaders(200, 0)
+                val os = httpExchange.responseBody
+                val source = File(synchronized(server) { data }).source()
+                os.sink().buffer().apply {
+                    writeAll(source)
+                    flush()
+                }
+                source.close()
+                os.close()
+                httpExchange.close()
+            } catch (e: Exception) {
+                throw IOException(e)
+            }
+        }
+    }
+
+    fun change(layout: String, data: String) {
+        synchronized(server) {
+            this.layout = layout
+            this.data = data
+        }
+    }
+
+    fun start() {
+        server.start()
+    }
+
+    fun close() {
+        server.stop(0)
+    }
 
     companion object {
+
         private val sax = SAXReader()
 
         private const val DEFAULT_PORT = 8080
 
-        @JvmOverloads
         @JvmStatic
-        fun run(layout: String, data: String, executorType: RunnerType = RunnerType.Current): MockSession {
-            val address = InetAddress.getLocalHost()
-            val url = "http://${address.hostAddress}:$DEFAULT_PORT"
-            ConsoleQRCode.print(url)
-            println("布局地址：$url/layout")
-            println("数据地址：$url/data")
-            val server = HttpServer.create(InetSocketAddress(DEFAULT_PORT), 0)
-            var looper: Looper? = null
-            if (executorType == RunnerType.Current) {
-                looper = Looper()
-                server.executor = looper
-            }
-            server.createContext("/layout") { httpExchange ->
-                println(httpExchange.remoteAddress.toString() + " request layout")
-                try {
-                    httpExchange.sendResponseHeaders(200, 0)
-                    val os = httpExchange.responseBody
-                    val string = toJson(sax.read(layout).rootElement).toString()
-                    os.write(string.toByteArray())
-                    httpExchange.close()
-                } catch (e: Exception) {
-                    throw IOException(e)
-                }
-            }
-            server.createContext("/data") { httpExchange ->
-                println(httpExchange.remoteAddress.toString() + " request data")
-                try {
-                    httpExchange.sendResponseHeaders(200, 0)
-                    val os = httpExchange.responseBody
-                    val source = File(data).source()
-                    os.sink().buffer().apply {
-                        writeAll(source)
-                        flush()
-                    }
-                    source.close()
-                    os.close()
-                    httpExchange.close()
-                } catch (e: Exception) {
-                    throw IOException(e)
-                }
-            }
-            server.start()
-            looper?.loop()
-            return if (executorType == RunnerType.Current) {
-                object : MockSession() {
-                    override fun close() {
-                        server.stop(0)
-                    }
-                }
-            } else {
-                throw IllegalStateException()
-            }
+        fun open(layout: String, data: String) {
+            val looper = Looper()
+            MockSession(layout, data).start()
+            looper.loop()
         }
 
         @JvmStatic

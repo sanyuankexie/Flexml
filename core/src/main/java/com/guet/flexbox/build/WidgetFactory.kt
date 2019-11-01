@@ -251,9 +251,14 @@ internal abstract class WidgetFactory<T : Component.Builder<*>> : Transform {
                     it.key to it.key as Any
                 }.toMap()
 
-        private val orientations: Map<String, Any> = GradientDrawable.Orientation.values()
-                .map {
-                    it.name to it as Any
-                }.toMap()
+        private val orientations: Map<String, Any> = mapOf(
+                "t2b" to GradientDrawable.Orientation.TOP_BOTTOM,
+                "tr2bl" to GradientDrawable.Orientation.TR_BL,
+                "l2r" to GradientDrawable.Orientation.LEFT_RIGHT,
+                "br2tl" to GradientDrawable.Orientation.BR_TL,
+                "b2t" to GradientDrawable.Orientation.BOTTOM_TOP,
+                "r2l" to GradientDrawable.Orientation.RIGHT_LEFT,
+                "tl2br" to GradientDrawable.Orientation.TL_BR
+        )
     }
 }
