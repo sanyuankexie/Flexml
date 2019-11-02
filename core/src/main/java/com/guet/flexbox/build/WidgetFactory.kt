@@ -166,7 +166,8 @@ internal abstract class WidgetFactory<T : Component.Builder<*>> : Transform {
             this.background(BorderDrawable(
                     model,
                     borderRadius,
-                    borderWidth
+                    borderWidth,
+                    borderColor
             ))
         }
     }
