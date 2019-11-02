@@ -4,15 +4,14 @@ import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.graphics.drawable.Drawable
 import android.graphics.drawable.GradientDrawable
-import com.facebook.litho.Border
 import com.facebook.litho.Component
 import com.facebook.yoga.YogaAlign
 import com.facebook.yoga.YogaEdge
 import com.guet.flexbox.DynamicBox
 import com.guet.flexbox.WidgetInfo
 import com.guet.flexbox.el.ELException
+import com.guet.flexbox.widget.BorderDrawable
 import com.guet.flexbox.widget.NetworkDrawable
-import com.guet.flexbox.widget.RoundedDrawable
 import java.util.*
 import kotlin.collections.HashMap
 
@@ -164,17 +163,11 @@ internal abstract class WidgetFactory<T : Component.Builder<*>> : Transform {
         }
         if (model != null) {
             @Suppress("DEPRECATION")
-            this.background(RoundedDrawable(
+            this.background(BorderDrawable(
                     model,
-                    borderRadius
+                    borderRadius,
+                    borderWidth
             ))
-        }
-        if (borderWidth > 0) {
-            border(Border.create(c.componentContext)
-                    .radiusPx(borderRadius)
-                    .widthPx(YogaEdge.ALL, borderWidth)
-                    .color(YogaEdge.ALL, borderColor)
-                    .build())
         }
     }
 

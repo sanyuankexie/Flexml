@@ -3,7 +3,7 @@
     background="${image1}"
     alignItems="center"
     borderColor="red"
-    borderRadius="30"
+    borderRadius="170"
     borderWidth="10"
     flexDirection="column"
     height="600"
@@ -11,11 +11,11 @@
     width="360">
     <Image
         url="${image1}"
-        background="${red}"
+        background="${image1}"
         alignItems="center"
         borderColor="red"
         borderRadius="40"
-        borderWidth="10"
+        borderWidth="50"
         flexDirection="column"
         height="400"
         justifyContent="center"
