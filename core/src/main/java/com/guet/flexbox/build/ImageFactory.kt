@@ -1,12 +1,12 @@
 package com.guet.flexbox.build
 
 import android.widget.ImageView.ScaleType.*
-import com.guet.flexbox.widget.AsyncImage
+import com.guet.flexbox.widget.NetworkImage
 
-internal object ImageFactory : WidgetFactory<AsyncImage.Builder>() {
+internal object ImageFactory : WidgetFactory<NetworkImage.Builder>() {
 
     init {
-        text("source") {
+        text("url") {
             url(it)
         }
         bound("scaleType", FIT_CENTER,
@@ -22,20 +22,14 @@ internal object ImageFactory : WidgetFactory<AsyncImage.Builder>() {
             scaleType(it)
         }
         value("borderRadius") {
-            borderRadius(it.toPx().toFloat())
-        }
-        value("borderWidth") {
-            borderWidth(it.toPx().toFloat())
-        }
-        color("borderColor") {
-            borderColor(it)
+            borderRadius(it.toPx())
         }
     }
 
     override fun create(
             c: BuildContext,
-            attrs: Map<String, String>): AsyncImage.Builder {
-        return AsyncImage.create(c.componentContext).apply {
+            attrs: Map<String, String>): NetworkImage.Builder {
+        return NetworkImage.create(c.componentContext).apply {
             applyDefault(c, attrs)
         }
     }

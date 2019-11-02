@@ -12,6 +12,7 @@ import com.guet.flexbox.WidgetInfo
 import com.guet.flexbox.el.ELException
 import com.guet.flexbox.el.ELManager
 import com.guet.flexbox.el.ELProcessor
+import com.guet.flexbox.widget.SharedCanvas
 import java.lang.reflect.Method
 import java.lang.reflect.Modifier
 
@@ -20,11 +21,12 @@ class BuildContext(val componentContext: ComponentContext, data: Any?) {
     private val el = ELProcessor()
 
     init {
+        SharedCanvas.initLowMemoryCallback(componentContext.androidContext)
         if (data != null) {
             enterScope(tryToMap(data))
         }
         functions.forEach {
-            el.defineFunction("fn", it.name, it)
+            el.defineFunction(it.getAnnotation(Prefix::class.java).value, it.name, it)
         }
     }
 
@@ -101,11 +103,9 @@ class BuildContext(val componentContext: ComponentContext, data: Any?) {
                 .filter {
                     it.modifiers.let { mod ->
                         Modifier.isPublic(mod) && Modifier.isStatic(mod)
-                    }
+                    } && it.isAnnotationPresent(Prefix::class.java)
                 }.map {
-                    it.apply {
-                        it.isAccessible = true
-                    }
+                    it.apply { it.isAccessible = true }
                 }
 
         private val transforms = mapOf(
@@ -113,14 +113,20 @@ class BuildContext(val componentContext: ComponentContext, data: Any?) {
                 "Flex" to FlexFactory,
                 "Text" to TextFactory,
                 "Frame" to FrameFactory,
-                "Legacy" to LegacyFactory,
+                "Native" to NativeFactory,
                 "Scroller" to ScrollerFactory,
                 "for" to ForTransform
         )
     }
 
+    @Target(AnnotationTarget.FUNCTION)
+    @Retention(AnnotationRetention.RUNTIME)
+    private annotation class Prefix(val value: String)
+
     @Keep
     private object Functions {
+
+        @Prefix("utils")
         @JvmName("check")
         @JvmStatic
         fun check(o: Any?): Boolean {
@@ -132,6 +138,7 @@ class BuildContext(val componentContext: ComponentContext, data: Any?) {
             }
         }
 
+        @Prefix("draw")
         @JvmName("gradient")
         @JvmStatic
         fun gradient(orientation: GradientDrawable.Orientation, vararg colors: String): GradientDrawable {

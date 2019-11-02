@@ -7,17 +7,17 @@ import com.facebook.litho.*
 import com.facebook.litho.annotations.*
 import com.facebook.litho.utils.MeasureUtils
 
-@MountSpec(isPureRender = true, poolSize = 10)
-internal object AsyncImageSpec {
+@MountSpec(isPureRender = true, poolSize = 30)
+internal object NetworkImageSpec {
 
     @PropDefault
-    val scaleType = ScaleType.FIT_XY
+    val scaleType = ScaleType.FIT_CENTER
     @PropDefault
     val imageAspectRatio = 1f
 
     @OnCreateMountContent
-    fun onCreateMountContent(c: Context): AsyncMatrixDrawable {
-        return AsyncMatrixDrawable(c)
+    fun onCreateMountContent(c: Context): NetworkMatrixDrawable {
+        return NetworkMatrixDrawable(c)
     }
 
     @OnMeasure
@@ -51,12 +51,10 @@ internal object AsyncImageSpec {
 
     @OnMount
     fun onMount(c: ComponentContext,
-                drawable: AsyncMatrixDrawable,
+                drawable: NetworkMatrixDrawable,
                 @Prop url: CharSequence,
+                @Prop(optional = true) borderRadius: Int,
                 @Prop(optional = true) scaleType: ScaleType,
-                @Prop(optional = true) borderRadius: Float,
-                @Prop(optional = true) borderColor: Int,
-                @Prop(optional = true) borderWidth: Float,
                 @FromBoundsDefined layoutWidth: Int,
                 @FromBoundsDefined layoutHeight: Int,
                 @FromBoundsDefined horizontalPadding: Int,
@@ -68,29 +66,23 @@ internal object AsyncImageSpec {
                 horizontalPadding,
                 verticalPadding,
                 borderRadius,
-                borderWidth,
-                borderColor,
                 scaleType
         )
     }
 
     @OnUnmount
     fun onUnmount(c: ComponentContext,
-                  drawable: AsyncMatrixDrawable) {
+                  drawable: NetworkMatrixDrawable) {
         drawable.unmount()
     }
 
     @ShouldUpdate(onMount = true)
     fun shouldUpdate(
             @Prop(optional = true) scaleType: Diff<ScaleType>,
-            @Prop url: Diff<CharSequence>,
-            @Prop(optional = true) borderRadius: Diff<Float>,
-            @Prop(optional = true) borderColor: Diff<Int>,
-            @Prop(optional = true) borderWidth: Diff<Float>): Boolean {
-        return (scaleType.previous != scaleType.next
-                || !TextUtils.equals(url.previous, url.next)
-                || borderRadius.previous != borderRadius.next
-                || borderColor.previous != borderColor.next
-                || borderWidth.previous != borderWidth.next)
+            @Prop(optional = true) borderRadius: Diff<Int>,
+            @Prop url: Diff<CharSequence>): Boolean {
+        return !TextUtils.equals(url.next, url.previous)
+                || scaleType.next != scaleType.previous
+                || borderRadius.next != borderRadius.previous
     }
 }

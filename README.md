@@ -48,7 +48,7 @@ Xml布局标签所支持的属性
 * reportView 曝光时上报一个json，此json支持数据绑定
 #### Image
 使用Glide作为图片加载引擎，支持异步加载
-* source 图片来源，一个url
+* url 图片来源，一个url
 * borderRadius 有圆角弧度时，会裁剪内部
 * scaleType 缩放类型，有center，fltXY，fitCenter，fitStart，fitEnd，centerInside
 #### Text
@@ -72,7 +72,7 @@ scrollBarEnable 启用或关闭scrollBar
 orientation 水平或者垂直（vertical，horizontal）
 #### Frame
 与FrameLayout类似
-#### Legacy
+#### Native
 可在布局中接入传统View
 * type 类名
 #### for
@@ -112,8 +112,9 @@ orientation 水平或者垂直（vertical，horizontal）
 </Flex>
 ```
 #### 辅助函数
-* check(o:Any)可以检擦一个变量是否有效，为空或者大小为0的集合或者为空的字符串都会返回false值，在表达式中使用fn:check(变量名)调用
-* gradient(o:Orientation,vararg colors: String) 第一个参数为渐变色的方向，有t2b，tr2bl，l2r，br2tl，b2t，r2l，tl2br八种方向可选，第二个参数是可变参，可传入若干个颜色的字符串
+可以在表达式中调用
+* utils:check(o:Any)可以检擦一个变量是否有效，为空或者大小为0的集合或者为空的字符串都会返回false值
+* draw:gradient(o:Orientation,vararg colors: String) 第一个参数为渐变色的方向，有t2b，tr2bl，l2r，br2tl，b2t，r2l，tl2br八种方向可选，第二个参数是可变参，可传入若干个颜色的字符串
 ### 运行测试用例
 * 在手机上安装overview
 * 确保手机与电脑在同一网络环境下

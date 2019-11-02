@@ -8,6 +8,10 @@ import android.graphics.drawable.Drawable
 
 internal object NoOpDrawable : Drawable() {
 
+    init {
+        setBounds(0, 0, 0, 0)
+    }
+
     override fun draw(canvas: Canvas) {
     }
 

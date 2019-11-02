@@ -1,20 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
-<Scroller>
-    <Flex alignItems="center" background="${fn:gradient(TOP_BOTTOM,red,blue)}" borderColor="red"
-        borderRadius="30" borderWidth="20" flexDirection="column" height="600" justifyContent="center"
-        width="660">
-        <Frame>
-            <Flex background="MAGENTA" height="260" width="230" />
-            <Flex background="GREEN" height="260" width="160" />
-            <Image height="160" marginTop="50" source="${image1}" width="160" />
-            <Flex flexDirection="column">
-                <for name="index" from="1" to="3">
-                    <Text text="1111111${index}" textColor="yellow" textSize="40" />
-                </for>
-                <Legacy
-                    type="ch.ielse.view.SwitchView">
-                </Legacy>
-            </Flex>
-        </Frame>
-    </Flex>
-</Scroller>
+<Flex
+    background="${image1}"
+    alignItems="center"
+    borderColor="red"
+    borderRadius="30"
+    borderWidth="10"
+    flexDirection="column"
+    height="600"
+    justifyContent="center"
+    width="360">
+    <Image
+        url="${image1}"
+        background="${red}"
+        alignItems="center"
+        borderColor="red"
+        borderRadius="40"
+        borderWidth="10"
+        flexDirection="column"
+        height="400"
+        justifyContent="center"
+        width="200">
+    </Image>
+</Flex>

@@ -13,7 +13,7 @@ import com.facebook.yoga.YogaPositionType
 import kotlin.math.max
 
 @LayoutSpec
-object FrameSpec {
+internal object FrameSpec {
 
     @OnCreateLayoutWithSizeSpec
     fun onCreateLayoutWithSizeSpec(

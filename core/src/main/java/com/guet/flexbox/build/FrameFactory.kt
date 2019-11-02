@@ -8,7 +8,9 @@ internal object FrameFactory : WidgetFactory<Frame.Builder>() {
     override fun create(
             c: BuildContext,
             attrs: Map<String, String>): Frame.Builder {
-        return Frame.create(c.componentContext)
+        return Frame.create(c.componentContext).apply {
+            applyDefault(c, attrs)
+        }
     }
 
     override fun Frame.Builder.applyChildren(c: BuildContext,

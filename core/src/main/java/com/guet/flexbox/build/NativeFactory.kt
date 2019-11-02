@@ -13,9 +13,9 @@ import com.facebook.litho.viewcompat.SimpleViewBinder
 import com.facebook.litho.viewcompat.ViewCreator
 import java.lang.reflect.Constructor
 
-internal object LegacyFactory : WidgetFactory<ViewCompatComponent.Builder<View>>() {
+internal object NativeFactory : WidgetFactory<ViewCompatComponent.Builder<View>>() {
 
-    private val views = ViewCache()
+    private val views = ViewTypeCache()
 
     override fun create(c: BuildContext, attrs: Map<String, String>)
             : ViewCompatComponent.Builder<View> {
@@ -25,7 +25,7 @@ internal object LegacyFactory : WidgetFactory<ViewCompatComponent.Builder<View>>
             val radius = c.tryGetValue(attrs["borderRadius"], Float::class.java, 0f)
             if (type.isNotEmpty()) {
                 val view = views[type]
-                return ViewCompatComponent.get(ViewAdapter(view, radius), type)
+                return ViewCompatComponent.get(ViewProvider(view, radius), type)
                         .create(c.componentContext)
                         .viewBinder(SimpleViewBinderSingleton)
             }
@@ -33,7 +33,7 @@ internal object LegacyFactory : WidgetFactory<ViewCompatComponent.Builder<View>>
         throw IllegalArgumentException("$type is not as 'View' type")
     }
 
-    private class ViewCache : LruCache<String, Constructor<*>>(32) {
+    private class ViewTypeCache : LruCache<String, Constructor<*>>(Int.MAX_VALUE) {
         override fun create(key: String): Constructor<*> {
             val viewType = Class.forName(key)
             if (View::class.java.isAssignableFrom(viewType)) {
@@ -44,13 +44,13 @@ internal object LegacyFactory : WidgetFactory<ViewCompatComponent.Builder<View>>
         }
     }
 
-    private class ViewAdapter(
+    private class ViewProvider(
             val constructor: Constructor<*>, val radius: Float)
         : ViewOutlineProvider(),
             ViewCreator<View> {
         override fun createView(c: Context, parent: ViewGroup?): View {
             return (constructor.newInstance(c) as View).apply {
-                outlineProvider = this@ViewAdapter
+                outlineProvider = this@ViewProvider
             }
         }
 

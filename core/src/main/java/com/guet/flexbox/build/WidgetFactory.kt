@@ -4,15 +4,15 @@ import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.graphics.drawable.Drawable
 import android.graphics.drawable.GradientDrawable
+import com.facebook.litho.Border
 import com.facebook.litho.Component
 import com.facebook.yoga.YogaAlign
 import com.facebook.yoga.YogaEdge
 import com.guet.flexbox.DynamicBox
 import com.guet.flexbox.WidgetInfo
 import com.guet.flexbox.el.ELException
-import com.guet.flexbox.widget.AsyncDrawable
-import com.guet.flexbox.widget.BorderDrawable
-import com.guet.flexbox.widget.NoOpDrawable
+import com.guet.flexbox.widget.NetworkDrawable
+import com.guet.flexbox.widget.RoundedDrawable
 import java.util.*
 import kotlin.collections.HashMap
 
@@ -26,19 +26,6 @@ internal abstract class WidgetFactory<T : Component.Builder<*>> : Transform {
         }
         value("height") {
             this.heightPx(it.toPx())
-        }
-        value("margin") {
-            this.marginPx(YogaEdge.ALL, it.toPx())
-        }
-        val edges = arrayOf("Left", "Right", "Top", "Bottom")
-        for (index in 0 until edges.size) {
-            val yogaEdge = YogaEdge.valueOf(edges[index].toUpperCase())
-            value("margin" + edges[index]) {
-                this.marginPx(yogaEdge, it.toPx())
-            }
-            value("padding" + edges[index]) {
-                this.paddingPx(yogaEdge, it.toPx())
-            }
         }
         value("flexGrow") {
             this.flexGrow(it.toFloat())
@@ -55,6 +42,22 @@ internal abstract class WidgetFactory<T : Component.Builder<*>> : Transform {
                         "stretch" to YogaAlign.STRETCH
                 )
         ) { this.alignSelf(it) }
+        value("margin") {
+            this.marginPx(YogaEdge.ALL, it.toPx())
+        }
+        value("padding") {
+            this.paddingPx(YogaEdge.ALL, it.toPx())
+        }
+        val edges = arrayOf("Left", "Right", "Top", "Bottom")
+        for (index in 0 until edges.size) {
+            val yogaEdge = YogaEdge.valueOf(edges[index].toUpperCase())
+            value("margin" + edges[index]) {
+                this.marginPx(yogaEdge, it.toPx())
+            }
+            value("padding" + edges[index]) {
+                this.paddingPx(yogaEdge, it.toPx())
+            }
+        }
     }
 
     private fun create(
@@ -115,8 +118,6 @@ internal abstract class WidgetFactory<T : Component.Builder<*>> : Transform {
                     clickUrlValue,
                     reportClickValue
             ))
-        } else {
-            clickHandler(null)
         }
         var reportViewValue: String? = null
         val reportView = attrs["reportView"]
@@ -140,16 +141,11 @@ internal abstract class WidgetFactory<T : Component.Builder<*>> : Transform {
                 Int::class.java, 0).toPx()
         val borderColor = c.tryGetColor(attrs["borderColor"],
                 Color.TRANSPARENT)
-        var background: Drawable? = null
+        var model: Drawable? = null
         val backgroundValue = attrs["background"]
         if (backgroundValue != null) {
             try {
-                background = BorderDrawable(
-                        ColorDrawable(c.getColor(backgroundValue)),
-                        borderRadius.toFloat(),
-                        borderWidth.toFloat(),
-                        borderColor
-                )
+                model = ColorDrawable(c.getColor(backgroundValue))
             } catch (e: Exception) {
                 val backgroundRaw = c.scope(orientations) {
                     c.scope(colorNameMap) {
@@ -157,33 +153,29 @@ internal abstract class WidgetFactory<T : Component.Builder<*>> : Transform {
                     }
                 }
                 if (backgroundRaw is Drawable) {
-                    background = BorderDrawable(
-                            backgroundRaw,
-                            borderRadius.toFloat(),
-                            borderWidth.toFloat(),
-                            borderColor
-                    )
+                    model = backgroundRaw
                 } else if (backgroundRaw is CharSequence && backgroundRaw.isNotEmpty()) {
-                    background = AsyncDrawable(
+                    model = NetworkDrawable(
                             c.componentContext.androidContext,
-                            backgroundRaw,
-                            borderRadius.toFloat(),
-                            borderWidth.toFloat(),
-                            borderColor
+                            backgroundRaw
                     )
                 }
             }
         }
-        if (background == null) {
-            background = BorderDrawable(
-                    NoOpDrawable,
-                    borderRadius.toFloat(),
-                    borderWidth.toFloat(),
-                    borderColor
-            )
+        if (model != null) {
+            @Suppress("DEPRECATION")
+            this.background(RoundedDrawable(
+                    model,
+                    borderRadius
+            ))
         }
-        @Suppress("DEPRECATION")
-        this.background(background)
+        if (borderWidth > 0) {
+            border(Border.create(c.componentContext)
+                    .radiusPx(borderRadius)
+                    .widthPx(YogaEdge.ALL, borderWidth)
+                    .color(YogaEdge.ALL, borderColor)
+                    .build())
+        }
     }
 
     protected inline fun <V : Any> bound(
