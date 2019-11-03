@@ -28,7 +28,7 @@ internal class NetworkMatrixDrawable(c: Context) : BorderDrawable<MatrixDrawable
             radius: Int,
             width: Int,
             color: Int,
-            scaleType: ScaleType = ScaleType.FIT_CENTER
+            scaleType: ScaleType
     ) {
         this.layoutHeight = layoutHeight
         this.layoutWidth = layoutWidth
@@ -84,7 +84,10 @@ internal class NetworkMatrixDrawable(c: Context) : BorderDrawable<MatrixDrawable
                 drawableWidth = resource.intrinsicWidth
                 drawableHeight = resource.intrinsicHeight
             }
-            wrappedDrawable.mount(resource, matrix)
+            wrappedDrawable.mount(NetworkDrawable.transition(
+                    wrappedDrawable.mountedDrawable,
+                    resource
+            ), matrix)
             wrappedDrawable.bind(drawableWidth, drawableHeight)
             invalidateSelf()
         }

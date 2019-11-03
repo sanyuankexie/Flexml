@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Flex
-    background="${image1}"
     alignItems="center"
     borderColor="red"
     borderRadius="170"
@@ -9,16 +8,31 @@
     height="600"
     justifyContent="center"
     width="360">
-    <Image
-        url="${image1}"
-        background="${image1}"
-        alignItems="center"
+    <Frame
+        borderWidth="10"
         borderColor="red"
-        borderRadius="40"
-        borderWidth="50"
+        borderRadius="170"
+        background="blue"
+        height="200"
+        width="360"
+        alignItems="center"
         flexDirection="column"
-        height="400"
-        justifyContent="center"
-        width="200">
-    </Image>
+        justifyContent="center">
+        <Image
+            borderColor="red"
+            borderWidth="10"
+            url="${image1}"
+            height="200"
+            scaleType="fitXY"
+            justifyContent="center"
+            width="360"/>
+        <Image
+            borderColor="red"
+            borderWidth="10"
+            url="${image1}"
+            height="100"
+            scaleType="fitXY"
+            justifyContent="center"
+            width="100"/>
+    </Frame>
 </Flex>
