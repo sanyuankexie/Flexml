@@ -41,15 +41,15 @@ internal class NetworkMatrixDrawable(c: Context) : BorderDrawable<MatrixDrawable
     }
 
     fun unmount() {
-        inner.unmount()
+        wrappedDrawable.unmount()
     }
 
     override fun onTouchEvent(event: MotionEvent?, host: View?): Boolean {
-        return inner.onTouchEvent(event, host)
+        return wrappedDrawable.onTouchEvent(event, host)
     }
 
     override fun shouldHandleTouchEvent(event: MotionEvent?): Boolean {
-        return inner.shouldHandleTouchEvent(event)
+        return wrappedDrawable.shouldHandleTouchEvent(event)
     }
 
     private inner class DrawableTarget(private val scaleType: ScaleType) : CustomTarget<Drawable>() {
@@ -58,7 +58,7 @@ internal class NetworkMatrixDrawable(c: Context) : BorderDrawable<MatrixDrawable
             if (placeholder != null) {
                 onResourceReady(placeholder, null)
             } else {
-                inner.unmount()
+                wrappedDrawable.unmount()
             }
         }
 
@@ -84,8 +84,8 @@ internal class NetworkMatrixDrawable(c: Context) : BorderDrawable<MatrixDrawable
                 drawableWidth = resource.intrinsicWidth
                 drawableHeight = resource.intrinsicHeight
             }
-            inner.mount(resource, matrix)
-            inner.bind(drawableWidth, drawableHeight)
+            wrappedDrawable.mount(resource, matrix)
+            wrappedDrawable.bind(drawableWidth, drawableHeight)
             invalidateSelf()
         }
     }

@@ -4,7 +4,7 @@
     alignItems="center"
     borderColor="red"
     borderRadius="170"
-    borderWidth="10"
+    borderWidth="0"
     flexDirection="column"
     height="600"
     justifyContent="center"

@@ -11,7 +11,6 @@ import com.guet.flexbox.WidgetInfo
 import com.guet.flexbox.el.ELException
 import com.guet.flexbox.el.ELManager
 import com.guet.flexbox.el.ELProcessor
-import com.guet.flexbox.widget.DrawCompat
 import java.lang.reflect.Method
 import java.lang.reflect.Modifier
 
@@ -20,7 +19,6 @@ class BuildContext(val componentContext: ComponentContext, data: Any?) {
     private val el = ELProcessor()
 
     init {
-        DrawCompat.ensureInit(componentContext.androidContext)
         if (data != null) {
             enterScope(tryToMap(data))
         }

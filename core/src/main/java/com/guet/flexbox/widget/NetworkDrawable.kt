@@ -2,7 +2,6 @@ package com.guet.flexbox.widget
 
 import android.content.Context
 import android.graphics.drawable.Drawable
-import androidx.appcompat.graphics.drawable.DrawableWrapper
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.target.CustomTarget
 import com.bumptech.glide.request.transition.Transition
@@ -10,7 +9,7 @@ import com.bumptech.glide.request.transition.Transition
 internal class NetworkDrawable(
         c: Context,
         url: CharSequence)
-    : DrawableWrapper(NoOpDrawable) {
+    : DrawableWrapper<Drawable>(NoOpDrawable) {
 
     init {
         Glide.with(c).load(url).into(BackgroundTarget())
