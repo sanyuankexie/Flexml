@@ -24,6 +24,12 @@ internal object ImageFactory : WidgetFactory<NetworkImage.Builder>() {
         value("borderRadius") {
             borderRadius(it.toPx())
         }
+        value("borderWidth") {
+            borderWidth(it.toPx())
+        }
+        color("borderColor") {
+            borderColor(it)
+        }
     }
 
     override fun create(

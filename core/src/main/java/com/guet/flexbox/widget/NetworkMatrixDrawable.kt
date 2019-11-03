@@ -12,8 +12,7 @@ import com.facebook.litho.DrawableMatrix
 import com.facebook.litho.MatrixDrawable
 import com.facebook.litho.Touchable
 
-internal class NetworkMatrixDrawable(c: Context)
-    : RoundedDrawable<MatrixDrawable<Drawable>>(MatrixDrawable()), Touchable {
+internal class NetworkMatrixDrawable(c: Context) : BorderDrawable<MatrixDrawable<Drawable>>(MatrixDrawable()), Touchable {
     private val c: Context = c.applicationContext
     private var layoutWidth: Int = 0
     private var layoutHeight: Int = 0
@@ -27,6 +26,8 @@ internal class NetworkMatrixDrawable(c: Context)
             horizontalPadding: Int,
             verticalPadding: Int,
             radius: Int,
+            width: Int,
+            color: Int,
             scaleType: ScaleType = ScaleType.FIT_CENTER
     ) {
         this.layoutHeight = layoutHeight
@@ -34,6 +35,8 @@ internal class NetworkMatrixDrawable(c: Context)
         this.horizontalPadding = horizontalPadding
         this.verticalPadding = verticalPadding
         this.radius = radius
+        this.width = width
+        this.color = color
         Glide.with(c).load(url).into(DrawableTarget(scaleType))
     }
 
@@ -50,6 +53,7 @@ internal class NetworkMatrixDrawable(c: Context)
     }
 
     private inner class DrawableTarget(private val scaleType: ScaleType) : CustomTarget<Drawable>() {
+
         override fun onLoadCleared(placeholder: Drawable?) {
             if (placeholder != null) {
                 onResourceReady(placeholder, null)

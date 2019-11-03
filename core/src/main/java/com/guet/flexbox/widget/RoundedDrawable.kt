@@ -11,7 +11,6 @@ internal open class RoundedDrawable<T : Drawable>(
     private val paint = Paint().apply { isAntiAlias = true }
     private val mode = PorterDuffXfermode(PorterDuff.Mode.SRC_IN)
     private val rectF = RectF()
-
     protected var inner: T = drawable.apply { callback = this@RoundedDrawable }
         set(value) {
             field.callback = null
@@ -30,11 +29,16 @@ internal open class RoundedDrawable<T : Drawable>(
     }
 
     override fun draw(canvas: Canvas) {
-        SharedCanvas.draw(inner) {
+        DrawCompat.drawToBitmap(inner) {
             rectF.set(bounds)
             val sc = canvas.saveLayer(rectF, null)
             paint.xfermode = null
-            canvas.drawRoundRect(rectF, radius.toFloat(), radius.toFloat(), paint)
+            canvas.drawRoundRect(
+                    rectF,
+                    radius.toFloat(),
+                    radius.toFloat(),
+                    paint
+            )
             paint.xfermode = mode
             canvas.drawBitmap(it, null, rectF, paint)
             canvas.restoreToCount(sc)

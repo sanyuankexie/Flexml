@@ -54,6 +54,8 @@ internal object NetworkImageSpec {
                 drawable: NetworkMatrixDrawable,
                 @Prop url: CharSequence,
                 @Prop(optional = true) borderRadius: Int,
+                @Prop(optional = true) borderWidth: Int,
+                @Prop(optional = true) borderColor: Int,
                 @Prop(optional = true) scaleType: ScaleType,
                 @FromBoundsDefined layoutWidth: Int,
                 @FromBoundsDefined layoutHeight: Int,
@@ -66,6 +68,8 @@ internal object NetworkImageSpec {
                 horizontalPadding,
                 verticalPadding,
                 borderRadius,
+                borderWidth,
+                borderColor,
                 scaleType
         )
     }
@@ -80,9 +84,13 @@ internal object NetworkImageSpec {
     fun shouldUpdate(
             @Prop(optional = true) scaleType: Diff<ScaleType>,
             @Prop(optional = true) borderRadius: Diff<Int>,
+            @Prop(optional = true) borderWidth: Diff<Int>,
+            @Prop(optional = true) borderColor: Diff<Int>,
             @Prop url: Diff<CharSequence>): Boolean {
         return !TextUtils.equals(url.next, url.previous)
                 || scaleType.next != scaleType.previous
                 || borderRadius.next != borderRadius.previous
+                || borderWidth.next != borderWidth.previous
+                || borderColor.next != borderColor.previous
     }
 }

@@ -4,7 +4,6 @@ import android.graphics.Color
 import android.graphics.Color.parseColor
 import android.graphics.drawable.GradientDrawable
 import androidx.annotation.ColorInt
-import androidx.annotation.Keep
 import androidx.annotation.RestrictTo
 import com.facebook.litho.Component
 import com.facebook.litho.ComponentContext
@@ -12,7 +11,7 @@ import com.guet.flexbox.WidgetInfo
 import com.guet.flexbox.el.ELException
 import com.guet.flexbox.el.ELManager
 import com.guet.flexbox.el.ELProcessor
-import com.guet.flexbox.widget.SharedCanvas
+import com.guet.flexbox.widget.DrawCompat
 import java.lang.reflect.Method
 import java.lang.reflect.Modifier
 
@@ -21,7 +20,7 @@ class BuildContext(val componentContext: ComponentContext, data: Any?) {
     private val el = ELProcessor()
 
     init {
-        SharedCanvas.initLowMemoryCallback(componentContext.androidContext)
+        DrawCompat.ensureInit(componentContext.androidContext)
         if (data != null) {
             enterScope(tryToMap(data))
         }
@@ -123,7 +122,6 @@ class BuildContext(val componentContext: ComponentContext, data: Any?) {
     @Retention(AnnotationRetention.RUNTIME)
     private annotation class Prefix(val value: String)
 
-    @Keep
     private object Functions {
 
         @Prefix("utils")
@@ -138,7 +136,7 @@ class BuildContext(val componentContext: ComponentContext, data: Any?) {
             }
         }
 
-        @Prefix("draw")
+        @Prefix("drawToBitmap")
         @JvmName("gradient")
         @JvmStatic
         fun gradient(orientation: GradientDrawable.Orientation, vararg colors: String): GradientDrawable {
