@@ -134,7 +134,7 @@ class BuildContext(val componentContext: ComponentContext, data: Any?) {
             }
         }
 
-        @Prefix("drawToBitmap")
+        @Prefix("draw")
         @JvmName("gradient")
         @JvmStatic
         fun gradient(orientation: GradientDrawable.Orientation, vararg colors: String): GradientDrawable {

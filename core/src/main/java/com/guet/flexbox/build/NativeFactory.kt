@@ -44,8 +44,7 @@ internal object NativeFactory : WidgetFactory<ViewCompatComponent.Builder<View>>
         }
     }
 
-    private class ViewProvider(
-            val constructor: Constructor<*>, val radius: Float)
+    private class ViewProvider(val constructor: Constructor<*>, val radius: Float)
         : ViewOutlineProvider(),
             ViewCreator<View> {
         override fun createView(c: Context, parent: ViewGroup?): View {
