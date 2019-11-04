@@ -49,6 +49,8 @@ Xml布局标签所支持的属性
 #### Image
 使用Glide作为图片加载引擎，支持异步加载
 * url 图片来源，一个url
+* blurRadius 高斯模糊的半径，最大为25
+* blurSampling 高斯模糊的采样率，默认为1
 * borderRadius 有圆角弧度时，会裁剪内部
 * scaleType 缩放类型，有center，fltXY，fitCenter，fitStart，fitEnd，centerInside
 #### Text
@@ -68,8 +70,8 @@ flex风格的布局容器
 * alignItems 副轴对齐，支持flexStart，flexEnd，center，baseline，stretch
 * alignContent 支持flexStart，flexEnd，center，baseline，stretch
 #### Scroller
-scrollBarEnable 启用或关闭scrollBar
-orientation 水平或者垂直（vertical，horizontal）
+* scrollBarEnable 启用或关闭scrollBar
+* orientation 水平或者垂直（vertical，horizontal）
 #### Frame
 与FrameLayout类似
 #### Mirror
