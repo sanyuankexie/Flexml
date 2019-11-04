@@ -28,6 +28,8 @@ internal class NetworkMatrixDrawable(c: Context) : BorderDrawable<MatrixDrawable
             radius: Int,
             width: Int,
             color: Int,
+            blurRadius: Int,
+            blurSampling: Int,
             scaleType: ScaleType
     ) {
         this.layoutHeight = layoutHeight
@@ -37,7 +39,16 @@ internal class NetworkMatrixDrawable(c: Context) : BorderDrawable<MatrixDrawable
         this.radius = radius
         this.width = width
         this.color = color
-        Glide.with(c).load(url).into(DrawableTarget(scaleType))
+        Glide.with(c).load(url)
+                .apply {
+                    if (blurRadius > 0) {
+                        transform(BlurTransformation(
+                                c,
+                                blurRadius,
+                                blurSampling
+                        ))
+                    }
+                }.into(DrawableTarget(scaleType))
     }
 
     fun unmount() {

@@ -19,6 +19,7 @@
         flexDirection="column"
         justifyContent="center">
         <Image
+            blurRadius="25"
             borderColor="red"
             borderWidth="10"
             url="${image1}"

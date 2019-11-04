@@ -21,14 +21,20 @@ internal object ImageFactory : WidgetFactory<NetworkImage.Builder>() {
         ) {
             scaleType(it)
         }
+        color("borderColor") {
+            borderColor(it)
+        }
         value("borderRadius") {
             borderRadius(it.toPx())
         }
         value("borderWidth") {
             borderWidth(it.toPx())
         }
-        color("borderColor") {
-            borderColor(it)
+        value("blurRadius") {
+            blurRadius(it.toInt())
+        }
+        value("blurSampling", 1.0) {
+            blurSampling(it.toInt())
         }
     }
 

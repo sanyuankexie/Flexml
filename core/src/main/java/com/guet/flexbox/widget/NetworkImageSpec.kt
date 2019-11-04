@@ -56,6 +56,8 @@ internal object NetworkImageSpec {
                 @Prop(optional = true) borderRadius: Int,
                 @Prop(optional = true) borderWidth: Int,
                 @Prop(optional = true) borderColor: Int,
+                @Prop(optional = true) blurRadius: Int,
+                @Prop(optional = true) blurSampling: Int,
                 @Prop(optional = true) scaleType: ScaleType,
                 @FromBoundsDefined layoutWidth: Int,
                 @FromBoundsDefined layoutHeight: Int,
@@ -70,6 +72,8 @@ internal object NetworkImageSpec {
                 borderRadius,
                 borderWidth,
                 borderColor,
+                blurRadius,
+                blurSampling,
                 scaleType
         )
     }
@@ -82,6 +86,8 @@ internal object NetworkImageSpec {
 
     @ShouldUpdate(onMount = true)
     fun shouldUpdate(
+            @Prop(optional = true) blurSampling: Diff<Int>,
+            @Prop(optional = true) blurRadius: Diff<Int>,
             @Prop(optional = true) scaleType: Diff<ScaleType>,
             @Prop(optional = true) borderRadius: Diff<Int>,
             @Prop(optional = true) borderWidth: Diff<Int>,
@@ -92,5 +98,7 @@ internal object NetworkImageSpec {
                 || borderRadius.next != borderRadius.previous
                 || borderWidth.next != borderWidth.previous
                 || borderColor.next != borderColor.previous
+                || blurRadius.next != blurRadius.previous
+                || blurSampling.next != blurSampling.previous
     }
 }

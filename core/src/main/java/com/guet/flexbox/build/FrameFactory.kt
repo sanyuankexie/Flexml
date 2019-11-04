@@ -6,11 +6,12 @@ import com.facebook.yoga.YogaPositionType
 import java.util.concurrent.Callable
 import java.util.concurrent.Executors
 import kotlin.math.max
+import kotlin.math.min
 
 internal object FrameFactory : WidgetFactory<Row.Builder>() {
 
-    private val exec = Executors.newFixedThreadPool(
-            max(4, Runtime.getRuntime().availableProcessors())
+    private val measureThreadPool = Executors.newFixedThreadPool(
+            min(4, Runtime.getRuntime().availableProcessors())
     )
 
     override fun create(
@@ -62,7 +63,7 @@ internal object FrameFactory : WidgetFactory<Row.Builder>() {
                     ) to size
                 }
             }.map {
-                exec.submit(it)
+                measureThreadPool.submit(it)
             }.forEach {
                 val (row, size) = it.get()
                 maxWidth = max(maxWidth, size.width)
