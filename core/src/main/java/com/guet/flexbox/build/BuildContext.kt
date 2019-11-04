@@ -110,7 +110,7 @@ class BuildContext(val componentContext: ComponentContext, data: Any?) {
                 "Flex" to FlexFactory,
                 "Text" to TextFactory,
                 "Frame" to FrameFactory,
-                "Native" to NativeFactory,
+                "Mirror" to MirrorFactory,
                 "Scroller" to ScrollerFactory,
                 "for" to ForTransform
         )

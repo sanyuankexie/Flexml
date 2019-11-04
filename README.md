@@ -72,7 +72,7 @@ scrollBarEnable 启用或关闭scrollBar
 orientation 水平或者垂直（vertical，horizontal）
 #### Frame
 与FrameLayout类似
-#### Native
+#### Mirror
 可在布局中接入传统View
 * type 类名
 #### for

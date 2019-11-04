@@ -9,11 +9,11 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.ViewOutlineProvider
 import com.facebook.litho.ViewCompatComponent
-import com.facebook.litho.viewcompat.SimpleViewBinder
+import com.facebook.litho.viewcompat.ViewBinder
 import com.facebook.litho.viewcompat.ViewCreator
 import java.lang.reflect.Constructor
 
-internal object NativeFactory : WidgetFactory<ViewCompatComponent.Builder<View>>() {
+internal object MirrorFactory : WidgetFactory<ViewCompatComponent.Builder<View>>() {
 
     private val views = ViewTypeCache()
 
@@ -25,9 +25,10 @@ internal object NativeFactory : WidgetFactory<ViewCompatComponent.Builder<View>>
             val radius = c.tryGetValue(attrs["borderRadius"], Float::class.java, 0f)
             if (type.isNotEmpty()) {
                 val view = views[type]
-                return ViewCompatComponent.get(ViewProvider(view, radius), type)
+                val vp = ViewAdapter(view, radius)
+                return ViewCompatComponent.get(vp, type)
                         .create(c.componentContext)
-                        .viewBinder(SimpleViewBinderSingleton)
+                        .viewBinder(vp)
             }
         }
         throw IllegalArgumentException("$type is not as 'View' type")
@@ -44,12 +45,18 @@ internal object NativeFactory : WidgetFactory<ViewCompatComponent.Builder<View>>
         }
     }
 
-    private class ViewProvider(val constructor: Constructor<*>, val radius: Float)
-        : ViewOutlineProvider(),
-            ViewCreator<View> {
+    private class ViewAdapter(val constructor: Constructor<*>, val radius: Float)
+        : ViewOutlineProvider(), ViewCreator<View>, ViewBinder<View> {
+
+        override fun prepare() {}
+
+        override fun bind(view: View) {}
+
+        override fun unbind(view: View) {}
+
         override fun createView(c: Context, parent: ViewGroup?): View {
             return (constructor.newInstance(c) as View).apply {
-                outlineProvider = this@ViewProvider
+                outlineProvider = this@ViewAdapter
             }
         }
 
@@ -57,6 +64,4 @@ internal object NativeFactory : WidgetFactory<ViewCompatComponent.Builder<View>>
             outline.setRoundRect(0, 0, view.width, view.height, radius)
         }
     }
-
-    private object SimpleViewBinderSingleton : SimpleViewBinder<View>()
 }
