@@ -2,38 +2,11 @@
 <Flex
     alignItems="center"
     borderColor="red"
-    borderRadius="170"
-    borderWidth="0"
+    borderRadius="10"
+    borderWidth="100"
     flexDirection="column"
-    height="600"
+    height="300"
     justifyContent="center"
     width="360">
-    <Frame
-        borderWidth="10"
-        borderColor="red"
-        borderRadius="170"
-        background="blue"
-        height="200"
-        width="360"
-        alignItems="center"
-        flexDirection="column"
-        justifyContent="center">
-        <Image
-            blurRadius="25"
-            borderColor="red"
-            borderWidth="10"
-            url="${image1}"
-            height="200"
-            scaleType="fitXY"
-            justifyContent="center"
-            width="360"/>
-        <Image
-            borderColor="red"
-            borderWidth="10"
-            url="${image1}"
-            height="100"
-            scaleType="fitXY"
-            justifyContent="center"
-            width="100"/>
-    </Frame>
+
 </Flex>

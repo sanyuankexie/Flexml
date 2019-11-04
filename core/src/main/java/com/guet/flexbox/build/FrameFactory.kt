@@ -5,14 +5,19 @@ import com.facebook.yoga.YogaEdge
 import com.facebook.yoga.YogaPositionType
 import java.util.concurrent.Callable
 import java.util.concurrent.Executors
+import java.util.concurrent.atomic.AtomicInteger
 import kotlin.math.max
 import kotlin.math.min
 
 internal object FrameFactory : WidgetFactory<Row.Builder>() {
 
+    private val count = AtomicInteger(0)
+
     private val measureThreadPool = Executors.newFixedThreadPool(
             min(4, Runtime.getRuntime().availableProcessors())
-    )
+    ) {
+        Thread(it, "frame-measure-${count.getAndIncrement()}")
+    }
 
     override fun create(
             c: BuildContext,
@@ -28,6 +33,7 @@ internal object FrameFactory : WidgetFactory<Row.Builder>() {
             attrs: Map<String, String>,
             children: List<Component.Builder<*>>
     ) {
+        val context = c.componentContext
         val width = c.tryGetValue(attrs["width"], Int::class.java, -1).toPx()
         val height = c.tryGetValue(attrs["height"], Int::class.java, -1).toPx()
         val widthSpec = if (width > 0) {
@@ -42,38 +48,29 @@ internal object FrameFactory : WidgetFactory<Row.Builder>() {
         }
         var maxWidth = 0
         var maxHeight = 0
-        if (children.size > 1) {
-            children.map {
-                it.build()
-            }.map {
-                val context = c.componentContext
-                Callable {
-                    val size = Size()
-                    it.measure(
-                            context,
-                            widthSpec,
-                            heightSpec,
-                            size
-                    )
-                    createWrapper(
-                            context,
-                            size.width,
-                            size.height,
-                            it
-                    ) to size
-                }
-            }.map {
-                measureThreadPool.submit(it)
-            }.forEach {
-                val (row, size) = it.get()
-                maxWidth = max(maxWidth, size.width)
-                maxHeight = max(maxHeight, size.height)
-                child(row)
-            }
-        } else {
-            val context = c.componentContext
+        if (children.isNotEmpty()) {
+            val futures = children
+                    .subList(1, children.size - 1)
+                    .map {
+                        val com = it.build()
+                        measureThreadPool.submit(Callable {
+                            val s = Size()
+                            com.measure(
+                                    context,
+                                    widthSpec,
+                                    heightSpec,
+                                    s
+                            )
+                            createWrapper(
+                                    context,
+                                    s.width,
+                                    s.height,
+                                    com
+                            ) to s
+                        })
+                    }
             val size = Size()
-            val content = children.single().build()
+            val content = children.first().build()
             content.measure(
                     context,
                     widthSpec,
@@ -82,7 +79,18 @@ internal object FrameFactory : WidgetFactory<Row.Builder>() {
             )
             maxWidth = max(maxWidth, size.width)
             maxHeight = max(maxHeight, size.height)
-            child(createWrapper(context, size.width, size.height, content))
+            child(createWrapper(
+                    context,
+                    size.width,
+                    size.height,
+                    content
+            ))
+            futures.forEach {
+                val (row, s) = it.get()
+                maxWidth = max(maxWidth, s.width)
+                maxHeight = max(maxHeight, s.height)
+                child(row)
+            }
         }
         if (width < 0) {
             widthPx(maxWidth)

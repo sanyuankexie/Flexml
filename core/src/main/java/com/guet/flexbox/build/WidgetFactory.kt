@@ -12,6 +12,7 @@ import com.guet.flexbox.WidgetInfo
 import com.guet.flexbox.el.ELException
 import com.guet.flexbox.widget.BorderDrawable
 import com.guet.flexbox.widget.NetworkDrawable
+import com.guet.flexbox.widget.NoOpDrawable
 import java.util.*
 import kotlin.collections.HashMap
 
@@ -161,15 +162,16 @@ internal abstract class WidgetFactory<T : Component.Builder<*>> : Transform {
                 }
             }
         }
-        if (model != null) {
-            @Suppress("DEPRECATION")
-            this.background(BorderDrawable(
-                    model,
-                    borderRadius,
-                    borderWidth,
-                    borderColor
-            ))
+        if (model == null) {
+            model = NoOpDrawable
         }
+        @Suppress("DEPRECATION")
+        this.background(BorderDrawable(
+                model,
+                borderRadius,
+                borderWidth,
+                borderColor
+        ))
     }
 
     protected inline fun <V : Any> bound(
