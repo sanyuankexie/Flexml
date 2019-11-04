@@ -13,7 +13,7 @@ import com.facebook.litho.viewcompat.ViewBinder
 import com.facebook.litho.viewcompat.ViewCreator
 import java.lang.reflect.Constructor
 
-internal object MirrorFactory : WidgetFactory<ViewCompatComponent.Builder<View>>() {
+internal object EmbeddedFactory : WidgetFactory<ViewCompatComponent.Builder<View>>() {
 
     private val views = ViewTypeCache()
 

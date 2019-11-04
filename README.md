@@ -74,7 +74,7 @@ flex风格的布局容器
 * orientation 水平或者垂直（vertical，horizontal）
 #### Frame
 与FrameLayout类似
-#### Mirror
+#### Embedded
 可在布局中接入传统View
 * type 类名
 #### for
