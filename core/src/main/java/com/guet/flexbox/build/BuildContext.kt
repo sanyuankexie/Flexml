@@ -56,7 +56,12 @@ class BuildContext(val componentContext: ComponentContext, data: Any?) {
         } catch (e: IllegalArgumentException) {
             @Suppress("UNCHECKED_CAST")
             return scope(colorMap) {
-                parseColor(getValue(expr, String::class.java))
+                val value = getValue(expr, Any::class.java)
+                if (value is Number) {
+                    value.toInt()
+                } else {
+                    parseColor(value.toString())
+                }
             }
         }
     }
@@ -88,13 +93,10 @@ class BuildContext(val componentContext: ComponentContext, data: Any?) {
     private companion object {
 
         @Suppress("UNCHECKED_CAST")
-        private val colorMap = (Color::class.java
+        private val colorMap = HashMap((Color::class.java
                 .getDeclaredField("sColorNameMap")
                 .apply { isAccessible = true }
-                .get(null) as Map<String, Int>)
-                .map {
-                    it.key to it.value.toColorString()
-                }.toMap()
+                .get(null) as Map<String, Int>))
 
         private val functions: List<Method> = Functions::class.java.declaredMethods
                 .filter {

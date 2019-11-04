@@ -16,7 +16,8 @@ internal object ImageFactory : WidgetFactory<NetworkImage.Builder>() {
                         "fitXY" to FIT_XY,
                         "fitStart" to FIT_START,
                         "fitEnd" to FIT_END,
-                        "centerInside" to CENTER_INSIDE
+                        "centerInside" to CENTER_INSIDE,
+                        "centerCrop" to CENTER_CROP
                 )
         ) {
             scaleType(it)

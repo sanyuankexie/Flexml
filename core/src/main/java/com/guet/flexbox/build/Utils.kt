@@ -9,56 +9,18 @@ import lite.beans.Introspector
 import java.io.*
 import java.lang.reflect.Type
 
-internal fun Long.toPx(): Int {
-    return (this * Resources.getSystem().displayMetrics.widthPixels / 360).toInt()
-}
 
 internal fun Double.toPx(): Int {
     return (this * Resources.getSystem().displayMetrics.widthPixels / 360).toInt()
-}
-
-internal fun Short.toPx(): Int {
-    return (this * Resources.getSystem().displayMetrics.widthPixels / 360)
 }
 
 internal fun Int.toPx(): Int {
     return (this * Resources.getSystem().displayMetrics.widthPixels / 360)
 }
 
-internal fun Float.toPx(): Int {
-    return (this * Resources.getSystem().displayMetrics.widthPixels / 360).toInt()
-}
-
-internal fun <T> BuildContext.tryGetValue(expr: String?, type: Class<T>, fallback: T): T {
-    if (expr == null) {
-        return fallback
-    }
-    return try {
-        getValue(expr, type)
-    } catch (e: ELException) {
-        fallback
-    }
-}
-
-@ColorInt
-internal fun BuildContext.tryGetColor(expr: String?, @ColorInt fallback: Int): Int {
-    if (expr == null) {
-        return fallback
-    }
-    return try {
-        getColor(expr)
-    } catch (e: ELException) {
-        fallback
-    }
-}
-
-internal fun Int.toColorString(): String {
-    return "#" + this.toString(16)
-}
-
 private typealias FromJson<T> = (T, Type) -> Any
 
-internal object GsonMirror {
+private object GsonMirror {
     private val calls: Map<Class<*>, FromJson<*>>
 
     init {
@@ -108,6 +70,29 @@ internal object GsonMirror {
 
     private inline fun <reified T> HashMap<Class<*>, FromJson<*>>.add(noinline action: FromJson<T>) {
         this[T::class.java] = action
+    }
+}
+
+internal fun <T> BuildContext.tryGetValue(expr: String?, type: Class<T>, fallback: T): T {
+    if (expr == null) {
+        return fallback
+    }
+    return try {
+        getValue(expr, type)
+    } catch (e: ELException) {
+        fallback
+    }
+}
+
+@ColorInt
+internal fun BuildContext.tryGetColor(expr: String?, @ColorInt fallback: Int): Int {
+    if (expr == null) {
+        return fallback
+    }
+    return try {
+        getColor(expr)
+    } catch (e: ELException) {
+        fallback
     }
 }
 
