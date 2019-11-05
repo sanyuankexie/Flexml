@@ -164,11 +164,10 @@ internal abstract class WidgetFactory<T : Component.Builder<*>> : Transform {
         if (reportView != null) {
             reportViewValue = c.getValue(reportView, String::class.java)
         }
-        if (!reportViewValue.isNullOrEmpty()) {
+        if (!reportViewValue.isNullOrEmpty() && display) {
             visibleHandler(DynamicBox.onView(
                     c.componentContext,
-                    reportClickValue,
-                    display))
+                    reportClickValue))
         }
     }
 
