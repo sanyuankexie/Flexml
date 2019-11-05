@@ -63,32 +63,7 @@ internal abstract class WidgetFactory<T : Component.Builder<*>> : Transform {
         }
     }
 
-    private fun create(
-            c: BuildContext,
-            nodeInfo: NodeInfo,
-            upperVisibility: Int
-    ): T? {
-        val attrs = nodeInfo.attrs ?: emptyMap()
-        val childrenNodes = nodeInfo.children ?: emptyList()
-        val visibility = getOwnerVisibility(c, attrs, upperVisibility)
-        if (visibility == View.INVISIBLE) {
-            return null
-        }
-        val builder = create(c, attrs)
-        builder.applyChildren(c, attrs, childrenNodes.map {
-            c.createFromElement(it, visibility)
-        }.flatten())
-        if (attrs.isNotEmpty()) {
-            builder.applyDefault(c, attrs, visibility)
-            builder.applyEvent(c, attrs)
-            if (visibility != View.INVISIBLE) {
-                builder.applyBackground(c, attrs)
-            }
-        }
-        return builder
-    }
-
-    override fun transform(
+    final override fun transform(
             c: BuildContext,
             nodeInfo: NodeInfo,
             upperVisibility: Int
@@ -99,6 +74,52 @@ internal abstract class WidgetFactory<T : Component.Builder<*>> : Transform {
         } else {
             emptyList()
         }
+    }
+
+
+    protected abstract fun onCreate(
+            c: BuildContext,
+            attrs: Map<String, String>,
+            visibility: Int
+    ): T
+
+    protected open fun T.onApplyChildren(
+            c: BuildContext,
+            attrs: Map<String, String>,
+            children: List<Component.Builder<*>>,
+            visibility: Int) {
+    }
+
+    protected open fun T.onComplete(
+            c: BuildContext,
+            attrs: Map<String, String>,
+            visibility: Int) {
+    }
+
+    private fun create(
+            c: BuildContext,
+            nodeInfo: NodeInfo,
+            upperVisibility: Int
+    ): T? {
+        val attrs = nodeInfo.attrs ?: emptyMap()
+        val childrenNodes = nodeInfo.children ?: emptyList()
+        val visibility = getOwnerVisibility(c, attrs, upperVisibility)
+        if (visibility == View.GONE) {
+            return null
+        }
+        val builder = onCreate(c, attrs, visibility)
+        builder.onApplyChildren(c, attrs, childrenNodes.map {
+            c.createFromElement(it, visibility)
+        }.flatten(), visibility)
+        if (attrs.isNotEmpty()) {
+            builder.applyDefault(c, attrs, visibility)
+            builder.applyEvent(c, attrs, visibility)
+            if (visibility != View.INVISIBLE) {
+                builder.applyBackground(c, attrs)
+            }
+        }
+        builder.onComplete(c, attrs, visibility)
+        return builder
     }
 
     private fun T.applyDefault(
@@ -114,18 +135,12 @@ internal abstract class WidgetFactory<T : Component.Builder<*>> : Transform {
         }
     }
 
-    protected abstract fun create(
-            c: BuildContext,
-            attrs: Map<String, String>
-    ): T
-
-    protected open fun T.applyChildren(
+    private fun T.applyEvent(
             c: BuildContext,
             attrs: Map<String, String>,
-            children: List<Component.Builder<*>>) {
-    }
-
-    private fun T.applyEvent(c: BuildContext, attrs: Map<String, String>) {
+            visibility: Int
+    ) {
+        val display = visibility == View.VISIBLE
         var clickUrlValue: String? = null
         val clickUrl = attrs["clickUrl"]
         if (clickUrl != null) {
@@ -152,8 +167,8 @@ internal abstract class WidgetFactory<T : Component.Builder<*>> : Transform {
         if (!reportViewValue.isNullOrEmpty()) {
             visibleHandler(DynamicBox.onView(
                     c.componentContext,
-                    reportClickValue
-            ))
+                    reportClickValue,
+                    display))
         }
     }
 
@@ -208,7 +223,7 @@ internal abstract class WidgetFactory<T : Component.Builder<*>> : Transform {
             visibilityValues[c.tryGetValue(
                     attrs["visibility"],
                     String::class.java,
-                    "gone"
+                    "visible"
             )] ?: View.GONE
         } else {
             upperVisibility

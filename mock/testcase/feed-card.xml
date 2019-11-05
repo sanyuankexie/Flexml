@@ -10,6 +10,7 @@
         marginTop="12"
         flexDirection="row">
         <Text
+            visibility="invisible"
             textStyle="bold"
             textSize="16"
             text="碧蓝航线电子科大店">
@@ -108,6 +109,7 @@
             marginRight="3"
             flexGrow="1">
             <Image
+
                 borderRadius="4"
                 scaleType="fitXY"
                 flexGrow="1"

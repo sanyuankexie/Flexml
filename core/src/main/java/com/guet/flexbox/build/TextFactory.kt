@@ -1,9 +1,11 @@
 package com.guet.flexbox.build
 
+import android.content.res.ColorStateList
 import android.graphics.Color
 import android.graphics.Typeface
 import android.text.Layout.Alignment.ALIGN_CENTER
 import android.text.Layout.Alignment.valueOf
+import android.view.View
 import com.facebook.litho.widget.Text
 
 internal object TextFactory : WidgetFactory<Text.Builder>() {
@@ -31,12 +33,8 @@ internal object TextFactory : WidgetFactory<Text.Builder>() {
         value("minLines", Int.MIN_VALUE.toDouble()) { _, it ->
             this.minLines(it.toInt())
         }
-        color("textColor") { display, it ->
-            if (display) {
-                this.textColor(it)
-            } else {
-                this.textColor(Color.TRANSPARENT)
-            }
+        color("textColor") { _, it ->
+            this.textColor(it)
         }
         value("textSize", 13.0) { _, it ->
             this.textSizePx(it.toPx())
@@ -51,10 +49,24 @@ internal object TextFactory : WidgetFactory<Text.Builder>() {
         }
     }
 
-    override fun create(
+    override fun onCreate(
             c: BuildContext,
-            attrs: Map<String, String>
+            attrs: Map<String, String>,
+            visibility: Int
     ): Text.Builder {
         return Text.create(c.componentContext)
     }
+
+    override fun Text.Builder.onComplete(
+            c: BuildContext,
+            attrs: Map<String, String>,
+            visibility: Int
+    ) {
+        if (visibility == View.INVISIBLE) {
+            textColor(Color.TRANSPARENT)
+            textColorStateList(invisibleColor)
+        }
+    }
+
+    private val invisibleColor = ColorStateList.valueOf(Color.TRANSPARENT)
 }

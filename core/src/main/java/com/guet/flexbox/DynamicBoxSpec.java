@@ -28,8 +28,9 @@ final class DynamicBoxSpec {
     @OnEvent(VisibleEvent.class)
     static void onView(ComponentContext c,
                        @Param String json,
+                       @Param boolean display,
                        @Prop(optional = true) EventListener eventListener) {
-        if (eventListener != null) {
+        if (eventListener != null && display) {
             eventListener.onEvent(EventType.REPORT_VIEW, json);
         }
     }

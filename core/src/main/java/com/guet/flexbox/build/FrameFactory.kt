@@ -17,22 +17,24 @@ internal object FrameFactory : WidgetFactory<Row.Builder>() {
     private val count = AtomicInteger(0)
 
     private val measureThreadPool = Executors.newFixedThreadPool(
-            min(4, Runtime.getRuntime().availableProcessors())
+            min(2, Runtime.getRuntime().availableProcessors())
     ) {
-        Thread(it, "frame-measure-${count.getAndIncrement()}")
+        Thread(it, "concurrent-measure-thread-${count.getAndIncrement()}")
     }
 
-    override fun create(
+    override fun onCreate(
             c: BuildContext,
-            attrs: Map<String, String>
+            attrs: Map<String, String>,
+            visibility: Int
     ): Row.Builder {
         return Row.create(c.componentContext)
     }
 
-    override fun Row.Builder.applyChildren(
+    override fun Row.Builder.onApplyChildren(
             c: BuildContext,
             attrs: Map<String, String>,
-            children: List<Component.Builder<*>>
+            children: List<Component.Builder<*>>,
+            visibility: Int
     ) {
         val context = c.componentContext
         var width = c.tryGetValue(attrs["width"], Int::class.java, Int.MIN_VALUE)
@@ -62,6 +64,7 @@ internal object FrameFactory : WidgetFactory<Row.Builder>() {
             } else {
                 SizeSpec.makeSizeSpec(0, SizeSpec.UNSPECIFIED)
             }
+            //concurrent measure
             var maxWidth = 0
             var maxHeight = 0
             if (children.isNotEmpty()) {

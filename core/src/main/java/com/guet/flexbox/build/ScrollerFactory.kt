@@ -16,9 +16,10 @@ internal object ScrollerFactory : WidgetFactory<Component.Builder<*>>() {
         }
     }
 
-    override fun create(
+    override fun onCreate(
             c: BuildContext,
-            attrs: Map<String, String>
+            attrs: Map<String, String>,
+            visibility: Int
     ): Component.Builder<*> {
         return if (c.tryGetValue(attrs["orientation"], String::class.java, "vertical") == "horizontal") {
             HorizontalScroll.create(c.componentContext)
@@ -27,10 +28,11 @@ internal object ScrollerFactory : WidgetFactory<Component.Builder<*>>() {
         }
     }
 
-    override fun Component.Builder<*>.applyChildren(
+    override fun Component.Builder<*>.onApplyChildren(
             c: BuildContext,
             attrs: Map<String, String>,
-            children: List<Component.Builder<*>>
+            children: List<Component.Builder<*>>,
+            visibility: Int
     ) {
         if (children.isNotEmpty()) {
             if (this is HorizontalScroll.Builder) {

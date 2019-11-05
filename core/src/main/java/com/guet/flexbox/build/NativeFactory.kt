@@ -23,9 +23,10 @@ internal object NativeFactory : WidgetFactory<ViewCompatComponent.Builder<View>>
         }
     }
 
-    override fun create(
+    override fun onCreate(
             c: BuildContext,
-            attrs: Map<String, String>
+            attrs: Map<String, String>,
+            visibility: Int
     ): ViewCompatComponent.Builder<View> {
         val type = c.tryGetValue(attrs["type"], String::class.java, "")
         if (type.isNotEmpty()) {

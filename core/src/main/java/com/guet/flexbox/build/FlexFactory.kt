@@ -54,9 +54,10 @@ internal object FlexFactory : WidgetFactory<Component.ContainerBuilder<*>>() {
         }
     }
 
-    override fun create(
+    override fun onCreate(
             c: BuildContext,
-            attrs: Map<String, String>
+            attrs: Map<String, String>,
+            visibility: Int
     ): Component.ContainerBuilder<*> {
         val component: Component.ContainerBuilder<*>
         val type = attrs["flexDirection"]
@@ -71,9 +72,10 @@ internal object FlexFactory : WidgetFactory<Component.ContainerBuilder<*>>() {
         return component
     }
 
-    override fun Component.ContainerBuilder<*>.applyChildren(
+    override fun Component.ContainerBuilder<*>.onApplyChildren(
             c: BuildContext, attrs: Map<String, String>,
-            children: List<Component.Builder<*>>
+            children: List<Component.Builder<*>>,
+            visibility: Int
     ) {
         children.forEach {
             child(it)

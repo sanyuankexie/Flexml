@@ -43,9 +43,10 @@ internal object ImageFactory : WidgetFactory<NetworkImage.Builder>() {
         }
     }
 
-    override fun create(
+    override fun onCreate(
             c: BuildContext,
-            attrs: Map<String, String>
+            attrs: Map<String, String>,
+            visibility: Int
     ): NetworkImage.Builder {
         return NetworkImage.create(c.componentContext)
     }
