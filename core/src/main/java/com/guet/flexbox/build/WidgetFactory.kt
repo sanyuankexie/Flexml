@@ -94,7 +94,7 @@ internal abstract class WidgetFactory<T : Component.Builder<*>> : Transform {
             upperVisibility: Int
     ): List<Component.Builder<*>> {
         val value = create(c, nodeInfo, upperVisibility)
-        return if (value == null) {
+        return if (value != null) {
             Collections.singletonList<T>(value)
         } else {
             emptyList()
