@@ -35,6 +35,7 @@ class MockSession private constructor(
         ConsoleQRCode.print(url)
         println("布局地址：$url/layout")
         println("数据地址：$url/data")
+        println("如果扫码不成功，请将控制台（Android Studio）的主题颜色换成白色，或者自行使用【${url}】生成二维码")
         server = HttpServer.create(InetSocketAddress(DEFAULT_PORT), 0)
         server.executor = executor
         server.createContext("/layout") { httpExchange ->
