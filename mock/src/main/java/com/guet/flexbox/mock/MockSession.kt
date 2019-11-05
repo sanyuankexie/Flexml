@@ -11,8 +11,10 @@ import org.dom4j.io.SAXReader
 import java.io.File
 import java.io.FileWriter
 import java.io.IOException
+import java.net.Inet4Address
 import java.net.InetAddress
 import java.net.InetSocketAddress
+import java.net.NetworkInterface
 import java.util.concurrent.Executor
 import java.util.concurrent.Executors
 
@@ -29,11 +31,11 @@ class MockSession private constructor(
     private val server: HttpServer
 
     init {
-        val address = InetAddress.getLocalHost()
-        val url = "http://${address.hostAddress}:$DEFAULT_PORT"
+        val url = "http://${findHostAddress()}:$DEFAULT_PORT"
         ConsoleQRCode.print(url)
         println("布局地址：$url/layout")
         println("数据地址：$url/data")
+        println("如果扫码不成功，请将控制台（Android Studio）的主题颜色换成白色，或者自行使用【${url}】生成二维码")
         server = HttpServer.create(InetSocketAddress(DEFAULT_PORT), 0)
         server.executor = executor
         server.createContext("/layout") { httpExchange ->
@@ -74,6 +76,25 @@ class MockSession private constructor(
             this.layout = layout
             this.data = data
         }
+    }
+
+    private fun findHostAddress(): String {
+        try {
+            val allNetInterfaces = NetworkInterface.getNetworkInterfaces()
+            while (allNetInterfaces.hasMoreElements()) {
+                val netInterface = allNetInterfaces.nextElement() as NetworkInterface
+                val addresses = netInterface.inetAddresses
+                while (addresses.hasMoreElements()) {
+                    val ip = addresses.nextElement() as InetAddress
+                    if (ip is Inet4Address && !ip.isLoopbackAddress
+                            && ip.hostAddress.indexOf(":") == -1) {
+                        return ip.hostAddress
+                    }
+                }
+            }
+        } catch (e: Exception) {
+        }
+        throw RuntimeException("搜索本机IP时出错")
     }
 
     fun start() {

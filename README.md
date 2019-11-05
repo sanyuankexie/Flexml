@@ -15,7 +15,7 @@
 Xml布局标签所支持的属性
 #### 基本样式
 每种布局都支持丰富的基本样式，每种Widget都适用
-* background 可以是颜色以#开头或是颜色的名字，或者为url，还可以使用渐变色，调用内置函数“fn:gradient”实现渐变色，最后一个参数是可变参数,如下：
+* background 可以是颜色以#开头或是颜色的名字，或者为url，还可以使用渐变色，调用内置函数“draw:gradient”实现渐变色，最后一个参数是可变参数,如下：
 ```xml
 <?xml version="1.0" encoding="utf-8"?>
 <Flex
