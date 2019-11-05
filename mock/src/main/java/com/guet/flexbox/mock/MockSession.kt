@@ -78,25 +78,6 @@ class MockSession private constructor(
         }
     }
 
-    private fun findHostAddress(): String {
-        try {
-            val allNetInterfaces = NetworkInterface.getNetworkInterfaces()
-            while (allNetInterfaces.hasMoreElements()) {
-                val netInterface = allNetInterfaces.nextElement() as NetworkInterface
-                val addresses = netInterface.inetAddresses
-                while (addresses.hasMoreElements()) {
-                    val ip = addresses.nextElement() as InetAddress
-                    if (ip is Inet4Address && !ip.isLoopbackAddress
-                            && ip.hostAddress.indexOf(":") == -1) {
-                        return ip.hostAddress
-                    }
-                }
-            }
-        } catch (e: Exception) {
-        }
-        throw RuntimeException("搜索本机IP时出错")
-    }
-
     fun start() {
         server.start()
     }
@@ -125,6 +106,26 @@ class MockSession private constructor(
                 write(string)
                 close()
             }
+        }
+
+        private fun findHostAddress(): String {
+            try {
+                val allNetInterfaces = NetworkInterface.getNetworkInterfaces()
+                while (allNetInterfaces.hasMoreElements()) {
+                    val netInterface = allNetInterfaces.nextElement() as NetworkInterface
+                    val addresses = netInterface.inetAddresses
+                    while (addresses.hasMoreElements()) {
+                        val ip = addresses.nextElement() as InetAddress
+                        if (ip is Inet4Address && !ip.isLoopbackAddress
+                                && ip.hostAddress.indexOf(":") == -1) {
+                            return ip.hostAddress
+                        }
+                    }
+                }
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+            throw RuntimeException("搜索本机IP时出错，请检查机器的在网状态，并确保手机和电脑在同一网络中")
         }
 
         private fun toJson(element: Element): JsonObject {

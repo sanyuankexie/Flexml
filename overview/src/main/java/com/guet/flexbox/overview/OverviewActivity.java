@@ -31,7 +31,7 @@ import com.facebook.yoga.YogaEdge;
 import com.guet.flexbox.DynamicBox;
 import com.guet.flexbox.EventListener;
 import com.guet.flexbox.EventType;
-import com.guet.flexbox.WidgetInfo;
+import com.guet.flexbox.NodeInfo;
 
 import java.util.Map;
 
@@ -60,7 +60,7 @@ public class OverviewActivity
     private SimpleHandler mNetwork = new SimpleHandler("network");
     private MockService mMockService;
     private ArrayAdapter<String> mAdapter;
-    private WidgetInfo mLayout;
+    private NodeInfo mLayout;
     private Map<String, Object> mData;
     private Runnable mReload = new Runnable() {
         @WorkerThread
@@ -68,9 +68,9 @@ public class OverviewActivity
         public void run() {
             try {
                 Response<Map<String, Object>> dataResponse = mMockService.data().execute();
-                Response<WidgetInfo> layout = mMockService.layout().execute();
+                Response<NodeInfo> layout = mMockService.layout().execute();
                 Map<String, Object> dataBody = dataResponse.body();
-                WidgetInfo layoutBody = layout.body();
+                NodeInfo layoutBody = layout.body();
                 runOnUiThread(() -> {
                     if (layoutBody != null) {
                         mLayout = layoutBody;

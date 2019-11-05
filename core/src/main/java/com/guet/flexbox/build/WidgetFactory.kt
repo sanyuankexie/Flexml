@@ -4,11 +4,12 @@ import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.graphics.drawable.Drawable
 import android.graphics.drawable.GradientDrawable
+import android.view.View
 import com.facebook.litho.Component
 import com.facebook.yoga.YogaAlign
 import com.facebook.yoga.YogaEdge
 import com.guet.flexbox.DynamicBox
-import com.guet.flexbox.WidgetInfo
+import com.guet.flexbox.NodeInfo
 import com.guet.flexbox.el.ELException
 import com.guet.flexbox.widget.BorderDrawable
 import com.guet.flexbox.widget.NetworkDrawable
@@ -18,19 +19,19 @@ import kotlin.collections.HashMap
 
 internal abstract class WidgetFactory<T : Component.Builder<*>> : Transform {
 
-    private val mappings = HashMap<String, T.(BuildContext, String) -> Unit>()
+    private val mappings = HashMap<String, T.(BuildContext, Boolean, String) -> Unit>()
 
     init {
-        value("width") {
+        value("width") { _, it ->
             this.widthPx(it.toPx())
         }
-        value("height") {
+        value("height") { _, it ->
             this.heightPx(it.toPx())
         }
-        value("flexGrow") {
+        value("flexGrow") { _, it ->
             this.flexGrow(it.toFloat())
         }
-        value("flexShrink") {
+        value("flexShrink") { _, it ->
             this.flexShrink(it.toFloat())
         }
         bound("alignSelf", YogaAlign.FLEX_START,
@@ -41,20 +42,22 @@ internal abstract class WidgetFactory<T : Component.Builder<*>> : Transform {
                         "baseline" to YogaAlign.BASELINE,
                         "stretch" to YogaAlign.STRETCH
                 )
-        ) { this.alignSelf(it) }
-        value("margin") {
+        ) { _, it ->
+            this.alignSelf(it)
+        }
+        value("margin") { _, it ->
             this.marginPx(YogaEdge.ALL, it.toPx())
         }
-        value("padding") {
+        value("padding") { _, it ->
             this.paddingPx(YogaEdge.ALL, it.toPx())
         }
         val edges = arrayOf("Left", "Right", "Top", "Bottom")
         for (index in 0 until edges.size) {
             val yogaEdge = YogaEdge.valueOf(edges[index].toUpperCase())
-            value("margin" + edges[index]) {
+            value("margin" + edges[index]) { _, it ->
                 this.marginPx(yogaEdge, it.toPx())
             }
-            value("padding" + edges[index]) {
+            value("padding" + edges[index]) { _, it ->
                 this.paddingPx(yogaEdge, it.toPx())
             }
         }
@@ -62,37 +65,59 @@ internal abstract class WidgetFactory<T : Component.Builder<*>> : Transform {
 
     private fun create(
             c: BuildContext,
-            attrs: Map<String, String>,
-            children: List<Component.Builder<*>>): T {
+            nodeInfo: NodeInfo,
+            upperVisibility: Int
+    ): T? {
+        val attrs = nodeInfo.attrs ?: emptyMap()
+        val childrenNodes = nodeInfo.children ?: emptyList()
+        val visibility = getOwnerVisibility(c, attrs, upperVisibility)
+        if (visibility == View.INVISIBLE) {
+            return null
+        }
         val builder = create(c, attrs)
-        builder.applyChildren(c, attrs, children)
+        builder.applyChildren(c, attrs, childrenNodes.map {
+            c.createFromElement(it, visibility)
+        }.flatten())
         if (attrs.isNotEmpty()) {
+            builder.applyDefault(c, attrs, visibility)
             builder.applyEvent(c, attrs)
-            builder.applyBackground(c, attrs)
+            if (visibility != View.INVISIBLE) {
+                builder.applyBackground(c, attrs)
+            }
         }
         return builder
     }
 
     override fun transform(
             c: BuildContext,
-            widgetInfo: WidgetInfo,
-            children: List<Component.Builder<*>>): List<Component.Builder<*>> {
-        return Collections.singletonList(create(c, widgetInfo.attrs ?: emptyMap(), children))
+            nodeInfo: NodeInfo,
+            upperVisibility: Int
+    ): List<Component.Builder<*>> {
+        val value = create(c, nodeInfo, upperVisibility)
+        return if (value == null) {
+            Collections.singletonList<T>(value)
+        } else {
+            emptyList()
+        }
     }
 
-    protected fun T.applyDefault(
+    private fun T.applyDefault(
             c: BuildContext,
-            attrs: Map<String, String>) {
+            attrs: Map<String, String>,
+            visibility: Int
+    ) {
+        val display = visibility == View.VISIBLE
         if (!attrs.isNullOrEmpty()) {
             for ((key, value) in attrs) {
-                mappings[key]?.invoke(this, c, value)
+                mappings[key]?.invoke(this, c, display, value)
             }
         }
     }
 
     protected abstract fun create(
             c: BuildContext,
-            attrs: Map<String, String>): T
+            attrs: Map<String, String>
+    ): T
 
     protected open fun T.applyChildren(
             c: BuildContext,
@@ -174,21 +199,37 @@ internal abstract class WidgetFactory<T : Component.Builder<*>> : Transform {
         ))
     }
 
+    private fun getOwnerVisibility(
+            c: BuildContext,
+            attrs: Map<String, String>,
+            upperVisibility: Int
+    ): Int {
+        return if (upperVisibility == View.VISIBLE) {
+            visibilityValues[c.tryGetValue(
+                    attrs["visibility"],
+                    String::class.java,
+                    "gone"
+            )] ?: View.GONE
+        } else {
+            upperVisibility
+        }
+    }
+
     protected inline fun <V : Any> bound(
             name: String,
             fallback: V,
             map: Map<String, V>,
-            crossinline action: T.(V) -> Unit
+            crossinline action: T.(Boolean, V) -> Unit
     ) {
-        mappings[name] = { c, value ->
+        mappings[name] = { c, display, value ->
             try {
                 var result = map[c.getValue(value, String::class.java)]
                 if (result == null) {
                     result = fallback
                 }
-                action(result)
+                action(display, result)
             } catch (e: ELException) {
-                action(fallback)
+                action(display, fallback)
             }
         }
     }
@@ -196,39 +237,45 @@ internal abstract class WidgetFactory<T : Component.Builder<*>> : Transform {
     protected inline fun text(
             name: String,
             fallback: String = "",
-            crossinline action: T.(String) -> Unit) {
-        mappings[name] = { c, value ->
-            action(c.tryGetValue(value, String::class.java, fallback))
+            crossinline action: T.(Boolean, String) -> Unit) {
+        mappings[name] = { c, display, value ->
+            action(display, c.tryGetValue(value, String::class.java, fallback))
         }
     }
 
     protected inline fun bool(
             name: String,
             fallback: Boolean = false,
-            crossinline action: T.(Boolean) -> Unit) {
-        mappings[name] = { c, value ->
-            action(c.tryGetValue(value, Boolean::class.java, fallback))
+            crossinline action: T.(Boolean, Boolean) -> Unit) {
+        mappings[name] = { c, display, value ->
+            action(display, c.tryGetValue(value, Boolean::class.java, fallback))
         }
     }
 
     protected inline fun value(
             name: String, fallback: Double = 0.0,
-            crossinline action: T.(Double) -> Unit) {
-        mappings[name] = { c, value ->
-            action(c.tryGetValue(value, Double::class.java, fallback))
+            crossinline action: T.(Boolean, Double) -> Unit) {
+        mappings[name] = { c, display, value ->
+            action(display, c.tryGetValue(value, Double::class.java, fallback))
         }
     }
 
     protected inline fun color(
             name: String,
             fallback: Int = Color.TRANSPARENT,
-            crossinline action: T.(Int) -> Unit) {
-        mappings[name] = { c, value ->
-            action(c.tryGetColor(value, fallback))
+            crossinline action: T.(Boolean, Int) -> Unit) {
+        mappings[name] = { c, display, value ->
+            action(display, c.tryGetColor(value, fallback))
         }
     }
 
     companion object {
+
+        private val visibilityValues = mapOf(
+                "visible" to View.VISIBLE,
+                "invisible" to View.INVISIBLE,
+                "gone" to View.GONE
+        )
 
         @Suppress("UNCHECKED_CAST")
         private val colorNameMap = (Color::class.java

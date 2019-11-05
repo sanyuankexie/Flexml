@@ -3,11 +3,12 @@ package com.guet.flexbox.build
 import android.graphics.Color
 import android.graphics.Color.parseColor
 import android.graphics.drawable.GradientDrawable
+import android.view.View
 import androidx.annotation.ColorInt
 import androidx.annotation.RestrictTo
 import com.facebook.litho.Component
 import com.facebook.litho.ComponentContext
-import com.guet.flexbox.WidgetInfo
+import com.guet.flexbox.NodeInfo
 import com.guet.flexbox.el.ELException
 import com.guet.flexbox.el.ELManager
 import com.guet.flexbox.el.ELProcessor
@@ -27,11 +28,11 @@ class BuildContext(val componentContext: ComponentContext, data: Any?) {
         }
     }
 
-    private fun enterScope(scope: Map<String, Any>) {
+    internal fun enterScope(scope: Map<String, Any>) {
         el.elManager.elContext.enterLambdaScope(scope)
     }
 
-    private fun exitScope() {
+    internal fun exitScope() {
         el.elManager.elContext.exitLambdaScope();
     }
 
@@ -66,7 +67,7 @@ class BuildContext(val componentContext: ComponentContext, data: Any?) {
         }
     }
 
-    fun <T> scope(scope: Map<String, Any>, action: () -> T): T {
+    internal inline fun <T> scope(scope: Map<String, Any>, action: () -> T): T {
         enterScope(scope)
         try {
             return action()
@@ -76,18 +77,20 @@ class BuildContext(val componentContext: ComponentContext, data: Any?) {
     }
 
     @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
-    fun createLayout(root: WidgetInfo): Component {
+    fun createLayout(root: NodeInfo): Component {
         return createFromElement(root).single().build()
     }
 
-    internal fun createFromElement(element: WidgetInfo): List<Component.Builder<*>> {
-        val behavior = transforms.getValue(element.type)
-        return behavior.transform(
-                this,
-                element,
-                element.children?.map {
-                    createFromElement(it)
-                }?.flatten() ?: emptyList())
+    internal fun createFromElement(
+            element: NodeInfo,
+            upperVisibility: Int = View.VISIBLE
+    ): List<Component.Builder<*>> {
+        return transforms.getValue(element.type)
+                .transform(
+                        this,
+                        element,
+                        upperVisibility
+                )
     }
 
     private companion object {
@@ -112,8 +115,9 @@ class BuildContext(val componentContext: ComponentContext, data: Any?) {
                 "Flex" to FlexFactory,
                 "Text" to TextFactory,
                 "Frame" to FrameFactory,
-                "Embedded" to EmbeddedFactory,
+                "Native" to NativeFactory,
                 "Scroller" to ScrollerFactory,
+                "Empty" to EmptyFactory,
                 "for" to ForTransform
         )
     }

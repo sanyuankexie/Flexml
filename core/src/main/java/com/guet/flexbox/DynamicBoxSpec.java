@@ -20,7 +20,7 @@ final class DynamicBoxSpec {
 
     @OnCreateLayout
     static Component onCreateLayout(ComponentContext c,
-                                    @Prop WidgetInfo layout,
+                                    @Prop NodeInfo layout,
                                     @Prop(optional = true) Object bind) {
         return new BuildContext(c, bind).createLayout(layout);
     }

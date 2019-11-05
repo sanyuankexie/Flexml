@@ -1,7 +1,7 @@
 package com.guet.flexbox
 
-data class WidgetInfo(
+data class NodeInfo(
         val type: String,
         val attrs: Map<String, String>?,
-        val children: List<WidgetInfo>?
+        val children: List<NodeInfo>?
 )

@@ -16,12 +16,12 @@ internal open class RoundedDrawable<T : Drawable>(
     override fun draw(canvas: Canvas) {
         rectF.set(bounds)
         val sc = canvas.saveLayer(rectF, null)
+        path.apply {
+            reset()
+            addRoundRect(rectF, radius.toFloat(), radius.toFloat(), Path.Direction.CW)
+            close()
+        }
         if (radius > 0) {
-            path.apply {
-                reset()
-                addRoundRect(rectF, radius.toFloat(), radius.toFloat(), Path.Direction.CW)
-                close()
-            }
             canvas.clipPath(path)
         }
         wrappedDrawable.draw(canvas)

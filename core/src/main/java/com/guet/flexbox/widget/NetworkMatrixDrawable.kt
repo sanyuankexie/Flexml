@@ -1,7 +1,10 @@
 package com.guet.flexbox.widget
 
 import android.content.Context
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import android.graphics.drawable.Drawable
+import android.text.TextUtils
 import android.view.MotionEvent
 import android.view.View
 import android.widget.ImageView.ScaleType
@@ -39,16 +42,20 @@ internal class NetworkMatrixDrawable(c: Context) : BorderDrawable<MatrixDrawable
         this.radius = radius
         this.width = width
         this.color = color
-        Glide.with(c).load(url)
-                .apply {
-                    if (blurRadius > 0) {
-                        transform(BlurTransformation(
-                                c,
-                                blurRadius,
-                                blurSampling
-                        ))
-                    }
-                }.into(DrawableTarget(scaleType))
+        if (TextUtils.isEmpty(url)) {
+            notifyChanged(scaleType, ColorDrawable(Color.TRANSPARENT))
+        } else {
+            Glide.with(c).load(url)
+                    .apply {
+                        if (blurRadius > 0) {
+                            transform(BlurTransformation(
+                                    c,
+                                    blurRadius,
+                                    blurSampling
+                            ))
+                        }
+                    }.into(DrawableTarget(scaleType))
+        }
     }
 
     fun unmount() {
@@ -61,6 +68,37 @@ internal class NetworkMatrixDrawable(c: Context) : BorderDrawable<MatrixDrawable
 
     override fun shouldHandleTouchEvent(event: MotionEvent?): Boolean {
         return wrappedDrawable.shouldHandleTouchEvent(event)
+    }
+
+
+    private fun notifyChanged(
+            scaleType: ScaleType,
+            resource: Drawable
+    ) {
+        val drawableWidth: Int
+        val drawableHeight: Int
+        val matrix: DrawableMatrix?
+        if (ScaleType.FIT_XY == scaleType
+                || resource.intrinsicWidth <= 0
+                || resource.intrinsicHeight <= 0) {
+            matrix = null
+            drawableWidth = layoutWidth - horizontalPadding
+            drawableHeight = layoutHeight - verticalPadding
+        } else {
+            matrix = DrawableMatrix.create(
+                    resource,
+                    scaleType,
+                    layoutWidth - horizontalPadding,
+                    layoutHeight - verticalPadding)
+            drawableWidth = resource.intrinsicWidth
+            drawableHeight = resource.intrinsicHeight
+        }
+        wrappedDrawable.mount(NetworkDrawable.transition(
+                wrappedDrawable.mountedDrawable,
+                resource
+        ), matrix)
+        wrappedDrawable.bind(drawableWidth, drawableHeight)
+        invalidateSelf()
     }
 
     private inner class DrawableTarget(private val scaleType: ScaleType) : CustomTarget<Drawable>() {
@@ -77,30 +115,7 @@ internal class NetworkMatrixDrawable(c: Context) : BorderDrawable<MatrixDrawable
                 resource: Drawable,
                 transition: Transition<in Drawable>?
         ) {
-            val drawableWidth: Int
-            val drawableHeight: Int
-            val matrix: DrawableMatrix?
-            if (ScaleType.FIT_XY == scaleType
-                    || resource.intrinsicWidth <= 0
-                    || resource.intrinsicHeight <= 0) {
-                matrix = null
-                drawableWidth = layoutWidth - horizontalPadding
-                drawableHeight = layoutHeight - verticalPadding
-            } else {
-                matrix = DrawableMatrix.create(
-                        resource,
-                        scaleType,
-                        layoutWidth - horizontalPadding,
-                        layoutHeight - verticalPadding)
-                drawableWidth = resource.intrinsicWidth
-                drawableHeight = resource.intrinsicHeight
-            }
-            wrappedDrawable.mount(NetworkDrawable.transition(
-                    wrappedDrawable.mountedDrawable,
-                    resource
-            ), matrix)
-            wrappedDrawable.bind(drawableWidth, drawableHeight)
-            invalidateSelf()
+            notifyChanged(scaleType, resource)
         }
     }
 }

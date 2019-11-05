@@ -1,10 +1,13 @@
 package com.guet.flexbox.build
 
-import com.facebook.litho.*
+import com.facebook.litho.Component
+import com.facebook.litho.Row
+import com.facebook.litho.Size
+import com.facebook.litho.SizeSpec
 import com.facebook.yoga.YogaEdge
 import com.facebook.yoga.YogaPositionType
-import java.util.concurrent.Callable
 import java.util.concurrent.Executors
+import java.util.concurrent.Future
 import java.util.concurrent.atomic.AtomicInteger
 import kotlin.math.max
 import kotlin.math.min
@@ -21,11 +24,9 @@ internal object FrameFactory : WidgetFactory<Row.Builder>() {
 
     override fun create(
             c: BuildContext,
-            attrs: Map<String, String>): Row.Builder {
+            attrs: Map<String, String>
+    ): Row.Builder {
         return Row.create(c.componentContext)
-                .apply {
-                    applyDefault(c, attrs)
-                }
     }
 
     override fun Row.Builder.applyChildren(
@@ -36,11 +37,17 @@ internal object FrameFactory : WidgetFactory<Row.Builder>() {
         val context = c.componentContext
         var width = c.tryGetValue(attrs["width"], Int::class.java, Int.MIN_VALUE)
         var height = c.tryGetValue(attrs["height"], Int::class.java, Int.MIN_VALUE)
+        val wrappers = children.map {
+            Row.create(context)
+                    .positionType(YogaPositionType.ABSOLUTE)
+                    .positionPx(YogaEdge.LEFT, 0)
+                    .positionPx(YogaEdge.TOP, 0)
+                    .child(it)
+                    .build()
+        }
         if (width > 0 && height > 0) {
-            children.forEach {
-                child(it.positionType(YogaPositionType.ABSOLUTE)
-                        .widthPx(width)
-                        .heightPx(height))
+            wrappers.forEach {
+                child(it)
             }
         } else {
             width = width.toPx()
@@ -58,29 +65,25 @@ internal object FrameFactory : WidgetFactory<Row.Builder>() {
             var maxWidth = 0
             var maxHeight = 0
             if (children.isNotEmpty()) {
-                val futures = children
-                        .subList(1, children.size - 1)
-                        .map {
-                            val component = it.build()
-                            measureThreadPool.submit(Callable {
-                                val s = Size()
-                                component.measure(
-                                        context,
-                                        widthSpec,
-                                        heightSpec,
-                                        s
-                                )
-                                createWrapper(
-                                        context,
-                                        s.width,
-                                        s.height,
-                                        component
-                                ) to s
-                            })
-                        }
+                var futures: List<Future<Pair<Component, Size>>>? = null
+                if (children.size > 1) {
+                    futures = wrappers.subList(1, children.size)
+                            .map {
+                                measureThreadPool.submit<Pair<Component, Size>> {
+                                    val s = Size()
+                                    it.measure(
+                                            context,
+                                            widthSpec,
+                                            heightSpec,
+                                            s
+                                    )
+                                    it to s
+                                }
+                            }
+                }
                 val size = Size()
-                val content = children.first().build()
-                content.measure(
+                val first = wrappers.first()
+                first.measure(
                         context,
                         widthSpec,
                         heightSpec,
@@ -88,41 +91,20 @@ internal object FrameFactory : WidgetFactory<Row.Builder>() {
                 )
                 maxWidth = max(maxWidth, size.width)
                 maxHeight = max(maxHeight, size.height)
-                child(createWrapper(
-                        context,
-                        size.width,
-                        size.height,
-                        content
-                ))
-                futures.forEach {
+                child(first)
+                futures?.forEach {
                     val (wrapper, s) = it.get()
                     maxWidth = max(maxWidth, s.width)
                     maxHeight = max(maxHeight, s.height)
                     child(wrapper)
                 }
             }
-            if (width < 0) {
+            if (width <= 0) {
                 widthPx(maxWidth)
             }
-            if (height < 0) {
+            if (height <= 0) {
                 heightPx(maxHeight)
             }
         }
-    }
-
-    private fun createWrapper(
-            c: ComponentContext,
-            width: Int,
-            height: Int,
-            inner: Component
-    ): Wrapper {
-        return Wrapper.create(c)
-                .positionType(YogaPositionType.ABSOLUTE)
-                .widthPx(width)
-                .heightPx(height)
-                .positionPx(YogaEdge.LEFT, 0)
-                .positionPx(YogaEdge.TOP, 0)
-                .delegate(inner)
-                .build()
     }
 }

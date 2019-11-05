@@ -1,6 +1,6 @@
 package com.guet.flexbox.overview;
 
-import com.guet.flexbox.WidgetInfo;
+import com.guet.flexbox.NodeInfo;
 
 import java.util.Map;
 
@@ -12,5 +12,5 @@ public interface MockService {
     Call<Map<String, Object>> data();
 
     @GET("/layout")
-    Call<WidgetInfo> layout();
+    Call<NodeInfo> layout();
 }

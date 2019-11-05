@@ -16,7 +16,7 @@ internal object FlexFactory : WidgetFactory<Component.ContainerBuilder<*>>() {
                         "noWrap" to NO_WRAP,
                         "wrapReverse" to WRAP_REVERSE
                 )
-        ) {
+        ) { _, it ->
             wrap(it)
         }
         bound("justifyContent", FLEX_START,
@@ -27,7 +27,7 @@ internal object FlexFactory : WidgetFactory<Component.ContainerBuilder<*>>() {
                         "spaceBetween" to SPACE_BETWEEN,
                         "spaceAround" to SPACE_AROUND
                 )
-        ) {
+        ) { _, it ->
             justifyContent(it)
         }
         bound("alignItems", YogaAlign.FLEX_START,
@@ -38,7 +38,7 @@ internal object FlexFactory : WidgetFactory<Component.ContainerBuilder<*>>() {
                         "baseline" to YogaAlign.BASELINE,
                         "stretch" to YogaAlign.STRETCH
                 )
-        ) {
+        ) { _, it ->
             alignItems(it)
         }
         bound("alignContent", YogaAlign.FLEX_START,
@@ -49,15 +49,15 @@ internal object FlexFactory : WidgetFactory<Component.ContainerBuilder<*>>() {
                         "baseline" to YogaAlign.BASELINE,
                         "stretch" to YogaAlign.STRETCH
                 )
-        ) {
+        ) { _, it ->
             alignContent(it)
         }
     }
 
     override fun create(
             c: BuildContext,
-            attrs: Map<String, String>)
-            : Component.ContainerBuilder<*> {
+            attrs: Map<String, String>
+    ): Component.ContainerBuilder<*> {
         val component: Component.ContainerBuilder<*>
         val type = attrs["flexDirection"]
         if (type == "column") {
@@ -68,9 +68,7 @@ internal object FlexFactory : WidgetFactory<Component.ContainerBuilder<*>>() {
         if (type != null && type.endsWith("Reverse")) {
             component.reverse(true)
         }
-        return component.apply {
-            applyDefault(c, attrs)
-        }
+        return component
     }
 
     override fun Component.ContainerBuilder<*>.applyChildren(

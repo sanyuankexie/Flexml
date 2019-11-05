@@ -1,11 +1,12 @@
 package com.guet.flexbox.build
 
 import com.facebook.litho.Component
-import com.guet.flexbox.WidgetInfo
+import com.guet.flexbox.NodeInfo
 
 internal interface Transform {
-    fun transform(c: BuildContext,
-                  widgetInfo: WidgetInfo,
-                  children: List<Component.Builder<*>>)
-            : List<Component.Builder<*>>
+    fun transform(
+            c: BuildContext,
+            nodeInfo: NodeInfo,
+            upperVisibility: Int
+    ): List<Component.Builder<*>>
 }
