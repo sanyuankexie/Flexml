@@ -10,16 +10,13 @@ import java.util.concurrent.Executors
 import java.util.concurrent.Future
 import java.util.concurrent.atomic.AtomicInteger
 import kotlin.math.max
-import kotlin.math.min
 
 internal object FrameFactory : WidgetFactory<Row.Builder>() {
 
     private val count = AtomicInteger(0)
 
-    private val measureThreadPool = Executors.newFixedThreadPool(
-            min(2, Runtime.getRuntime().availableProcessors())
-    ) {
-        Thread(it, "concurrent-measure-thread-${count.getAndIncrement()}")
+    private val measureThreadPool = Executors.newCachedThreadPool {
+        Thread(it, "Frame:Measure_${count.getAndIncrement()}")
     }
 
     override fun onCreate(
