@@ -21,7 +21,7 @@ internal object TextFactory : WidgetFactory<Text.Builder>() {
         ) { _, it ->
             this.textAlignment(it)
         }
-        textAttr("textAttr") { _, it ->
+        textAttr("text") { _, it ->
             this.text(it)
         }
         boolAttr("clipToBounds") { _, it ->
