@@ -24,12 +24,16 @@ internal object ForTransform : Transform {
                 Int::class.java
         )
         val elements = nodeInfo.children
-        return (from..to).map {
-            return@map c.scope(Collections.singletonMap(name, it)) {
-                elements?.map { item ->
-                    c.createFromElement(item, upperVisibility)
-                }?.flatten() ?: emptyList()
-            }
-        }.flatten()
+        return if (!elements.isNullOrEmpty()) {
+            (from..to).map {
+                return@map c.scope(Collections.singletonMap(name, it)) {
+                    elements.map { item ->
+                        c.createFromElement(item, upperVisibility)
+                    }.flatten()
+                }
+            }.flatten()
+        } else {
+            emptyList()
+        }
     }
 }
