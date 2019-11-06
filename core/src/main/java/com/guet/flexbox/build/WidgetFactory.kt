@@ -220,7 +220,7 @@ internal abstract class WidgetFactory<T : Component.Builder<*>> : Transform {
                 c.tryGetValue(
                         attrs["visibility"],
                         Int::class.java,
-                        View.GONE
+                        View.VISIBLE
                 )
             }
         } else {

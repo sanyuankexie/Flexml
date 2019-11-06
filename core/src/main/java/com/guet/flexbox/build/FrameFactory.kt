@@ -51,9 +51,9 @@ internal object FrameFactory : WidgetFactory<Row.Builder>() {
                     .positionPx(YogaEdge.TOP, 0)
                     .child(it)
                     .build()
-        }
+        } ?: emptyList()
         if (width > 0 && height > 0) {
-            wrappers?.forEach {
+            wrappers.forEach {
                 owner.child(it)
             }
         } else {
@@ -75,7 +75,7 @@ internal object FrameFactory : WidgetFactory<Row.Builder>() {
             if (!children.isNullOrEmpty()) {
                 var futures: List<Future<Pair<Component, Size>>>? = null
                 if (children.size > 1) {
-                    futures = wrappers!!.subList(1, children.size).map {
+                    futures = wrappers.subList(1, children.size).map {
                         measureThreadPool.submit<Pair<Component, Size>> {
                             val s = Size()
                             it.measure(
@@ -89,7 +89,7 @@ internal object FrameFactory : WidgetFactory<Row.Builder>() {
                     }
                 }
                 val size = Size()
-                val first = wrappers!!.first()
+                val first = wrappers.first()
                 first.measure(
                         context,
                         widthSpec,
