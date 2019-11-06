@@ -16,6 +16,7 @@
         android:theme="@style/AppTheme"
         tools:ignore="AllowBackup,GoogleAppIndexingWarning,UnusedAttribute">
         <activity
+            android:configChanges="orientation|screenSize"
             android:theme="@style/AppStartup"
             android:name="com.guet.flexbox.overview.StartupActivity">
             <intent-filter>
@@ -24,6 +25,7 @@
             </intent-filter>
         </activity>
         <activity
+            android:configChanges="orientation|screenSize"
             android:name="com.guet.flexbox.overview.OverviewActivity">
         </activity>
     </application>

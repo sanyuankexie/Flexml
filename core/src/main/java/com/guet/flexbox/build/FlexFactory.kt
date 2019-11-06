@@ -10,7 +10,7 @@ import com.facebook.yoga.YogaWrap.*
 internal object FlexFactory : WidgetFactory<Component.ContainerBuilder<*>>() {
 
     init {
-        bound("flexWrap", NO_WRAP,
+        enumAttr("flexWrap", NO_WRAP,
                 mapOf(
                         "wrap" to WRAP,
                         "noWrap" to NO_WRAP,
@@ -19,7 +19,7 @@ internal object FlexFactory : WidgetFactory<Component.ContainerBuilder<*>>() {
         ) { _, it ->
             wrap(it)
         }
-        bound("justifyContent", FLEX_START,
+        enumAttr("justifyContent", FLEX_START,
                 mapOf(
                         "flexStart" to FLEX_START,
                         "flexEnd" to FLEX_END,
@@ -30,7 +30,7 @@ internal object FlexFactory : WidgetFactory<Component.ContainerBuilder<*>>() {
         ) { _, it ->
             justifyContent(it)
         }
-        bound("alignItems", YogaAlign.FLEX_START,
+        enumAttr("alignItems", YogaAlign.FLEX_START,
                 mapOf(
                         "flexStart" to YogaAlign.FLEX_START,
                         "flexEnd" to YogaAlign.FLEX_END,
@@ -41,7 +41,7 @@ internal object FlexFactory : WidgetFactory<Component.ContainerBuilder<*>>() {
         ) { _, it ->
             alignItems(it)
         }
-        bound("alignContent", YogaAlign.FLEX_START,
+        enumAttr("alignContent", YogaAlign.FLEX_START,
                 mapOf(
                         "flexStart" to YogaAlign.FLEX_START,
                         "flexEnd" to YogaAlign.FLEX_END,
@@ -56,29 +56,35 @@ internal object FlexFactory : WidgetFactory<Component.ContainerBuilder<*>>() {
 
     override fun onCreate(
             c: BuildContext,
-            attrs: Map<String, String>,
+            attrs: Map<String, String>?,
             visibility: Int
     ): Component.ContainerBuilder<*> {
         val component: Component.ContainerBuilder<*>
-        val type = attrs["flexDirection"]
+        val type = if (attrs != null) {
+            attrs["flexDirection"] ?: "row"
+        } else {
+            "row"
+        }
         if (type == "column") {
             component = Column.create(c.componentContext)
         } else {
             component = Row.create(c.componentContext)
         }
-        if (type != null && type.endsWith("Reverse")) {
+        if (type.endsWith("Reverse")) {
             component.reverse(true)
         }
         return component
     }
 
-    override fun Component.ContainerBuilder<*>.onApplyChildren(
-            c: BuildContext, attrs: Map<String, String>,
-            children: List<Component.Builder<*>>,
+    override fun onApplyChildren(
+            owner: Component.ContainerBuilder<*>,
+            c: BuildContext,
+            attrs: Map<String, String>?,
+            children: List<Component.Builder<*>>?,
             visibility: Int
     ) {
-        children.forEach {
-            child(it)
+        children?.forEach {
+            owner.child(it)
         }
     }
 }

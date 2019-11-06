@@ -21,22 +21,30 @@ internal object FrameFactory : WidgetFactory<Row.Builder>() {
 
     override fun onCreate(
             c: BuildContext,
-            attrs: Map<String, String>,
+            attrs: Map<String, String>?,
             visibility: Int
     ): Row.Builder {
         return Row.create(c.componentContext)
     }
 
-    override fun Row.Builder.onApplyChildren(
+    override fun onApplyChildren(
+            owner: Row.Builder,
             c: BuildContext,
-            attrs: Map<String, String>,
-            children: List<Component.Builder<*>>,
-            visibility: Int
-    ) {
+            attrs: Map<String, String>?,
+            children: List<Component.Builder<*>>?,
+            visibility: Int) {
         val context = c.componentContext
-        var width = c.tryGetValue(attrs["width"], Int::class.java, Int.MIN_VALUE)
-        var height = c.tryGetValue(attrs["height"], Int::class.java, Int.MIN_VALUE)
-        val wrappers = children.map {
+        var width = if (attrs != null) {
+            c.tryGetValue(attrs["width"], Int::class.java, Int.MIN_VALUE)
+        } else {
+            Int.MIN_VALUE
+        }
+        var height = if (attrs != null) {
+            c.tryGetValue(attrs["height"], Int::class.java, Int.MIN_VALUE)
+        } else {
+            Int.MIN_VALUE
+        }
+        val wrappers = children?.map {
             Row.create(context)
                     .positionType(YogaPositionType.ABSOLUTE)
                     .positionPx(YogaEdge.LEFT, 0)
@@ -45,8 +53,8 @@ internal object FrameFactory : WidgetFactory<Row.Builder>() {
                     .build()
         }
         if (width > 0 && height > 0) {
-            wrappers.forEach {
-                child(it)
+            wrappers?.forEach {
+                owner.child(it)
             }
         } else {
             width = width.toPx()
@@ -64,25 +72,24 @@ internal object FrameFactory : WidgetFactory<Row.Builder>() {
             //concurrent measure
             var maxWidth = 0
             var maxHeight = 0
-            if (children.isNotEmpty()) {
+            if (!children.isNullOrEmpty()) {
                 var futures: List<Future<Pair<Component, Size>>>? = null
                 if (children.size > 1) {
-                    futures = wrappers.subList(1, children.size)
-                            .map {
-                                measureThreadPool.submit<Pair<Component, Size>> {
-                                    val s = Size()
-                                    it.measure(
-                                            context,
-                                            widthSpec,
-                                            heightSpec,
-                                            s
-                                    )
-                                    it to s
-                                }
-                            }
+                    futures = wrappers!!.subList(1, children.size).map {
+                        measureThreadPool.submit<Pair<Component, Size>> {
+                            val s = Size()
+                            it.measure(
+                                    context,
+                                    widthSpec,
+                                    heightSpec,
+                                    s
+                            )
+                            it to s
+                        }
+                    }
                 }
                 val size = Size()
-                val first = wrappers.first()
+                val first = wrappers!!.first()
                 first.measure(
                         context,
                         widthSpec,
@@ -91,19 +98,19 @@ internal object FrameFactory : WidgetFactory<Row.Builder>() {
                 )
                 maxWidth = max(maxWidth, size.width)
                 maxHeight = max(maxHeight, size.height)
-                child(first)
+                owner.child(first)
                 futures?.forEach {
                     val (wrapper, s) = it.get()
                     maxWidth = max(maxWidth, s.width)
                     maxHeight = max(maxHeight, s.height)
-                    child(wrapper)
+                    owner.child(wrapper)
                 }
             }
             if (width <= 0) {
-                widthPx(maxWidth)
+                owner.widthPx(maxWidth)
             }
             if (height <= 0) {
-                heightPx(maxHeight)
+                owner.heightPx(maxHeight)
             }
         }
     }

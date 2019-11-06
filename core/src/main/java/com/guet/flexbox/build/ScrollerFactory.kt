@@ -7,7 +7,7 @@ import com.facebook.litho.widget.VerticalScroll
 internal object ScrollerFactory : WidgetFactory<Component.Builder<*>>() {
 
     init {
-        bool("scrollBarEnable") { _, it ->
+        boolAttr("scrollBarEnable") { _, it ->
             if (this is HorizontalScroll.Builder) {
                 scrollbarEnabled(it)
             } else if (this is VerticalScroll.Builder) {
@@ -18,27 +18,32 @@ internal object ScrollerFactory : WidgetFactory<Component.Builder<*>>() {
 
     override fun onCreate(
             c: BuildContext,
-            attrs: Map<String, String>,
+            attrs: Map<String, String>?,
             visibility: Int
     ): Component.Builder<*> {
-        return if (c.tryGetValue(attrs["orientation"], String::class.java, "vertical") == "horizontal") {
+        return if (attrs != null && c.tryGetValue(
+                        attrs["orientation"],
+                        String::class.java,
+                        "vertical"
+                ) == "horizontal") {
             HorizontalScroll.create(c.componentContext)
         } else {
             VerticalScroll.create(c.componentContext)
         }
     }
 
-    override fun Component.Builder<*>.onApplyChildren(
+    override fun onApplyChildren(
+            owner: Component.Builder<*>,
             c: BuildContext,
-            attrs: Map<String, String>,
-            children: List<Component.Builder<*>>,
+            attrs: Map<String, String>?,
+            children: List<Component.Builder<*>>?,
             visibility: Int
     ) {
-        if (children.isNotEmpty()) {
-            if (this is HorizontalScroll.Builder) {
-                contentProps(children.single())
-            } else if (this is VerticalScroll.Builder) {
-                childComponent(children.single())
+        if (!children.isNullOrEmpty()) {
+            if (owner is HorizontalScroll.Builder) {
+                owner.contentProps(children.single())
+            } else if (owner is VerticalScroll.Builder) {
+                owner.childComponent(children.single())
             }
         }
     }

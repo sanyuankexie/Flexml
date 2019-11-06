@@ -14,7 +14,7 @@ import java.lang.reflect.Constructor
 internal object NativeFactory : WidgetFactory<ViewCompatComponent.Builder<View>>() {
 
     init {
-        text("visibility") { display, _ ->
+        textAttr("visibility") { display, _ ->
             if (display) {
                 viewBinder(displayValues[0])
             } else {
@@ -25,17 +25,18 @@ internal object NativeFactory : WidgetFactory<ViewCompatComponent.Builder<View>>
 
     override fun onCreate(
             c: BuildContext,
-            attrs: Map<String, String>,
+            attrs: Map<String, String>?,
             visibility: Int
     ): ViewCompatComponent.Builder<View> {
-        val type = c.tryGetValue(attrs["type"], String::class.java, "")
-        if (type.isNotEmpty()) {
-            val view = ViewTypeCache[type]
-            return ViewCompatComponent.get(view, type)
-                    .create(c.componentContext)
-        } else {
-            throw IllegalArgumentException("$type is not as 'View' type")
+        if (attrs != null) {
+            val type = c.tryGetValue(attrs["type"], String::class.java, "")
+            if (type.isNotEmpty()) {
+                val view = ViewTypeCache[type]
+                return ViewCompatComponent.get(view, type)
+                        .create(c.componentContext)
+            }
         }
+        throw IllegalArgumentException("can not found View type")
     }
 
     private object ViewTypeCache : LruCache<String, ReflectViewCreator>(Int.MAX_VALUE) {

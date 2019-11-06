@@ -5,6 +5,7 @@ import android.graphics.drawable.ColorDrawable
 import android.graphics.drawable.Drawable
 import android.graphics.drawable.GradientDrawable
 import android.view.View
+import androidx.annotation.CallSuper
 import com.facebook.litho.Component
 import com.facebook.yoga.YogaAlign
 import com.facebook.yoga.YogaEdge
@@ -22,19 +23,19 @@ internal abstract class WidgetFactory<T : Component.Builder<*>> : Transform {
     private val mappings = HashMap<String, T.(BuildContext, Boolean, String) -> Unit>()
 
     init {
-        value("width") { _, it ->
+        numberAttr("width") { _, it ->
             this.widthPx(it.toPx())
         }
-        value("height") { _, it ->
+        numberAttr("height") { _, it ->
             this.heightPx(it.toPx())
         }
-        value("flexGrow") { _, it ->
+        numberAttr("flexGrow") { _, it ->
             this.flexGrow(it.toFloat())
         }
-        value("flexShrink") { _, it ->
+        numberAttr("flexShrink") { _, it ->
             this.flexShrink(it.toFloat())
         }
-        bound("alignSelf", YogaAlign.FLEX_START,
+        enumAttr("alignSelf", YogaAlign.FLEX_START,
                 mapOf(
                         "flexStart" to YogaAlign.FLEX_START,
                         "flexEnd" to YogaAlign.FLEX_END,
@@ -45,19 +46,19 @@ internal abstract class WidgetFactory<T : Component.Builder<*>> : Transform {
         ) { _, it ->
             this.alignSelf(it)
         }
-        value("margin") { _, it ->
+        numberAttr("margin") { _, it ->
             this.marginPx(YogaEdge.ALL, it.toPx())
         }
-        value("padding") { _, it ->
+        numberAttr("padding") { _, it ->
             this.paddingPx(YogaEdge.ALL, it.toPx())
         }
         val edges = arrayOf("Left", "Right", "Top", "Bottom")
         for (index in 0 until edges.size) {
             val yogaEdge = YogaEdge.valueOf(edges[index].toUpperCase())
-            value("margin" + edges[index]) { _, it ->
+            numberAttr("margin" + edges[index]) { _, it ->
                 this.marginPx(yogaEdge, it.toPx())
             }
-            value("padding" + edges[index]) { _, it ->
+            numberAttr("padding" + edges[index]) { _, it ->
                 this.paddingPx(yogaEdge, it.toPx())
             }
         }
@@ -76,24 +77,33 @@ internal abstract class WidgetFactory<T : Component.Builder<*>> : Transform {
         }
     }
 
-
     protected abstract fun onCreate(
             c: BuildContext,
-            attrs: Map<String, String>,
+            attrs: Map<String, String>?,
             visibility: Int
     ): T
 
-    protected open fun T.onApplyChildren(
+    protected open fun onApplyChildren(
+            owner: T,
             c: BuildContext,
-            attrs: Map<String, String>,
-            children: List<Component.Builder<*>>,
+            attrs: Map<String, String>?,
+            children: List<Component.Builder<*>>?,
             visibility: Int) {
     }
 
-    protected open fun T.onComplete(
+    @CallSuper
+    protected open fun onLoadStyles(
+            owner: T,
             c: BuildContext,
-            attrs: Map<String, String>,
-            visibility: Int) {
+            attrs: Map<String, String>?,
+            visibility: Int
+    ) {
+        val display = visibility == View.VISIBLE
+        if (!attrs.isNullOrEmpty()) {
+            for ((key, value) in attrs) {
+                mappings[key]?.invoke(owner, c, display, value)
+            }
+        }
     }
 
     private fun create(
@@ -101,38 +111,24 @@ internal abstract class WidgetFactory<T : Component.Builder<*>> : Transform {
             nodeInfo: NodeInfo,
             upperVisibility: Int
     ): T? {
-        val attrs = nodeInfo.attrs ?: emptyMap()
-        val childrenNodes = nodeInfo.children ?: emptyList()
-        val visibility = getOwnerVisibility(c, attrs, upperVisibility)
+        val attrs = nodeInfo.attrs
+        val childrenNodes = nodeInfo.children
+        val visibility = calculateOwnerVisibility(c, attrs, upperVisibility)
         if (visibility == View.GONE) {
             return null
         }
         val builder = onCreate(c, attrs, visibility)
-        builder.onApplyChildren(c, attrs, childrenNodes.map {
+        onApplyChildren(builder, c, attrs, childrenNodes?.map {
             c.createFromElement(it, visibility)
-        }.flatten(), visibility)
-        if (attrs.isNotEmpty()) {
-            builder.applyDefault(c, attrs, visibility)
+        }?.flatten(), visibility)
+        if (!attrs.isNullOrEmpty()) {
             builder.applyEvent(c, attrs, visibility)
             if (visibility != View.INVISIBLE) {
                 builder.applyBackground(c, attrs)
             }
         }
-        builder.onComplete(c, attrs, visibility)
+        onLoadStyles(builder, c, attrs, visibility)
         return builder
-    }
-
-    private fun T.applyDefault(
-            c: BuildContext,
-            attrs: Map<String, String>,
-            visibility: Int
-    ) {
-        val display = visibility == View.VISIBLE
-        if (!attrs.isNullOrEmpty()) {
-            for ((key, value) in attrs) {
-                mappings[key]?.invoke(this, c, display, value)
-            }
-        }
     }
 
     private fun T.applyEvent(
@@ -213,23 +209,26 @@ internal abstract class WidgetFactory<T : Component.Builder<*>> : Transform {
         ))
     }
 
-    private fun getOwnerVisibility(
+    private fun calculateOwnerVisibility(
             c: BuildContext,
-            attrs: Map<String, String>,
+            attrs: Map<String, String>?,
             upperVisibility: Int
     ): Int {
-        return if (upperVisibility == View.VISIBLE) {
-            visibilityValues[c.tryGetValue(
-                    attrs["visibility"],
-                    String::class.java,
-                    "visible"
-            )] ?: View.GONE
+        return if (upperVisibility == View.VISIBLE
+                && attrs != null) {
+            c.scope(visibilityValues) {
+                c.tryGetValue(
+                        attrs["visibility"],
+                        Int::class.java,
+                        View.GONE
+                )
+            }
         } else {
             upperVisibility
         }
     }
 
-    protected inline fun <V : Any> bound(
+    protected inline fun <V : Any> enumAttr(
             name: String,
             fallback: V,
             map: Map<String, V>,
@@ -248,7 +247,7 @@ internal abstract class WidgetFactory<T : Component.Builder<*>> : Transform {
         }
     }
 
-    protected inline fun text(
+    protected inline fun textAttr(
             name: String,
             fallback: String = "",
             crossinline action: T.(Boolean, String) -> Unit) {
@@ -257,7 +256,7 @@ internal abstract class WidgetFactory<T : Component.Builder<*>> : Transform {
         }
     }
 
-    protected inline fun bool(
+    protected inline fun boolAttr(
             name: String,
             fallback: Boolean = false,
             crossinline action: T.(Boolean, Boolean) -> Unit) {
@@ -266,7 +265,7 @@ internal abstract class WidgetFactory<T : Component.Builder<*>> : Transform {
         }
     }
 
-    protected inline fun value(
+    protected inline fun numberAttr(
             name: String, fallback: Double = 0.0,
             crossinline action: T.(Boolean, Double) -> Unit) {
         mappings[name] = { c, display, value ->
@@ -274,7 +273,7 @@ internal abstract class WidgetFactory<T : Component.Builder<*>> : Transform {
         }
     }
 
-    protected inline fun color(
+    protected inline fun colorAttr(
             name: String,
             fallback: Int = Color.TRANSPARENT,
             crossinline action: T.(Boolean, Int) -> Unit) {

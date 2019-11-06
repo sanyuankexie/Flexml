@@ -3,26 +3,26 @@
     background="WHITE"
     borderRadius="12"
     flexDirection="column"
-    width="300">
+    width="340">
     <Flex
         alignItems="center"
         marginLeft="10"
         marginTop="12"
         flexDirection="row">
         <Text
-            visibility="invisible"
             textStyle="bold"
             textSize="16"
-            text="碧蓝航线电子科大店">
+            text="碧蓝航线">
         </Text>
         <Text
+            textColor="WHITE"
             marginTop="2"
             paddingLeft="4"
             paddingRight="4"
-            background="${draw:gradient(l2r,'#EE9611','#F7C709')}"
+            background="${draw:gradient(l2r,red,'#EE9611','#F7C709')}"
             borderRadius="3"
             marginLeft="12"
-            text="外卖"
+            text="Game"
             textSize="10"/>
     </Flex>
     <Flex
@@ -76,7 +76,7 @@
         </Text>
     </Flex>
     <Flex
-        height="100"
+        height="120"
         flexGrow="1"
         marginBottom="10"
         marginLeft="7"

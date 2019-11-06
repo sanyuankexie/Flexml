@@ -11,7 +11,7 @@ import com.facebook.litho.widget.Text
 internal object TextFactory : WidgetFactory<Text.Builder>() {
 
     init {
-        bound("textAlign",
+        enumAttr("textAlign",
                 ALIGN_CENTER,
                 mapOf(
                         "center" to ALIGN_CENTER,
@@ -21,25 +21,25 @@ internal object TextFactory : WidgetFactory<Text.Builder>() {
         ) { _, it ->
             this.textAlignment(it)
         }
-        text("text") { _, it ->
+        textAttr("textAttr") { _, it ->
             this.text(it)
         }
-        bool("clipToBounds") { _, it ->
+        boolAttr("clipToBounds") { _, it ->
             this.clipToBounds(it)
         }
-        value("maxLines", Int.MAX_VALUE.toDouble()) { _, it ->
+        numberAttr("maxLines", Int.MAX_VALUE.toDouble()) { _, it ->
             this.maxLines(it.toInt())
         }
-        value("minLines", Int.MIN_VALUE.toDouble()) { _, it ->
+        numberAttr("minLines", Int.MIN_VALUE.toDouble()) { _, it ->
             this.minLines(it.toInt())
         }
-        color("textColor") { _, it ->
+        colorAttr("textColor") { _, it ->
             this.textColor(it)
         }
-        value("textSize", 13.0) { _, it ->
+        numberAttr("textSize", 13.0) { _, it ->
             this.textSizePx(it.toPx())
         }
-        bound("textStyle", Typeface.NORMAL,
+        enumAttr("textStyle", Typeface.NORMAL,
                 mapOf(
                         "normal" to Typeface.NORMAL,
                         "bold" to Typeface.BOLD
@@ -51,20 +51,22 @@ internal object TextFactory : WidgetFactory<Text.Builder>() {
 
     override fun onCreate(
             c: BuildContext,
-            attrs: Map<String, String>,
+            attrs: Map<String, String>?,
             visibility: Int
     ): Text.Builder {
         return Text.create(c.componentContext)
     }
 
-    override fun Text.Builder.onComplete(
+    override fun onLoadStyles(
+            owner: Text.Builder,
             c: BuildContext,
-            attrs: Map<String, String>,
+            attrs: Map<String, String>?,
             visibility: Int
     ) {
+        super.onLoadStyles(owner, c, attrs, visibility)
         if (visibility == View.INVISIBLE) {
-            textColor(Color.TRANSPARENT)
-            textColorStateList(invisibleColor)
+            owner.textColor(Color.TRANSPARENT)
+            owner.textColorStateList(invisibleColor)
         }
     }
 

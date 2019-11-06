@@ -6,14 +6,14 @@ import com.guet.flexbox.widget.NetworkImage
 internal object ImageFactory : WidgetFactory<NetworkImage.Builder>() {
 
     init {
-        text("url") { display, it ->
+        textAttr("url") { display, it ->
             if (display) {
                 url(it)
             } else {
                 url("")
             }
         }
-        bound("scaleType", FIT_CENTER,
+        enumAttr("scaleType", FIT_CENTER,
                 mapOf(
                         "center" to CENTER,
                         "fitCenter" to FIT_CENTER,
@@ -26,26 +26,26 @@ internal object ImageFactory : WidgetFactory<NetworkImage.Builder>() {
         ) { _, it ->
             scaleType(it)
         }
-        color("borderColor") { _, it ->
+        colorAttr("borderColor") { _, it ->
             borderColor(it)
         }
-        value("borderRadius") { _, it ->
+        numberAttr("borderRadius") { _, it ->
             borderRadius(it.toPx())
         }
-        value("borderWidth") { _, it ->
+        numberAttr("borderWidth") { _, it ->
             borderWidth(it.toPx())
         }
-        value("blurRadius") { _, it ->
+        numberAttr("blurRadius") { _, it ->
             blurRadius(it.toInt())
         }
-        value("blurSampling", 1.0) { _, it ->
+        numberAttr("blurSampling", 1.0) { _, it ->
             blurSampling(it.toInt())
         }
     }
 
     override fun onCreate(
             c: BuildContext,
-            attrs: Map<String, String>,
+            attrs: Map<String, String>?,
             visibility: Int
     ): NetworkImage.Builder {
         return NetworkImage.create(c.componentContext)
