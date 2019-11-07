@@ -148,6 +148,5 @@ class BuildContext(val componentContext: ComponentContext, data: Any?) {
                 parseColor(it)
             }.toIntArray())
         }
-
     }
 }
