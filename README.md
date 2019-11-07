@@ -13,7 +13,7 @@
 * 支持原生View复用
 ### 3 教程
 [掘金文章：Gbox完全使用指南](https://juejin.im/post/5dc2d88f6fb9a04a752b983b)
-### 获取Realse包
+### 4 获取Realse包
 Gbox使用jitpack进行构建，在你的根项目的build.gradle中添加
 ```
 	allprojects {
