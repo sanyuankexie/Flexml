@@ -11,6 +11,8 @@ import com.facebook.litho.widget.Text
 
 internal object TextFactory : WidgetFactory<Text.Builder>() {
 
+    private val invisibleColor = ColorStateList.valueOf(Color.TRANSPARENT)
+
     init {
         enumAttr("textAlign",
                 ALIGN_CENTER,
@@ -72,6 +74,7 @@ internal object TextFactory : WidgetFactory<Text.Builder>() {
             attrs: Map<String, String>?,
             visibility: Int
     ) {
+
         super.onLoadStyles(owner, c, attrs, visibility)
         if (visibility == View.INVISIBLE) {
             owner.textColor(Color.TRANSPARENT)
@@ -79,5 +82,4 @@ internal object TextFactory : WidgetFactory<Text.Builder>() {
         }
     }
 
-    private val invisibleColor = ColorStateList.valueOf(Color.TRANSPARENT)
 }
