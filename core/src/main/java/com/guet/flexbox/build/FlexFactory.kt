@@ -9,6 +9,11 @@ import com.facebook.yoga.YogaWrap.*
 
 internal object FlexFactory : WidgetFactory<Component.ContainerBuilder<*>>() {
 
+    private val flexDirections = arrayOf("row", "column", "rowReverse", "columnReverse")
+            .map {
+                it to it
+            }.toMap()
+
     init {
         enumAttr("flexWrap", NO_WRAP,
                 mapOf(
@@ -61,7 +66,9 @@ internal object FlexFactory : WidgetFactory<Component.ContainerBuilder<*>>() {
     ): Component.ContainerBuilder<*> {
         val component: Component.ContainerBuilder<*>
         val type = if (attrs != null) {
-            attrs["flexDirection"] ?: "row"
+            c.scope(flexDirections) {
+                c.tryGetValue(attrs["flexDirection"], String::class.java, "row")
+            }
         } else {
             "row"
         }
@@ -87,4 +94,5 @@ internal object FlexFactory : WidgetFactory<Component.ContainerBuilder<*>>() {
             owner.child(it)
         }
     }
+
 }

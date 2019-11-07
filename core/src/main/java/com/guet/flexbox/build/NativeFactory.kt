@@ -56,17 +56,13 @@ internal object NativeFactory : WidgetFactory<ViewCompatComponent.Builder<View>>
         }
     }
 
-    private class DisplayBinder(private val display: Boolean)
+    private class DisplayBinder(private val visibility: Int)
         : ViewBinder<View> {
 
         override fun prepare() {}
 
         override fun bind(view: View) {
-            if (display) {
-                view.visibility = View.VISIBLE
-            } else {
-                view.visibility = View.INVISIBLE
-            }
+            view.visibility = visibility
         }
 
         override fun unbind(view: View) {}
@@ -74,8 +70,8 @@ internal object NativeFactory : WidgetFactory<ViewCompatComponent.Builder<View>>
     }
 
     private val displayValues = arrayOf(
-            DisplayBinder(true),
-            DisplayBinder(false)
+            DisplayBinder(View.VISIBLE),
+            DisplayBinder(View.INVISIBLE)
     )
 
 }

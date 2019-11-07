@@ -5,6 +5,7 @@ import android.graphics.Color
 import android.graphics.Typeface
 import android.text.Layout.Alignment.ALIGN_CENTER
 import android.text.Layout.Alignment.valueOf
+import android.text.TextUtils.TruncateAt.*
 import android.view.View
 import com.facebook.litho.widget.Text
 
@@ -46,6 +47,14 @@ internal object TextFactory : WidgetFactory<Text.Builder>() {
                 )
         ) { _, it ->
             this.typeface(Typeface.defaultFromStyle(it))
+        }
+        enumAttr("ellipsize", END, mapOf(
+                "start" to START,
+                "end" to END,
+                "middle" to MIDDLE,
+                "marquee" to MARQUEE
+        )) { _, it ->
+            ellipsize(it)
         }
     }
 

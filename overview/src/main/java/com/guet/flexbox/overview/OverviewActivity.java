@@ -26,6 +26,7 @@ import com.facebook.litho.ComponentContext;
 import com.facebook.litho.ComponentTree;
 import com.facebook.litho.LithoView;
 import com.facebook.litho.widget.Text;
+import com.facebook.litho.widget.VerticalScroll;
 import com.facebook.yoga.YogaAlign;
 import com.facebook.yoga.YogaEdge;
 import com.guet.flexbox.DynamicBox;
@@ -101,25 +102,27 @@ public class OverviewActivity
             ComponentTree componentTree = mLithoView.getComponentTree();
             if (componentTree != null) {
                 componentTree.setRootAsync(
-                        Column.create(c)
-                                .widthPx(toPx(360))
-                                .alignItems(YogaAlign.CENTER)
-                                .child(DynamicBox.create(c)
-                                        .bind(mData)
-                                        .layout(mLayout)
-                                        .marginPx(YogaEdge.TOP, dp2px(20))
-                                        .eventListener(this))
-                                .child(Text.create(c)
+                        VerticalScroll.create(c)
+                                .onScrollChangeListener(this)
+                                .childComponent(Column.create(c)
                                         .widthPx(toPx(360))
-                                        .heightPx(toPx(40))
-                                        .backgroundColor(getResources()
-                                                .getColor(R.color.colorPrimary))
-                                        .textAlignment(Layout.Alignment.ALIGN_CENTER)
-                                        .text("这里是布局的下边界")
-                                        .textColor(Color.WHITE)
-                                        .textSizePx(toPx(25))
-                                        .typeface(Typeface.defaultFromStyle(Typeface.BOLD)))
-                                .build()
+                                        .alignItems(YogaAlign.CENTER)
+                                        .child(DynamicBox.create(c)
+                                                .bind(mData)
+                                                .layout(mLayout)
+                                                .marginPx(YogaEdge.TOP, dp2px(20))
+                                                .eventListener(this))
+                                        .child(Text.create(c)
+                                                .widthPx(toPx(360))
+                                                .heightPx(toPx(40))
+                                                .backgroundColor(getResources()
+                                                        .getColor(R.color.colorPrimary))
+                                                .textAlignment(Layout.Alignment.ALIGN_CENTER)
+                                                .text("这里是布局的下边界")
+                                                .textColor(Color.WHITE)
+                                                .textSizePx(toPx(25))
+                                                .typeface(Typeface.defaultFromStyle(Typeface.BOLD)))
+                                ).build()
                 );
             }
         }
