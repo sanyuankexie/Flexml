@@ -73,12 +73,12 @@ private object GsonMirror {
     }
 }
 
-internal fun <T> BuildContext.tryGetValue(expr: String?, type: Class<T>, fallback: T): T {
+internal inline fun <reified T> BuildContext.tryGetValue(expr: String?, fallback: T): T {
     if (expr == null) {
         return fallback
     }
     return try {
-        getValue(expr, type)
+        getValue(expr, T::class.java)
     } catch (e: ELException) {
         fallback
     }

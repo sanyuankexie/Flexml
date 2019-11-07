@@ -67,7 +67,7 @@ internal object FlexFactory : WidgetFactory<Component.ContainerBuilder<*>>() {
         val component: Component.ContainerBuilder<*>
         val type = if (attrs != null) {
             c.scope(flexDirections) {
-                c.tryGetValue(attrs["flexDirection"], String::class.java, "row")
+                c.tryGetValue(attrs["flexDirection"], "row")
             }
         } else {
             "row"

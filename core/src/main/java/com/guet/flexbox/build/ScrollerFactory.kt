@@ -29,7 +29,6 @@ internal object ScrollerFactory : WidgetFactory<Component.Builder<*>>() {
         return if (attrs != null && c.scope(orientations){
                     c.tryGetValue(
                             attrs["orientation"],
-                            String::class.java,
                             "vertical"
                     ) == "horizontal"
                 }) {
