@@ -4,6 +4,7 @@ import android.content.Context
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.graphics.drawable.Drawable
+import android.graphics.drawable.TransitionDrawable
 import android.text.TextUtils
 import android.view.MotionEvent
 import android.view.View
@@ -93,7 +94,7 @@ internal class NetworkMatrixDrawable(c: Context) : BorderDrawable<MatrixDrawable
             drawableWidth = resource.intrinsicWidth
             drawableHeight = resource.intrinsicHeight
         }
-        wrappedDrawable.mount(NetworkDrawable.transition(
+        wrappedDrawable.mount(transition(
                 wrappedDrawable.mountedDrawable,
                 resource
         ), matrix)
@@ -116,6 +117,17 @@ internal class NetworkMatrixDrawable(c: Context) : BorderDrawable<MatrixDrawable
                 transition: Transition<in Drawable>?
         ) {
             notifyChanged(scaleType, resource)
+        }
+    }
+
+    companion object {
+        private fun transition(current: Drawable?, next: Drawable): Drawable {
+            val transitionDrawable = TransitionDrawable(arrayOf(
+                    current ?: ColorDrawable(Color.TRANSPARENT), next
+            ))
+            transitionDrawable.isCrossFadeEnabled = true
+            transitionDrawable.startTransition(200)
+            return transitionDrawable
         }
     }
 }
