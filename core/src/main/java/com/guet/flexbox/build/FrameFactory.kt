@@ -35,22 +35,12 @@ internal object FrameFactory : WidgetFactory<Row.Builder>() {
             visibility: Int) {
         val context = c.componentContext
         var width = if (attrs != null) {
-            val raw = attrs["width"]
-            if (raw != null) {
-                c.tryGetValue(raw, Int.MIN_VALUE)
-            } else {
-                Int.MIN_VALUE
-            }
+            c.tryGetValue(attrs["width"], Int.MIN_VALUE)
         } else {
             Int.MIN_VALUE
         }
         var height = if (attrs != null) {
-            val raw = attrs["height"]
-            if (raw != null) {
-                c.tryGetValue(raw, Int.MIN_VALUE)
-            } else {
-                Int.MIN_VALUE
-            }
+            c.tryGetValue(attrs["height"], Int.MIN_VALUE)
         } else {
             Int.MIN_VALUE
         }
