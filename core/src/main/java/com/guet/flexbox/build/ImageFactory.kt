@@ -22,8 +22,9 @@ internal object ImageFactory : WidgetFactory<NetworkImage.Builder>() {
                         "fitEnd" to FIT_END,
                         "centerInside" to CENTER_INSIDE,
                         "centerCrop" to CENTER_CROP
-                )
-        ) { _, it ->
+                ),
+                FIT_XY
+                ) { _, it ->
             scaleType(it)
         }
         colorAttr("borderColor") { _, it ->

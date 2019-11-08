@@ -36,6 +36,7 @@ internal abstract class WidgetFactory<T : Component.Builder<*>> : Transform {
         }
         enumAttr("alignSelf",
                 mapOf(
+                        "auto" to YogaAlign.AUTO,
                         "flexStart" to YogaAlign.FLEX_START,
                         "flexEnd" to YogaAlign.FLEX_END,
                         "center" to YogaAlign.CENTER,

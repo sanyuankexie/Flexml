@@ -19,7 +19,8 @@ internal object TextFactory : WidgetFactory<Text.Builder>() {
                         "center" to ALIGN_CENTER,
                         "left" to valueOf("ALIGN_LEFT"),
                         "right" to valueOf("ALIGN_RIGHT")
-                )
+                ),
+                ALIGN_CENTER
         ) { _, it ->
             this.textAlignment(it)
         }
