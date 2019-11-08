@@ -232,9 +232,13 @@ internal abstract class WidgetFactory<T : Component.Builder<*>> : Transform {
             crossinline action: T.(Boolean, V) -> Unit
     ) {
         mappings[name] = { c, display, value ->
-            action(display, c.scope(scope) {
-                c.tryGetValue(value, fallback)
-            })
+            if (value.isExpr) {
+                action(display, c.scope(scope) {
+                    c.tryGetValue(value, fallback)
+                })
+            } else {
+                action(display, scope[value] ?: fallback)
+            }
         }
     }
 
@@ -244,11 +248,7 @@ internal abstract class WidgetFactory<T : Component.Builder<*>> : Transform {
             fallback: V = V::class.java.enumConstants[0],
             crossinline action: T.(Boolean, V) -> Unit
     ) {
-        mappings[name] = { c, display, value ->
-            action(display, c.scope(scope) {
-                c.tryGetValue(value, fallback)
-            })
-        }
+        scopeAttr(name, scope, fallback, action)
     }
 
     protected inline fun textAttr(
@@ -265,7 +265,15 @@ internal abstract class WidgetFactory<T : Component.Builder<*>> : Transform {
             fallback: Boolean = false,
             crossinline action: T.(Boolean, Boolean) -> Unit) {
         mappings[name] = { c, display, value ->
-            action(display, c.tryGetValue(value, fallback))
+            if (value.isExpr) {
+                action(display, c.tryGetValue(value, fallback))
+            } else {
+                action(display, try {
+                    value.toBoolean()
+                } catch (e: Exception) {
+                    fallback
+                })
+            }
         }
     }
 
@@ -282,7 +290,15 @@ internal abstract class WidgetFactory<T : Component.Builder<*>> : Transform {
             fallback: Int = Color.TRANSPARENT,
             crossinline action: T.(Boolean, Int) -> Unit) {
         mappings[name] = { c, display, value ->
-            action(display, c.tryGetColor(value, fallback))
+            if (value.isExpr) {
+                action(display, c.tryGetColor(value, fallback))
+            } else {
+                try {
+                    action(display, Color.parseColor(value))
+                } catch (e: Exception) {
+                    action(display, fallback)
+                }
+            }
         }
     }
 

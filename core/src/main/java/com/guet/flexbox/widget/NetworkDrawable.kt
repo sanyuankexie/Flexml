@@ -12,10 +12,10 @@ internal class NetworkDrawable(
     : DrawableWrapper<Drawable>(NoOpDrawable) {
 
     init {
-        Glide.with(c).load(url).into(BackgroundTarget())
+        Glide.with(c).load(url).into(SimpleTarget())
     }
 
-    internal inner class BackgroundTarget : CustomTarget<Drawable>() {
+    internal inner class SimpleTarget : CustomTarget<Drawable>() {
         override fun onLoadCleared(placeholder: Drawable?) {
             if (placeholder != null) {
                 onResourceReady(placeholder, null)

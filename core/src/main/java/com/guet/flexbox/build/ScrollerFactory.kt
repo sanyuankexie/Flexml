@@ -6,10 +6,15 @@ import com.facebook.litho.widget.VerticalScroll
 
 internal object ScrollerFactory : WidgetFactory<Component.Builder<*>>() {
 
-    private val orientations = arrayOf("vertical", "horizontal")
-            .map {
-                it to it
-            }.toMap()
+    internal enum class Orientation {
+        VERTICAL,
+        HORIZONTAL
+    }
+
+    private val orientations = mapOf(
+            "vertical" to Orientation.VERTICAL,
+            "horizontal" to Orientation.HORIZONTAL
+    )
 
     init {
         boolAttr("scrollBarEnable") { _, it ->
@@ -26,12 +31,10 @@ internal object ScrollerFactory : WidgetFactory<Component.Builder<*>>() {
             attrs: Map<String, String>?,
             visibility: Int
     ): Component.Builder<*> {
-        return if (attrs != null && c.scope(orientations){
-                    c.tryGetValue(
-                            attrs["orientation"],
-                            "vertical"
-                    ) == "horizontal"
-                }) {
+        return if (attrs != null && c.tryGetEnum(
+                        attrs["orientation"],
+                        orientations
+                ) == Orientation.HORIZONTAL) {
             HorizontalScroll.create(c.componentContext)
         } else {
             VerticalScroll.create(c.componentContext)

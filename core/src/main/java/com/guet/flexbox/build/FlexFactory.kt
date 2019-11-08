@@ -70,14 +70,11 @@ internal object FlexFactory : WidgetFactory<Component.ContainerBuilder<*>>() {
             visibility: Int
     ): Component.ContainerBuilder<*> {
         val component: Component.ContainerBuilder<*>
-        val type = if (attrs != null) {
-            c.scope(flexDirections) {
-                c.tryGetValue(attrs["flexDirection"], YogaFlexDirection.ROW)
-            }
+        when (if (attrs != null) {
+            c.tryGetEnum(attrs["flexDirection"], flexDirections, YogaFlexDirection.ROW)
         } else {
             YogaFlexDirection.ROW
-        }
-        when (type) {
+        }) {
             YogaFlexDirection.COLUMN -> {
                 component = Column.create(c.componentContext)
             }

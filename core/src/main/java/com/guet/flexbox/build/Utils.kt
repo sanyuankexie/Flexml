@@ -85,6 +85,19 @@ internal inline fun <T> BuildContext.scope(scope: Map<String, Any>, action: () -
     }
 }
 
+internal inline fun <reified T : Enum<T>> BuildContext.tryGetEnum(
+        expr: String?,
+        scope: Map<String, T>,
+        fallback: T = T::class.java.enumConstants[0]):T {
+    return when {
+        expr == null -> fallback
+        expr.isExpr -> scope(scope) {
+            tryGetValue(expr, fallback)
+        }
+        else -> scope[expr] ?: fallback
+    }
+}
+
 @ColorInt
 internal fun BuildContext.tryGetColor(expr: String?, @ColorInt fallback: Int): Int {
     if (expr == null) {
@@ -96,6 +109,9 @@ internal fun BuildContext.tryGetColor(expr: String?, @ColorInt fallback: Int): I
         fallback
     }
 }
+
+internal inline val CharSequence?.isExpr: Boolean
+    get() = this != null && length > 3 && startsWith("\${") && endsWith('}')
 
 internal fun tryToMap(o: Any): Map<String, Any> {
     return if (o is Map<*, *> && o.keys.all { it is String }) {
