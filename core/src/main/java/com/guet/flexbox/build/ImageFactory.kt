@@ -13,7 +13,7 @@ internal object ImageFactory : WidgetFactory<NetworkImage.Builder>() {
                 url("")
             }
         }
-        enumAttr("scaleType", FIT_CENTER,
+        enumAttr("scaleType",
                 mapOf(
                         "center" to CENTER,
                         "fitCenter" to FIT_CENTER,
@@ -22,28 +22,29 @@ internal object ImageFactory : WidgetFactory<NetworkImage.Builder>() {
                         "fitEnd" to FIT_END,
                         "centerInside" to CENTER_INSIDE,
                         "centerCrop" to CENTER_CROP
-                )
-        ) { _, it ->
+                ),
+                FIT_XY
+                ) { _, it ->
             scaleType(it)
         }
         colorAttr("borderColor") { _, it ->
             borderColor(it)
         }
-        numberAttr<Int>("borderRadius") { _, it ->
+        numberAttr<Double>("borderRadius") { _, it ->
             borderRadius(it.toPx())
         }
-        numberAttr<Int>("borderWidth") { _, it ->
+        numberAttr<Double>("borderWidth") { _, it ->
             borderWidth(it.toPx())
         }
-        numberAttr<Int>("blurRadius") { _, it ->
+        numberAttr<Float>("blurRadius") { _, it ->
             blurRadius(it)
         }
-        numberAttr("blurSampling", 1) { _, it ->
+        numberAttr("blurSampling", 1f) { _, it ->
             blurSampling(it)
         }
     }
 
-    override fun onCreate(
+    override fun onCreateWidget(
             c: BuildContext,
             attrs: Map<String, String>?,
             visibility: Int

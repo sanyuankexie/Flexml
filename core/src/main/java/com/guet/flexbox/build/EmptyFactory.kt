@@ -3,7 +3,7 @@ package com.guet.flexbox.build
 import com.facebook.litho.widget.EmptyComponent
 
 internal object EmptyFactory : WidgetFactory<EmptyComponent.Builder>() {
-    override fun onCreate(
+    override fun onCreateWidget(
             c: BuildContext,
             attrs: Map<String, String>?,
             visibility: Int

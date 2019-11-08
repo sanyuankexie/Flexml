@@ -32,8 +32,8 @@ internal class NetworkMatrixDrawable(c: Context) : BorderDrawable<MatrixDrawable
             radius: Int,
             width: Int,
             color: Int,
-            blurRadius: Int,
-            blurSampling: Int,
+            blurRadius: Float,
+            blurSampling: Float,
             scaleType: ScaleType
     ) {
         this.layoutHeight = layoutHeight
@@ -71,8 +71,7 @@ internal class NetworkMatrixDrawable(c: Context) : BorderDrawable<MatrixDrawable
         return wrappedDrawable.shouldHandleTouchEvent(event)
     }
 
-
-    private fun notifyChanged(
+    internal fun notifyChanged(
             scaleType: ScaleType,
             resource: Drawable
     ) {
@@ -102,7 +101,7 @@ internal class NetworkMatrixDrawable(c: Context) : BorderDrawable<MatrixDrawable
         invalidateSelf()
     }
 
-    private inner class DrawableTarget(private val scaleType: ScaleType) : CustomTarget<Drawable>() {
+    internal inner class DrawableTarget(private val scaleType: ScaleType) : CustomTarget<Drawable>() {
 
         override fun onLoadCleared(placeholder: Drawable?) {
             if (placeholder != null) {
@@ -120,8 +119,8 @@ internal class NetworkMatrixDrawable(c: Context) : BorderDrawable<MatrixDrawable
         }
     }
 
-    companion object {
-        private fun transition(current: Drawable?, next: Drawable): Drawable {
+    internal companion object {
+        internal fun transition(current: Drawable?, next: Drawable): Drawable {
             val transitionDrawable = TransitionDrawable(arrayOf(
                     current ?: ColorDrawable(Color.TRANSPARENT), next
             ))

@@ -9,18 +9,16 @@ import lite.beans.Introspector
 import java.io.*
 import java.lang.reflect.Type
 
-
-internal fun Int.toPx(): Int {
-    return (this * Resources.getSystem().displayMetrics.widthPixels / 360)
+internal fun Number.toPx(): Int {
+    return (this.toDouble() * Resources.getSystem().displayMetrics.widthPixels / 360.0).toInt()
 }
 
 private typealias FromJson<T> = (T, Type) -> Any
 
-private object GsonMirror {
-    private val calls: Map<Class<*>, FromJson<*>>
+private object GsonMirror : HashMap<Class<*>, FromJson<*>>(5) {
 
     init {
-        calls = try {
+        try {
             val gsonType = Class.forName("com.google.gson.Gson")
             val gson = gsonType.newInstance()
             val readerMethod = gsonType.getMethod(
@@ -33,7 +31,7 @@ private object GsonMirror {
                     String::class.java,
                     Type::class.java
             )
-            val map = HashMap<Class<*>, FromJson<*>>()
+            val map = this
             val inputStreamFunc: FromJson<InputStream> = { data, type ->
                 readerMethod.invoke(gson, InputStreamReader(data), type)
             }
@@ -50,21 +48,19 @@ private object GsonMirror {
             map.add<String> { data, type ->
                 stringMethod.invoke(gson, data, type)
             }
-            map
         } catch (e: Exception) {
             e.printStackTrace()
-            emptyMap()
         }
     }
 
     internal fun <T> fromJson(data: Any, type: Type): T? {
-        return calls[data::class.java]?.let {
+        return this[data::class.java]?.let {
             @Suppress("UNCHECKED_CAST")
             return@let (it as FromJson<Any>).invoke(data, type) as T
         }
     }
 
-    private inline fun <reified T> HashMap<Class<*>, FromJson<*>>.add(noinline action: FromJson<T>) {
+    private inline fun <reified T> add(noinline action: FromJson<T>) {
         this[T::class.java] = action
     }
 }
@@ -89,6 +85,19 @@ internal inline fun <T> BuildContext.scope(scope: Map<String, Any>, action: () -
     }
 }
 
+internal inline fun <reified T : Enum<T>> BuildContext.tryGetEnum(
+        expr: String?,
+        scope: Map<String, T>,
+        fallback: T = T::class.java.enumConstants[0]): T {
+    return when {
+        expr == null -> fallback
+        expr.isExpr -> scope(scope) {
+            tryGetValue(expr, fallback)
+        }
+        else -> scope[expr] ?: fallback
+    }
+}
+
 @ColorInt
 internal fun BuildContext.tryGetColor(expr: String?, @ColorInt fallback: Int): Int {
     if (expr == null) {
@@ -100,6 +109,9 @@ internal fun BuildContext.tryGetColor(expr: String?, @ColorInt fallback: Int): I
         fallback
     }
 }
+
+internal inline val CharSequence?.isExpr: Boolean
+    get() = this != null && length > 3 && startsWith("\${") && endsWith('}')
 
 internal fun tryToMap(o: Any): Map<String, Any> {
     return if (o is Map<*, *> && o.keys.all { it is String }) {
@@ -121,4 +133,17 @@ internal fun tryToMap(o: Any): Map<String, Any> {
                     }.toMap()
         }
     }
+}
+
+internal inline fun <reified N : Number> Number.smartCast(): N {
+    return when (N::class) {
+        Byte::class -> this.toByte()
+        Char::class -> this.toChar()
+        Int::class -> this.toInt()
+        Short::class -> this.toShort()
+        Long::class -> this.toLong()
+        Float::class -> this.toFloat()
+        Double::class -> this.toDouble()
+        else -> error("no match number type ${N::class.java.name}")
+    } as N
 }
