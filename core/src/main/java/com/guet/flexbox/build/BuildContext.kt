@@ -67,15 +67,6 @@ class BuildContext(val componentContext: ComponentContext, data: Any?) {
         }
     }
 
-    internal inline fun <T> scope(scope: Map<String, Any>, action: () -> T): T {
-        enterScope(scope)
-        try {
-            return action()
-        } finally {
-            exitScope()
-        }
-    }
-
     @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
     fun createLayout(root: NodeInfo): Component {
         return createFromElement(root).single().build()

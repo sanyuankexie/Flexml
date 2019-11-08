@@ -10,10 +10,6 @@ import java.io.*
 import java.lang.reflect.Type
 
 
-internal fun Double.toPx(): Int {
-    return (this * Resources.getSystem().displayMetrics.widthPixels / 360).toInt()
-}
-
 internal fun Int.toPx(): Int {
     return (this * Resources.getSystem().displayMetrics.widthPixels / 360)
 }
@@ -81,6 +77,15 @@ internal inline fun <reified T> BuildContext.tryGetValue(expr: String?, fallback
         getValue(expr, T::class.java)
     } catch (e: ELException) {
         fallback
+    }
+}
+
+internal inline fun <T> BuildContext.scope(scope: Map<String, Any>, action: () -> T): T {
+    enterScope(scope)
+    try {
+        return action()
+    } finally {
+        exitScope()
     }
 }
 
