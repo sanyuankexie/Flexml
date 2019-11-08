@@ -134,3 +134,16 @@ internal fun tryToMap(o: Any): Map<String, Any> {
         }
     }
 }
+
+internal inline fun <reified N : Number> Number.smartCast(): N {
+    return when (N::class) {
+        Byte::class -> this.toByte()
+        Char::class -> this.toChar()
+        Int::class -> this.toInt()
+        Short::class -> this.toShort()
+        Long::class -> this.toLong()
+        Float::class -> this.toFloat()
+        Double::class -> this.toDouble()
+        else -> error("no match number type ${N::class.java.name}")
+    } as N
+}

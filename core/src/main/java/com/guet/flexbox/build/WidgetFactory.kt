@@ -278,7 +278,8 @@ internal abstract class WidgetFactory<T : Component.Builder<*>> : Transform {
     }
 
     protected inline fun <reified N : Number> numberAttr(
-            name: String, fallback: N = 0 as N,
+            name: String,
+            fallback: N = 0.smartCast(),
             crossinline action: T.(Boolean, N) -> Unit) {
         mappings[name] = { c, display, value ->
             action(display, c.tryGetValue(value, fallback))
