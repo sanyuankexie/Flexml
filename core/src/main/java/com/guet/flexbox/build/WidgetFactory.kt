@@ -167,11 +167,23 @@ internal abstract class WidgetFactory<T : Component.Builder<*>> : Transform {
         }
     }
 
-    protected abstract fun calculateOwnerVisibility(
+    protected open fun calculateOwnerVisibility(
             c: BuildContext,
             attrs: Map<String, String>?,
             upperVisibility: Int
-    ): Int
+    ): Int {
+        return if (upperVisibility == View.VISIBLE
+                && attrs != null) {
+            c.scope(visibilityValues) {
+                c.tryGetValue(
+                        attrs["visibility"],
+                        View.VISIBLE
+                )
+            }
+        } else {
+            upperVisibility
+        }
+    }
 
     protected inline fun <reified V : Any> scopeAttr(
             name: String,

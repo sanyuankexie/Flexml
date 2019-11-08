@@ -62,22 +62,4 @@ internal abstract class DisplayWidgetFactory<T : Component.Builder<*>> : WidgetF
         }
         super.performLoadStyles(owner, c, attrs, visibility)
     }
-
-    final override fun calculateOwnerVisibility(
-            c: BuildContext,
-            attrs: Map<String, String>?,
-            upperVisibility: Int
-    ): Int {
-        return if (upperVisibility == View.VISIBLE
-                && attrs != null) {
-            c.scope(visibilityValues) {
-                c.tryGetValue(
-                        attrs["visibility"],
-                        View.VISIBLE
-                )
-            }
-        } else {
-            upperVisibility
-        }
-    }
 }

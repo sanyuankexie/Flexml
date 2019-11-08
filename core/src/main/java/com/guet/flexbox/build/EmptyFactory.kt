@@ -16,10 +16,11 @@ internal object EmptyFactory : WidgetFactory<EmptyComponent.Builder>() {
             c: BuildContext,
             attrs: Map<String, String>?,
             upperVisibility: Int): Int {
-        return if (upperVisibility == View.VISIBLE) {
+        val v = super.calculateOwnerVisibility(c, attrs, upperVisibility)
+        return if (v == View.VISIBLE) {
             View.INVISIBLE
         } else {
-            upperVisibility
+            v
         }
     }
 }
