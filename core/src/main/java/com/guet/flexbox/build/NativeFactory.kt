@@ -22,10 +22,10 @@ internal object NativeFactory : WidgetFactory<ViewCompatComponent.Builder<View>>
             visibility: Int
     ): ViewCompatComponent.Builder<View> {
         if (attrs != null) {
-            val type = c.tryGetValue(attrs["type"], String::class.java, "")
+            val type = c.tryGetValue(attrs["type"], "")
             if (type.isNotEmpty()) {
                 val view = ViewTypeCache[type]
-                val radius = c.tryGetValue(attrs["borderRadius"], Float::class.java, 0f)
+                val radius = c.tryGetValue(attrs["borderRadius"], 0f)
                 val va = ViewAdapter(visibility, radius)
                 return ViewCompatComponent.get(view, type)
                         .create(c.componentContext)

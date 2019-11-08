@@ -29,17 +29,17 @@ internal object ImageFactory : WidgetFactory<NetworkImage.Builder>() {
         colorAttr("borderColor") { _, it ->
             borderColor(it)
         }
-        numberAttr("borderRadius") { _, it ->
+        numberAttr<Int>("borderRadius") { _, it ->
             borderRadius(it.toPx())
         }
-        numberAttr("borderWidth") { _, it ->
+        numberAttr<Int>("borderWidth") { _, it ->
             borderWidth(it.toPx())
         }
-        numberAttr("blurRadius") { _, it ->
-            blurRadius(it.toInt())
+        numberAttr<Int>("blurRadius") { _, it ->
+            blurRadius(it)
         }
-        numberAttr("blurSampling", 1.0) { _, it ->
-            blurSampling(it.toInt())
+        numberAttr("blurSampling", 1) { _, it ->
+            blurSampling(it)
         }
     }
 
