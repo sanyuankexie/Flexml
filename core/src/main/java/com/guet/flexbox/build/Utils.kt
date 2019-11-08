@@ -9,18 +9,16 @@ import lite.beans.Introspector
 import java.io.*
 import java.lang.reflect.Type
 
-
 internal fun Int.toPx(): Int {
     return (this * Resources.getSystem().displayMetrics.widthPixels / 360)
 }
 
 private typealias FromJson<T> = (T, Type) -> Any
 
-private object GsonMirror {
-    private val calls: Map<Class<*>, FromJson<*>>
+private object GsonMirror : HashMap<Class<*>, FromJson<*>>(5) {
 
     init {
-        calls = try {
+        try {
             val gsonType = Class.forName("com.google.gson.Gson")
             val gson = gsonType.newInstance()
             val readerMethod = gsonType.getMethod(
@@ -33,7 +31,7 @@ private object GsonMirror {
                     String::class.java,
                     Type::class.java
             )
-            val map = HashMap<Class<*>, FromJson<*>>()
+            val map = this
             val inputStreamFunc: FromJson<InputStream> = { data, type ->
                 readerMethod.invoke(gson, InputStreamReader(data), type)
             }
@@ -50,21 +48,19 @@ private object GsonMirror {
             map.add<String> { data, type ->
                 stringMethod.invoke(gson, data, type)
             }
-            map
         } catch (e: Exception) {
             e.printStackTrace()
-            emptyMap()
         }
     }
 
     internal fun <T> fromJson(data: Any, type: Type): T? {
-        return calls[data::class.java]?.let {
+        return this[data::class.java]?.let {
             @Suppress("UNCHECKED_CAST")
             return@let (it as FromJson<Any>).invoke(data, type) as T
         }
     }
 
-    private inline fun <reified T> HashMap<Class<*>, FromJson<*>>.add(noinline action: FromJson<T>) {
+    private inline fun <reified T> add(noinline action: FromJson<T>) {
         this[T::class.java] = action
     }
 }

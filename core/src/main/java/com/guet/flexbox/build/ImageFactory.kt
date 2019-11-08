@@ -13,7 +13,7 @@ internal object ImageFactory : WidgetFactory<NetworkImage.Builder>() {
                 url("")
             }
         }
-        enumAttr("scaleType", FIT_CENTER,
+        enumAttr("scaleType",
                 mapOf(
                         "center" to CENTER,
                         "fitCenter" to FIT_CENTER,
@@ -43,7 +43,7 @@ internal object ImageFactory : WidgetFactory<NetworkImage.Builder>() {
         }
     }
 
-    override fun onCreate(
+    override fun onCreateWidget(
             c: BuildContext,
             attrs: Map<String, String>?,
             visibility: Int

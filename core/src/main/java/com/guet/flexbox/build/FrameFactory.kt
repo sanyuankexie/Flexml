@@ -8,18 +8,21 @@ import com.facebook.yoga.YogaEdge
 import com.facebook.yoga.YogaPositionType
 import java.util.concurrent.Executors
 import java.util.concurrent.Future
+import java.util.concurrent.ThreadFactory
 import java.util.concurrent.atomic.AtomicInteger
 import kotlin.math.max
 
-internal object FrameFactory : WidgetFactory<Row.Builder>() {
+internal object FrameFactory : WidgetFactory<Row.Builder>(), ThreadFactory {
 
-    private val count = AtomicInteger(0)
+    private val count = AtomicInteger()
 
-    private val measureThreadPool = Executors.newCachedThreadPool {
-        Thread(it, "Frame:Measure_${count.getAndIncrement()}")
+    private val measureThreadPool = Executors.newCachedThreadPool(this)
+
+    override fun newThread(r: Runnable): Thread {
+        return Thread(r, "Frame:Measure_${count.getAndIncrement()}")
     }
 
-    override fun onCreate(
+    override fun onCreateWidget(
             c: BuildContext,
             attrs: Map<String, String>?,
             visibility: Int
@@ -27,7 +30,7 @@ internal object FrameFactory : WidgetFactory<Row.Builder>() {
         return Row.create(c.componentContext)
     }
 
-    override fun onApplyChildren(
+    override fun onInstallChildren(
             owner: Row.Builder,
             c: BuildContext,
             attrs: Map<String, String>?,

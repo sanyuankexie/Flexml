@@ -97,7 +97,7 @@ internal class BlurTransformation(
         return bitmap
     }
 
-    companion object {
-        private val ID = BlurTransformation::class.java.name
+    internal companion object {
+        internal val ID = BlurTransformation::class.java.name
     }
 }

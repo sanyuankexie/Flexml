@@ -15,7 +15,7 @@ internal class NetworkDrawable(
         Glide.with(c).load(url).into(BackgroundTarget())
     }
 
-    private inner class BackgroundTarget : CustomTarget<Drawable>() {
+    internal inner class BackgroundTarget : CustomTarget<Drawable>() {
         override fun onLoadCleared(placeholder: Drawable?) {
             if (placeholder != null) {
                 onResourceReady(placeholder, null)

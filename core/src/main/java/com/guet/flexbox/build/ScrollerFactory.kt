@@ -21,7 +21,7 @@ internal object ScrollerFactory : WidgetFactory<Component.Builder<*>>() {
         }
     }
 
-    override fun onCreate(
+    override fun onCreateWidget(
             c: BuildContext,
             attrs: Map<String, String>?,
             visibility: Int
@@ -38,7 +38,7 @@ internal object ScrollerFactory : WidgetFactory<Component.Builder<*>>() {
         }
     }
 
-    override fun onApplyChildren(
+    override fun onInstallChildren(
             owner: Component.Builder<*>,
             c: BuildContext,
             attrs: Map<String, String>?,

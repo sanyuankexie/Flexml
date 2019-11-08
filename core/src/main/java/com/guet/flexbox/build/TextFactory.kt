@@ -15,7 +15,6 @@ internal object TextFactory : WidgetFactory<Text.Builder>() {
 
     init {
         enumAttr("textAlign",
-                ALIGN_CENTER,
                 mapOf(
                         "center" to ALIGN_CENTER,
                         "left" to valueOf("ALIGN_LEFT"),
@@ -30,11 +29,11 @@ internal object TextFactory : WidgetFactory<Text.Builder>() {
         boolAttr("clipToBounds") { _, it ->
             this.clipToBounds(it)
         }
-        numberAttr("maxLines", Int.MAX_VALUE.toDouble()) { _, it ->
-            this.maxLines(it.toInt())
+        numberAttr("maxLines", Int.MAX_VALUE) { _, it ->
+            this.maxLines(it)
         }
-        numberAttr("minLines", Int.MIN_VALUE.toDouble()) { _, it ->
-            this.minLines(it.toInt())
+        numberAttr("minLines", Int.MIN_VALUE) { _, it ->
+            this.minLines(it)
         }
         colorAttr("textColor") { _, it ->
             this.textColor(it)
@@ -42,25 +41,27 @@ internal object TextFactory : WidgetFactory<Text.Builder>() {
         numberAttr("textSize", 13) { _, it ->
             this.textSizePx(it.toPx())
         }
-        enumAttr("textStyle", Typeface.NORMAL,
+        scopeAttr("textStyle",
                 mapOf(
                         "normal" to Typeface.NORMAL,
                         "bold" to Typeface.BOLD
-                )
+                ),
+                Typeface.NORMAL
         ) { _, it ->
             this.typeface(Typeface.defaultFromStyle(it))
         }
-        enumAttr("ellipsize", END, mapOf(
-                "start" to START,
-                "end" to END,
-                "middle" to MIDDLE,
-                "marquee" to MARQUEE
-        )) { _, it ->
+        enumAttr("ellipsize",
+                mapOf(
+                        "start" to START,
+                        "end" to END,
+                        "middle" to MIDDLE,
+                        "marquee" to MARQUEE
+                )) { _, it ->
             ellipsize(it)
         }
     }
 
-    override fun onCreate(
+    override fun onCreateWidget(
             c: BuildContext,
             attrs: Map<String, String>?,
             visibility: Int
@@ -74,7 +75,6 @@ internal object TextFactory : WidgetFactory<Text.Builder>() {
             attrs: Map<String, String>?,
             visibility: Int
     ) {
-
         super.onLoadStyles(owner, c, attrs, visibility)
         if (visibility == View.INVISIBLE) {
             owner.textColor(Color.TRANSPARENT)

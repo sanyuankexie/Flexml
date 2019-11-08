@@ -84,15 +84,15 @@ class BuildContext(val componentContext: ComponentContext, data: Any?) {
                 )
     }
 
-    private companion object {
+    internal companion object {
 
         @Suppress("UNCHECKED_CAST")
-        private val colorMap = HashMap((Color::class.java
+        internal val colorMap = HashMap((Color::class.java
                 .getDeclaredField("sColorNameMap")
                 .apply { isAccessible = true }
                 .get(null) as Map<String, Int>))
 
-        private val functions: List<Method> = Functions::class.java.declaredMethods
+        internal val functions: List<Method> = Functions::class.java.declaredMethods
                 .filter {
                     it.modifiers.let { mod ->
                         Modifier.isPublic(mod) && Modifier.isStatic(mod)
@@ -101,7 +101,7 @@ class BuildContext(val componentContext: ComponentContext, data: Any?) {
                     it.apply { it.isAccessible = true }
                 }
 
-        private val transforms = mapOf(
+        internal val transforms = mapOf(
                 "Image" to ImageFactory,
                 "Flex" to FlexFactory,
                 "Text" to TextFactory,
@@ -115,9 +115,9 @@ class BuildContext(val componentContext: ComponentContext, data: Any?) {
 
     @Target(AnnotationTarget.FUNCTION)
     @Retention(AnnotationRetention.RUNTIME)
-    private annotation class Prefix(val value: String)
+    internal annotation class Prefix(val value: String)
 
-    private object Functions {
+    internal object Functions {
 
         @Prefix("utils")
         @JvmName("check")

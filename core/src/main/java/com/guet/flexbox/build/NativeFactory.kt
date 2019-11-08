@@ -15,8 +15,7 @@ import java.lang.reflect.Constructor
 
 internal object NativeFactory : WidgetFactory<ViewCompatComponent.Builder<View>>() {
 
-
-    override fun onCreate(
+    override fun onCreateWidget(
             c: BuildContext,
             attrs: Map<String, String>?,
             visibility: Int
@@ -35,7 +34,7 @@ internal object NativeFactory : WidgetFactory<ViewCompatComponent.Builder<View>>
         throw IllegalArgumentException("can not found View type")
     }
 
-    private object ViewTypeCache : LruCache<String, ReflectViewCreator>(Int.MAX_VALUE) {
+    internal object ViewTypeCache : LruCache<String, ReflectViewCreator>(Int.MAX_VALUE) {
         override fun create(key: String): ReflectViewCreator {
             val viewType = Class.forName(key)
             if (View::class.java.isAssignableFrom(viewType)) {
@@ -46,13 +45,13 @@ internal object NativeFactory : WidgetFactory<ViewCompatComponent.Builder<View>>
         }
     }
 
-    private class ReflectViewCreator(val constructor: Constructor<*>) : ViewCreator<View> {
+    internal class ReflectViewCreator(private val constructor: Constructor<*>) : ViewCreator<View> {
         override fun createView(c: Context, parent: ViewGroup?): View {
             return (constructor.newInstance(c) as View)
         }
     }
 
-    private class ViewAdapter(
+    internal class ViewAdapter(
             private val visibility: Int,
             private val radius: Float
     ) : ViewOutlineProvider(), ViewBinder<View> {
@@ -71,7 +70,7 @@ internal object NativeFactory : WidgetFactory<ViewCompatComponent.Builder<View>>
         }
 
         override fun unbind(view: View) {
-            view.visibility
+            view.visibility = View.GONE
             view.outlineProvider = BACKGROUND
         }
 

@@ -11,7 +11,6 @@ import com.facebook.yoga.YogaAlign
 import com.facebook.yoga.YogaEdge
 import com.guet.flexbox.DynamicBox
 import com.guet.flexbox.NodeInfo
-import com.guet.flexbox.el.ELException
 import com.guet.flexbox.widget.BorderDrawable
 import com.guet.flexbox.widget.NetworkDrawable
 import com.guet.flexbox.widget.NoOpDrawable
@@ -35,7 +34,7 @@ internal abstract class WidgetFactory<T : Component.Builder<*>> : Transform {
         numberAttr<Int>("flexShrink") { _, it ->
             this.flexShrink(it.toFloat())
         }
-        enumAttr("alignSelf", YogaAlign.FLEX_START,
+        enumAttr("alignSelf",
                 mapOf(
                         "flexStart" to YogaAlign.FLEX_START,
                         "flexEnd" to YogaAlign.FLEX_END,
@@ -77,13 +76,13 @@ internal abstract class WidgetFactory<T : Component.Builder<*>> : Transform {
         }
     }
 
-    protected abstract fun onCreate(
+    protected abstract fun onCreateWidget(
             c: BuildContext,
             attrs: Map<String, String>?,
             visibility: Int
     ): T
 
-    protected open fun onApplyChildren(
+    protected open fun onInstallChildren(
             owner: T,
             c: BuildContext,
             attrs: Map<String, String>?,
@@ -117,10 +116,7 @@ internal abstract class WidgetFactory<T : Component.Builder<*>> : Transform {
         if (visibility == View.GONE) {
             return null
         }
-        val builder = onCreate(c, attrs, visibility)
-        onApplyChildren(builder, c, attrs, childrenNodes?.map {
-            c.createFromElement(it, visibility)
-        }?.flatten(), visibility)
+        val builder = onCreateWidget(c, attrs, visibility)
         if (!attrs.isNullOrEmpty()) {
             builder.applyEvent(c, attrs, visibility)
             if (visibility != View.INVISIBLE) {
@@ -128,6 +124,9 @@ internal abstract class WidgetFactory<T : Component.Builder<*>> : Transform {
             }
         }
         onLoadStyles(builder, c, attrs, visibility)
+        onInstallChildren(builder, c, attrs, childrenNodes?.map {
+            c.createFromElement(it, visibility)
+        }?.flatten(), visibility)
         return builder
     }
 
@@ -225,22 +224,29 @@ internal abstract class WidgetFactory<T : Component.Builder<*>> : Transform {
         }
     }
 
-    protected inline fun <V : Any> enumAttr(
+    protected inline fun <reified V : Any> scopeAttr(
             name: String,
+            scope: Map<String, V>,
             fallback: V,
-            map: Map<String, V>,
             crossinline action: T.(Boolean, V) -> Unit
     ) {
         mappings[name] = { c, display, value ->
-            try {
-                var result = map[c.getValue(value, String::class.java)]
-                if (result == null) {
-                    result = fallback
-                }
-                action(display, result)
-            } catch (e: ELException) {
-                action(display, fallback)
-            }
+            action(display, c.scope(scope) {
+                c.tryGetValue(value, fallback)
+            })
+        }
+    }
+
+    protected inline fun <reified V : Enum<V>> enumAttr(
+            name: String,
+            scope: Map<String, V>,
+            fallback: V = V::class.java.enumConstants[0],
+            crossinline action: T.(Boolean, V) -> Unit
+    ) {
+        mappings[name] = { c, display, value ->
+            action(display, c.scope(scope) {
+                c.tryGetValue(value, fallback)
+            })
         }
     }
 
@@ -279,24 +285,24 @@ internal abstract class WidgetFactory<T : Component.Builder<*>> : Transform {
         }
     }
 
-    companion object {
+    internal companion object {
 
-        private val visibilityValues = mapOf(
+        @Suppress("UNCHECKED_CAST")
+        internal val colorNameMap = (Color::class.java
+                .getDeclaredField("sColorNameMap")
+                .apply { isAccessible = true }
+                .get(null) as Map<String, Int>)
+                .map {
+                    it.key to it.key
+                }.toMap()
+
+        internal val visibilityValues = mapOf(
                 "visible" to View.VISIBLE,
                 "invisible" to View.INVISIBLE,
                 "gone" to View.GONE
         )
 
-        @Suppress("UNCHECKED_CAST")
-        private val colorNameMap = (Color::class.java
-                .getDeclaredField("sColorNameMap")
-                .apply { isAccessible = true }
-                .get(null) as Map<String, Int>)
-                .map {
-                    it.key to it.key as Any
-                }.toMap()
-
-        private val orientations: Map<String, Any> = mapOf(
+        internal val orientations: Map<String, Any> = mapOf(
                 "t2b" to GradientDrawable.Orientation.TOP_BOTTOM,
                 "tr2bl" to GradientDrawable.Orientation.TR_BL,
                 "l2r" to GradientDrawable.Orientation.LEFT_RIGHT,
