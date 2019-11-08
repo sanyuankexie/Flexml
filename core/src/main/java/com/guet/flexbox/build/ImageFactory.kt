@@ -3,7 +3,7 @@ package com.guet.flexbox.build
 import android.widget.ImageView.ScaleType.*
 import com.guet.flexbox.widget.NetworkImage
 
-internal object ImageFactory : WidgetFactory<NetworkImage.Builder>() {
+internal object ImageFactory : DisplayWidgetFactory<NetworkImage.Builder>() {
 
     init {
         textAttr("url") { display, it ->

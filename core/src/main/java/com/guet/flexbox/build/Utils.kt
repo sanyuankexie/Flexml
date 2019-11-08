@@ -32,18 +32,18 @@ private object GsonMirror : HashMap<Class<*>, FromJson<*>>(5) {
                     Type::class.java
             )
             val map = this
-            val inputStreamFunc: FromJson<InputStream> = { data, type ->
+            val converter: FromJson<InputStream> = { data, type ->
                 readerMethod.invoke(gson, InputStreamReader(data), type)
             }
             map.add<Reader> { data, type ->
                 readerMethod.invoke(gson, data, type)
             }
-            map.add(inputStreamFunc)
+            map.add(converter)
             map.add<ByteArray> { data, type ->
-                inputStreamFunc(ByteArrayInputStream(data), type)
+                converter(ByteArrayInputStream(data), type)
             }
             map.add<File> { data, type ->
-                inputStreamFunc(FileInputStream(data), type)
+                converter(FileInputStream(data), type)
             }
             map.add<String> { data, type ->
                 stringMethod.invoke(gson, data, type)
@@ -65,12 +65,12 @@ private object GsonMirror : HashMap<Class<*>, FromJson<*>>(5) {
     }
 }
 
-internal inline fun <reified T> BuildContext.tryGetValue(expr: String?, fallback: T): T {
+internal inline fun <reified T:Any> BuildContext.tryGetValue(expr: String?, fallback: T): T {
     if (expr == null) {
         return fallback
     }
     return try {
-        getValue(expr, T::class.java)
+        getValue(expr)
     } catch (e: ELException) {
         fallback
     }
@@ -135,15 +135,15 @@ internal fun tryToMap(o: Any): Map<String, Any> {
     }
 }
 
-internal inline fun <reified N : Number> Number.smartCast(): N {
+internal inline fun <reified N : Number> Number.safeCast(): N {
     return when (N::class) {
-        Byte::class -> this.toByte()
-        Char::class -> this.toChar()
-        Int::class -> this.toInt()
-        Short::class -> this.toShort()
-        Long::class -> this.toLong()
-        Float::class -> this.toFloat()
-        Double::class -> this.toDouble()
+        Byte::class -> this.toByte() as N
+        Char::class -> this.toChar() as N
+        Int::class -> this.toInt() as N
+        Short::class -> this.toShort() as N
+        Long::class -> this.toLong() as N
+        Float::class -> this.toFloat() as N
+        Double::class -> this.toDouble() as N
         else -> error("no match number type ${N::class.java.name}")
-    } as N
+    }
 }

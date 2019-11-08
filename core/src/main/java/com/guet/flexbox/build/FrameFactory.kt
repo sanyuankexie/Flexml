@@ -12,7 +12,7 @@ import java.util.concurrent.ThreadFactory
 import java.util.concurrent.atomic.AtomicInteger
 import kotlin.math.max
 
-internal object FrameFactory : WidgetFactory<Row.Builder>(), ThreadFactory {
+internal object FrameFactory : DisplayWidgetFactory<Row.Builder>(), ThreadFactory {
 
     private val count = AtomicInteger()
 

@@ -1,8 +1,6 @@
 package com.guet.flexbox.build
 
 import android.graphics.Color
-import android.graphics.drawable.ColorDrawable
-import android.graphics.drawable.Drawable
 import android.graphics.drawable.GradientDrawable
 import android.view.View
 import androidx.annotation.CallSuper
@@ -11,9 +9,6 @@ import com.facebook.yoga.YogaAlign
 import com.facebook.yoga.YogaEdge
 import com.guet.flexbox.DynamicBox
 import com.guet.flexbox.NodeInfo
-import com.guet.flexbox.widget.BorderDrawable
-import com.guet.flexbox.widget.NetworkDrawable
-import com.guet.flexbox.widget.NoOpDrawable
 import java.util.*
 import kotlin.collections.HashMap
 
@@ -118,17 +113,22 @@ internal abstract class WidgetFactory<T : Component.Builder<*>> : Transform {
             return null
         }
         val builder = onCreateWidget(c, attrs, visibility)
-        if (!attrs.isNullOrEmpty()) {
-            builder.applyEvent(c, attrs, visibility)
-            if (visibility != View.INVISIBLE) {
-                builder.applyBackground(c, attrs)
-            }
-        }
-        onLoadStyles(builder, c, attrs, visibility)
+        performLoadStyles(builder, c, attrs, visibility)
         onInstallChildren(builder, c, attrs, childrenNodes?.map {
             c.createFromElement(it, visibility)
         }?.flatten(), visibility)
         return builder
+    }
+
+    protected open fun performLoadStyles(
+            owner: T,
+            c: BuildContext,
+            attrs: Map<String, String>?,
+            visibility: Int) {
+        if (!attrs.isNullOrEmpty()) {
+            owner.applyEvent(c, attrs, visibility)
+        }
+        onLoadStyles(owner, c, attrs, visibility)
     }
 
     private fun T.applyEvent(
@@ -140,12 +140,12 @@ internal abstract class WidgetFactory<T : Component.Builder<*>> : Transform {
         var clickUrlValue: String? = null
         val clickUrl = attrs["clickUrl"]
         if (clickUrl != null) {
-            clickUrlValue = c.getValue(clickUrl, String::class.java)
+            clickUrlValue = c.getValue(clickUrl)
         }
         var reportClickValue: String? = null
         val reportClick = attrs["reportClick"]
         if (reportClick != null) {
-            reportClickValue = c.getValue(reportClick, String::class.java)
+            reportClickValue = c.getValue(reportClick)
         }
         if (!clickUrlValue.isNullOrEmpty()) {
             clipChildren(false)
@@ -158,7 +158,7 @@ internal abstract class WidgetFactory<T : Component.Builder<*>> : Transform {
         var reportViewValue: String? = null
         val reportView = attrs["reportView"]
         if (reportView != null) {
-            reportViewValue = c.getValue(reportView, String::class.java)
+            reportViewValue = c.getValue(reportView)
         }
         if (!reportViewValue.isNullOrEmpty() && display) {
             visibleHandler(DynamicBox.onView(
@@ -167,63 +167,11 @@ internal abstract class WidgetFactory<T : Component.Builder<*>> : Transform {
         }
     }
 
-    private fun T.applyBackground(
-            c: BuildContext,
-            attrs: Map<String, String>) {
-        val borderRadius = c.tryGetValue(attrs["borderRadius"], 0).toPx()
-        val borderWidth = c.tryGetValue(attrs["borderWidth"], 0).toPx()
-        val borderColor = c.tryGetColor(attrs["borderColor"],
-                Color.TRANSPARENT)
-        var model: Drawable? = null
-        val backgroundValue = attrs["background"]
-        if (backgroundValue != null) {
-            try {
-                model = ColorDrawable(c.getColor(backgroundValue))
-            } catch (e: Exception) {
-                val backgroundRaw = c.scope(orientations) {
-                    c.scope(colorNameMap) {
-                        c.tryGetValue<Any>(backgroundValue, Unit)
-                    }
-                }
-                if (backgroundRaw is Drawable) {
-                    model = backgroundRaw
-                } else if (backgroundRaw is CharSequence && backgroundRaw.isNotEmpty()) {
-                    model = NetworkDrawable(
-                            c.componentContext.androidContext,
-                            backgroundRaw
-                    )
-                }
-            }
-        }
-        if (model == null) {
-            model = NoOpDrawable
-        }
-        @Suppress("DEPRECATION")
-        this.background(BorderDrawable(
-                model,
-                borderRadius,
-                borderWidth,
-                borderColor
-        ))
-    }
-
-    private fun calculateOwnerVisibility(
+    protected abstract fun calculateOwnerVisibility(
             c: BuildContext,
             attrs: Map<String, String>?,
             upperVisibility: Int
-    ): Int {
-        return if (upperVisibility == View.VISIBLE
-                && attrs != null) {
-            c.scope(visibilityValues) {
-                c.tryGetValue(
-                        attrs["visibility"],
-                        View.VISIBLE
-                )
-            }
-        } else {
-            upperVisibility
-        }
-    }
+    ): Int
 
     protected inline fun <reified V : Any> scopeAttr(
             name: String,
@@ -279,7 +227,7 @@ internal abstract class WidgetFactory<T : Component.Builder<*>> : Transform {
 
     protected inline fun <reified N : Number> numberAttr(
             name: String,
-            fallback: N = 0.smartCast(),
+            fallback: N = 0.safeCast(),
             crossinline action: T.(Boolean, N) -> Unit) {
         mappings[name] = { c, display, value ->
             action(display, c.tryGetValue(value, fallback))
@@ -309,7 +257,7 @@ internal abstract class WidgetFactory<T : Component.Builder<*>> : Transform {
         internal val colorNameMap = (Color::class.java
                 .getDeclaredField("sColorNameMap")
                 .apply { isAccessible = true }
-                .get(null) as Map<String, Int>)
+                .get(null) as Map<String, *>)
                 .map {
                     it.key to it.key
                 }.toMap()
