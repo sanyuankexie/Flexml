@@ -32,8 +32,8 @@ internal class NetworkMatrixDrawable(c: Context) : BorderDrawable<MatrixDrawable
             radius: Int,
             width: Int,
             color: Int,
-            blurRadius: Int,
-            blurSampling: Int,
+            blurRadius: Float,
+            blurSampling: Float,
             scaleType: ScaleType
     ) {
         this.layoutHeight = layoutHeight
@@ -70,7 +70,6 @@ internal class NetworkMatrixDrawable(c: Context) : BorderDrawable<MatrixDrawable
     override fun shouldHandleTouchEvent(event: MotionEvent?): Boolean {
         return wrappedDrawable.shouldHandleTouchEvent(event)
     }
-
 
     internal fun notifyChanged(
             scaleType: ScaleType,

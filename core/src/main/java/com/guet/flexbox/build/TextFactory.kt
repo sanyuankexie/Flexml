@@ -39,7 +39,7 @@ internal object TextFactory : WidgetFactory<Text.Builder>() {
         colorAttr("textColor") { _, it ->
             this.textColor(it)
         }
-        numberAttr("textSize", 13) { _, it ->
+        numberAttr("textSize", 13.0) { _, it ->
             this.textSizePx(it.toPx())
         }
         scopeAttr("textStyle",

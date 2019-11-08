@@ -9,8 +9,8 @@ import lite.beans.Introspector
 import java.io.*
 import java.lang.reflect.Type
 
-internal fun Int.toPx(): Int {
-    return (this * Resources.getSystem().displayMetrics.widthPixels / 360)
+internal fun Number.toPx(): Int {
+    return (this.toDouble() * Resources.getSystem().displayMetrics.widthPixels / 360.0).toInt()
 }
 
 private typealias FromJson<T> = (T, Type) -> Any
@@ -88,7 +88,7 @@ internal inline fun <T> BuildContext.scope(scope: Map<String, Any>, action: () -
 internal inline fun <reified T : Enum<T>> BuildContext.tryGetEnum(
         expr: String?,
         scope: Map<String, T>,
-        fallback: T = T::class.java.enumConstants[0]):T {
+        fallback: T = T::class.java.enumConstants[0]): T {
     return when {
         expr == null -> fallback
         expr.isExpr -> scope(scope) {

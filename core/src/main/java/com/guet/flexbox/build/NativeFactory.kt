@@ -1,5 +1,3 @@
-@file:Suppress("DEPRECATION")
-
 package com.guet.flexbox.build
 
 import android.content.Context
@@ -73,7 +71,5 @@ internal object NativeFactory : WidgetFactory<ViewCompatComponent.Builder<View>>
             view.visibility = View.GONE
             view.outlineProvider = BACKGROUND
         }
-
     }
-
 }

@@ -16,8 +16,8 @@ import kotlin.math.max
 
 internal class BlurTransformation(
         private val context: Context,
-        private val radius: Int,
-        private val sampling: Int
+        private val radius: Float,
+        private val sampling: Float
 ) : BitmapTransformation() {
 
     override fun transform(
@@ -25,23 +25,22 @@ internal class BlurTransformation(
             toTransform: Bitmap,
             outWidth: Int,
             outHeight: Int): Bitmap {
-        val sampling = max(this.sampling, 1)
+        val sampling = max(this.sampling, 1f)
         val width = toTransform.width
         val height = toTransform.height
-        val scaledWidth = width / sampling
-        val scaledHeight = height / sampling
-
+        val scaledWidth = (width / sampling).toInt()
+        val scaledHeight = (height / sampling).toInt()
         val bitmap = pool[
                 scaledWidth,
                 scaledHeight,
                 Bitmap.Config.ARGB_8888
         ]
         val canvas = Canvas(bitmap)
-        canvas.scale(1 / sampling.toFloat(), 1 / sampling.toFloat())
+        canvas.scale(1 / sampling, 1 / sampling)
         val paint = Paint()
         paint.flags = Paint.FILTER_BITMAP_FLAG
         canvas.drawBitmap(toTransform, 0f, 0f, paint)
-        return blur(bitmap, max(radius, 25))
+        return blur(bitmap, max(radius, 25f))
     }
 
     override fun toString(): String {
@@ -55,7 +54,7 @@ internal class BlurTransformation(
     }
 
     override fun hashCode(): Int {
-        return ID.hashCode() + radius * 1000 + sampling * 10
+        return (ID.hashCode() + radius * 1000 + sampling * 10).toInt()
     }
 
     override fun updateDiskCacheKey(messageDigest: MessageDigest) {
@@ -64,7 +63,7 @@ internal class BlurTransformation(
 
     private fun blur(
             bitmap: Bitmap,
-            radius: Int
+            radius: Float
     ): Bitmap {
         var rs: RenderScript? = null
         var input: Allocation? = null
@@ -79,7 +78,7 @@ internal class BlurTransformation(
             blur = ScriptIntrinsicBlur.create(rs, Element.U8_4(rs))
 
             blur.setInput(input)
-            blur.setRadius(radius.toFloat())
+            blur.setRadius(radius)
             blur.forEach(output)
             output.copyTo(bitmap)
         } finally {

@@ -19,20 +19,20 @@ import kotlin.collections.HashMap
 
 internal abstract class WidgetFactory<T : Component.Builder<*>> : Transform {
 
-    private val mappings = HashMap<String, T.(BuildContext, Boolean, String) -> Unit>()
+    internal val mappings = HashMap<String, T.(BuildContext, Boolean, String) -> Unit>()
 
     init {
-        numberAttr<Int>("width") { _, it ->
+        numberAttr<Double>("width") { _, it ->
             this.widthPx(it.toPx())
         }
-        numberAttr<Int>("height") { _, it ->
+        numberAttr<Double>("height") { _, it ->
             this.heightPx(it.toPx())
         }
-        numberAttr<Int>("flexGrow") { _, it ->
-            this.flexGrow(it.toFloat())
+        numberAttr<Float>("flexGrow") { _, it ->
+            this.flexGrow(it)
         }
-        numberAttr<Int>("flexShrink") { _, it ->
-            this.flexShrink(it.toFloat())
+        numberAttr<Float>("flexShrink") { _, it ->
+            this.flexShrink(it)
         }
         enumAttr("alignSelf",
                 mapOf(
@@ -46,19 +46,19 @@ internal abstract class WidgetFactory<T : Component.Builder<*>> : Transform {
         ) { _, it ->
             this.alignSelf(it)
         }
-        numberAttr<Int>("margin") { _, it ->
+        numberAttr<Double>("margin") { _, it ->
             this.marginPx(YogaEdge.ALL, it.toPx())
         }
-        numberAttr<Int>("padding") { _, it ->
+        numberAttr<Double>("padding") { _, it ->
             this.paddingPx(YogaEdge.ALL, it.toPx())
         }
         val edges = arrayOf("Left", "Right", "Top", "Bottom")
         for (index in edges.indices) {
             val yogaEdge = YogaEdge.valueOf(edges[index].toUpperCase(Locale.US))
-            numberAttr<Int>("margin" + edges[index]) { _, it ->
+            numberAttr<Double>("margin" + edges[index]) { _, it ->
                 this.marginPx(yogaEdge, it.toPx())
             }
-            numberAttr<Int>("padding" + edges[index]) { _, it ->
+            numberAttr<Double>("padding" + edges[index]) { _, it ->
                 this.paddingPx(yogaEdge, it.toPx())
             }
         }
