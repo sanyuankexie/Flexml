@@ -16,7 +16,8 @@ import com.facebook.litho.DrawableMatrix
 import com.facebook.litho.MatrixDrawable
 import com.facebook.litho.Touchable
 
-internal class NetworkMatrixDrawable(c: Context) : BorderDrawable<MatrixDrawable<Drawable>>(MatrixDrawable()), Touchable {
+internal class NetworkMatrixDrawable(c: Context)
+    : BorderDrawable<MatrixDrawable<Drawable>>(MatrixDrawable()), Touchable {
     private val c: Context = c.applicationContext
     private var layoutWidth: Int = 0
     private var layoutHeight: Int = 0
@@ -55,7 +56,11 @@ internal class NetworkMatrixDrawable(c: Context) : BorderDrawable<MatrixDrawable
                                     blurSampling
                             ))
                         }
-                    }.into(DrawableTarget(scaleType))
+                    }.into(DrawableTarget(
+                            layoutWidth - horizontalPadding,
+                            layoutHeight - verticalPadding,
+                            scaleType
+                    ))
         }
     }
 
@@ -101,7 +106,11 @@ internal class NetworkMatrixDrawable(c: Context) : BorderDrawable<MatrixDrawable
         invalidateSelf()
     }
 
-    internal inner class DrawableTarget(private val scaleType: ScaleType) : CustomTarget<Drawable>() {
+    internal inner class DrawableTarget(
+            width: Int,
+            height: Int,
+            private val scaleType: ScaleType
+    ) : CustomTarget<Drawable>(width, height) {
 
         override fun onLoadCleared(placeholder: Drawable?) {
             if (placeholder != null) {

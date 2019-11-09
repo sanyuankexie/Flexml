@@ -3,6 +3,7 @@ package com.guet.flexbox.build
 import android.graphics.Color
 import android.graphics.Color.parseColor
 import android.graphics.drawable.GradientDrawable
+import android.graphics.drawable.GradientDrawable.Orientation
 import android.view.View
 import androidx.annotation.ColorInt
 import androidx.annotation.RestrictTo
@@ -20,6 +21,7 @@ class BuildContext(val componentContext: ComponentContext, data: Any?) {
     private val el = ELProcessor()
 
     init {
+        init(componentContext.androidContext)
         if (data != null) {
             enterScope(tryToMap(data))
         }
@@ -35,7 +37,6 @@ class BuildContext(val componentContext: ComponentContext, data: Any?) {
     internal fun exitScope() {
         el.elManager.elContext.exitLambdaScope()
     }
-
 
     @Throws(ELException::class)
     fun getValue(expr: String, type: Class<*>): Any {
@@ -56,10 +57,10 @@ class BuildContext(val componentContext: ComponentContext, data: Any?) {
     @ColorInt
     @Throws(ELException::class)
     fun getColor(expr: String): Int {
-        try {
-            return parseColor(expr)
+        return try {
+            parseColor(expr)
         } catch (e: IllegalArgumentException) {
-            return scope(colorMap) {
+            scope(colorMap) {
                 val value = getValue<Any>(expr)
                 if (value is Number) {
                     value.toInt()
@@ -112,7 +113,9 @@ class BuildContext(val componentContext: ComponentContext, data: Any?) {
                 "Native" to NativeFactory,
                 "Scroller" to ScrollerFactory,
                 "Empty" to EmptyFactory,
-                "for" to ForTransform
+                "for" to ForTransform,
+                "foreach" to ForEachTransform,
+                "if" to IfTransform
         )
     }
 
@@ -137,10 +140,34 @@ class BuildContext(val componentContext: ComponentContext, data: Any?) {
         @Prefix("draw")
         @JvmName("gradient")
         @JvmStatic
-        fun gradient(orientation: GradientDrawable.Orientation, vararg colors: String): GradientDrawable {
+        fun gradient(
+                orientation: Orientation,
+                vararg colors: String
+        ): GradientDrawable {
             return GradientDrawable(orientation, colors.map {
                 parseColor(it)
             }.toIntArray())
+        }
+
+        @Prefix("dimen")
+        @JvmName("px")
+        @JvmStatic
+        fun px(value: Number): Double {
+            return value.toDouble() / metrics.widthPixels / 360.0
+        }
+
+        @Prefix("dimen")
+        @JvmName("sp")
+        @JvmStatic
+        fun sp(value: Number): Double {
+            return (px(value) * metrics.scaledDensity + 0.5f)
+        }
+
+        @Prefix("dimen")
+        @JvmName("dp")
+        @JvmStatic
+        fun dp(value: Number): Double {
+            return (px(value) * metrics.density + 0.5f)
         }
     }
 }

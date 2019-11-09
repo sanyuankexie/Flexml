@@ -4,13 +4,14 @@ import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.graphics.drawable.Drawable
 import android.view.View
+import com.bumptech.glide.request.target.Target
 import com.facebook.litho.Component
 import com.guet.flexbox.widget.BorderDrawable
 import com.guet.flexbox.widget.NetworkDrawable
 import com.guet.flexbox.widget.NoOpDrawable
 
 internal abstract class DisplayWidgetFactory<T : Component.Builder<*>> : WidgetFactory<T>() {
-    
+
     private fun T.applyBackground(
             c: BuildContext,
             attrs: Map<String, String>) {
@@ -32,7 +33,17 @@ internal abstract class DisplayWidgetFactory<T : Component.Builder<*>> : WidgetF
                 if (backgroundRaw is Drawable) {
                     model = backgroundRaw
                 } else if (backgroundRaw is CharSequence && backgroundRaw.isNotEmpty()) {
+                    var width = c.tryGetValue(attrs["width"], Target.SIZE_ORIGINAL)
+                    if (width <= 0) {
+                        width = Target.SIZE_ORIGINAL
+                    }
+                    var height = c.tryGetValue(attrs["height"], Target.SIZE_ORIGINAL)
+                    if (height <= 0) {
+                        height = Target.SIZE_ORIGINAL
+                    }
                     model = NetworkDrawable(
+                            width.toPx(),
+                            height.toPx(),
                             c.componentContext.androidContext,
                             backgroundRaw
                     )
@@ -40,7 +51,7 @@ internal abstract class DisplayWidgetFactory<T : Component.Builder<*>> : WidgetF
             }
         }
         if (model == null) {
-            model = NoOpDrawable
+            model = NoOpDrawable()
         }
         @Suppress("DEPRECATION")
         this.background(BorderDrawable(
