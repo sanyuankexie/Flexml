@@ -3,8 +3,8 @@ package com.guet.flexbox.build
 import com.facebook.litho.Component
 import com.guet.flexbox.NodeInfo
 
-internal object IfTransform : Behavior() {
-    override fun doTransform(
+internal object IfBehavior : Behavior() {
+    override fun doApply(
             c: BuildContext,
             attrs: Map<String, String>,
             children: List<NodeInfo>,

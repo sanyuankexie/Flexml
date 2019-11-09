@@ -4,8 +4,8 @@ import com.facebook.litho.Component
 import com.guet.flexbox.NodeInfo
 import java.util.*
 
-internal object ForTransform : Behavior() {
-    override fun doTransform(
+internal object ForBehavior : Behavior() {
+    override fun doApply(
             c: BuildContext,
             attrs: Map<String, String>,
             children: List<NodeInfo>,
