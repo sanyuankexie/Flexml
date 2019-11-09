@@ -34,7 +34,7 @@ internal object NativeFactory : DisplayWidgetFactory<ViewCompatComponent.Builder
         throw IllegalArgumentException("can not found View type")
     }
 
-    internal object ViewTypeCache : LruCache<String, ReflectViewCreator>(Int.MAX_VALUE) {
+    internal object ViewTypeCache : LruCache<String, ReflectViewCreator>(32) {
         override fun create(key: String): ReflectViewCreator {
             val viewType = Class.forName(key)
             if (View::class.java.isAssignableFrom(viewType)) {

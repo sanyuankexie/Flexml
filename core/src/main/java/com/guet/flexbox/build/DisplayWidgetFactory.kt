@@ -10,8 +10,7 @@ import com.guet.flexbox.widget.NetworkDrawable
 import com.guet.flexbox.widget.NoOpDrawable
 
 internal abstract class DisplayWidgetFactory<T : Component.Builder<*>> : WidgetFactory<T>() {
-
-
+    
     private fun T.applyBackground(
             c: BuildContext,
             attrs: Map<String, String>) {

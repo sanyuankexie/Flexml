@@ -47,7 +47,6 @@ internal abstract class WidgetFactory<T : Component.Builder<*>> : Transform {
         numberAttr<Double>("padding") { _, it ->
             this.paddingPx(YogaEdge.ALL, it.toPx())
         }
-        val edges = arrayOf("Left", "Right", "Top", "Bottom")
         for (index in edges.indices) {
             val yogaEdge = YogaEdge.valueOf(edges[index].toUpperCase(Locale.US))
             numberAttr<Double>("margin" + edges[index]) { _, it ->
@@ -264,6 +263,8 @@ internal abstract class WidgetFactory<T : Component.Builder<*>> : Transform {
     }
 
     internal companion object {
+
+        internal val edges = arrayOf("Left", "Right", "Top", "Bottom")
 
         @Suppress("UNCHECKED_CAST")
         internal val colorNameMap = (Color::class.java
