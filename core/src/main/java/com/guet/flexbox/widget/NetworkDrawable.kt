@@ -7,20 +7,25 @@ import com.bumptech.glide.request.target.CustomTarget
 import com.bumptech.glide.request.transition.Transition
 
 internal class NetworkDrawable(
+        width: Int,
+        height: Int,
         c: Context,
         url: CharSequence)
-    : DrawableWrapper<Drawable>(NoOpDrawable) {
+    : DrawableWrapper<Drawable>(NoOpDrawable()) {
 
     init {
-        Glide.with(c).load(url).into(SimpleTarget())
+        Glide.with(c).load(url).into(DrawableTarget(width, height))
     }
 
-    internal inner class SimpleTarget : CustomTarget<Drawable>() {
+    internal inner class DrawableTarget(
+            width: Int,
+            height: Int
+    ) : CustomTarget<Drawable>(width, height) {
         override fun onLoadCleared(placeholder: Drawable?) {
             if (placeholder != null) {
                 onResourceReady(placeholder, null)
             } else {
-                onResourceReady(NoOpDrawable, null)
+                onResourceReady(NoOpDrawable(), null)
             }
         }
 
