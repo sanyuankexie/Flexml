@@ -12,18 +12,9 @@ internal object ForTransform : Transform {
     ): List<Component.Builder<*>> {
         val attrs = nodeInfo.attrs
         if (!attrs.isNullOrEmpty()) {
-            val name = c.getValue(
-                    attrs["name"] ?: error("must has attr 'name'"),
-                    String::class.java
-            )
-            val from = c.getValue(
-                    attrs["from"] ?: error("must has attr 'from'"),
-                    Int::class.java
-            )
-            val to = c.getValue(
-                    attrs["to"] ?: error("must has attr 'to'"),
-                    Int::class.java
-            )
+            val name = c.getValue<String>(attrs["name"] ?: error("must has attr 'name'"))
+            val from = c.getValue<Int>(attrs["from"] ?: error("must has attr 'from'"))
+            val to = c.getValue<Int>(attrs["to"] ?: error("must has attr 'to'"))
             val elements = nodeInfo.children
             return if (!elements.isNullOrEmpty()) {
                 (from..to).map {

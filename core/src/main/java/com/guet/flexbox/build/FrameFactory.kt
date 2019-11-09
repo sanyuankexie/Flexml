@@ -6,17 +6,22 @@ import com.facebook.litho.Size
 import com.facebook.litho.SizeSpec
 import com.facebook.yoga.YogaEdge
 import com.facebook.yoga.YogaPositionType
-import java.util.concurrent.Executors
-import java.util.concurrent.Future
-import java.util.concurrent.ThreadFactory
+import java.util.concurrent.*
 import java.util.concurrent.atomic.AtomicInteger
 import kotlin.math.max
 
-internal object FrameFactory : WidgetFactory<Row.Builder>(), ThreadFactory {
+internal object FrameFactory : DisplayWidgetFactory<Row.Builder>(), ThreadFactory {
 
     private val count = AtomicInteger()
 
-    private val measureThreadPool = Executors.newCachedThreadPool(this)
+    private val measureThreadPool = ThreadPoolExecutor(
+            0,
+            Int.MAX_VALUE,
+            30L,
+            TimeUnit.SECONDS,
+            SynchronousQueue<Runnable>(),
+            this
+    )
 
     override fun newThread(r: Runnable): Thread {
         return Thread(r, "Frame:Measure_${count.getAndIncrement()}")

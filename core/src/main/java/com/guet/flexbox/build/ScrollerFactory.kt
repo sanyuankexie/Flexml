@@ -4,7 +4,7 @@ import com.facebook.litho.Component
 import com.facebook.litho.widget.HorizontalScroll
 import com.facebook.litho.widget.VerticalScroll
 
-internal object ScrollerFactory : WidgetFactory<Component.Builder<*>>() {
+internal object ScrollerFactory : DisplayWidgetFactory<Component.Builder<*>>() {
 
     internal enum class Orientation {
         VERTICAL,

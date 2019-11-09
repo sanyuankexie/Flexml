@@ -33,20 +33,24 @@ class BuildContext(val componentContext: ComponentContext, data: Any?) {
     }
 
     internal fun exitScope() {
-        el.elManager.elContext.exitLambdaScope();
+        el.elManager.elContext.exitLambdaScope()
     }
 
+
     @Throws(ELException::class)
-    fun <T> getValue(expr: String, type: Class<T>): T {
+    fun getValue(expr: String, type: Class<*>): Any {
         val ve = ELManager.getExpressionFactory()
                 .createValueExpression(
                         el.elManager.elContext,
                         expr,
                         type
                 )
-        val v = ve.getValue(el.elManager.elContext) ?: throw ELException()
-        @Suppress("UNCHECKED_CAST")
-        return v as T
+        return ve.getValue(el.elManager.elContext) ?: throw ELException()
+    }
+
+    @Throws(ELException::class)
+    inline fun <reified T : Any> getValue(expr: String): T {
+        return getValue(expr, T::class.java) as T
     }
 
     @ColorInt
@@ -55,9 +59,8 @@ class BuildContext(val componentContext: ComponentContext, data: Any?) {
         try {
             return parseColor(expr)
         } catch (e: IllegalArgumentException) {
-            @Suppress("UNCHECKED_CAST")
             return scope(colorMap) {
-                val value = getValue(expr, Any::class.java)
+                val value = getValue<Any>(expr)
                 if (value is Number) {
                     value.toInt()
                 } else {
@@ -92,14 +95,14 @@ class BuildContext(val componentContext: ComponentContext, data: Any?) {
                 .apply { isAccessible = true }
                 .get(null) as Map<String, Int>))
 
-        internal val functions: List<Method> = Functions::class.java.declaredMethods
+        internal val functions: Array<Method> = Functions::class.java.declaredMethods
                 .filter {
                     it.modifiers.let { mod ->
                         Modifier.isPublic(mod) && Modifier.isStatic(mod)
                     } && it.isAnnotationPresent(Prefix::class.java)
                 }.map {
                     it.apply { it.isAccessible = true }
-                }
+                }.toTypedArray()
 
         internal val transforms = mapOf(
                 "Image" to ImageFactory,

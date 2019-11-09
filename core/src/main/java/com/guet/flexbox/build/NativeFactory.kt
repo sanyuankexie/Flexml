@@ -1,3 +1,4 @@
+@file:Suppress("DEPRECATION")
 package com.guet.flexbox.build
 
 import android.content.Context
@@ -11,7 +12,8 @@ import com.facebook.litho.viewcompat.ViewBinder
 import com.facebook.litho.viewcompat.ViewCreator
 import java.lang.reflect.Constructor
 
-internal object NativeFactory : WidgetFactory<ViewCompatComponent.Builder<View>>() {
+
+internal object NativeFactory : DisplayWidgetFactory<ViewCompatComponent.Builder<View>>() {
 
     override fun onCreateWidget(
             c: BuildContext,
@@ -32,7 +34,7 @@ internal object NativeFactory : WidgetFactory<ViewCompatComponent.Builder<View>>
         throw IllegalArgumentException("can not found View type")
     }
 
-    internal object ViewTypeCache : LruCache<String, ReflectViewCreator>(Int.MAX_VALUE) {
+    internal object ViewTypeCache : LruCache<String, ReflectViewCreator>(32) {
         override fun create(key: String): ReflectViewCreator {
             val viewType = Class.forName(key)
             if (View::class.java.isAssignableFrom(viewType)) {

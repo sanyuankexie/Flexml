@@ -8,7 +8,7 @@ import com.facebook.yoga.YogaFlexDirection
 import com.facebook.yoga.YogaJustify.*
 import com.facebook.yoga.YogaWrap.*
 
-internal object FlexFactory : WidgetFactory<Component.ContainerBuilder<*>>() {
+internal object FlexFactory : DisplayWidgetFactory<Component.ContainerBuilder<*>>() {
 
     private val flexDirections = mapOf(
             "row" to YogaFlexDirection.ROW,
