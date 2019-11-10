@@ -12,7 +12,7 @@ internal object ForEachBehavior : Behavior() {
             upperVisibility: Int
     ): List<Component.Builder<*>> {
         val name = c.requestValue<String>("var", attrs)
-        val items = c.requestValue<List<*>>("items", attrs)
+        val items = c.requestValue<List<Any>>("items", attrs)
         return items.map { item ->
             c.scope(Collections.singletonMap(name, item)) {
                 children.map {
