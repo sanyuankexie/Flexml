@@ -1,7 +1,10 @@
-![](https://jitpack.io/v/LukeXeon/flexbox.svg)
-![])
+# Gbox
 ![](https://img.shields.io/badge/language-kotlin-orange)
-![](https://i(https://img.shields.io/badge/license-Apache%202.0-greenmg.shields.io/badge/platform-android-brightgreen)
+![](https://jitpack.io/v/LukeXeon/flexbox.svg)
+![](https://img.shields.io/badge/platform-android-brightgreen)
+![](https://img.shields.io/badge/doc-%E6%8E%98%E9%87%91-blue)
+![](https://img.shields.io/badge/license-Apache%202.0-green)
+![](https://img.shields.io/badge/organization-GCTA-blue)
 ### 1 适用的业务范围
 适用于要求强展示、无动画、轻交互且要求随时上线、局部动态化，同时还要兼顾性能的应用场景，这些页面由于性能问题RN和WebView显得太重，例如首页feed流卡片，一级页面的活动页等
 ### 2 特性
