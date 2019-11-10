@@ -18,20 +18,20 @@ internal abstract class DisplayWidgetFactory<T : Component.Builder<*>> : WidgetF
         val borderRadius = c.tryGetValue(attrs["borderRadius"], 0).toPx()
         val borderWidth = c.tryGetValue(attrs["borderWidth"], 0).toPx()
         val borderColor = c.tryGetColor(attrs["borderColor"], Color.TRANSPARENT)
-        var model: Drawable? = null
-        val backgroundValue = attrs["background"]
-        if (backgroundValue != null) {
+        var backgroundDrawable: Drawable? = null
+        val background = attrs["background"]
+        if (background != null) {
             try {
-                model = ColorDrawable(c.getColor(backgroundValue))
+                backgroundDrawable = ColorDrawable(c.getColor(background))
             } catch (e: Exception) {
-                val backgroundRaw = c.scope(orientations) {
+                val backgroundELResult = c.scope(orientations) {
                     c.scope(colorNameMap) {
-                        c.tryGetValue<Any>(backgroundValue, Unit)
+                        c.tryGetValue<Any>(background, Unit)
                     }
                 }
-                if (backgroundRaw is Drawable) {
-                    model = backgroundRaw
-                } else if (backgroundRaw is CharSequence && backgroundRaw.isNotEmpty()) {
+                if (backgroundELResult is Drawable) {
+                    backgroundDrawable = backgroundELResult
+                } else if (backgroundELResult is CharSequence && backgroundELResult.isNotEmpty()) {
                     var width = c.tryGetValue(attrs["width"], Target.SIZE_ORIGINAL)
                     if (width <= 0) {
                         width = Target.SIZE_ORIGINAL
@@ -40,21 +40,21 @@ internal abstract class DisplayWidgetFactory<T : Component.Builder<*>> : WidgetF
                     if (height <= 0) {
                         height = Target.SIZE_ORIGINAL
                     }
-                    model = NetworkDrawable(
+                    backgroundDrawable = NetworkDrawable(
                             width.toPx(),
                             height.toPx(),
                             c.componentContext.androidContext,
-                            backgroundRaw
+                            backgroundELResult
                     )
                 }
             }
         }
-        if (model == null) {
-            model = NoOpDrawable()
+        if (backgroundDrawable == null) {
+            backgroundDrawable = NoOpDrawable()
         }
         @Suppress("DEPRECATION")
         this.background(BorderDrawable(
-                model,
+                backgroundDrawable,
                 borderRadius,
                 borderWidth,
                 borderColor

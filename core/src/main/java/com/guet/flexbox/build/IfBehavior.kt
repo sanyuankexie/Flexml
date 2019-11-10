@@ -4,7 +4,7 @@ import com.facebook.litho.Component
 import com.guet.flexbox.NodeInfo
 
 internal object IfBehavior : Behavior() {
-    override fun doApply(
+    override fun onApply(
             c: BuildContext,
             attrs: Map<String, String>,
             children: List<NodeInfo>,

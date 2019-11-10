@@ -14,7 +14,8 @@ internal class NetworkDrawable(
     : DrawableWrapper<Drawable>(NoOpDrawable()) {
 
     init {
-        Glide.with(c).load(url).into(DrawableTarget(width, height))
+        Glide.with(c.applicationContext).load(url)
+                .into(DrawableTarget(width, height))
     }
 
     internal inner class DrawableTarget(

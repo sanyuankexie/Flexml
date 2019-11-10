@@ -5,7 +5,7 @@ import com.guet.flexbox.NodeInfo
 import java.util.*
 
 internal object ForBehavior : Behavior() {
-    override fun doApply(
+    override fun onApply(
             c: BuildContext,
             attrs: Map<String, String>,
             children: List<NodeInfo>,

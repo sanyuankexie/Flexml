@@ -16,13 +16,13 @@ internal abstract class Behavior : Transform {
             if (elements.isNullOrEmpty()) {
                 return emptyList()
             }
-            return doApply(c, attrs, elements, upperVisibility)
+            return onApply(c, attrs, elements, upperVisibility)
         } else {
             error("must has attr test")
         }
     }
 
-    protected abstract fun doApply(
+    protected abstract fun onApply(
             c: BuildContext,
             attrs: Map<String, String>,
             children: List<NodeInfo>,
