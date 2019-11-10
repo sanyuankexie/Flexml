@@ -17,8 +17,7 @@ internal abstract class DisplayWidgetFactory<T : Component.Builder<*>> : WidgetF
             attrs: Map<String, String>) {
         val borderRadius = c.tryGetValue(attrs["borderRadius"], 0).toPx()
         val borderWidth = c.tryGetValue(attrs["borderWidth"], 0).toPx()
-        val borderColor = c.tryGetColor(attrs["borderColor"],
-                Color.TRANSPARENT)
+        val borderColor = c.tryGetColor(attrs["borderColor"], Color.TRANSPARENT)
         var model: Drawable? = null
         val backgroundValue = attrs["background"]
         if (backgroundValue != null) {
@@ -62,7 +61,7 @@ internal abstract class DisplayWidgetFactory<T : Component.Builder<*>> : WidgetF
         ))
     }
 
-    override fun performLoadStyles(
+    override fun loadStyles(
             owner: T,
             c: BuildContext,
             attrs: Map<String, String>?,
@@ -70,6 +69,6 @@ internal abstract class DisplayWidgetFactory<T : Component.Builder<*>> : WidgetF
         if (!attrs.isNullOrEmpty() && visibility != View.INVISIBLE) {
             owner.applyBackground(c, attrs)
         }
-        super.performLoadStyles(owner, c, attrs, visibility)
+        super.loadStyles(owner, c, attrs, visibility)
     }
 }
