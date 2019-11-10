@@ -15,7 +15,7 @@
 * 布局自适应，布局使用的单位为pt，以设备屏幕宽度为准，1pt=设备屏幕宽度/360
 * 支持原生View复用
 ### 3 教程
-👉掘金文章：[Gbox完全使用指南](https://juejin.im/post/5dbaceb5f265da4cf677b8c5)
+掘金文章：👉[Gbox完全使用指南](https://juejin.im/post/5dbaceb5f265da4cf677b8c5)
 ### 4 从Jitpack获取
 Gbox使用jitpack进行构建，在你的根项目的build.gradle中添加
 ```
