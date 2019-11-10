@@ -8,7 +8,7 @@ import android.graphics.drawable.Drawable
 internal open class RoundedDrawable<T : Drawable>(
         drawable: T,
         var radius: Int = 0
-) : DrawableWrapper<T>(drawable), Drawable.Callback {
+) : DrawableWrapper<T>(drawable) {
 
     protected val path = Path()
     private val rectF = RectF()

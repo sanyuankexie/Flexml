@@ -13,7 +13,7 @@ import com.facebook.litho.viewcompat.ViewCreator
 import java.lang.reflect.Constructor
 
 
-internal object NativeFactory : DisplayWidgetFactory<ViewCompatComponent.Builder<View>>() {
+internal object NativeFactory : WidgetFactory<ViewCompatComponent.Builder<View>>() {
 
     override fun onCreateWidget(
             c: BuildContext,

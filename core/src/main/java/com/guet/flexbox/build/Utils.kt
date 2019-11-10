@@ -33,8 +33,8 @@ private object Callbacks : AtomicBoolean(false), ComponentCallbacks {
     }
 }
 
-internal fun Number.toPx(): Int {
-    return (this.toDouble() * metrics.widthPixels / 360.0).toInt()
+internal inline fun <reified T : Number> T.toPx(): Int {
+    return (this.toFloat() * metrics.widthPixels / 360f).toInt()
 }
 
 internal inline fun <reified T : Any> BuildContext.tryGetValue(expr: String?, fallback: T): T {
@@ -104,9 +104,11 @@ private fun Number.safeCast(type: KClass<*>): Any {
 
 private typealias FromJson<T> = (T, Type) -> Any
 
+private typealias TypeMatcher = HashMap<Class<*>, FromJson<*>>
+
 private object GsonMirror {
 
-    private val map = HashMap<Class<*>, FromJson<*>>(5)
+    private val map = TypeMatcher(5)
 
     init {
         try {
@@ -143,14 +145,14 @@ private object GsonMirror {
         }
     }
 
-    internal fun <T> fromJson(data: Any, type: Type): T? {
-        return map[data::class.java]?.let {
+    internal inline fun <reified T> fromJson(data: Any): T? {
+        return map[T::class.java]?.let {
             @Suppress("UNCHECKED_CAST")
-            return@let (it as FromJson<Any>).invoke(data, type) as T
-        }
+            (it as FromJson<Any>).invoke(data, T::class.java)
+        } as? T
     }
 
-    private inline fun <reified T> HashMap<Class<*>, FromJson<*>>.add(noinline action: FromJson<T>) {
+    private inline fun <reified T> TypeMatcher.add(noinline action: FromJson<T>) {
         this[T::class.java] = action
     }
 }
@@ -161,7 +163,7 @@ internal fun tryToMap(o: Any): Map<String, Any> {
         return o as Map<String, Any>
     } else {
         @Suppress("UNCHECKED_CAST")
-        GsonMirror.fromJson(o, Map::class.java) ?: if (o.javaClass.declaredMethods.isEmpty()) {
+        GsonMirror.fromJson(o) ?: if (o.javaClass.declaredMethods.isEmpty()) {
             o.javaClass.declaredFields.map {
                 it.name to it[o]
             }.toMap()

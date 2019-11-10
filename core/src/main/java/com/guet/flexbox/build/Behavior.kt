@@ -9,7 +9,7 @@ internal abstract class Behavior : Transform {
             c: BuildContext,
             nodeInfo: NodeInfo,
             upperVisibility: Int
-    ): List<Component.Builder<*>> {
+    ): List<Component> {
         val attrs = nodeInfo.attrs
         val elements = nodeInfo.children
         if (!attrs.isNullOrEmpty()) {
@@ -27,7 +27,7 @@ internal abstract class Behavior : Transform {
             attrs: Map<String, String>,
             children: List<NodeInfo>,
             upperVisibility: Int
-    ): List<Component.Builder<*>>
+    ): List<Component>
 
     protected inline fun <reified T : Any> BuildContext.requestValue(
             name: String,

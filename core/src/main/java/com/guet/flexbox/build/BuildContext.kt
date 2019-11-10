@@ -73,19 +73,18 @@ class BuildContext(val componentContext: ComponentContext, data: Any?) {
 
     @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
     fun createLayout(root: NodeInfo): Component {
-        return createFromElement(root).single().build()
+        return createFromElement(root).single()
     }
 
     internal fun createFromElement(
             element: NodeInfo,
             upperVisibility: Int = View.VISIBLE
-    ): List<Component.Builder<*>> {
-        return transforms.getValue(element.type)
-                .transform(
-                        this,
-                        element,
-                        upperVisibility
-                )
+    ): List<Component> {
+        return transforms[element.type]?.transform(
+                this,
+                element,
+                upperVisibility
+        ) ?: emptyList()
     }
 
     internal companion object {

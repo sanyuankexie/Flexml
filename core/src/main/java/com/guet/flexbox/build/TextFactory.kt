@@ -9,7 +9,7 @@ import android.text.TextUtils.TruncateAt.*
 import android.view.View
 import com.facebook.litho.widget.Text
 
-internal object TextFactory : DisplayWidgetFactory<Text.Builder>() {
+internal object TextFactory : WidgetFactory<Text.Builder>() {
 
     private val invisibleColor = ColorStateList.valueOf(Color.TRANSPARENT)
 

@@ -10,7 +10,7 @@ internal object ForBehavior : Behavior() {
             attrs: Map<String, String>,
             children: List<NodeInfo>,
             upperVisibility: Int
-    ): List<Component.Builder<*>> {
+    ): List<Component> {
         val name = c.requestValue<String>("var", attrs)
         val from = c.requestValue<Int>("from", attrs)
         val to = c.requestValue<Int>("to", attrs)
