@@ -113,9 +113,9 @@ class BuildContext(val componentContext: ComponentContext, data: Any?) {
                 "Native" to NativeFactory,
                 "Scroller" to ScrollerFactory,
                 "Empty" to EmptyFactory,
-                "for" to ForTransform,
-                "foreach" to ForEachTransform,
-                "if" to IfTransform
+                "for" to ForBehavior,
+                "foreach" to ForEachBehavior,
+                "if" to IfBehavior
         )
     }
 

@@ -112,14 +112,15 @@ internal abstract class WidgetFactory<T : Component.Builder<*>> : Transform {
             return null
         }
         val builder = onCreateWidget(c, attrs, visibility)
-        performLoadStyles(builder, c, attrs, visibility)
+        loadStyles(builder, c, attrs, visibility)
         onInstallChildren(builder, c, attrs, childrenNodes?.map {
             c.createFromElement(it, visibility)
         }?.flatten(), visibility)
         return builder
     }
 
-    protected open fun performLoadStyles(
+    @CallSuper
+    protected open fun loadStyles(
             owner: T,
             c: BuildContext,
             attrs: Map<String, String>?,

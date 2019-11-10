@@ -13,11 +13,10 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.request.target.CustomTarget
 import com.bumptech.glide.request.transition.Transition
 import com.facebook.litho.DrawableMatrix
-import com.facebook.litho.MatrixDrawable
 import com.facebook.litho.Touchable
 
 internal class NetworkMatrixDrawable(c: Context)
-    : BorderDrawable<MatrixDrawable<Drawable>>(MatrixDrawable()), Touchable {
+    : BorderDrawable<MatrixDrawable>(MatrixDrawable()), Touchable {
     private val c: Context = c.applicationContext
     private var layoutWidth: Int = 0
     private var layoutHeight: Int = 0
@@ -98,12 +97,12 @@ internal class NetworkMatrixDrawable(c: Context)
             drawableWidth = resource.intrinsicWidth
             drawableHeight = resource.intrinsicHeight
         }
-        wrappedDrawable.mount(transition(
-                wrappedDrawable.mountedDrawable,
-                resource
-        ), matrix)
-        wrappedDrawable.bind(drawableWidth, drawableHeight)
-        invalidateSelf()
+        wrappedDrawable.mount(
+                transition(wrappedDrawable.mountedDrawable, resource),
+                matrix,
+                drawableWidth,
+                drawableHeight
+        )
     }
 
     internal inner class DrawableTarget(
