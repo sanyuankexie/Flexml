@@ -109,7 +109,6 @@
             marginRight="3"
             flexGrow="1">
             <Image
-
                 borderRadius="4"
                 scaleType="fitXY"
                 flexGrow="1"
@@ -129,8 +128,8 @@
             marginRight="3"
             flexGrow="1">
             <Image
-                blurSampling="3"
-                blurRadius="25"
+                blurSampling="1"
+                blurRadius="10"
                 borderRadius="4"
                 scaleType="fitXY"
                 flexGrow="1"

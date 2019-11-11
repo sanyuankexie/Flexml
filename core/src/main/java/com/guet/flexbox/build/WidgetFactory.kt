@@ -249,19 +249,23 @@ internal abstract class WidgetFactory<T : Component.Builder<*>> : Transform {
         scopeAttr(name, scope, fallback, action)
     }
 
+    protected fun Int.hasFlags(bitCount: Int): Boolean {
+        return this and 1.shl(bitCount) != 0
+    }
+
     protected inline fun flagsAttr(
             name: String,
             scope: Map<String, Int>,
             fallback: Int = 0,
-            crossinline action: T.(Boolean, BitSet) -> Unit) {
+            crossinline action: T.(Boolean, Int) -> Unit) {
         mappings[name] = { c, display, value ->
-            action(display, BitSet(c.scope(scope) {
+            action(display, c.scope(scope) {
                 c.tryGetValue(if (value.isExpr) {
                     value
                 } else {
                     "\${$value}"
                 }, fallback)
-            }))
+            })
         }
     }
 

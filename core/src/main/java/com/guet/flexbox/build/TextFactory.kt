@@ -26,22 +26,22 @@ internal object TextFactory : WidgetFactory<Text.Builder>() {
                 )
         ) { _, set ->
             when {
-                set[1] -> {
+                set.hasFlags(1) -> {
                     textAlignment(Alignment.ALIGN_CENTER)
                 }
-                set[2] -> {
+                set.hasFlags(2) -> {
                     textAlignment(Alignment.valueOf("ALIGN_LEFT"))
                 }
-                set[3] -> {
+                set.hasFlags(3) -> {
                     textAlignment(Alignment.valueOf("ALIGN_RIGHT"))
                 }
-                set[4] -> {
+                set.hasFlags(4) -> {
                     verticalGravity(VerticalGravity.CENTER)
                 }
-                set[5] -> {
+                set.hasFlags(5) -> {
                     verticalGravity(VerticalGravity.TOP)
                 }
-                set[6] -> {
+                set.hasFlags(6) -> {
                     verticalGravity(VerticalGravity.BOTTOM)
                 }
             }
