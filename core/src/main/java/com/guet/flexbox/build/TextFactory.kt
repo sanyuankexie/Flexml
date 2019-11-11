@@ -16,13 +16,13 @@ internal object TextFactory : WidgetFactory<Text.Builder>() {
     init {
         flagsAttr("textAlign",
                 mapOf(
-                        "centerHorizontal" to 1.shl(1),
-                        "left" to 1.shl(2),
-                        "right" to 1.shl(3),
-                        "centerVertical" to 1.shl(4),
-                        "top" to 1.shl(5),
-                        "bottom" to 1.shl(6),
-                        "center" to (1.shl(1) or 1.shl(4))
+                        "centerHorizontal" to makeFlags(1),
+                        "left" to makeFlags(2),
+                        "right" to makeFlags(3),
+                        "centerVertical" to makeFlags(4),
+                        "top" to makeFlags(5),
+                        "bottom" to makeFlags(6),
+                        "center" to makeFlags(1, 4)
                 )
         ) { _, set ->
             when {

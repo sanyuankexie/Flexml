@@ -249,10 +249,6 @@ internal abstract class WidgetFactory<T : Component.Builder<*>> : Transform {
         scopeAttr(name, scope, fallback, action)
     }
 
-    protected fun Int.hasFlags(bitCount: Int): Boolean {
-        return this and 1.shl(bitCount) != 0
-    }
-
     protected inline fun flagsAttr(
             name: String,
             scope: Map<String, Int>,
