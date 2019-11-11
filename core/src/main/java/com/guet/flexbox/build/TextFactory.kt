@@ -3,26 +3,48 @@ package com.guet.flexbox.build
 import android.content.res.ColorStateList
 import android.graphics.Color
 import android.graphics.Typeface
-import android.text.Layout.Alignment.ALIGN_CENTER
-import android.text.Layout.Alignment.valueOf
+import android.text.Layout.Alignment
 import android.text.TextUtils.TruncateAt.*
 import android.view.View
 import com.facebook.litho.widget.Text
+import com.facebook.litho.widget.VerticalGravity
 
-internal object TextFactory : DisplayWidgetFactory<Text.Builder>() {
+internal object TextFactory : WidgetFactory<Text.Builder>() {
 
     private val invisibleColor = ColorStateList.valueOf(Color.TRANSPARENT)
 
     init {
-        enumAttr("textAlign",
+        flagsAttr("textAlign",
                 mapOf(
-                        "center" to ALIGN_CENTER,
-                        "left" to valueOf("ALIGN_LEFT"),
-                        "right" to valueOf("ALIGN_RIGHT")
-                ),
-                ALIGN_CENTER
-        ) { _, it ->
-            this.textAlignment(it)
+                        "centerHorizontal" to makeFlags(1),
+                        "left" to makeFlags(2),
+                        "right" to makeFlags(3),
+                        "centerVertical" to makeFlags(4),
+                        "top" to makeFlags(5),
+                        "bottom" to makeFlags(6),
+                        "center" to makeFlags(1, 4)
+                )
+        ) { _, set ->
+            when {
+                set.hasFlags(1) -> {
+                    textAlignment(Alignment.ALIGN_CENTER)
+                }
+                set.hasFlags(2) -> {
+                    textAlignment(Alignment.valueOf("ALIGN_LEFT"))
+                }
+                set.hasFlags(3) -> {
+                    textAlignment(Alignment.valueOf("ALIGN_RIGHT"))
+                }
+                set.hasFlags(4) -> {
+                    verticalGravity(VerticalGravity.CENTER)
+                }
+                set.hasFlags(5) -> {
+                    verticalGravity(VerticalGravity.TOP)
+                }
+                set.hasFlags(6) -> {
+                    verticalGravity(VerticalGravity.BOTTOM)
+                }
+            }
         }
         textAttr("text") { _, it ->
             this.text(it)

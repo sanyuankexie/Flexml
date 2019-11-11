@@ -9,7 +9,7 @@ internal object IfBehavior : Behavior() {
             attrs: Map<String, String>,
             children: List<NodeInfo>,
             upperVisibility: Int
-    ): List<Component.Builder<*>> {
+    ): List<Component> {
         return if (c.requestValue("test", attrs)) {
             return children.map {
                 c.createFromElement(it, upperVisibility)

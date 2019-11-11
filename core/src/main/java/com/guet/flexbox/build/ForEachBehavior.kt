@@ -10,7 +10,7 @@ internal object ForEachBehavior : Behavior() {
             attrs: Map<String, String>,
             children: List<NodeInfo>,
             upperVisibility: Int
-    ): List<Component.Builder<*>> {
+    ): List<Component> {
         val name = c.requestValue<String>("var", attrs)
         val items = c.requestValue<List<Any>>("items", attrs)
         return items.map { item ->

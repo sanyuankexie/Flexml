@@ -8,5 +8,5 @@ internal interface Transform {
             c: BuildContext,
             nodeInfo: NodeInfo,
             upperVisibility: Int
-    ): List<Component.Builder<*>>
+    ): List<Component>
 }

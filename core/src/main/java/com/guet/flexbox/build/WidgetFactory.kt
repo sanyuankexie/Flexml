@@ -1,14 +1,20 @@
 package com.guet.flexbox.build
 
 import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
+import android.graphics.drawable.Drawable
 import android.graphics.drawable.GradientDrawable
 import android.view.View
 import androidx.annotation.CallSuper
+import com.bumptech.glide.request.target.Target
 import com.facebook.litho.Component
 import com.facebook.yoga.YogaAlign
 import com.facebook.yoga.YogaEdge
 import com.guet.flexbox.DynamicBox
 import com.guet.flexbox.NodeInfo
+import com.guet.flexbox.widget.BorderDrawable
+import com.guet.flexbox.widget.NetworkDrawable
+import com.guet.flexbox.widget.NoOpDrawable
 import java.util.*
 import kotlin.collections.HashMap
 
@@ -62,10 +68,10 @@ internal abstract class WidgetFactory<T : Component.Builder<*>> : Transform {
             c: BuildContext,
             nodeInfo: NodeInfo,
             upperVisibility: Int
-    ): List<Component.Builder<*>> {
+    ): List<Component> {
         val value = create(c, nodeInfo, upperVisibility)
         return if (value != null) {
-            Collections.singletonList<T>(value)
+            Collections.singletonList(value)
         } else {
             emptyList()
         }
@@ -81,7 +87,7 @@ internal abstract class WidgetFactory<T : Component.Builder<*>> : Transform {
             owner: T,
             c: BuildContext,
             attrs: Map<String, String>?,
-            children: List<Component.Builder<*>>?,
+            children: List<Component>?,
             visibility: Int) {
     }
 
@@ -92,6 +98,12 @@ internal abstract class WidgetFactory<T : Component.Builder<*>> : Transform {
             attrs: Map<String, String>?,
             visibility: Int
     ) {
+        if (!attrs.isNullOrEmpty()) {
+            owner.applyEvent(c, attrs, visibility)
+            if (visibility == View.VISIBLE) {
+                owner.applyBackground(c, attrs)
+            }
+        }
         val display = visibility == View.VISIBLE
         if (!attrs.isNullOrEmpty()) {
             for ((key, value) in attrs) {
@@ -104,7 +116,7 @@ internal abstract class WidgetFactory<T : Component.Builder<*>> : Transform {
             c: BuildContext,
             nodeInfo: NodeInfo,
             upperVisibility: Int
-    ): T? {
+    ): Component? {
         val attrs = nodeInfo.attrs
         val childrenNodes = nodeInfo.children
         val visibility = calculateOwnerVisibility(c, attrs, upperVisibility)
@@ -112,23 +124,61 @@ internal abstract class WidgetFactory<T : Component.Builder<*>> : Transform {
             return null
         }
         val builder = onCreateWidget(c, attrs, visibility)
-        loadStyles(builder, c, attrs, visibility)
+        onLoadStyles(builder, c, attrs, visibility)
         onInstallChildren(builder, c, attrs, childrenNodes?.map {
             c.createFromElement(it, visibility)
         }?.flatten(), visibility)
-        return builder
+        return builder.build()
     }
 
-    @CallSuper
-    protected open fun loadStyles(
-            owner: T,
+    private fun T.applyBackground(
             c: BuildContext,
-            attrs: Map<String, String>?,
-            visibility: Int) {
-        if (!attrs.isNullOrEmpty()) {
-            owner.applyEvent(c, attrs, visibility)
+            attrs: Map<String, String>
+    ) {
+        val borderRadius = c.tryGetValue(attrs["borderRadius"], 0).toPx()
+        val borderWidth = c.tryGetValue(attrs["borderWidth"], 0).toPx()
+        val borderColor = c.tryGetColor(attrs["borderColor"], Color.TRANSPARENT)
+        var backgroundDrawable: Drawable? = null
+        val background = attrs["background"]
+        if (background != null) {
+            try {
+                backgroundDrawable = ColorDrawable(c.getColor(background))
+            } catch (e: Exception) {
+                val backgroundELResult = c.scope(orientations) {
+                    c.scope(colorNameMap) {
+                        c.tryGetValue<Any>(background, Unit)
+                    }
+                }
+                if (backgroundELResult is Drawable) {
+                    backgroundDrawable = backgroundELResult
+                } else if (backgroundELResult is CharSequence && backgroundELResult.isNotEmpty()) {
+                    var width = c.tryGetValue(attrs["width"], Target.SIZE_ORIGINAL)
+                    if (width <= 0) {
+                        width = Target.SIZE_ORIGINAL
+                    }
+                    var height = c.tryGetValue(attrs["height"], Target.SIZE_ORIGINAL)
+                    if (height <= 0) {
+                        height = Target.SIZE_ORIGINAL
+                    }
+                    backgroundDrawable = NetworkDrawable(
+                            width.toPx(),
+                            height.toPx(),
+                            c.componentContext.androidContext,
+                            backgroundELResult
+                    )
+                }
+            }
         }
-        onLoadStyles(owner, c, attrs, visibility)
+        if (backgroundDrawable == null) {
+            backgroundDrawable = NoOpDrawable()
+        }
+        @Suppress("DEPRECATION")
+        this.background(BorderDrawable(
+                backgroundDrawable,
+                borderRadius,
+                borderWidth,
+                borderColor
+        ))
     }
 
     private fun T.applyEvent(
@@ -137,33 +187,21 @@ internal abstract class WidgetFactory<T : Component.Builder<*>> : Transform {
             visibility: Int
     ) {
         val display = visibility == View.VISIBLE
-        var clickUrlValue: String? = null
-        val clickUrl = attrs["clickUrl"]
-        if (clickUrl != null) {
-            clickUrlValue = c.getValue(clickUrl)
-        }
-        var reportClickValue: String? = null
-        val reportClick = attrs["reportClick"]
-        if (reportClick != null) {
-            reportClickValue = c.getValue(reportClick)
-        }
-        if (!clickUrlValue.isNullOrEmpty()) {
+        val clickUrl = c.tryGetValue(attrs["clickUrl"], "")
+        val reportClick = c.tryGetValue(attrs["reportClick"], "")
+        if (clickUrl.isNotEmpty()) {
             clipChildren(false)
             clickHandler(DynamicBox.onClick(
                     c.componentContext,
-                    clickUrlValue,
-                    reportClickValue
+                    clickUrl,
+                    reportClick
             ))
         }
-        var reportViewValue: String? = null
-        val reportView = attrs["reportView"]
-        if (reportView != null) {
-            reportViewValue = c.getValue(reportView)
-        }
-        if (!reportViewValue.isNullOrEmpty() && display) {
+        val reportView = c.tryGetValue(attrs["reportView"], "")
+        if (reportView.isNotEmpty() && display) {
             visibleHandler(DynamicBox.onView(
                     c.componentContext,
-                    reportClickValue))
+                    reportView))
         }
     }
 
@@ -192,13 +230,13 @@ internal abstract class WidgetFactory<T : Component.Builder<*>> : Transform {
             crossinline action: T.(Boolean, V) -> Unit
     ) {
         mappings[name] = { c, display, value ->
-            if (value.isExpr) {
-                action(display, c.scope(scope) {
+            action(display, if (value.isExpr) {
+                c.scope(scope) {
                     c.tryGetValue(value, fallback)
-                })
+                }
             } else {
-                action(display, scope[value] ?: fallback)
-            }
+                scope[value] ?: fallback
+            })
         }
     }
 
@@ -209,6 +247,22 @@ internal abstract class WidgetFactory<T : Component.Builder<*>> : Transform {
             crossinline action: T.(Boolean, V) -> Unit
     ) {
         scopeAttr(name, scope, fallback, action)
+    }
+
+    protected inline fun flagsAttr(
+            name: String,
+            scope: Map<String, Int>,
+            fallback: Int = 0,
+            crossinline action: T.(Boolean, Int) -> Unit) {
+        mappings[name] = { c, display, value ->
+            action(display, c.scope(scope) {
+                c.tryGetValue(if (value.isExpr) {
+                    value
+                } else {
+                    "\${$value}"
+                }, fallback)
+            })
+        }
     }
 
     protected inline fun textAttr(
@@ -225,15 +279,15 @@ internal abstract class WidgetFactory<T : Component.Builder<*>> : Transform {
             fallback: Boolean = false,
             crossinline action: T.(Boolean, Boolean) -> Unit) {
         mappings[name] = { c, display, value ->
-            if (value.isExpr) {
-                action(display, c.tryGetValue(value, fallback))
+            action(display, if (value.isExpr) {
+                c.tryGetValue(value, fallback)
             } else {
-                action(display, try {
+                try {
                     value.toBoolean()
                 } catch (e: Exception) {
                     fallback
-                })
-            }
+                }
+            })
         }
     }
 
@@ -251,15 +305,15 @@ internal abstract class WidgetFactory<T : Component.Builder<*>> : Transform {
             fallback: Int = Color.TRANSPARENT,
             crossinline action: T.(Boolean, Int) -> Unit) {
         mappings[name] = { c, display, value ->
-            if (value.isExpr) {
-                action(display, c.tryGetColor(value, fallback))
+            action(display, if (value.isExpr) {
+                c.tryGetColor(value, fallback)
             } else {
                 try {
-                    action(display, Color.parseColor(value))
+                    Color.parseColor(value)
                 } catch (e: Exception) {
-                    action(display, fallback)
+                    fallback
                 }
-            }
+            })
         }
     }
 
@@ -272,9 +326,7 @@ internal abstract class WidgetFactory<T : Component.Builder<*>> : Transform {
                 .getDeclaredField("sColorNameMap")
                 .apply { isAccessible = true }
                 .get(null) as Map<String, *>)
-                .map {
-                    it.key to it.key
-                }.toMap()
+                .map { it.key to it.key }.toMap()
 
         internal val visibilityValues = mapOf(
                 "visible" to View.VISIBLE,

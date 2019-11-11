@@ -8,7 +8,7 @@ import com.facebook.yoga.YogaFlexDirection
 import com.facebook.yoga.YogaJustify.*
 import com.facebook.yoga.YogaWrap.*
 
-internal object FlexFactory : DisplayWidgetFactory<Component.ContainerBuilder<*>>() {
+internal object FlexFactory : WidgetFactory<Component.ContainerBuilder<*>>() {
 
     private val flexDirections = mapOf(
             "row" to YogaFlexDirection.ROW,
@@ -100,7 +100,7 @@ internal object FlexFactory : DisplayWidgetFactory<Component.ContainerBuilder<*>
             owner: Component.ContainerBuilder<*>,
             c: BuildContext,
             attrs: Map<String, String>?,
-            children: List<Component.Builder<*>>?,
+            children: List<Component>?,
             visibility: Int
     ) {
         children?.forEach {

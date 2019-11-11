@@ -4,7 +4,7 @@ import com.facebook.litho.Component
 import com.facebook.litho.widget.HorizontalScroll
 import com.facebook.litho.widget.VerticalScroll
 
-internal object ScrollerFactory : DisplayWidgetFactory<Component.Builder<*>>() {
+internal object ScrollerFactory : WidgetFactory<Component.Builder<*>>() {
 
     internal enum class Orientation {
         VERTICAL,
@@ -45,7 +45,7 @@ internal object ScrollerFactory : DisplayWidgetFactory<Component.Builder<*>>() {
             owner: Component.Builder<*>,
             c: BuildContext,
             attrs: Map<String, String>?,
-            children: List<Component.Builder<*>>?,
+            children: List<Component>?,
             visibility: Int
     ) {
         if (!children.isNullOrEmpty()) {

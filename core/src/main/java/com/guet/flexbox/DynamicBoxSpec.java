@@ -1,6 +1,7 @@
 package com.guet.flexbox;
 
 
+import android.text.TextUtils;
 import android.view.View;
 
 import com.facebook.litho.ClickEvent;
@@ -29,7 +30,7 @@ final class DynamicBoxSpec {
     static void onView(ComponentContext c,
                        @Param String json,
                        @Prop(optional = true) EventListener eventListener) {
-        if (eventListener != null) {
+        if (eventListener != null && !TextUtils.isEmpty(json)) {
             eventListener.onEvent(EventType.REPORT_VIEW, json);
         }
     }
@@ -42,7 +43,7 @@ final class DynamicBoxSpec {
                         @Prop(optional = true) EventListener eventListener) {
         if (eventListener != null) {
             eventListener.onEvent(EventType.CLICK, click);
-            if (json != null) {
+            if (!TextUtils.isEmpty(json)) {
                 eventListener.onEvent(EventType.REPORT_CLICK, json);
             }
         }

@@ -10,7 +10,7 @@ import java.util.concurrent.*
 import java.util.concurrent.atomic.AtomicInteger
 import kotlin.math.max
 
-internal object FrameFactory : DisplayWidgetFactory<Row.Builder>(), ThreadFactory {
+internal object FrameFactory : WidgetFactory<Row.Builder>(), ThreadFactory {
 
     private val count = AtomicInteger()
 
@@ -39,7 +39,7 @@ internal object FrameFactory : DisplayWidgetFactory<Row.Builder>(), ThreadFactor
             owner: Row.Builder,
             c: BuildContext,
             attrs: Map<String, String>?,
-            children: List<Component.Builder<*>>?,
+            children: List<Component>?,
             visibility: Int) {
         val context = c.componentContext
         var width = if (attrs != null) {
@@ -52,18 +52,22 @@ internal object FrameFactory : DisplayWidgetFactory<Row.Builder>(), ThreadFactor
         } else {
             Int.MIN_VALUE
         }
-        val wrappers = children?.map {
+        if (children.isNullOrEmpty()) {
+            return
+        }
+        val wrappers = children.map {
             Row.create(context)
                     .positionType(YogaPositionType.ABSOLUTE)
                     .positionPx(YogaEdge.LEFT, 0)
                     .positionPx(YogaEdge.TOP, 0)
                     .child(it)
                     .build()
-        } ?: emptyList()
+        }
+        wrappers.forEach {
+            owner.child(it)
+        }
         if (width > 0 && height > 0) {
-            wrappers.forEach {
-                owner.child(it)
-            }
+            return
         } else {
             width = width.toPx()
             height = height.toPx()
@@ -80,39 +84,37 @@ internal object FrameFactory : DisplayWidgetFactory<Row.Builder>(), ThreadFactor
             //concurrent measure
             var maxWidth = 0
             var maxHeight = 0
-            if (!children.isNullOrEmpty()) {
-                var futures: List<Future<Pair<Component, Size>>>? = null
-                if (children.size > 1) {
-                    futures = wrappers.subList(1, children.size).map {
-                        measureThreadPool.submit<Pair<Component, Size>> {
-                            val s = Size()
-                            it.measure(
-                                    context,
-                                    widthSpec,
-                                    heightSpec,
-                                    s
-                            )
-                            it to s
-                        }
+            var futures: List<Future<Size>>? = null
+            if (children.size > 1) {
+                futures = wrappers.subList(1, children.size).map {
+                    measureThreadPool.submit<Size> {
+                        val s = Size()
+                        it.measure(
+                                context,
+                                widthSpec,
+                                heightSpec,
+                                s
+                        )
+                        s
                     }
                 }
-                val size = Size()
-                val first = wrappers.first()
-                first.measure(
-                        context,
-                        widthSpec,
-                        heightSpec,
-                        size
-                )
-                maxWidth = max(maxWidth, size.width)
-                maxHeight = max(maxHeight, size.height)
-                owner.child(first)
-                futures?.forEach {
-                    val (wrapper, s) = it.get()
-                    maxWidth = max(maxWidth, s.width)
-                    maxHeight = max(maxHeight, s.height)
-                    owner.child(wrapper)
-                }
+            }
+            val size = Size()
+            val first = wrappers.first()
+            first.measure(
+                    context,
+                    widthSpec,
+                    heightSpec,
+                    size
+            )
+            maxWidth = max(maxWidth, size.width)
+            maxHeight = max(maxHeight, size.height)
+            owner.child(first)
+            futures?.map {
+                it.get()
+            }?.forEach {
+                maxWidth = max(maxWidth, it.width)
+                maxHeight = max(maxHeight, it.height)
             }
             if (width <= 0) {
                 owner.widthPx(maxWidth)
