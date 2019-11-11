@@ -82,7 +82,7 @@ internal fun BuildContext.tryGetColor(expr: String?, @ColorInt fallback: Int): I
     }
 }
 
-internal inline val CharSequence?.isExpr: Boolean
+internal val CharSequence?.isExpr: Boolean
     get() = this != null && length > 3 && startsWith("\${") && endsWith('}')
 
 internal inline fun <reified N : Number> Number.safeCast(): N {

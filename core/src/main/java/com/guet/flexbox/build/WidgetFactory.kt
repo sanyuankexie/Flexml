@@ -187,33 +187,21 @@ internal abstract class WidgetFactory<T : Component.Builder<*>> : Transform {
             visibility: Int
     ) {
         val display = visibility == View.VISIBLE
-        var clickUrlValue: String? = null
-        val clickUrl = attrs["clickUrl"]
-        if (clickUrl != null) {
-            clickUrlValue = c.getValue(clickUrl)
-        }
-        var reportClickValue: String? = null
-        val reportClick = attrs["reportClick"]
-        if (reportClick != null) {
-            reportClickValue = c.getValue(reportClick)
-        }
-        if (!clickUrlValue.isNullOrEmpty()) {
+        val clickUrl = c.tryGetValue(attrs["clickUrl"], "")
+        val reportClick = c.tryGetValue(attrs["reportClick"], "")
+        if (clickUrl.isNotEmpty()) {
             clipChildren(false)
             clickHandler(DynamicBox.onClick(
                     c.componentContext,
-                    clickUrlValue,
-                    reportClickValue
+                    clickUrl,
+                    reportClick
             ))
         }
-        var reportViewValue: String? = null
-        val reportView = attrs["reportView"]
-        if (reportView != null) {
-            reportViewValue = c.getValue(reportView)
-        }
-        if (!reportViewValue.isNullOrEmpty() && display) {
+        val reportView = c.tryGetValue(attrs["reportView"], "")
+        if (reportView.isNotEmpty() && display) {
             visibleHandler(DynamicBox.onView(
                     c.componentContext,
-                    reportClickValue))
+                    reportView))
         }
     }
 
@@ -242,13 +230,13 @@ internal abstract class WidgetFactory<T : Component.Builder<*>> : Transform {
             crossinline action: T.(Boolean, V) -> Unit
     ) {
         mappings[name] = { c, display, value ->
-            if (value.isExpr) {
-                action(display, c.scope(scope) {
+            action(display, if (value.isExpr) {
+                c.scope(scope) {
                     c.tryGetValue(value, fallback)
-                })
+                }
             } else {
-                action(display, scope[value] ?: fallback)
-            }
+                scope[value] ?: fallback
+            })
         }
     }
 
@@ -259,6 +247,22 @@ internal abstract class WidgetFactory<T : Component.Builder<*>> : Transform {
             crossinline action: T.(Boolean, V) -> Unit
     ) {
         scopeAttr(name, scope, fallback, action)
+    }
+
+    protected inline fun flagsAttr(
+            name: String,
+            scope: Map<String, Int>,
+            fallback: Int = 0,
+            crossinline action: T.(Boolean, BitSet) -> Unit) {
+        mappings[name] = { c, display, value ->
+            action(display, BitSet(c.scope(scope) {
+                c.tryGetValue(if (value.isExpr) {
+                    value
+                } else {
+                    "\${$value}"
+                }, fallback)
+            }))
+        }
     }
 
     protected inline fun textAttr(
@@ -275,15 +279,15 @@ internal abstract class WidgetFactory<T : Component.Builder<*>> : Transform {
             fallback: Boolean = false,
             crossinline action: T.(Boolean, Boolean) -> Unit) {
         mappings[name] = { c, display, value ->
-            if (value.isExpr) {
-                action(display, c.tryGetValue(value, fallback))
+            action(display, if (value.isExpr) {
+                c.tryGetValue(value, fallback)
             } else {
-                action(display, try {
+                try {
                     value.toBoolean()
                 } catch (e: Exception) {
                     fallback
-                })
-            }
+                }
+            })
         }
     }
 
@@ -301,15 +305,15 @@ internal abstract class WidgetFactory<T : Component.Builder<*>> : Transform {
             fallback: Int = Color.TRANSPARENT,
             crossinline action: T.(Boolean, Int) -> Unit) {
         mappings[name] = { c, display, value ->
-            if (value.isExpr) {
-                action(display, c.tryGetColor(value, fallback))
+            action(display, if (value.isExpr) {
+                c.tryGetColor(value, fallback)
             } else {
                 try {
-                    action(display, Color.parseColor(value))
+                    Color.parseColor(value)
                 } catch (e: Exception) {
-                    action(display, fallback)
+                    fallback
                 }
-            }
+            })
         }
     }
 
