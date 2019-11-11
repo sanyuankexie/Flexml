@@ -326,9 +326,7 @@ internal abstract class WidgetFactory<T : Component.Builder<*>> : Transform {
                 .getDeclaredField("sColorNameMap")
                 .apply { isAccessible = true }
                 .get(null) as Map<String, *>)
-                .map {
-                    it.key to it.key
-                }.toMap()
+                .map { it.key to it.key }.toMap()
 
         internal val visibilityValues = mapOf(
                 "visible" to View.VISIBLE,
