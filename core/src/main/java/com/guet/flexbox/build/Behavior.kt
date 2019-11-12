@@ -28,11 +28,4 @@ internal abstract class Behavior : Transform {
             children: List<NodeInfo>,
             upperVisibility: Int
     ): List<Component>
-
-    protected inline fun <reified T : Any> BuildContext.requestValue(
-            name: String,
-            attrs: Map<String, String>
-    ): T {
-        return getValue(attrs[name] ?: error("request attr '$name'"))
-    }
 }

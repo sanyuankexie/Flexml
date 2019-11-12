@@ -38,6 +38,6 @@ internal class NetworkDrawable(
             invalidateSelf()
         }
     }
-    
+
 }
 
