@@ -7,9 +7,13 @@
 ![](https://img.shields.io/badge/organization-GCTA-blue)
 ![](https://img.shields.io/badge/email-imlkluo%40qq.com-green)
 ### 1 适用的业务范围
-适用于要求强展示、无动画、轻交互且要求随时上线、局部动态化，同时还要兼顾性能的应用场景，这些页面由于性能问题RN和WebView显得太重，例如首页feed流卡片，一级页面的活动页等
+在线上，对于某些适用于要求强展示、轻交互、高可配场景，RN和WebView显得不够灵活，性能表现也不够好。
+
+使用RN时要占据整个Activity，而且Native和Js的通信损耗不可避，WebView的情况则更加糟糕，还要lock主线程来加载webkit。这在二级、三级页面还好，在首页是绝对不能用这种掉性能的方案的。
+
+并且对于首页feed流卡片、一级页面的活动区块来说，这些页面的逻辑本身就不强，而且往往也只是需要局部动态化，所以综合来看RN和WebView都不是最优选，我们需要**第三条路**。
 ### 2 特性
-Gbox是对**业务**以及**性能**友好的：
+Gbox是对**业务**以及**性能**友好的，它为了解决上述应用场景中所存在的问题而出现：
 * **耗时操作异步化**。将原本View体系中的measure、layout搬到异步线程中去，解放主线程，这也是Gbox之所以高效的原因之一
 * **干掉布局层级**。直接使用轻量级的Drawable进行渲染，与WebView相比有更大的性能优势
 * **异步图片加载**。使用轻量级Glide作为图片加载引擎，所有图片均可以从网络加载，并且不会触发额外的布局更新
@@ -21,9 +25,11 @@ Gbox是对**业务**以及**性能**友好的：
 * **屏幕适配**，布局使用的单位为是设备独立的pt，以设备屏幕宽度为基准，将屏幕分成360份，1pt=设备屏幕宽度/360
 * **使用kotlin实现**，代码实现非常简洁，很适合阅读学习
 * **对旧逻辑友好**，支持原生View嵌入Gbox
-### 3 教程
-掘金文章：👉[Gbox完全使用指南](https://juejin.im/post/5dbaceb5f265da4cf677b8c5)
-### 4 从Jitpack获取
+### 4 开始使用
+预览截图：
+![](https://s2.ax1x.com/2019/11/12/M3I1rF.png)
+使用指南：👉[掘金文章：Gbox完全使用指南](https://juejin.im/post/5dbaceb5f265da4cf677b8c5)
+### 5 从Jitpack获取
 Gbox使用jitpack进行构建，在你的根项目的build.gradle中添加
 ```
 	allprojects {
