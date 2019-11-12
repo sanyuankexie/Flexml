@@ -70,6 +70,13 @@ internal inline fun <reified T : Enum<T>> BuildContext.tryGetEnum(
     }
 }
 
+internal inline fun <reified T : Any> BuildContext.requestValue(
+        name: String,
+        attrs: Map<String, String>
+): T {
+    return getValue(attrs[name] ?: error("request attr '$name'"))
+}
+
 @ColorInt
 internal fun BuildContext.tryGetColor(expr: String?, @ColorInt fallback: Int): Int {
     if (expr == null) {
@@ -174,7 +181,6 @@ internal fun tryToMap(o: Any): Map<String, Any> {
         @Suppress("UNCHECKED_CAST")
         return o as Map<String, Any>
     } else {
-        @Suppress("UNCHECKED_CAST")
         GsonMirror.fromJson(o) ?: if (o.javaClass.declaredMethods.isEmpty()) {
             o.javaClass.declaredFields.map {
                 it.name to it[o]
