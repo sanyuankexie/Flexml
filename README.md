@@ -1,11 +1,7 @@
-# Gbox
-![](https://img.shields.io/badge/language-kotlin-orange)
-![](https://jitpack.io/v/LukeXeon/flexbox.svg)
-![](https://img.shields.io/badge/platform-android-brightgreen)
-![](https://img.shields.io/badge/doc-%E6%8E%98%E9%87%91-blue)
-![](https://img.shields.io/badge/license-Apache%202.0-green)
-![](https://img.shields.io/badge/organization-GCTA-blue)
-![](https://img.shields.io/badge/email-imlkluo%40qq.com-green)
+# Gbox ![](https://img.shields.io/badge/language-kotlin-orange) ![](https://jitpack.io/v/LukeXeon/flexbox.svg) ![](https://img.shields.io/badge/platform-android-brightgreen) ![](https://img.shields.io/badge/doc-%E6%8E%98%E9%87%91-blue) ![](https://img.shields.io/badge/license-Apache%202.0-green) ![](https://img.shields.io/badge/organization-GCTA-blue) ![](https://img.shields.io/badge/email-imlkluo%40qq.com-green)
+<img src="https://s2.ax1x.com/2019/11/13/MGZAxI.png" width=150 align=right>
+
+
 ### 1 适用的业务范围
 在线上，对于某些适用于要求强展示、轻交互、高可配场景，RN和WebView显得不够灵活，性能表现也不够好。
 
