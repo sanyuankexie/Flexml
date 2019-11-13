@@ -113,6 +113,10 @@ private typealias FromJson<T> = (T, Type) -> Any
 
 private typealias TypeMatcher = HashMap<Class<*>, FromJson<*>>
 
+internal typealias Mapping<T> = T.(BuildContext, Map<String, String>, Boolean, String) -> Unit
+
+internal typealias Apply<T, V> = T.(Map<String, String>, Boolean, V) -> Unit
+
 private object GsonMirror {
 
     private val map = TypeMatcher(5)

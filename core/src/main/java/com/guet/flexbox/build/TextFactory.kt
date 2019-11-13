@@ -24,7 +24,7 @@ internal object TextFactory : WidgetFactory<Text.Builder>() {
                         "bottom" to 0b0100,
                         "center" to 0b1111
                 )
-        ) { _, set ->
+        ) { _, _, set ->
             set.hasFlags(0b0011) {
                 textAlignment(Alignment.ALIGN_CENTER)
             }
@@ -44,22 +44,22 @@ internal object TextFactory : WidgetFactory<Text.Builder>() {
                 verticalGravity(VerticalGravity.BOTTOM)
             }
         }
-        textAttr("text") { _, it ->
+        textAttr("text") { _, _, it ->
             this.text(it)
         }
-        boolAttr("clipToBounds") { _, it ->
+        boolAttr("clipToBounds") { _, _, it ->
             this.clipToBounds(it)
         }
-        numberAttr("maxLines", Int.MAX_VALUE) { _, it ->
+        numberAttr("maxLines", Int.MAX_VALUE) { _, _, it ->
             this.maxLines(it)
         }
-        numberAttr("minLines", Int.MIN_VALUE) { _, it ->
+        numberAttr("minLines", Int.MIN_VALUE) { _, _, it ->
             this.minLines(it)
         }
-        colorAttr("textColor") { _, it ->
+        colorAttr("textColor") { _, _, it ->
             this.textColor(it)
         }
-        numberAttr("textSize", 13.0) { _, it ->
+        numberAttr("textSize", 13.0) { _, _, it ->
             this.textSizePx(it.toPx())
         }
         scopeAttr("textStyle",
@@ -68,7 +68,7 @@ internal object TextFactory : WidgetFactory<Text.Builder>() {
                         "bold" to Typeface.BOLD
                 ),
                 Typeface.NORMAL
-        ) { _, it ->
+        ) { _, _, it ->
             this.typeface(Typeface.defaultFromStyle(it))
         }
         enumAttr("ellipsize",
@@ -77,7 +77,7 @@ internal object TextFactory : WidgetFactory<Text.Builder>() {
                         "end" to END,
                         "middle" to MIDDLE,
                         "marquee" to MARQUEE
-                )) { _, it ->
+                )) { _, _, it ->
             ellipsize(it)
         }
     }
