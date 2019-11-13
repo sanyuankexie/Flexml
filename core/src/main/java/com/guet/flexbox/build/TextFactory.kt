@@ -16,34 +16,32 @@ internal object TextFactory : WidgetFactory<Text.Builder>() {
     init {
         flagsAttr("textAlign",
                 mapOf(
-                        "centerHorizontal" to makeFlags(1),
-                        "left" to makeFlags(2),
-                        "right" to makeFlags(3),
-                        "centerVertical" to makeFlags(4),
-                        "top" to makeFlags(5),
-                        "bottom" to makeFlags(6),
-                        "center" to makeFlags(1, 4)
+                        "centerHorizontal" to 0b0011,
+                        "left" to 0b0001,
+                        "right" to 0b0010,
+                        "centerVertical" to 0b1100,
+                        "top" to 0b0100,
+                        "bottom" to 0b0100,
+                        "center" to 0b1111
                 )
         ) { _, set ->
-            when {
-                set.hasFlags(1) -> {
-                    textAlignment(Alignment.ALIGN_CENTER)
-                }
-                set.hasFlags(2) -> {
-                    textAlignment(Alignment.valueOf("ALIGN_LEFT"))
-                }
-                set.hasFlags(3) -> {
-                    textAlignment(Alignment.valueOf("ALIGN_RIGHT"))
-                }
-                set.hasFlags(4) -> {
-                    verticalGravity(VerticalGravity.CENTER)
-                }
-                set.hasFlags(5) -> {
-                    verticalGravity(VerticalGravity.TOP)
-                }
-                set.hasFlags(6) -> {
-                    verticalGravity(VerticalGravity.BOTTOM)
-                }
+            set.hasFlags(0b0011) {
+                textAlignment(Alignment.ALIGN_CENTER)
+            }
+            set.hasFlags(0b0001) {
+                textAlignment(Alignment.valueOf("ALIGN_LEFT"))
+            }
+            set.hasFlags(0b0010) {
+                textAlignment(Alignment.valueOf("ALIGN_RIGHT"))
+            }
+            set.hasFlags(0b1100) {
+                verticalGravity(VerticalGravity.CENTER)
+            }
+            set.hasFlags(0b0100) {
+                verticalGravity(VerticalGravity.TOP)
+            }
+            set.hasFlags(0b1000) {
+                verticalGravity(VerticalGravity.BOTTOM)
             }
         }
         textAttr("text") { _, it ->

@@ -18,7 +18,7 @@ internal abstract class Behavior : Transform {
             }
             return onApply(c, attrs, elements, upperVisibility)
         } else {
-            error("must has attr test")
+            error("must has attr")
         }
     }
 
