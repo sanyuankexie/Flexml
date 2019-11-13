@@ -41,6 +41,9 @@ internal object FrameFactory : WidgetFactory<Row.Builder>(), ThreadFactory {
             attrs: Map<String, String>?,
             children: List<Component>?,
             visibility: Int) {
+        if (children.isNullOrEmpty()) {
+            return
+        }
         val context = c.componentContext
         var width = if (attrs != null) {
             c.tryGetValue(attrs["width"], Int.MIN_VALUE)
@@ -51,9 +54,6 @@ internal object FrameFactory : WidgetFactory<Row.Builder>(), ThreadFactory {
             c.tryGetValue(attrs["height"], Int.MIN_VALUE)
         } else {
             Int.MIN_VALUE
-        }
-        if (children.isNullOrEmpty()) {
-            return
         }
         val wrappers = children.map {
             Row.create(context)

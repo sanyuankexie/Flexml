@@ -174,10 +174,6 @@ internal inline fun Int.hasFlags(flag: Int, action: () -> Unit) {
     }
 }
 
-internal fun makeFlags(flags: Int): Int {
-    return flags
-}
-
 internal fun tryToMap(o: Any): Map<String, Any> {
     return if (o is Map<*, *> && o.keys.all { it is String }) {
         @Suppress("UNCHECKED_CAST")
