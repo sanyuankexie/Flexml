@@ -123,7 +123,7 @@ internal abstract class WidgetFactory<T : Component.Builder<*>> : Transform {
     ): Component? {
         val attrs = nodeInfo.attrs
         val childrenNodes = nodeInfo.children
-        val visibility = calculateOwnerVisibility(c, attrs, upperVisibility)
+        val visibility = calculateVisibility(c, attrs, upperVisibility)
         if (visibility == View.GONE) {
             return null
         }
@@ -209,7 +209,7 @@ internal abstract class WidgetFactory<T : Component.Builder<*>> : Transform {
         }
     }
 
-    protected open fun calculateOwnerVisibility(
+    protected open fun calculateVisibility(
             c: BuildContext,
             attrs: Map<String, String>?,
             upperVisibility: Int

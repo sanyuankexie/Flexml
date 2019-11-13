@@ -22,6 +22,7 @@ class BuildContext(val componentContext: ComponentContext, data: Any?) {
 
     init {
         init(componentContext.androidContext)
+        el.elManager.addELResolver(JsonELResolver)
         if (data != null) {
             enterScope(tryToMap(data))
         }

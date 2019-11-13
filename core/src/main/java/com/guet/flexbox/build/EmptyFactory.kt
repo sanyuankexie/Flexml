@@ -12,11 +12,11 @@ internal object EmptyFactory : WidgetFactory<EmptyComponent.Builder>() {
         return EmptyComponent.create(c.componentContext)
     }
 
-    override fun calculateOwnerVisibility(
+    override fun calculateVisibility(
             c: BuildContext,
             attrs: Map<String, String>?,
             upperVisibility: Int): Int {
-        val value = super.calculateOwnerVisibility(c, attrs, upperVisibility)
+        val value = super.calculateVisibility(c, attrs, upperVisibility)
         return if (value == View.VISIBLE) {
             View.INVISIBLE
         } else {
