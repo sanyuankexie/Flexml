@@ -6,7 +6,7 @@ import com.guet.flexbox.widget.NetworkImage
 internal object ImageFactory : WidgetFactory<NetworkImage.Builder>() {
 
     init {
-        textAttr("url") { display, it ->
+        textAttr("url") { _, display, it ->
             if (display) {
                 url(it)
             } else {
@@ -24,22 +24,22 @@ internal object ImageFactory : WidgetFactory<NetworkImage.Builder>() {
                         "centerCrop" to CENTER_CROP
                 ),
                 FIT_XY
-                ) { _, it ->
+        ) { _, _, it ->
             scaleType(it)
         }
-        colorAttr("borderColor") { _, it ->
+        colorAttr("borderColor") { _, _, it ->
             borderColor(it)
         }
-        numberAttr<Double>("borderRadius") { _, it ->
+        numberAttr<Double>("borderRadius") { _, _, it ->
             borderRadius(it.toPx())
         }
-        numberAttr<Double>("borderWidth") { _, it ->
+        numberAttr<Double>("borderWidth") { _, _, it ->
             borderWidth(it.toPx())
         }
-        numberAttr<Float>("blurRadius") { _, it ->
+        numberAttr<Float>("blurRadius") { _, _, it ->
             blurRadius(it)
         }
-        numberAttr("blurSampling", 1f) { _, it ->
+        numberAttr("blurSampling", 1f) { _, _, it ->
             blurSampling(it)
         }
     }

@@ -16,52 +16,50 @@ internal object TextFactory : WidgetFactory<Text.Builder>() {
     init {
         flagsAttr("textAlign",
                 mapOf(
-                        "centerHorizontal" to makeFlags(1),
-                        "left" to makeFlags(2),
-                        "right" to makeFlags(3),
-                        "centerVertical" to makeFlags(4),
-                        "top" to makeFlags(5),
-                        "bottom" to makeFlags(6),
-                        "center" to makeFlags(1, 4)
+                        "centerHorizontal" to 0b0011,
+                        "left" to 0b0001,
+                        "right" to 0b0010,
+                        "centerVertical" to 0b1100,
+                        "top" to 0b0100,
+                        "bottom" to 0b0100,
+                        "center" to 0b1111
                 )
-        ) { _, set ->
-            when {
-                set.hasFlags(1) -> {
-                    textAlignment(Alignment.ALIGN_CENTER)
-                }
-                set.hasFlags(2) -> {
-                    textAlignment(Alignment.valueOf("ALIGN_LEFT"))
-                }
-                set.hasFlags(3) -> {
-                    textAlignment(Alignment.valueOf("ALIGN_RIGHT"))
-                }
-                set.hasFlags(4) -> {
-                    verticalGravity(VerticalGravity.CENTER)
-                }
-                set.hasFlags(5) -> {
-                    verticalGravity(VerticalGravity.TOP)
-                }
-                set.hasFlags(6) -> {
-                    verticalGravity(VerticalGravity.BOTTOM)
-                }
+        ) { _, _, set ->
+            set.hasFlags(0b0011) {
+                textAlignment(Alignment.ALIGN_CENTER)
+            }
+            set.hasFlags(0b0001) {
+                textAlignment(Alignment.valueOf("ALIGN_LEFT"))
+            }
+            set.hasFlags(0b0010) {
+                textAlignment(Alignment.valueOf("ALIGN_RIGHT"))
+            }
+            set.hasFlags(0b1100) {
+                verticalGravity(VerticalGravity.CENTER)
+            }
+            set.hasFlags(0b0100) {
+                verticalGravity(VerticalGravity.TOP)
+            }
+            set.hasFlags(0b1000) {
+                verticalGravity(VerticalGravity.BOTTOM)
             }
         }
-        textAttr("text") { _, it ->
+        textAttr("text") { _, _, it ->
             this.text(it)
         }
-        boolAttr("clipToBounds") { _, it ->
+        boolAttr("clipToBounds") { _, _, it ->
             this.clipToBounds(it)
         }
-        numberAttr("maxLines", Int.MAX_VALUE) { _, it ->
+        numberAttr("maxLines", Int.MAX_VALUE) { _, _, it ->
             this.maxLines(it)
         }
-        numberAttr("minLines", Int.MIN_VALUE) { _, it ->
+        numberAttr("minLines", Int.MIN_VALUE) { _, _, it ->
             this.minLines(it)
         }
-        colorAttr("textColor") { _, it ->
+        colorAttr("textColor") { _, _, it ->
             this.textColor(it)
         }
-        numberAttr("textSize", 13.0) { _, it ->
+        numberAttr("textSize", 13.0) { _, _, it ->
             this.textSizePx(it.toPx())
         }
         scopeAttr("textStyle",
@@ -70,7 +68,7 @@ internal object TextFactory : WidgetFactory<Text.Builder>() {
                         "bold" to Typeface.BOLD
                 ),
                 Typeface.NORMAL
-        ) { _, it ->
+        ) { _, _, it ->
             this.typeface(Typeface.defaultFromStyle(it))
         }
         enumAttr("ellipsize",
@@ -79,7 +77,7 @@ internal object TextFactory : WidgetFactory<Text.Builder>() {
                         "end" to END,
                         "middle" to MIDDLE,
                         "marquee" to MARQUEE
-                )) { _, it ->
+                )) { _, _, it ->
             ellipsize(it)
         }
     }

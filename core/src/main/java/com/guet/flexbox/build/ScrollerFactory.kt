@@ -17,7 +17,7 @@ internal object ScrollerFactory : WidgetFactory<Component.Builder<*>>() {
     )
 
     init {
-        boolAttr("scrollBarEnable") { _, it ->
+        boolAttr("scrollBarEnable") { _, _, it ->
             if (this is HorizontalScroll.Builder) {
                 scrollbarEnabled(it)
             } else if (this is VerticalScroll.Builder) {

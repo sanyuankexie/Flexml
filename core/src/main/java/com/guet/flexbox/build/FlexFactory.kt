@@ -24,7 +24,7 @@ internal object FlexFactory : WidgetFactory<Component.ContainerBuilder<*>>() {
                         "noWrap" to NO_WRAP,
                         "wrapReverse" to WRAP_REVERSE
                 )
-        ) { _, it ->
+        ) { _, _, it ->
             wrap(it)
         }
         enumAttr("justifyContent",
@@ -35,7 +35,7 @@ internal object FlexFactory : WidgetFactory<Component.ContainerBuilder<*>>() {
                         "spaceBetween" to SPACE_BETWEEN,
                         "spaceAround" to SPACE_AROUND
                 )
-        ) { _, it ->
+        ) { _, _, it ->
             justifyContent(it)
         }
         enumAttr("alignItems",
@@ -47,7 +47,7 @@ internal object FlexFactory : WidgetFactory<Component.ContainerBuilder<*>>() {
                         "baseline" to YogaAlign.BASELINE,
                         "stretch" to YogaAlign.STRETCH
                 )
-        ) { _, it ->
+        ) { _, _, it ->
             alignItems(it)
         }
         enumAttr("alignContent",
@@ -59,7 +59,7 @@ internal object FlexFactory : WidgetFactory<Component.ContainerBuilder<*>>() {
                         "baseline" to YogaAlign.BASELINE,
                         "stretch" to YogaAlign.STRETCH
                 )
-        ) { _, it ->
+        ) { _, _, it ->
             alignContent(it)
         }
     }

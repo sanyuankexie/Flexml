@@ -113,6 +113,10 @@ private typealias FromJson<T> = (T, Type) -> Any
 
 private typealias TypeMatcher = HashMap<Class<*>, FromJson<*>>
 
+internal typealias Mapping<T> = T.(BuildContext, Map<String, String>, Boolean, String) -> Unit
+
+internal typealias Apply<T, V> = T.(Map<String, String>, Boolean, V) -> Unit
+
 private object GsonMirror {
 
     private val map = TypeMatcher(5)
@@ -164,16 +168,14 @@ private object GsonMirror {
     }
 }
 
-internal fun Int.hasFlags(bitCount: Int): Boolean {
-    return this and 1.shl(bitCount) != 0
+internal inline fun Int.hasFlags(flag: Int, action: () -> Unit) {
+    if (this and flag != 0) {
+        action()
+    }
 }
 
-internal fun makeFlags(vararg bits: Int): Int {
-    var bit = 0
-    bits.forEach {
-        bit = bit or 1.shl(it)
-    }
-    return bit
+internal fun makeFlags(flags: Int): Int {
+    return flags
 }
 
 internal fun tryToMap(o: Any): Map<String, Any> {

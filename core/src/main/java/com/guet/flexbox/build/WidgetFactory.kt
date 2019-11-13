@@ -20,19 +20,19 @@ import kotlin.collections.HashMap
 
 internal abstract class WidgetFactory<T : Component.Builder<*>> : Transform {
 
-    internal val mappings = HashMap<String, T.(BuildContext, Boolean, String) -> Unit>()
+    internal val mappings = HashMap<String, Mapping<T>>()
 
     init {
-        numberAttr<Double>("width") { _, it ->
+        numberAttr<Double>("width") { _, _, it ->
             this.widthPx(it.toPx())
         }
-        numberAttr<Double>("height") { _, it ->
+        numberAttr<Double>("height") { _, _, it ->
             this.heightPx(it.toPx())
         }
-        numberAttr<Float>("flexGrow") { _, it ->
+        numberAttr<Float>("flexGrow") { _, _, it ->
             this.flexGrow(it)
         }
-        numberAttr<Float>("flexShrink") { _, it ->
+        numberAttr<Float>("flexShrink") { _, _, it ->
             this.flexShrink(it)
         }
         enumAttr("alignSelf",
@@ -44,22 +44,26 @@ internal abstract class WidgetFactory<T : Component.Builder<*>> : Transform {
                         "baseline" to YogaAlign.BASELINE,
                         "stretch" to YogaAlign.STRETCH
                 )
-        ) { _, it ->
+        ) { _, _, it ->
             this.alignSelf(it)
         }
-        numberAttr<Double>("margin") { _, it ->
+        numberAttr<Double>("margin") { _, _, it ->
             this.marginPx(YogaEdge.ALL, it.toPx())
         }
-        numberAttr<Double>("padding") { _, it ->
+        numberAttr<Double>("padding") { _, _, it ->
             this.paddingPx(YogaEdge.ALL, it.toPx())
         }
         for (index in edges.indices) {
             val yogaEdge = YogaEdge.valueOf(edges[index].toUpperCase(Locale.US))
-            numberAttr<Double>("margin" + edges[index]) { _, it ->
-                this.marginPx(yogaEdge, it.toPx())
+            numberAttr<Double>("margin" + edges[index]) { map, _, it ->
+                if (!map.containsKey("margin")) {
+                    this.marginPx(yogaEdge, it.toPx())
+                }
             }
-            numberAttr<Double>("padding" + edges[index]) { _, it ->
-                this.paddingPx(yogaEdge, it.toPx())
+            numberAttr<Double>("padding" + edges[index]) { map, _, it ->
+                if (!map.containsKey("padding")) {
+                    this.paddingPx(yogaEdge, it.toPx())
+                }
             }
         }
     }
@@ -107,7 +111,7 @@ internal abstract class WidgetFactory<T : Component.Builder<*>> : Transform {
         val display = visibility == View.VISIBLE
         if (!attrs.isNullOrEmpty()) {
             for ((key, value) in attrs) {
-                mappings[key]?.invoke(owner, c, display, value)
+                mappings[key]?.invoke(owner, c, attrs, display, value)
             }
         }
     }
@@ -227,10 +231,10 @@ internal abstract class WidgetFactory<T : Component.Builder<*>> : Transform {
             name: String,
             scope: Map<String, V>,
             fallback: V,
-            crossinline action: T.(Boolean, V) -> Unit
+            crossinline action: Apply<T, V>
     ) {
-        mappings[name] = { c, display, value ->
-            action(display, if (value.isExpr) {
+        mappings[name] = { c, map, display, value ->
+            action(map, display, if (value.isExpr) {
                 c.scope(scope) {
                     c.tryGetValue(value, fallback)
                 }
@@ -244,7 +248,7 @@ internal abstract class WidgetFactory<T : Component.Builder<*>> : Transform {
             name: String,
             scope: Map<String, V>,
             fallback: V = V::class.java.enumConstants[0],
-            crossinline action: T.(Boolean, V) -> Unit
+            crossinline action: Apply<T, V>
     ) {
         scopeAttr(name, scope, fallback, action)
     }
@@ -253,9 +257,9 @@ internal abstract class WidgetFactory<T : Component.Builder<*>> : Transform {
             name: String,
             scope: Map<String, Int>,
             fallback: Int = 0,
-            crossinline action: T.(Boolean, Int) -> Unit) {
-        mappings[name] = { c, display, value ->
-            action(display, c.scope(scope) {
+            crossinline action: Apply<T, Int>) {
+        mappings[name] = { c, map, display, value ->
+            action(map, display, c.scope(scope) {
                 c.tryGetValue(if (value.isExpr) {
                     value
                 } else {
@@ -268,18 +272,18 @@ internal abstract class WidgetFactory<T : Component.Builder<*>> : Transform {
     protected inline fun textAttr(
             name: String,
             fallback: String = "",
-            crossinline action: T.(Boolean, String) -> Unit) {
-        mappings[name] = { c, display, value ->
-            action(display, c.tryGetValue(value, fallback))
+            crossinline action: Apply<T, String>) {
+        mappings[name] = { c, map, display, value ->
+            action(map, display, c.tryGetValue(value, fallback))
         }
     }
 
     protected inline fun boolAttr(
             name: String,
             fallback: Boolean = false,
-            crossinline action: T.(Boolean, Boolean) -> Unit) {
-        mappings[name] = { c, display, value ->
-            action(display, if (value.isExpr) {
+            crossinline action: Apply<T, Boolean>) {
+        mappings[name] = { c, map, display, value ->
+            action(map, display, if (value.isExpr) {
                 c.tryGetValue(value, fallback)
             } else {
                 try {
@@ -294,18 +298,18 @@ internal abstract class WidgetFactory<T : Component.Builder<*>> : Transform {
     protected inline fun <reified N : Number> numberAttr(
             name: String,
             fallback: N = 0.safeCast(),
-            crossinline action: T.(Boolean, N) -> Unit) {
-        mappings[name] = { c, display, value ->
-            action(display, c.tryGetValue(value, fallback))
+            crossinline action: Apply<T, N>) {
+        mappings[name] = { c, map, display, value ->
+            action(map, display, c.tryGetValue(value, fallback))
         }
     }
 
     protected inline fun colorAttr(
             name: String,
             fallback: Int = Color.TRANSPARENT,
-            crossinline action: T.(Boolean, Int) -> Unit) {
-        mappings[name] = { c, display, value ->
-            action(display, if (value.isExpr) {
+            crossinline action: Apply<T, Int>) {
+        mappings[name] = { c, map, display, value ->
+            action(map, display, if (value.isExpr) {
                 c.tryGetColor(value, fallback)
             } else {
                 try {
