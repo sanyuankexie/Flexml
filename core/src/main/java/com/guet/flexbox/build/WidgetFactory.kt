@@ -135,7 +135,7 @@ internal abstract class WidgetFactory<T : Component.Builder<*>> : Transform {
         val builder = onCreateWidget(c, dataBinding, attrs, visibility)
         onLoadStyles(builder, c, dataBinding, attrs, visibility)
         onInstallChildren(builder, c, dataBinding, attrs, childrenNodes?.map {
-            Transform.createFromElement(c, dataBinding, it, visibility)
+            c.createFromElement(dataBinding, it, visibility)
         }?.flatten(), visibility)
         return builder.build()
     }

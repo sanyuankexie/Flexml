@@ -18,7 +18,7 @@ internal object ForEachBehavior : Behavior() {
         return items.map { item ->
             dataBinding.scope(Collections.singletonMap(name, item)) {
                 children.map {
-                    Transform.createFromElement(c, dataBinding, it, upperVisibility)
+                    c.createFromElement(dataBinding, it, upperVisibility)
                 }.flatten()
             }
         }.flatten()

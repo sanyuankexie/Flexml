@@ -3,8 +3,12 @@
 package com.guet.flexbox.build
 
 import android.content.res.Resources
+import android.view.View
 import androidx.annotation.ColorInt
+import com.facebook.litho.Component
+import com.facebook.litho.ComponentContext
 import com.guet.flexbox.BuildConfig
+import com.guet.flexbox.NodeInfo
 import com.guet.flexbox.el.ELException
 import lite.beans.Introspector
 import org.json.JSONObject
@@ -236,3 +240,29 @@ internal fun tryToMap(o: Any): Map<String, Any> {
         }
     }
 }
+
+internal fun ComponentContext.createFromElement(
+        dataBinding: DataBinding,
+        element: NodeInfo,
+        upperVisibility: Int = View.VISIBLE
+): List<Component> {
+    return transforms[element.type]?.transform(
+            this,
+            dataBinding,
+            element,
+            upperVisibility
+    ) ?: emptyList()
+}
+
+private val transforms = mapOf(
+        "Image" to ImageFactory,
+        "Flex" to FlexFactory,
+        "Text" to TextFactory,
+        "Frame" to FrameFactory,
+        "Native" to NativeFactory,
+        "Scroller" to ScrollerFactory,
+        "Empty" to EmptyFactory,
+        "for" to ForBehavior,
+        "foreach" to ForEachBehavior,
+        "if" to IfBehavior
+)

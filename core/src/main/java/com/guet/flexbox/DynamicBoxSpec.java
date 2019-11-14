@@ -15,7 +15,6 @@ import com.facebook.litho.annotations.OnEvent;
 import com.facebook.litho.annotations.Param;
 import com.facebook.litho.annotations.Prop;
 import com.guet.flexbox.build.DataBinding;
-import com.guet.flexbox.build.Transform;
 
 @LayoutSpec
 final class DynamicBoxSpec {
@@ -25,9 +24,9 @@ final class DynamicBoxSpec {
                                     @Prop(optional = true) Object bind,
                                     @Prop(optional = true) DataBinding dataBinding,
                                     @Prop NodeInfo layout) {
-        return Transform.Companion.createLayout(
+        return DataBinding.createLayout(
                 componentContext,
-                dataBinding != null ? dataBinding : DataBinding.create(bind),
+                dataBinding != null ? dataBinding : new DataBinding(bind),
                 layout
         );
     }

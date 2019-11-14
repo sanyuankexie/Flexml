@@ -6,11 +6,15 @@ import android.graphics.Color.parseColor
 import android.graphics.drawable.GradientDrawable
 import android.graphics.drawable.GradientDrawable.Orientation
 import androidx.annotation.ColorInt
+import androidx.annotation.RestrictTo
+import com.facebook.litho.Component
+import com.facebook.litho.ComponentContext
+import com.guet.flexbox.NodeInfo
 import com.guet.flexbox.el.ELException
 import com.guet.flexbox.el.ELManager
 import java.lang.reflect.Modifier
 
-class DataBinding private constructor(data: Any?) {
+class DataBinding(data: Any?) {
 
     private val el = ELManager()
 
@@ -71,8 +75,13 @@ class DataBinding private constructor(data: Any?) {
     companion object {
 
         @JvmStatic
-        fun create(data: Any?): DataBinding {
-            return DataBinding(data)
+        @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
+        fun createLayout(
+                c: ComponentContext,
+                dataBinding: DataBinding,
+                root: NodeInfo
+        ): Component {
+            return c.createFromElement(dataBinding, root).single()
         }
 
         internal val colorMap by lazy {

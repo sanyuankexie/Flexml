@@ -14,7 +14,7 @@ internal object IfBehavior : Behavior() {
     ): List<Component> {
         return if (dataBinding.requestValue("test", attrs)) {
             return children.map {
-                Transform.createFromElement(c, dataBinding, it, upperVisibility)
+                c.createFromElement(dataBinding, it, upperVisibility)
             }.flatten()
         } else {
             emptyList()
