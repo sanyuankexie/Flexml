@@ -1,6 +1,7 @@
 package com.guet.flexbox.build
 
 import android.widget.ImageView.ScaleType.*
+import com.facebook.litho.ComponentContext
 import com.guet.flexbox.widget.NetworkImage
 
 internal object ImageFactory : WidgetFactory<NetworkImage.Builder>() {
@@ -45,10 +46,11 @@ internal object ImageFactory : WidgetFactory<NetworkImage.Builder>() {
     }
 
     override fun onCreateWidget(
-            c: BuildContext,
+            c: ComponentContext,
+            dataBinding: DataBinding,
             attrs: Map<String, String>?,
             visibility: Int
     ): NetworkImage.Builder {
-        return NetworkImage.create(c.componentContext)
+        return NetworkImage.create(c)
     }
 }

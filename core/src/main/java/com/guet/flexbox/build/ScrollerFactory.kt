@@ -1,6 +1,7 @@
 package com.guet.flexbox.build
 
 import com.facebook.litho.Component
+import com.facebook.litho.ComponentContext
 import com.facebook.litho.widget.HorizontalScroll
 import com.facebook.litho.widget.VerticalScroll
 
@@ -27,23 +28,25 @@ internal object ScrollerFactory : WidgetFactory<Component.Builder<*>>() {
     }
 
     override fun onCreateWidget(
-            c: BuildContext,
+            c: ComponentContext,
+            dataBinding: DataBinding,
             attrs: Map<String, String>?,
             visibility: Int
     ): Component.Builder<*> {
-        return if (attrs != null && c.tryGetEnum(
+        return if (attrs != null && dataBinding.tryGetEnum(
                         attrs["orientation"],
                         orientations
                 ) == Orientation.HORIZONTAL) {
-            HorizontalScroll.create(c.componentContext)
+            HorizontalScroll.create(c)
         } else {
-            VerticalScroll.create(c.componentContext)
+            VerticalScroll.create(c)
         }
     }
 
     override fun onInstallChildren(
             owner: Component.Builder<*>,
-            c: BuildContext,
+            c: ComponentContext,
+            dataBinding: DataBinding,
             attrs: Map<String, String>?,
             children: List<Component>?,
             visibility: Int

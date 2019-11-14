@@ -14,16 +14,22 @@ import com.facebook.litho.annotations.OnCreateLayout;
 import com.facebook.litho.annotations.OnEvent;
 import com.facebook.litho.annotations.Param;
 import com.facebook.litho.annotations.Prop;
-import com.guet.flexbox.build.BuildContext;
+import com.guet.flexbox.build.DataBinding;
+import com.guet.flexbox.build.Transform;
 
 @LayoutSpec
 final class DynamicBoxSpec {
 
     @OnCreateLayout
-    static Component onCreateLayout(ComponentContext c,
-                                    @Prop NodeInfo layout,
-                                    @Prop(optional = true) Object bind) {
-        return new BuildContext(c, bind).createLayout(layout);
+    static Component onCreateLayout(ComponentContext componentContext,
+                                    @Prop(optional = true) Object bind,
+                                    @Prop(optional = true) DataBinding dataBinding,
+                                    @Prop NodeInfo layout) {
+        return Transform.Companion.createLayout(
+                componentContext,
+                dataBinding != null ? dataBinding : DataBinding.create(bind),
+                layout
+        );
     }
 
     @OnEvent(VisibleEvent.class)

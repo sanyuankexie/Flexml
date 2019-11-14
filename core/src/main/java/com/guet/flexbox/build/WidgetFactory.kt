@@ -8,6 +8,7 @@ import android.view.View
 import androidx.annotation.CallSuper
 import com.bumptech.glide.request.target.Target
 import com.facebook.litho.Component
+import com.facebook.litho.ComponentContext
 import com.facebook.yoga.YogaAlign
 import com.facebook.yoga.YogaEdge
 import com.guet.flexbox.DynamicBox
@@ -16,11 +17,10 @@ import com.guet.flexbox.widget.BorderDrawable
 import com.guet.flexbox.widget.NetworkDrawable
 import com.guet.flexbox.widget.NoOpDrawable
 import java.util.*
-import kotlin.collections.HashMap
 
 internal abstract class WidgetFactory<T : Component.Builder<*>> : Transform {
 
-    internal val mappings = HashMap<String, Mapping<T>>()
+    internal val mappings = Mappings<T>()
 
     init {
         numberAttr<Double>("width") { _, _, it ->
@@ -69,11 +69,12 @@ internal abstract class WidgetFactory<T : Component.Builder<*>> : Transform {
     }
 
     final override fun transform(
-            c: BuildContext,
+            c: ComponentContext,
+            dataBinding: DataBinding,
             nodeInfo: NodeInfo,
             upperVisibility: Int
     ): List<Component> {
-        val value = create(c, nodeInfo, upperVisibility)
+        val value = create(c, dataBinding, nodeInfo, upperVisibility)
         return if (value != null) {
             Collections.singletonList(value)
         } else {
@@ -82,14 +83,16 @@ internal abstract class WidgetFactory<T : Component.Builder<*>> : Transform {
     }
 
     protected abstract fun onCreateWidget(
-            c: BuildContext,
+            c: ComponentContext,
+            dataBinding: DataBinding,
             attrs: Map<String, String>?,
             visibility: Int
     ): T
 
     protected open fun onInstallChildren(
             owner: T,
-            c: BuildContext,
+            c: ComponentContext,
+            dataBinding: DataBinding,
             attrs: Map<String, String>?,
             children: List<Component>?,
             visibility: Int) {
@@ -98,76 +101,79 @@ internal abstract class WidgetFactory<T : Component.Builder<*>> : Transform {
     @CallSuper
     protected open fun onLoadStyles(
             owner: T,
-            c: BuildContext,
+            c: ComponentContext,
+            dataBinding: DataBinding,
             attrs: Map<String, String>?,
             visibility: Int
     ) {
         if (!attrs.isNullOrEmpty()) {
-            owner.applyEvent(c, attrs, visibility)
+            owner.applyEvent(c, dataBinding, attrs, visibility)
             if (visibility == View.VISIBLE) {
-                owner.applyBackground(c, attrs)
+                owner.applyBackground(c, dataBinding, attrs)
             }
         }
         val display = visibility == View.VISIBLE
         if (!attrs.isNullOrEmpty()) {
             for ((key, value) in attrs) {
-                mappings[key]?.invoke(owner, c, attrs, display, value)
+                mappings[key]?.invoke(owner, dataBinding, attrs, display, value)
             }
         }
     }
 
     private fun create(
-            c: BuildContext,
+            c: ComponentContext,
+            dataBinding: DataBinding,
             nodeInfo: NodeInfo,
             upperVisibility: Int
     ): Component? {
         val attrs = nodeInfo.attrs
         val childrenNodes = nodeInfo.children
-        val visibility = calculateOwnerVisibility(c, attrs, upperVisibility)
+        val visibility = calculateVisibility(dataBinding, attrs, upperVisibility)
         if (visibility == View.GONE) {
             return null
         }
-        val builder = onCreateWidget(c, attrs, visibility)
-        onLoadStyles(builder, c, attrs, visibility)
-        onInstallChildren(builder, c, attrs, childrenNodes?.map {
-            c.createFromElement(it, visibility)
+        val builder = onCreateWidget(c, dataBinding, attrs, visibility)
+        onLoadStyles(builder, c, dataBinding, attrs, visibility)
+        onInstallChildren(builder, c, dataBinding, attrs, childrenNodes?.map {
+            Transform.createFromElement(c, dataBinding, it, visibility)
         }?.flatten(), visibility)
         return builder.build()
     }
 
     private fun T.applyBackground(
-            c: BuildContext,
+            c: ComponentContext,
+            dataBinding: DataBinding,
             attrs: Map<String, String>
     ) {
-        val borderRadius = c.tryGetValue(attrs["borderRadius"], 0).toPx()
-        val borderWidth = c.tryGetValue(attrs["borderWidth"], 0).toPx()
-        val borderColor = c.tryGetColor(attrs["borderColor"], Color.TRANSPARENT)
+        val borderRadius = dataBinding.tryGetValue(attrs["borderRadius"], 0).toPx()
+        val borderWidth = dataBinding.tryGetValue(attrs["borderWidth"], 0).toPx()
+        val borderColor = dataBinding.tryGetColor(attrs["borderColor"], Color.TRANSPARENT)
         var backgroundDrawable: Drawable? = null
         val background = attrs["background"]
         if (background != null) {
             try {
-                backgroundDrawable = ColorDrawable(c.getColor(background))
+                backgroundDrawable = ColorDrawable(dataBinding.getColor(background))
             } catch (e: Exception) {
-                val backgroundELResult = c.scope(orientations) {
-                    c.scope(colorNameMap) {
-                        c.tryGetValue<Any>(background, Unit)
+                val backgroundELResult = dataBinding.scope(orientations) {
+                    dataBinding.scope(colorNameMap) {
+                        dataBinding.tryGetValue<Any>(background, Unit)
                     }
                 }
                 if (backgroundELResult is Drawable) {
                     backgroundDrawable = backgroundELResult
                 } else if (backgroundELResult is CharSequence && backgroundELResult.isNotEmpty()) {
-                    var width = c.tryGetValue(attrs["width"], Target.SIZE_ORIGINAL)
+                    var width = dataBinding.tryGetValue(attrs["width"], Target.SIZE_ORIGINAL)
                     if (width <= 0) {
                         width = Target.SIZE_ORIGINAL
                     }
-                    var height = c.tryGetValue(attrs["height"], Target.SIZE_ORIGINAL)
+                    var height = dataBinding.tryGetValue(attrs["height"], Target.SIZE_ORIGINAL)
                     if (height <= 0) {
                         height = Target.SIZE_ORIGINAL
                     }
                     backgroundDrawable = NetworkDrawable(
                             width.toPx(),
                             height.toPx(),
-                            c.componentContext.androidContext,
+                            c.androidContext,
                             backgroundELResult
                     )
                 }
@@ -186,38 +192,39 @@ internal abstract class WidgetFactory<T : Component.Builder<*>> : Transform {
     }
 
     private fun T.applyEvent(
-            c: BuildContext,
+            c: ComponentContext,
+            dataBinding: DataBinding,
             attrs: Map<String, String>,
             visibility: Int
     ) {
         val display = visibility == View.VISIBLE
-        val clickUrl = c.tryGetValue(attrs["clickUrl"], "")
-        val reportClick = c.tryGetValue(attrs["reportClick"], "")
+        val clickUrl = dataBinding.tryGetValue(attrs["clickUrl"], "")
+        val reportClick = dataBinding.tryGetValue(attrs["reportClick"], "")
         if (clickUrl.isNotEmpty()) {
             clipChildren(false)
             clickHandler(DynamicBox.onClick(
-                    c.componentContext,
+                    c,
                     clickUrl,
                     reportClick
             ))
         }
-        val reportView = c.tryGetValue(attrs["reportView"], "")
+        val reportView = dataBinding.tryGetValue(attrs["reportView"], "")
         if (reportView.isNotEmpty() && display) {
             visibleHandler(DynamicBox.onView(
-                    c.componentContext,
+                    c,
                     reportView))
         }
     }
 
-    protected open fun calculateOwnerVisibility(
-            c: BuildContext,
+    protected open fun calculateVisibility(
+            dataBinding: DataBinding,
             attrs: Map<String, String>?,
             upperVisibility: Int
     ): Int {
         return if (upperVisibility == View.VISIBLE
                 && attrs != null) {
-            c.scope(visibilityValues) {
-                c.tryGetValue(
+            dataBinding.scope(visibilityValues) {
+                dataBinding.tryGetValue(
                         attrs["visibility"],
                         View.VISIBLE
                 )
@@ -251,22 +258,6 @@ internal abstract class WidgetFactory<T : Component.Builder<*>> : Transform {
             crossinline action: Apply<T, V>
     ) {
         scopeAttr(name, scope, fallback, action)
-    }
-
-    protected inline fun flagsAttr(
-            name: String,
-            scope: Map<String, Int>,
-            fallback: Int = 0,
-            crossinline action: Apply<T, Int>) {
-        mappings[name] = { c, map, display, value ->
-            action(map, display, c.scope(scope) {
-                c.tryGetValue(if (value.isExpr) {
-                    value
-                } else {
-                    "\${$value}"
-                }, fallback)
-            })
-        }
     }
 
     protected inline fun textAttr(

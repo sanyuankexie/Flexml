@@ -6,6 +6,7 @@ import android.graphics.Typeface
 import android.text.Layout.Alignment
 import android.text.TextUtils.TruncateAt.*
 import android.view.View
+import com.facebook.litho.ComponentContext
 import com.facebook.litho.widget.Text
 import com.facebook.litho.widget.VerticalGravity
 
@@ -14,35 +15,18 @@ internal object TextFactory : WidgetFactory<Text.Builder>() {
     private val invisibleColor = ColorStateList.valueOf(Color.TRANSPARENT)
 
     init {
-        flagsAttr("textAlign",
-                mapOf(
-                        "centerHorizontal" to 0b0011,
-                        "left" to 0b0001,
-                        "right" to 0b0010,
-                        "centerVertical" to 0b1100,
-                        "top" to 0b0100,
-                        "bottom" to 0b0100,
-                        "center" to 0b1111
-                )
-        ) { _, _, set ->
-            set.hasFlags(0b0011) {
-                textAlignment(Alignment.ALIGN_CENTER)
-            }
-            set.hasFlags(0b0001) {
-                textAlignment(Alignment.valueOf("ALIGN_LEFT"))
-            }
-            set.hasFlags(0b0010) {
-                textAlignment(Alignment.valueOf("ALIGN_RIGHT"))
-            }
-            set.hasFlags(0b1100) {
-                verticalGravity(VerticalGravity.CENTER)
-            }
-            set.hasFlags(0b0100) {
-                verticalGravity(VerticalGravity.TOP)
-            }
-            set.hasFlags(0b1000) {
-                verticalGravity(VerticalGravity.BOTTOM)
-            }
+        enumAttr("verticalGravity", mapOf("top" to VerticalGravity.TOP,
+                "bottom" to VerticalGravity.BOTTOM,
+                "center" to VerticalGravity.CENTER)) { _, _, it ->
+            verticalGravity(it)
+        }
+        @Suppress("NewApi")
+        enumAttr("horizontalGravity", mapOf(
+                "left" to Alignment.ALIGN_LEFT,
+                "right" to Alignment.ALIGN_RIGHT,
+                "center" to Alignment.ALIGN_CENTER
+        ), Alignment.ALIGN_LEFT) { _, _, it ->
+            textAlignment(it)
         }
         textAttr("text") { _, _, it ->
             this.text(it)
@@ -83,20 +67,22 @@ internal object TextFactory : WidgetFactory<Text.Builder>() {
     }
 
     override fun onCreateWidget(
-            c: BuildContext,
+            c: ComponentContext,
+            dataBinding: DataBinding,
             attrs: Map<String, String>?,
             visibility: Int
     ): Text.Builder {
-        return Text.create(c.componentContext)
+        return Text.create(c)
     }
 
     override fun onLoadStyles(
             owner: Text.Builder,
-            c: BuildContext,
+            c: ComponentContext,
+            dataBinding: DataBinding,
             attrs: Map<String, String>?,
             visibility: Int
     ) {
-        super.onLoadStyles(owner, c, attrs, visibility)
+        super.onLoadStyles(owner, c, dataBinding, attrs, visibility)
         if (visibility == View.INVISIBLE) {
             owner.textColor(Color.TRANSPARENT)
             owner.textColorStateList(invisibleColor)

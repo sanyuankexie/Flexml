@@ -2,6 +2,7 @@ package com.guet.flexbox.build
 
 import com.facebook.litho.Column
 import com.facebook.litho.Component
+import com.facebook.litho.ComponentContext
 import com.facebook.litho.Row
 import com.facebook.yoga.YogaAlign
 import com.facebook.yoga.YogaFlexDirection
@@ -65,32 +66,33 @@ internal object FlexFactory : WidgetFactory<Component.ContainerBuilder<*>>() {
     }
 
     override fun onCreateWidget(
-            c: BuildContext,
+            c: ComponentContext,
+            dataBinding: DataBinding,
             attrs: Map<String, String>?,
             visibility: Int
     ): Component.ContainerBuilder<*> {
         val component: Component.ContainerBuilder<*>
         when (if (attrs != null) {
-            c.tryGetEnum(attrs["flexDirection"], flexDirections, YogaFlexDirection.ROW)
+            dataBinding.tryGetEnum(attrs["flexDirection"], flexDirections, YogaFlexDirection.ROW)
         } else {
             YogaFlexDirection.ROW
         }) {
             YogaFlexDirection.COLUMN -> {
-                component = Column.create(c.componentContext)
+                component = Column.create(c)
             }
             YogaFlexDirection.ROW -> {
-                component = Row.create(c.componentContext)
+                component = Row.create(c)
             }
             YogaFlexDirection.COLUMN_REVERSE -> {
-                component = Column.create(c.componentContext)
+                component = Column.create(c)
                         .reverse(true)
             }
             YogaFlexDirection.ROW_REVERSE -> {
-                component = Row.create(c.componentContext)
+                component = Row.create(c)
                         .reverse(true)
             }
             else -> {
-                component = Row.create(c.componentContext)
+                component = Row.create(c)
             }
         }
         return component
@@ -98,7 +100,8 @@ internal object FlexFactory : WidgetFactory<Component.ContainerBuilder<*>>() {
 
     override fun onInstallChildren(
             owner: Component.ContainerBuilder<*>,
-            c: BuildContext,
+            c: ComponentContext,
+            dataBinding: DataBinding,
             attrs: Map<String, String>?,
             children: List<Component>?,
             visibility: Int

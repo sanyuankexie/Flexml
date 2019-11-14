@@ -1,9 +1,6 @@
 package com.guet.flexbox.build
 
-import com.facebook.litho.Component
-import com.facebook.litho.Row
-import com.facebook.litho.Size
-import com.facebook.litho.SizeSpec
+import com.facebook.litho.*
 import com.facebook.yoga.YogaEdge
 import com.facebook.yoga.YogaPositionType
 import java.util.concurrent.*
@@ -28,35 +25,36 @@ internal object FrameFactory : WidgetFactory<Row.Builder>(), ThreadFactory {
     }
 
     override fun onCreateWidget(
-            c: BuildContext,
+            c: ComponentContext,
+            dataBinding: DataBinding,
             attrs: Map<String, String>?,
             visibility: Int
     ): Row.Builder {
-        return Row.create(c.componentContext)
+        return Row.create(c)
     }
 
     override fun onInstallChildren(
             owner: Row.Builder,
-            c: BuildContext,
+            c: ComponentContext,
+            dataBinding: DataBinding,
             attrs: Map<String, String>?,
             children: List<Component>?,
             visibility: Int) {
         if (children.isNullOrEmpty()) {
             return
         }
-        val context = c.componentContext
         var width = if (attrs != null) {
-            c.tryGetValue(attrs["width"], Int.MIN_VALUE)
+            dataBinding.tryGetValue(attrs["width"], Int.MIN_VALUE)
         } else {
             Int.MIN_VALUE
         }
         var height = if (attrs != null) {
-            c.tryGetValue(attrs["height"], Int.MIN_VALUE)
+            dataBinding.tryGetValue(attrs["height"], Int.MIN_VALUE)
         } else {
             Int.MIN_VALUE
         }
         val wrappers = children.map {
-            Row.create(context)
+            Row.create(c)
                     .positionType(YogaPositionType.ABSOLUTE)
                     .positionPx(YogaEdge.LEFT, 0)
                     .positionPx(YogaEdge.TOP, 0)
@@ -90,7 +88,7 @@ internal object FrameFactory : WidgetFactory<Row.Builder>(), ThreadFactory {
                     measureThreadPool.submit<Size> {
                         val s = Size()
                         it.measure(
-                                context,
+                                c,
                                 widthSpec,
                                 heightSpec,
                                 s
@@ -102,7 +100,7 @@ internal object FrameFactory : WidgetFactory<Row.Builder>(), ThreadFactory {
             val size = Size()
             val first = wrappers.first()
             first.measure(
-                    context,
+                    c,
                     widthSpec,
                     heightSpec,
                     size
