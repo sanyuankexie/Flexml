@@ -15,7 +15,6 @@ class DataBinding private constructor(data: Any?) {
     private val el = ELManager()
 
     init {
-        el.addELResolver(JsonELResolver)
         functions.forEach {
             el.mapFunction(it.first, it.second.name, it.second)
         }
