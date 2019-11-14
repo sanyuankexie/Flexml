@@ -2,9 +2,6 @@
 
 package com.guet.flexbox.build
 
-import android.content.ComponentCallbacks
-import android.content.Context
-import android.content.res.Configuration
 import android.content.res.Resources
 import androidx.annotation.ColorInt
 import com.guet.flexbox.el.ELException
@@ -13,33 +10,13 @@ import org.json.JSONObject
 import java.io.*
 import java.lang.reflect.Array
 import java.lang.reflect.Type
-import java.util.concurrent.atomic.AtomicBoolean
 import kotlin.reflect.KClass
 
-@Volatile
-internal var metrics = Resources.getSystem().displayMetrics
-    private set
-
-internal fun init(c: Context) {
-    if (Callbacks.compareAndSet(false, true)) {
-        c.applicationContext.registerComponentCallbacks(Callbacks)
-    }
-}
-
-private object Callbacks : AtomicBoolean(false), ComponentCallbacks {
-
-    override fun onLowMemory() = Unit
-
-    override fun onConfigurationChanged(newConfig: Configuration?) {
-        metrics = Resources.getSystem().displayMetrics
-    }
-}
-
 internal inline fun <reified T : Number> T.toPx(): Int {
-    return (this.toFloat() * metrics.widthPixels / 360f).toInt()
+    return (this.toFloat() * Resources.getSystem().displayMetrics.widthPixels / 360f).toInt()
 }
 
-internal inline fun <reified T : Any> BuildContext.tryGetValue(expr: String?, fallback: T): T {
+internal inline fun <reified T : Any> DataBinding.tryGetValue(expr: String?, fallback: T): T {
     if (expr == null) {
         return fallback
     }
@@ -50,7 +27,7 @@ internal inline fun <reified T : Any> BuildContext.tryGetValue(expr: String?, fa
     }
 }
 
-internal inline fun <T> BuildContext.scope(scope: Map<String, Any>, action: () -> T): T {
+internal inline fun <T> DataBinding.scope(scope: Map<String, Any>, action: () -> T): T {
     enterScope(scope)
     try {
         return action()
@@ -59,7 +36,7 @@ internal inline fun <T> BuildContext.scope(scope: Map<String, Any>, action: () -
     }
 }
 
-internal inline fun <reified T : Enum<T>> BuildContext.tryGetEnum(
+internal inline fun <reified T : Enum<T>> DataBinding.tryGetEnum(
         expr: String?,
         scope: Map<String, T>,
         fallback: T = T::class.java.enumConstants[0]): T {
@@ -72,7 +49,7 @@ internal inline fun <reified T : Enum<T>> BuildContext.tryGetEnum(
     }
 }
 
-internal inline fun <reified T : Any> BuildContext.requestValue(
+internal inline fun <reified T : Any> DataBinding.requestValue(
         name: String,
         attrs: Map<String, String>
 ): T {
@@ -80,7 +57,7 @@ internal inline fun <reified T : Any> BuildContext.requestValue(
 }
 
 @ColorInt
-internal fun BuildContext.tryGetColor(expr: String?, @ColorInt fallback: Int): Int {
+internal fun DataBinding.tryGetColor(expr: String?, @ColorInt fallback: Int): Int {
     if (expr == null) {
         return fallback
     }
@@ -117,7 +94,7 @@ private typealias JsonSupports = Map<Class<*>, FromJson<*>>
 
 private typealias SupportMap = HashMap<Class<*>, FromJson<*>>
 
-internal typealias Mapping<T> = T.(BuildContext, Map<String, String>, Boolean, String) -> Unit
+internal typealias Mapping<T> = T.(DataBinding, Map<String, String>, Boolean, String) -> Unit
 
 internal typealias Apply<T, V> = T.(Map<String, String>, Boolean, V) -> Unit
 
@@ -234,8 +211,8 @@ internal fun tryToMap(o: Any): Map<String, Any> {
             return map
         }
         jsonMatchTypes.keys.any { it.isAssignableFrom(javaClass) } -> {
-            return fromJson(o)
-                    ?: error("convert ${javaClass.name} request $GSON_NAME or $FAST_JSON_NAME")
+            return fromJson(o) ?: error("convert ${javaClass.name} " +
+                    "request $GSON_NAME or $FAST_JSON_NAME")
         }
         javaClass.methods.all { it.declaringClass == Any::class.java } -> {
             return javaClass.fields.map {

@@ -28,9 +28,7 @@ internal object JsonELResolver : ELResolver() {
         if (base is JSONArray) {
             context.setPropertyResolved(base, property)
             val idx = coerce(property)
-            return if (idx < 0 || idx >= base.length()) {
-                null
-            } else base[idx]?.javaClass
+            return if (idx < 0 || idx >= base.length()) null else base[idx]?.javaClass
         }
         if (base is JSONObject) {
             context.setPropertyResolved(base, property)
@@ -46,7 +44,7 @@ internal object JsonELResolver : ELResolver() {
             checkBounds(base, idx)
             base.put(idx, value)
         }
-        if (base is JSONObject && property != null) {
+        if (base is JSONObject) {
             context.setPropertyResolved(base, property)
             base.put(property.toString(), value)
         }
@@ -90,21 +88,20 @@ internal object JsonELResolver : ELResolver() {
             return property.toInt()
         }
         if (property is Char) {
-            return (property as Char?)!!.toInt()
+            return property.toInt()
         }
         if (property is Boolean) {
             return if (property) 1 else 0
         }
         if (property is String) {
-            return Integer.parseInt((property as String?)!!)
+            return property.toInt()
         }
         throw IllegalArgumentException(property?.toString() ?: "null")
     }
 
     private fun checkBounds(base: JSONArray, idx: Int) {
         if (idx < 0 || idx >= base.length()) {
-            throw PropertyNotFoundException(
-                    ArrayIndexOutOfBoundsException(idx).message)
+            throw PropertyNotFoundException(ArrayIndexOutOfBoundsException(idx).message)
         }
     }
 }

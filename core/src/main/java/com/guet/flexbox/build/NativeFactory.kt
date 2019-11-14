@@ -1,4 +1,5 @@
 @file:Suppress("DEPRECATION")
+
 package com.guet.flexbox.build
 
 import android.content.Context
@@ -7,6 +8,7 @@ import android.util.LruCache
 import android.view.View
 import android.view.ViewGroup
 import android.view.ViewOutlineProvider
+import com.facebook.litho.ComponentContext
 import com.facebook.litho.ViewCompatComponent
 import com.facebook.litho.viewcompat.ViewBinder
 import com.facebook.litho.viewcompat.ViewCreator
@@ -16,18 +18,19 @@ import java.lang.reflect.Constructor
 internal object NativeFactory : WidgetFactory<ViewCompatComponent.Builder<View>>() {
 
     override fun onCreateWidget(
-            c: BuildContext,
+            c: ComponentContext,
+            dataBinding: DataBinding,
             attrs: Map<String, String>?,
             visibility: Int
     ): ViewCompatComponent.Builder<View> {
         if (attrs != null) {
-            val type = c.tryGetValue(attrs["type"], "")
+            val type = dataBinding.tryGetValue(attrs["type"], "")
             if (type.isNotEmpty()) {
                 val view = ViewTypeCache[type]
-                val radius = c.tryGetValue(attrs["borderRadius"], 0f)
+                val radius = dataBinding.tryGetValue(attrs["borderRadius"], 0f)
                 val va = ViewAdapter(visibility, radius)
                 return ViewCompatComponent.get(view, type)
-                        .create(c.componentContext)
+                        .create(c)
                         .viewBinder(va)
             }
         }

@@ -6,6 +6,7 @@ import android.graphics.Typeface
 import android.text.Layout.Alignment
 import android.text.TextUtils.TruncateAt.*
 import android.view.View
+import com.facebook.litho.ComponentContext
 import com.facebook.litho.widget.Text
 import com.facebook.litho.widget.VerticalGravity
 
@@ -83,20 +84,22 @@ internal object TextFactory : WidgetFactory<Text.Builder>() {
     }
 
     override fun onCreateWidget(
-            c: BuildContext,
+            c: ComponentContext,
+            dataBinding: DataBinding,
             attrs: Map<String, String>?,
             visibility: Int
     ): Text.Builder {
-        return Text.create(c.componentContext)
+        return Text.create(c)
     }
 
     override fun onLoadStyles(
             owner: Text.Builder,
-            c: BuildContext,
+            c: ComponentContext,
+            dataBinding: DataBinding,
             attrs: Map<String, String>?,
             visibility: Int
     ) {
-        super.onLoadStyles(owner, c, attrs, visibility)
+        super.onLoadStyles(owner, c, dataBinding, attrs, visibility)
         if (visibility == View.INVISIBLE) {
             owner.textColor(Color.TRANSPARENT)
             owner.textColorStateList(invisibleColor)
