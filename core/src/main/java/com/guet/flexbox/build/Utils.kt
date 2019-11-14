@@ -4,6 +4,7 @@ package com.guet.flexbox.build
 
 import android.content.res.Resources
 import androidx.annotation.ColorInt
+import com.guet.flexbox.BuildConfig
 import com.guet.flexbox.el.ELException
 import lite.beans.Introspector
 import org.json.JSONObject
@@ -23,6 +24,9 @@ internal inline fun <reified T : Any> DataBinding.tryGetValue(expr: String?, fal
     return try {
         getValue(expr)
     } catch (e: ELException) {
+        if (BuildConfig.DEBUG) {
+            e.printStackTrace()
+        }
         fallback
     }
 }
@@ -193,7 +197,7 @@ internal inline fun <reified T> fromJson(data: Any): T? {
 }
 
 internal inline fun Int.hasFlags(flag: Int, action: () -> Unit) {
-    if (this and flag != 0) {
+    if (this and flag == flag) {
         action()
     }
 }

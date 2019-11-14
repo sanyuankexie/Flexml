@@ -97,7 +97,7 @@
             </Image>
             <Text
                 marginTop="5"
-                textAlign="center"
+                horizontalGravity="center"
                 textSize="11"
                 text="拉菲">
             </Text>
@@ -116,7 +116,7 @@
             </Image>
             <Text
                 marginTop="5"
-                textAlign="center"
+                horizontalGravity="center"
                 textSize="11"
                 text="初音未来">
             </Text>
@@ -137,7 +137,7 @@
             </Image>
             <Text
                 marginTop="5"
-                textAlign="center"
+                horizontalGravity="center"
                 textSize="11"
                 text="高斯模糊">
             </Text>

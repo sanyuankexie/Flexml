@@ -12,15 +12,15 @@ import java.lang.reflect.Modifier
 
 class DataBinding private constructor(data: Any?) {
 
-    private val el by lazy {
-        ELManager().apply {
-            addELResolver(JsonELResolver)
-            if (data != null) {
-                enterScope(tryToMap(data))
-            }
-            functions.forEach {
-                mapFunction(it.first, it.second.name, it.second)
-            }
+    private val el = ELManager()
+
+    init {
+        el.addELResolver(JsonELResolver)
+        functions.forEach {
+            el.mapFunction(it.first, it.second.name, it.second)
+        }
+        if (data != null) {
+            enterScope(tryToMap(data))
         }
     }
 

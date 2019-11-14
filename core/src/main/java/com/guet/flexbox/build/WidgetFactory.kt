@@ -260,22 +260,6 @@ internal abstract class WidgetFactory<T : Component.Builder<*>> : Transform {
         scopeAttr(name, scope, fallback, action)
     }
 
-    protected inline fun flagsAttr(
-            name: String,
-            scope: Map<String, Int>,
-            fallback: Int = 0,
-            crossinline action: Apply<T, Int>) {
-        mappings[name] = { c, map, display, value ->
-            action(map, display, c.scope(scope) {
-                c.tryGetValue(if (value.isExpr) {
-                    value
-                } else {
-                    "\${$value}"
-                }, fallback)
-            })
-        }
-    }
-
     protected inline fun textAttr(
             name: String,
             fallback: String = "",
