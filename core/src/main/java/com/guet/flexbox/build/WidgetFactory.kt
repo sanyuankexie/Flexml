@@ -17,11 +17,10 @@ import com.guet.flexbox.widget.BorderDrawable
 import com.guet.flexbox.widget.NetworkDrawable
 import com.guet.flexbox.widget.NoOpDrawable
 import java.util.*
-import kotlin.collections.HashMap
 
 internal abstract class WidgetFactory<T : Component.Builder<*>> : Transform {
 
-    internal val mappings = HashMap<String, Mapping<T>>()
+    internal val mappings = Mappings<T>()
 
     init {
         numberAttr<Double>("width") { _, _, it ->

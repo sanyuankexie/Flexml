@@ -8,37 +8,38 @@ import android.graphics.drawable.GradientDrawable.Orientation
 import androidx.annotation.ColorInt
 import com.guet.flexbox.el.ELException
 import com.guet.flexbox.el.ELManager
-import java.lang.reflect.Method
 import java.lang.reflect.Modifier
 
-class DataBinding private constructor(data: Any?) : ELManager() {
+class DataBinding private constructor(data: Any?) {
 
-    init {
-        addELResolver(JsonELResolver)
-        if (data != null) {
-            enterScope(tryToMap(data))
-        }
-        functions.forEach {
-            mapFunction(it.first, it.second.name, it.second)
+    private val el by lazy {
+        ELManager().apply {
+            addELResolver(JsonELResolver)
+            if (data != null) {
+                enterScope(tryToMap(data))
+            }
+            functions.forEach {
+                mapFunction(it.first, it.second.name, it.second)
+            }
         }
     }
 
     internal fun enterScope(scope: Map<String, Any>) {
-        elContext.enterLambdaScope(scope)
+        el.elContext.enterLambdaScope(scope)
     }
 
     internal fun exitScope() {
-        elContext.exitLambdaScope()
+        el.elContext.exitLambdaScope()
     }
 
     @Throws(ELException::class)
     internal fun getValue(expr: String, type: Class<*>): Any {
         return ELManager.getExpressionFactory()
                 .createValueExpression(
-                        elContext,
+                        el.elContext,
                         expr,
                         type
-                ).getValue(elContext)
+                ).getValue(el.elContext)
                 ?: throw ELException()
     }
 
@@ -75,22 +76,26 @@ class DataBinding private constructor(data: Any?) : ELManager() {
             return DataBinding(data)
         }
 
-        @Suppress("UNCHECKED_CAST")
-        internal val colorMap = HashMap((Color::class.java
-                .getDeclaredField("sColorNameMap")
-                .apply { isAccessible = true }
-                .get(null) as Map<String, Int>))
+        internal val colorMap by lazy {
+            @Suppress("UNCHECKED_CAST")
+            HashMap((Color::class.java
+                    .getDeclaredField("sColorNameMap")
+                    .apply { isAccessible = true }
+                    .get(null) as Map<String, Int>))
+        }
 
-        internal val functions: Array<Pair<String, Method>> = Functions::class.java.declaredMethods
-                .filter {
-                    it.modifiers.let { mod ->
-                        Modifier.isPublic(mod) && Modifier.isStatic(mod)
-                    } && it.isAnnotationPresent(Prefix::class.java)
-                }.map {
-                    it.apply { it.isAccessible = true }
-                }.map {
-                    it.getAnnotation(Prefix::class.java).value to it
-                }.toTypedArray()
+        internal val functions by lazy {
+            Functions::class.java.declaredMethods
+                    .filter {
+                        it.modifiers.let { mod ->
+                            Modifier.isPublic(mod) && Modifier.isStatic(mod)
+                        } && it.isAnnotationPresent(Prefix::class.java)
+                    }.map {
+                        it.apply { it.isAccessible = true }
+                    }.map {
+                        it.getAnnotation(Prefix::class.java).value to it
+                    }.toTypedArray()
+        }
     }
 
     internal object Functions {

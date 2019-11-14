@@ -96,6 +96,8 @@ private typealias SupportMap = HashMap<Class<*>, FromJson<*>>
 
 internal typealias Mapping<T> = T.(DataBinding, Map<String, String>, Boolean, String) -> Unit
 
+internal typealias Mappings<T> = HashMap<String, Mapping<T>>
+
 internal typealias Apply<T, V> = T.(Map<String, String>, Boolean, V) -> Unit
 
 private inline fun <reified T> SupportMap.add(noinline action: FromJson<T>) {
