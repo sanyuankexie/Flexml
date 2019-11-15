@@ -6,9 +6,11 @@ import android.graphics.drawable.Drawable
 import androidx.core.graphics.drawable.DrawableCompat
 
 
-internal open class DrawableWrapper<T : Drawable>(drawable: T) : Drawable(), Drawable.Callback {
+internal open class DrawableWrapper<T : Drawable>(
+        drawable: T
+) : Drawable(), Drawable.Callback {
 
-    protected var wrappedDrawable: T = drawable.apply { callback = this@DrawableWrapper }
+    var wrappedDrawable: T = drawable.apply { callback = this@DrawableWrapper }
         set(value) {
             field.callback = null
             field = value

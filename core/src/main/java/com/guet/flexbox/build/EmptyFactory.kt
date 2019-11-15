@@ -7,7 +7,7 @@ import com.facebook.litho.widget.EmptyComponent
 internal object EmptyFactory : WidgetFactory<EmptyComponent.Builder>() {
     override fun onCreateWidget(
             c: ComponentContext,
-            dataBinding: DataBinding,
+            dataBinding: DataContext,
             attrs: Map<String, String>?,
             visibility: Int
     ): EmptyComponent.Builder {
@@ -15,7 +15,7 @@ internal object EmptyFactory : WidgetFactory<EmptyComponent.Builder>() {
     }
 
     override fun calculateVisibility(
-            dataBinding: DataBinding,
+            dataBinding: DataContext,
             attrs: Map<String, String>?,
             upperVisibility: Int): Int {
         val value = super.calculateVisibility(dataBinding, attrs, upperVisibility)

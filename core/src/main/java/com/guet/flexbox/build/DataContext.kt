@@ -3,19 +3,22 @@ package com.guet.flexbox.build
 import android.content.res.Resources
 import android.graphics.Color
 import android.graphics.Color.parseColor
-import android.graphics.drawable.GradientDrawable
 import android.graphics.drawable.GradientDrawable.Orientation
 import androidx.annotation.ColorInt
+import androidx.annotation.RestrictTo
+import com.facebook.litho.Component
+import com.facebook.litho.ComponentContext
+import com.facebook.litho.drawable.ComparableGradientDrawable
+import com.guet.flexbox.NodeInfo
 import com.guet.flexbox.el.ELException
 import com.guet.flexbox.el.ELManager
 import java.lang.reflect.Modifier
 
-class DataBinding private constructor(data: Any?) {
+class DataContext(data: Any?) {
 
     private val el = ELManager()
 
     init {
-        el.addELResolver(JsonELResolver)
         functions.forEach {
             el.mapFunction(it.first, it.second.name, it.second)
         }
@@ -72,30 +75,31 @@ class DataBinding private constructor(data: Any?) {
     companion object {
 
         @JvmStatic
-        fun create(data: Any?): DataBinding {
-            return DataBinding(data)
+        @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
+        fun createLayout(
+                c: ComponentContext,
+                dataBinding: DataContext,
+                root: NodeInfo
+        ): Component {
+            return c.createFromElement(dataBinding, root).single()
         }
 
-        internal val colorMap by lazy {
-            @Suppress("UNCHECKED_CAST")
-            HashMap((Color::class.java
-                    .getDeclaredField("sColorNameMap")
-                    .apply { isAccessible = true }
-                    .get(null) as Map<String, Int>))
-        }
+        @Suppress("UNCHECKED_CAST")
+        internal val colorMap = HashMap((Color::class.java
+                .getDeclaredField("sColorNameMap")
+                .apply { isAccessible = true }
+                .get(null) as Map<String, Int>))
 
-        internal val functions by lazy {
-            Functions::class.java.declaredMethods
-                    .filter {
-                        it.modifiers.let { mod ->
-                            Modifier.isPublic(mod) && Modifier.isStatic(mod)
-                        } && it.isAnnotationPresent(Prefix::class.java)
-                    }.map {
-                        it.apply { it.isAccessible = true }
-                    }.map {
-                        it.getAnnotation(Prefix::class.java).value to it
-                    }.toTypedArray()
-        }
+        internal val functions = Functions::class.java.declaredMethods
+                .filter {
+                    it.modifiers.let { mod ->
+                        Modifier.isPublic(mod) && Modifier.isStatic(mod)
+                    } && it.isAnnotationPresent(Prefix::class.java)
+                }.map {
+                    it.apply { it.isAccessible = true }
+                }.map {
+                    it.getAnnotation(Prefix::class.java).value to it
+                }.toTypedArray()
     }
 
     internal object Functions {
@@ -118,8 +122,8 @@ class DataBinding private constructor(data: Any?) {
         fun gradient(
                 orientation: Orientation,
                 vararg colors: String
-        ): GradientDrawable {
-            return GradientDrawable(orientation, colors.map {
+        ): ComparableGradientDrawable {
+            return ComparableGradientDrawable(orientation, colors.map {
                 parseColor(it)
             }.toIntArray())
         }

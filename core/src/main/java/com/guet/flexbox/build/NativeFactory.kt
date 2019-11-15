@@ -4,7 +4,6 @@ package com.guet.flexbox.build
 
 import android.content.Context
 import android.graphics.Outline
-import android.util.LruCache
 import android.view.View
 import android.view.ViewGroup
 import android.view.ViewOutlineProvider
@@ -19,14 +18,21 @@ internal object NativeFactory : WidgetFactory<ViewCompatComponent.Builder<View>>
 
     override fun onCreateWidget(
             c: ComponentContext,
-            dataBinding: DataBinding,
+            dataBinding: DataContext,
             attrs: Map<String, String>?,
             visibility: Int
     ): ViewCompatComponent.Builder<View> {
         if (attrs != null) {
             val type = dataBinding.tryGetValue(attrs["type"], "")
             if (type.isNotEmpty()) {
-                val view = ViewTypeCache[type]
+                val view = viewTypeCache.getOrPut(type) {
+                    val viewType = Class.forName(type)
+                    if (View::class.java.isAssignableFrom(viewType)) {
+                        return@getOrPut ReflectViewCreator(viewType.getConstructor(Context::class.java))
+                    } else {
+                        throw IllegalStateException("$type is not as 'View' type")
+                    }
+                }
                 val radius = dataBinding.tryGetValue(attrs["borderRadius"], 0f)
                 val va = ViewAdapter(visibility, radius)
                 return ViewCompatComponent.get(view, type)
@@ -34,19 +40,11 @@ internal object NativeFactory : WidgetFactory<ViewCompatComponent.Builder<View>>
                         .viewBinder(va)
             }
         }
+
         throw IllegalArgumentException("can not found View type")
     }
 
-    internal object ViewTypeCache : LruCache<String, ReflectViewCreator>(32) {
-        override fun create(key: String): ReflectViewCreator {
-            val viewType = Class.forName(key)
-            if (View::class.java.isAssignableFrom(viewType)) {
-                return ReflectViewCreator(viewType.getConstructor(Context::class.java))
-            } else {
-                throw IllegalArgumentException("$key is not as 'View' type")
-            }
-        }
-    }
+    private val viewTypeCache = HashMap<String, ReflectViewCreator>(32)
 
     internal class ReflectViewCreator(private val constructor: Constructor<*>) : ViewCreator<View> {
         override fun createView(c: Context, parent: ViewGroup?): View {

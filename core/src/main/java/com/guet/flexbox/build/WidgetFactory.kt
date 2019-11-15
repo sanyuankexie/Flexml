@@ -1,7 +1,6 @@
 package com.guet.flexbox.build
 
 import android.graphics.Color
-import android.graphics.drawable.ColorDrawable
 import android.graphics.drawable.Drawable
 import android.graphics.drawable.GradientDrawable
 import android.view.View
@@ -9,12 +8,14 @@ import androidx.annotation.CallSuper
 import com.bumptech.glide.request.target.Target
 import com.facebook.litho.Component
 import com.facebook.litho.ComponentContext
+import com.facebook.litho.drawable.ComparableColorDrawable
+import com.facebook.litho.drawable.ComparableGradientDrawable
 import com.facebook.yoga.YogaAlign
 import com.facebook.yoga.YogaEdge
 import com.guet.flexbox.DynamicBox
 import com.guet.flexbox.NodeInfo
-import com.guet.flexbox.widget.BorderDrawable
-import com.guet.flexbox.widget.NetworkDrawable
+import com.guet.flexbox.widget.BackgroundDrawable
+import com.guet.flexbox.widget.NetworkLazyDrawable
 import com.guet.flexbox.widget.NoOpDrawable
 import java.util.*
 
@@ -70,7 +71,7 @@ internal abstract class WidgetFactory<T : Component.Builder<*>> : Transform {
 
     final override fun transform(
             c: ComponentContext,
-            dataBinding: DataBinding,
+            dataBinding: DataContext,
             nodeInfo: NodeInfo,
             upperVisibility: Int
     ): List<Component> {
@@ -84,7 +85,7 @@ internal abstract class WidgetFactory<T : Component.Builder<*>> : Transform {
 
     protected abstract fun onCreateWidget(
             c: ComponentContext,
-            dataBinding: DataBinding,
+            dataBinding: DataContext,
             attrs: Map<String, String>?,
             visibility: Int
     ): T
@@ -92,7 +93,7 @@ internal abstract class WidgetFactory<T : Component.Builder<*>> : Transform {
     protected open fun onInstallChildren(
             owner: T,
             c: ComponentContext,
-            dataBinding: DataBinding,
+            dataBinding: DataContext,
             attrs: Map<String, String>?,
             children: List<Component>?,
             visibility: Int) {
@@ -102,7 +103,7 @@ internal abstract class WidgetFactory<T : Component.Builder<*>> : Transform {
     protected open fun onLoadStyles(
             owner: T,
             c: ComponentContext,
-            dataBinding: DataBinding,
+            dataBinding: DataContext,
             attrs: Map<String, String>?,
             visibility: Int
     ) {
@@ -122,7 +123,7 @@ internal abstract class WidgetFactory<T : Component.Builder<*>> : Transform {
 
     private fun create(
             c: ComponentContext,
-            dataBinding: DataBinding,
+            dataBinding: DataContext,
             nodeInfo: NodeInfo,
             upperVisibility: Int
     ): Component? {
@@ -135,14 +136,14 @@ internal abstract class WidgetFactory<T : Component.Builder<*>> : Transform {
         val builder = onCreateWidget(c, dataBinding, attrs, visibility)
         onLoadStyles(builder, c, dataBinding, attrs, visibility)
         onInstallChildren(builder, c, dataBinding, attrs, childrenNodes?.map {
-            Transform.createFromElement(c, dataBinding, it, visibility)
+            c.createFromElement(dataBinding, it, visibility)
         }?.flatten(), visibility)
         return builder.build()
     }
 
     private fun T.applyBackground(
             c: ComponentContext,
-            dataBinding: DataBinding,
+            dataBinding: DataContext,
             attrs: Map<String, String>
     ) {
         val borderRadius = dataBinding.tryGetValue(attrs["borderRadius"], 0).toPx()
@@ -152,14 +153,14 @@ internal abstract class WidgetFactory<T : Component.Builder<*>> : Transform {
         val background = attrs["background"]
         if (background != null) {
             try {
-                backgroundDrawable = ColorDrawable(dataBinding.getColor(background))
+                backgroundDrawable = ComparableColorDrawable.create(dataBinding.getColor(background))
             } catch (e: Exception) {
                 val backgroundELResult = dataBinding.scope(orientations) {
                     dataBinding.scope(colorNameMap) {
                         dataBinding.tryGetValue<Any>(background, Unit)
                     }
                 }
-                if (backgroundELResult is Drawable) {
+                if (backgroundELResult is ComparableGradientDrawable) {
                     backgroundDrawable = backgroundELResult
                 } else if (backgroundELResult is CharSequence && backgroundELResult.isNotEmpty()) {
                     var width = dataBinding.tryGetValue(attrs["width"], Target.SIZE_ORIGINAL)
@@ -170,10 +171,10 @@ internal abstract class WidgetFactory<T : Component.Builder<*>> : Transform {
                     if (height <= 0) {
                         height = Target.SIZE_ORIGINAL
                     }
-                    backgroundDrawable = NetworkDrawable(
+                    backgroundDrawable = NetworkLazyDrawable(
+                            c.androidContext,
                             width.toPx(),
                             height.toPx(),
-                            c.androidContext,
                             backgroundELResult
                     )
                 }
@@ -182,8 +183,7 @@ internal abstract class WidgetFactory<T : Component.Builder<*>> : Transform {
         if (backgroundDrawable == null) {
             backgroundDrawable = NoOpDrawable()
         }
-        @Suppress("DEPRECATION")
-        this.background(BorderDrawable(
+        this.background(BackgroundDrawable(
                 backgroundDrawable,
                 borderRadius,
                 borderWidth,
@@ -193,7 +193,7 @@ internal abstract class WidgetFactory<T : Component.Builder<*>> : Transform {
 
     private fun T.applyEvent(
             c: ComponentContext,
-            dataBinding: DataBinding,
+            dataBinding: DataContext,
             attrs: Map<String, String>,
             visibility: Int
     ) {
@@ -217,7 +217,7 @@ internal abstract class WidgetFactory<T : Component.Builder<*>> : Transform {
     }
 
     protected open fun calculateVisibility(
-            dataBinding: DataBinding,
+            dataBinding: DataContext,
             attrs: Map<String, String>?,
             upperVisibility: Int
     ): Int {

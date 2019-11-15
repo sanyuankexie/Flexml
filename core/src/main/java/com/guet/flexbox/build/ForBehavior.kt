@@ -8,7 +8,7 @@ import java.util.*
 internal object ForBehavior : Behavior() {
     override fun onApply(
             c: ComponentContext,
-            dataBinding: DataBinding,
+            dataBinding: DataContext,
             attrs: Map<String, String>,
             children: List<NodeInfo>,
             upperVisibility: Int
@@ -19,7 +19,7 @@ internal object ForBehavior : Behavior() {
         return (from..to).map {
             return@map dataBinding.scope(Collections.singletonMap(name, it)) {
                 children.map { item ->
-                    Transform.createFromElement(c, dataBinding, item, upperVisibility)
+                    c.createFromElement(dataBinding, item, upperVisibility)
                 }.flatten()
             }
         }.flatten()

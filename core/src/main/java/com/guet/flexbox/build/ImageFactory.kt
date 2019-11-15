@@ -47,7 +47,7 @@ internal object ImageFactory : WidgetFactory<NetworkImage.Builder>() {
 
     override fun onCreateWidget(
             c: ComponentContext,
-            dataBinding: DataBinding,
+            dataBinding: DataContext,
             attrs: Map<String, String>?,
             visibility: Int
     ): NetworkImage.Builder {

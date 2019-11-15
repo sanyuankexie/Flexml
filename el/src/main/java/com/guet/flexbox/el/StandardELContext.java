@@ -56,6 +56,8 @@ public class StandardELContext extends ELContext {
         standardResolver.add(new ListELResolver());
         standardResolver.add(new ArrayELResolver());
         standardResolver.add(new BeanELResolver());
+        standardResolver.add(JSONArrayELResolver.INSTANCE);
+        standardResolver.add(JSONObjectELResolver.INSTANCE);
     }
 
     public StandardELContext(ELContext context) {

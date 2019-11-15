@@ -44,6 +44,7 @@ import static android.os.Build.VERSION_CODES.LOLLIPOP;
 final class MatrixDrawable extends Drawable implements Drawable.Callback, Touchable {
 
     private static final int UNSET = -1;
+    private static final int[] EMPTY = new int[0];
 
     private Drawable mDrawable;
     private DrawableMatrix mMatrix;
@@ -203,7 +204,7 @@ final class MatrixDrawable extends Drawable implements Drawable.Callback, Toucha
     @Override
     public @NonNull
     int[] getState() {
-        return mDrawable == null ? new int[0] : mDrawable.getState();
+        return mDrawable == null ? EMPTY : mDrawable.getState();
     }
 
     @Override
