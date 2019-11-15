@@ -67,7 +67,7 @@ internal object FlexFactory : WidgetFactory<Component.ContainerBuilder<*>>() {
 
     override fun onCreateWidget(
             c: ComponentContext,
-            dataBinding: DataBinding,
+            dataBinding: DataContext,
             attrs: Map<String, String>?,
             visibility: Int
     ): Component.ContainerBuilder<*> {
@@ -101,7 +101,7 @@ internal object FlexFactory : WidgetFactory<Component.ContainerBuilder<*>>() {
     override fun onInstallChildren(
             owner: Component.ContainerBuilder<*>,
             c: ComponentContext,
-            dataBinding: DataBinding,
+            dataBinding: DataContext,
             attrs: Map<String, String>?,
             children: List<Component>?,
             visibility: Int

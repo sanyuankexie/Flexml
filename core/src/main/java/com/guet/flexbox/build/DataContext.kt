@@ -14,7 +14,7 @@ import com.guet.flexbox.el.ELException
 import com.guet.flexbox.el.ELManager
 import java.lang.reflect.Modifier
 
-class DataBinding(data: Any?) {
+class DataContext(data: Any?) {
 
     private val el = ELManager()
 
@@ -78,7 +78,7 @@ class DataBinding(data: Any?) {
         @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
         fun createLayout(
                 c: ComponentContext,
-                dataBinding: DataBinding,
+                dataBinding: DataContext,
                 root: NodeInfo
         ): Component {
             return c.createFromElement(dataBinding, root).single()

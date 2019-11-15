@@ -8,7 +8,7 @@ import java.util.*
 internal object ForEachBehavior : Behavior() {
     override fun onApply(
             c: ComponentContext,
-            dataBinding: DataBinding,
+            dataBinding: DataContext,
             attrs: Map<String, String>,
             children: List<NodeInfo>,
             upperVisibility: Int

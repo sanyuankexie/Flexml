@@ -8,7 +8,7 @@ internal abstract class Behavior : Transform {
 
     final override fun transform(
             c: ComponentContext,
-            dataBinding: DataBinding,
+            dataBinding: DataContext,
             nodeInfo: NodeInfo,
             upperVisibility: Int
     ): List<Component> {
@@ -26,7 +26,7 @@ internal abstract class Behavior : Transform {
 
     protected abstract fun onApply(
             c: ComponentContext,
-            dataBinding: DataBinding,
+            dataBinding: DataContext,
             attrs: Map<String, String>,
             children: List<NodeInfo>,
             upperVisibility: Int

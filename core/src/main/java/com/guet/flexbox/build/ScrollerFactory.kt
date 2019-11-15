@@ -29,7 +29,7 @@ internal object ScrollerFactory : WidgetFactory<Component.Builder<*>>() {
 
     override fun onCreateWidget(
             c: ComponentContext,
-            dataBinding: DataBinding,
+            dataBinding: DataContext,
             attrs: Map<String, String>?,
             visibility: Int
     ): Component.Builder<*> {
@@ -46,7 +46,7 @@ internal object ScrollerFactory : WidgetFactory<Component.Builder<*>>() {
     override fun onInstallChildren(
             owner: Component.Builder<*>,
             c: ComponentContext,
-            dataBinding: DataBinding,
+            dataBinding: DataContext,
             attrs: Map<String, String>?,
             children: List<Component>?,
             visibility: Int

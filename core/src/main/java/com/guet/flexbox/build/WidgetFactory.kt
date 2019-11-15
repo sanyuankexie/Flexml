@@ -70,7 +70,7 @@ internal abstract class WidgetFactory<T : Component.Builder<*>> : Transform {
 
     final override fun transform(
             c: ComponentContext,
-            dataBinding: DataBinding,
+            dataBinding: DataContext,
             nodeInfo: NodeInfo,
             upperVisibility: Int
     ): List<Component> {
@@ -84,7 +84,7 @@ internal abstract class WidgetFactory<T : Component.Builder<*>> : Transform {
 
     protected abstract fun onCreateWidget(
             c: ComponentContext,
-            dataBinding: DataBinding,
+            dataBinding: DataContext,
             attrs: Map<String, String>?,
             visibility: Int
     ): T
@@ -92,7 +92,7 @@ internal abstract class WidgetFactory<T : Component.Builder<*>> : Transform {
     protected open fun onInstallChildren(
             owner: T,
             c: ComponentContext,
-            dataBinding: DataBinding,
+            dataBinding: DataContext,
             attrs: Map<String, String>?,
             children: List<Component>?,
             visibility: Int) {
@@ -102,7 +102,7 @@ internal abstract class WidgetFactory<T : Component.Builder<*>> : Transform {
     protected open fun onLoadStyles(
             owner: T,
             c: ComponentContext,
-            dataBinding: DataBinding,
+            dataBinding: DataContext,
             attrs: Map<String, String>?,
             visibility: Int
     ) {
@@ -122,7 +122,7 @@ internal abstract class WidgetFactory<T : Component.Builder<*>> : Transform {
 
     private fun create(
             c: ComponentContext,
-            dataBinding: DataBinding,
+            dataBinding: DataContext,
             nodeInfo: NodeInfo,
             upperVisibility: Int
     ): Component? {
@@ -142,7 +142,7 @@ internal abstract class WidgetFactory<T : Component.Builder<*>> : Transform {
 
     private fun T.applyBackground(
             c: ComponentContext,
-            dataBinding: DataBinding,
+            dataBinding: DataContext,
             attrs: Map<String, String>
     ) {
         val borderRadius = dataBinding.tryGetValue(attrs["borderRadius"], 0).toPx()
@@ -193,7 +193,7 @@ internal abstract class WidgetFactory<T : Component.Builder<*>> : Transform {
 
     private fun T.applyEvent(
             c: ComponentContext,
-            dataBinding: DataBinding,
+            dataBinding: DataContext,
             attrs: Map<String, String>,
             visibility: Int
     ) {
@@ -217,7 +217,7 @@ internal abstract class WidgetFactory<T : Component.Builder<*>> : Transform {
     }
 
     protected open fun calculateVisibility(
-            dataBinding: DataBinding,
+            dataBinding: DataContext,
             attrs: Map<String, String>?,
             upperVisibility: Int
     ): Int {

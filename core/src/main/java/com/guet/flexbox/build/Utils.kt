@@ -21,7 +21,7 @@ internal inline fun <reified T : Number> T.toPx(): Int {
     return (this.toFloat() * Resources.getSystem().displayMetrics.widthPixels / 360f).toInt()
 }
 
-internal inline fun <reified T : Any> DataBinding.tryGetValue(expr: String?, fallback: T): T {
+internal inline fun <reified T : Any> DataContext.tryGetValue(expr: String?, fallback: T): T {
     if (expr == null) {
         return fallback
     }
@@ -35,7 +35,7 @@ internal inline fun <reified T : Any> DataBinding.tryGetValue(expr: String?, fal
     }
 }
 
-internal inline fun <T> DataBinding.scope(scope: Map<String, Any>, action: () -> T): T {
+internal inline fun <T> DataContext.scope(scope: Map<String, Any>, action: () -> T): T {
     enterScope(scope)
     try {
         return action()
@@ -44,7 +44,7 @@ internal inline fun <T> DataBinding.scope(scope: Map<String, Any>, action: () ->
     }
 }
 
-internal inline fun <reified T : Enum<T>> DataBinding.tryGetEnum(
+internal inline fun <reified T : Enum<T>> DataContext.tryGetEnum(
         expr: String?,
         scope: Map<String, T>,
         fallback: T = T::class.java.enumConstants[0]): T {
@@ -57,7 +57,7 @@ internal inline fun <reified T : Enum<T>> DataBinding.tryGetEnum(
     }
 }
 
-internal inline fun <reified T : Any> DataBinding.requestValue(
+internal inline fun <reified T : Any> DataContext.requestValue(
         name: String,
         attrs: Map<String, String>
 ): T {
@@ -65,7 +65,7 @@ internal inline fun <reified T : Any> DataBinding.requestValue(
 }
 
 @ColorInt
-internal fun DataBinding.tryGetColor(expr: String?, @ColorInt fallback: Int): Int {
+internal fun DataContext.tryGetColor(expr: String?, @ColorInt fallback: Int): Int {
     if (expr == null) {
         return fallback
     }
@@ -102,7 +102,7 @@ private typealias JsonSupports = Map<Class<*>, FromJson<*>>
 
 private typealias SupportMap = HashMap<Class<*>, FromJson<*>>
 
-internal typealias Mapping<T> = T.(DataBinding, Map<String, String>, Boolean, String) -> Unit
+internal typealias Mapping<T> = T.(DataContext, Map<String, String>, Boolean, String) -> Unit
 
 internal typealias Mappings<T> = HashMap<String, Mapping<T>>
 
@@ -242,7 +242,7 @@ internal fun tryToMap(o: Any): Map<String, Any> {
 }
 
 internal fun ComponentContext.createFromElement(
-        dataBinding: DataBinding,
+        dataBinding: DataContext,
         element: NodeInfo,
         upperVisibility: Int = View.VISIBLE
 ): List<Component> {

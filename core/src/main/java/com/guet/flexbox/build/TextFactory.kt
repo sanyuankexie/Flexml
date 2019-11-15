@@ -68,7 +68,7 @@ internal object TextFactory : WidgetFactory<Text.Builder>() {
 
     override fun onCreateWidget(
             c: ComponentContext,
-            dataBinding: DataBinding,
+            dataBinding: DataContext,
             attrs: Map<String, String>?,
             visibility: Int
     ): Text.Builder {
@@ -78,7 +78,7 @@ internal object TextFactory : WidgetFactory<Text.Builder>() {
     override fun onLoadStyles(
             owner: Text.Builder,
             c: ComponentContext,
-            dataBinding: DataBinding,
+            dataBinding: DataContext,
             attrs: Map<String, String>?,
             visibility: Int
     ) {

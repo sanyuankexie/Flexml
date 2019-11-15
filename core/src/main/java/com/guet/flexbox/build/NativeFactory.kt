@@ -18,7 +18,7 @@ internal object NativeFactory : WidgetFactory<ViewCompatComponent.Builder<View>>
 
     override fun onCreateWidget(
             c: ComponentContext,
-            dataBinding: DataBinding,
+            dataBinding: DataContext,
             attrs: Map<String, String>?,
             visibility: Int
     ): ViewCompatComponent.Builder<View> {
