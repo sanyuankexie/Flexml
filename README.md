@@ -1,5 +1,4 @@
-<img src="https://s2.ax1x.com/2019/11/15/MayJWq.png" width="100%">
-
+![](https://s2.ax1x.com/2019/11/15/MayJWq.png)
 # Gbox ![](https://img.shields.io/badge/language-kotlin-orange) ![](https://jitpack.io/v/LukeXeon/flexbox.svg) ![](https://img.shields.io/badge/platform-android-brightgreen) ![](https://img.shields.io/badge/doc-%E6%8E%98%E9%87%91-blue) ![](https://img.shields.io/badge/license-Apache%202.0-green) ![](https://img.shields.io/badge/email-imlkluo%40qq.com-green)
 <img src="https://s2.ax1x.com/2019/11/13/MGZAxI.png" width=150 align=right>
 
