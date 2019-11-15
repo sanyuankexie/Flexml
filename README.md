@@ -1,3 +1,5 @@
+<img src="https://s2.ax1x.com/2019/11/15/MayJWq.png" width=100%>
+
 # Gbox ![](https://img.shields.io/badge/language-kotlin-orange) ![](https://jitpack.io/v/LukeXeon/flexbox.svg) ![](https://img.shields.io/badge/platform-android-brightgreen) ![](https://img.shields.io/badge/doc-%E6%8E%98%E9%87%91-blue) ![](https://img.shields.io/badge/license-Apache%202.0-green) ![](https://img.shields.io/badge/email-imlkluo%40qq.com-green)
 <img src="https://s2.ax1x.com/2019/11/13/MGZAxI.png" width=150 align=right>
 
@@ -9,7 +11,7 @@
 
 并且对于首页feed流卡片、一级页面的活动区块来说，这些页面的逻辑本身就不强，而且往往也只是需要局部动态化，所以综合来看RN和WebView都不是最优选，我们需要**第三条路**。
 ### 2 特性
-Gbox是对**业务**以及**性能**友好的，它为了解决上述应用场景中所存在的问题而出现：
+Gbox是对**业务**以及**性能**友好的，它为了解决上述应用场景中所存在的问题而出现，在性能上更接近于原生的基础上也能够编写简单的逻辑：
 * **耗时操作异步化**。将原本View体系中的measure、layout搬到异步线程中去，解放主线程，这也是Gbox之所以高效的原因之一
 * **干掉布局层级**。直接使用轻量级的Drawable进行渲染，与WebView相比有更大的性能优势
 * **异步图片加载**。使用轻量级Glide作为图片加载引擎，所有图片均可以从网络加载，并且不会触发额外的布局更新
