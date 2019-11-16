@@ -8,8 +8,8 @@ import android.graphics.drawable.Drawable
 internal open class BorderDrawable<T : Drawable>(
         drawable: T,
         radius: Int = 0,
-        var width: Int = 0,
-        var color: Int = Color.TRANSPARENT
+        var borderWidth: Int = 0,
+        var borderColor: Int = Color.TRANSPARENT
 ) : RoundedDrawable<T>(drawable, radius) {
 
     private val paint = Paint().apply {
@@ -19,9 +19,9 @@ internal open class BorderDrawable<T : Drawable>(
 
     override fun draw(canvas: Canvas) {
         super.draw(canvas)
-        if (width > 0) {
-            paint.color = color
-            paint.strokeWidth = width.toFloat()
+        if (borderWidth > 0) {
+            paint.color = borderColor
+            paint.strokeWidth = borderWidth.toFloat()
             canvas.drawPath(path, paint)
         }
     }

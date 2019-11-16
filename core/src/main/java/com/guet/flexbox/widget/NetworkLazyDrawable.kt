@@ -13,16 +13,14 @@ import java.util.concurrent.atomic.AtomicBoolean
 
 internal class NetworkLazyDrawable(
         c: Context,
-        private val width: Int,
-        private val height: Int,
         private val url: CharSequence)
     : ComparableDrawableWrapper(NoOpDrawable()), WrapperTarget {
 
-    private val loaded = AtomicBoolean(false)
+    private val trigger = AtomicBoolean(false)
     private val context = c.applicationContext
 
     override fun draw(canvas: Canvas) {
-        if (loaded.compareAndSet(false, true)) {
+        if (trigger.compareAndSet(false, true)) {
             Glide.with(context).load(url).into(this)
         } else {
             super.draw(canvas)
@@ -38,9 +36,7 @@ internal class NetworkLazyDrawable(
             return true
         }
         if (other is NetworkLazyDrawable) {
-            return width == other.width
-                    && height == other.height
-                    && TextUtils.equals(url, other.url)
+            return TextUtils.equals(url, other.url)
         }
         return false
     }

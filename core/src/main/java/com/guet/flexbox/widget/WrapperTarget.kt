@@ -46,11 +46,11 @@ internal interface WrapperTarget : Target<Drawable> {
         return lock.read { return requests[this] }
     }
 
-    companion object {
+    companion object  {
 
-        private val lock = ReentrantReadWriteLock()
+        internal val lock = ReentrantReadWriteLock()
 
-        private val requests = WeakHashMap<WrapperTarget, Request>()
+        internal val requests = WeakHashMap<WrapperTarget, Request>()
 
         internal fun transition(current: Drawable?, next: Drawable): Drawable {
             val transitionDrawable = TransitionDrawable(arrayOf(

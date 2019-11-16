@@ -20,32 +20,26 @@ internal class NetworkMatrixDrawable(c: Context)
     : BorderDrawable<MatrixDrawable>(MatrixDrawable()), Touchable, WrapperTarget {
 
     private val c: Context = c.applicationContext
-    private var layoutWidth: Int = 0
-    private var layoutHeight: Int = 0
-    private var horizontalPadding: Int = 0
-    private var verticalPadding: Int = 0
+    private var width: Int = 0
+    private var height: Int = 0
     private var scaleType = ScaleType.FIT_CENTER
 
     fun mount(
             url: CharSequence,
-            layoutWidth: Int,
-            layoutHeight: Int,
-            horizontalPadding: Int,
-            verticalPadding: Int,
-            radius: Int,
             width: Int,
-            color: Int,
+            height: Int,
+            radius: Int,
+            borderWidth: Int,
+            borderColor: Int,
             blurRadius: Float,
             blurSampling: Float,
             scaleType: ScaleType
     ) {
-        this.layoutHeight = layoutHeight
-        this.layoutWidth = layoutWidth
-        this.horizontalPadding = horizontalPadding
-        this.verticalPadding = verticalPadding
-        this.radius = radius
         this.width = width
-        this.color = color
+        this.height = height
+        this.radius = radius
+        this.borderWidth = borderWidth
+        this.borderColor = borderColor
         this.scaleType = scaleType
         if (TextUtils.isEmpty(url)) {
             notifyChanged(scaleType, ColorDrawable(Color.TRANSPARENT))
@@ -63,10 +57,7 @@ internal class NetworkMatrixDrawable(c: Context)
     }
 
     override fun getSize(cb: SizeReadyCallback) {
-        cb.onSizeReady(
-                layoutWidth - horizontalPadding,
-                layoutHeight - verticalPadding
-        )
+        cb.onSizeReady(width, height)
     }
 
     override fun onLoadCleared(placeholder: Drawable?) {
@@ -86,6 +77,7 @@ internal class NetworkMatrixDrawable(c: Context)
 
     fun unmount() {
         wrappedDrawable.unmount()
+        Glide.with(c).clear(this)
     }
 
     @TargetApi(LOLLIPOP)
@@ -108,14 +100,15 @@ internal class NetworkMatrixDrawable(c: Context)
                 || resource.intrinsicWidth <= 0
                 || resource.intrinsicHeight <= 0) {
             matrix = null
-            drawableWidth = layoutWidth - horizontalPadding
-            drawableHeight = layoutHeight - verticalPadding
+            drawableWidth = width
+            drawableHeight = height
         } else {
             matrix = DrawableMatrix.create(
                     resource,
                     scaleType,
-                    layoutWidth - horizontalPadding,
-                    layoutHeight - verticalPadding)
+                    width,
+                    height
+            )
             drawableWidth = resource.intrinsicWidth
             drawableHeight = resource.intrinsicHeight
         }

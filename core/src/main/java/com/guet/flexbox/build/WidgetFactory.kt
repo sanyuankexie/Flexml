@@ -5,7 +5,6 @@ import android.graphics.drawable.Drawable
 import android.graphics.drawable.GradientDrawable
 import android.view.View
 import androidx.annotation.CallSuper
-import com.bumptech.glide.request.target.Target
 import com.facebook.litho.Component
 import com.facebook.litho.ComponentContext
 import com.facebook.litho.drawable.ComparableColorDrawable
@@ -24,7 +23,7 @@ internal abstract class WidgetFactory<T : Component.Builder<*>> : Transform {
     internal val mappings = Mappings<T>()
 
     init {
-        numberAttr<Double>("width") { _, _, it ->
+        numberAttr<Double>("borderWidth") { _, _, it ->
             this.widthPx(it.toPx())
         }
         numberAttr<Double>("height") { _, _, it ->
@@ -163,18 +162,8 @@ internal abstract class WidgetFactory<T : Component.Builder<*>> : Transform {
                 if (backgroundELResult is ComparableGradientDrawable) {
                     backgroundDrawable = backgroundELResult
                 } else if (backgroundELResult is CharSequence && backgroundELResult.isNotEmpty()) {
-                    var width = dataBinding.tryGetValue(attrs["width"], Target.SIZE_ORIGINAL)
-                    if (width <= 0) {
-                        width = Target.SIZE_ORIGINAL
-                    }
-                    var height = dataBinding.tryGetValue(attrs["height"], Target.SIZE_ORIGINAL)
-                    if (height <= 0) {
-                        height = Target.SIZE_ORIGINAL
-                    }
                     backgroundDrawable = NetworkLazyDrawable(
                             c.androidContext,
-                            width.toPx(),
-                            height.toPx(),
                             backgroundELResult
                     )
                 }
