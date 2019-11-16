@@ -17,12 +17,12 @@ internal class BackgroundDrawable(
             return true
         }
         if (other is BackgroundDrawable) {
-            fun unwrap(drawable: BorderDrawable<*>): ComparableDrawable {
+            fun unwrap(drawable: BorderDrawable<*>): Drawable {
                 var innerDrawable: Drawable = drawable
                 while (innerDrawable is DrawableWrapper<*>) {
                     innerDrawable = innerDrawable.wrappedDrawable
                 }
-                return innerDrawable as ComparableDrawable
+                return innerDrawable
             }
 
             val border = wrappedDrawable
@@ -30,10 +30,13 @@ internal class BackgroundDrawable(
             if (border.borderWidth == otherBorder.borderWidth
                     && border.borderColor == otherBorder.borderColor
                     && border.radius == otherBorder.radius) {
-                return ComparableDrawable.isEquivalentTo(
-                        unwrap(border),
-                        unwrap(otherBorder)
-                )
+                val left = unwrap(border)
+                val right = unwrap(otherBorder)
+                return if (left is ComparableDrawable && right is ComparableDrawable) {
+                    ComparableDrawable.isEquivalentTo(left, right)
+                } else {
+                    left == right
+                }
             }
         }
         return false
