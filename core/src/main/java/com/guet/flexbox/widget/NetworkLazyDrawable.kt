@@ -5,7 +5,7 @@ import android.graphics.Canvas
 import android.graphics.drawable.Drawable
 import android.text.TextUtils
 import com.bumptech.glide.Glide
-import com.bumptech.glide.request.target.CustomTarget
+import com.bumptech.glide.request.target.SizeReadyCallback
 import com.bumptech.glide.request.transition.Transition
 import com.facebook.litho.drawable.ComparableDrawable
 import com.facebook.litho.drawable.ComparableDrawableWrapper
@@ -16,18 +16,21 @@ internal class NetworkLazyDrawable(
         private val width: Int,
         private val height: Int,
         private val url: CharSequence)
-    : ComparableDrawableWrapper(NoOpDrawable()) {
+    : ComparableDrawableWrapper(NoOpDrawable()), WrapperTarget {
 
     private val loaded = AtomicBoolean(false)
     private val context = c.applicationContext
 
     override fun draw(canvas: Canvas) {
         if (loaded.compareAndSet(false, true)) {
-            Glide.with(context).load(url)
-                    .into(LazyTarget(width, height))
+            Glide.with(context).load(url).into(this)
         } else {
             super.draw(canvas)
         }
+    }
+
+    override fun getSize(cb: SizeReadyCallback) {
+        cb.onSizeReady(bounds.width(), bounds.height())
     }
 
     override fun isEquivalentTo(other: ComparableDrawable?): Boolean {
@@ -42,24 +45,17 @@ internal class NetworkLazyDrawable(
         return false
     }
 
-    internal inner class LazyTarget(
-            width: Int,
-            height: Int
-    ) : CustomTarget<Drawable>(width, height) {
-        override fun onLoadCleared(placeholder: Drawable?) {
-            if (placeholder != null) {
-                onResourceReady(placeholder, null)
-            } else {
-                onResourceReady(NoOpDrawable(), null)
-            }
-        }
+    override fun onResourceReady(resource: Drawable, transition: Transition<in Drawable>?) {
+        resource.bounds = bounds
+        wrappedDrawable = WrapperTarget.transition(null, resource)
+        invalidateSelf()
+    }
 
-        override fun onResourceReady(
-                resource: Drawable,
-                transition: Transition<in Drawable>?) {
-            resource.bounds = bounds
-            wrappedDrawable = NetworkMatrixDrawable.transition(null, resource)
-            invalidateSelf()
+    override fun onLoadCleared(placeholder: Drawable?) {
+        if (placeholder != null) {
+            onResourceReady(placeholder, null)
+        } else {
+            onResourceReady(NoOpDrawable(), null)
         }
     }
 }

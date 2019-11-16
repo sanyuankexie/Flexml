@@ -17,19 +17,18 @@ internal class BackgroundDrawable(
             return true
         }
         if (other is BackgroundDrawable) {
-            var inner = wrappedDrawable
-            while (inner is DrawableWrapper<*>) {
-                inner = inner.wrappedDrawable
+            fun getInnerDrawable(drawable: Drawable): ComparableDrawable {
+                var innerDrawable: Drawable = drawable as DrawableWrapper<*>
+                while (innerDrawable is DrawableWrapper<*>) {
+                    innerDrawable = innerDrawable.wrappedDrawable
+                }
+                return innerDrawable as ComparableDrawable
             }
-            var otherInner = other.wrappedDrawable
-            while (otherInner is DrawableWrapper<*>) {
-                otherInner = otherInner.wrappedDrawable
-            }
-            if (inner is ComparableDrawable && otherInner is ComparableDrawable) {
-                return ComparableDrawable.isEquivalentTo(inner, otherInner)
-            }
+            return ComparableDrawable.isEquivalentTo(
+                    getInnerDrawable(wrappedDrawable),
+                    getInnerDrawable(other)
+            )
         }
         return false
     }
-
 }
