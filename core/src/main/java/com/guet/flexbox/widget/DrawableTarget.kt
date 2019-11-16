@@ -8,9 +8,6 @@ import com.bumptech.glide.request.Request
 import com.bumptech.glide.request.target.SizeReadyCallback
 import com.bumptech.glide.request.target.Target
 import java.util.*
-import java.util.concurrent.locks.ReentrantReadWriteLock
-import kotlin.concurrent.read
-import kotlin.concurrent.write
 
 internal interface DrawableTarget : Target<Drawable> {
 
@@ -43,18 +40,17 @@ internal interface DrawableTarget : Target<Drawable> {
     }
 
     override fun setRequest(request: Request?) {
-        lock.write { requests[this] = request }
+        requests[this] = request
     }
 
     override fun getRequest(): Request? {
-        return lock.read { return requests[this] }
+        return requests[this]
     }
 
     companion object  {
 
-        internal val lock = ReentrantReadWriteLock()
-
-        internal val requests = WeakHashMap<DrawableTarget, Request>()
+        internal val requests = Collections
+                .synchronizedMap(WeakHashMap<DrawableTarget, Request>())
 
         internal fun transition(current: Drawable?, next: Drawable): Drawable {
             val transitionDrawable = TransitionDrawable(arrayOf(
