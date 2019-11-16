@@ -15,7 +15,6 @@ import org.json.JSONObject
 import java.io.*
 import java.lang.reflect.Array
 import java.lang.reflect.Type
-import kotlin.reflect.KClass
 
 internal inline fun <reified T : Number> T.toPx(): Int {
     return (this.toFloat() * Resources.getSystem().displayMetrics.widthPixels / 360f).toInt()
@@ -47,7 +46,7 @@ internal inline fun <T> DataContext.scope(scope: Map<String, Any>, action: () ->
 internal inline fun <reified T : Enum<T>> DataContext.tryGetEnum(
         expr: String?,
         scope: Map<String, T>,
-        fallback: T = T::class.java.enumConstants[0]): T {
+        fallback: T = enumValues<T>()[0]): T {
     return when {
         expr == null -> fallback
         expr.isExpr -> scope(scope) {
@@ -80,21 +79,12 @@ internal inline val CharSequence?.isExpr: Boolean
     get() = this != null && length > 3 && startsWith("\${") && endsWith('}')
 
 internal inline fun <reified N : Number> Number.safeCast(): N {
-    return safeCast(N::class) as N
+    return safeCast(N::class.javaObjectType) as N
 }
 
-private fun Number.safeCast(type: KClass<*>): Any {
-    return when (type) {
-        Byte::class -> this.toByte()
-        Char::class -> this.toChar()
-        Int::class -> this.toInt()
-        Short::class -> this.toShort()
-        Long::class -> this.toLong()
-        Float::class -> this.toFloat()
-        Double::class -> this.toDouble()
-        else -> error("no match number type ${type.java.name}")
-    }
-}
+private fun Number.safeCast(type: Class<*>) = type
+        .getMethod("valueOf", String::class.java)
+        .invoke(null, this.toString())
 
 private typealias FromJson<T> = (T, Type) -> Any
 
@@ -108,7 +98,7 @@ internal typealias Mappings<T> = HashMap<String, Mapping<T>>
 
 internal typealias Apply<T, V> = T.(Map<String, String>, Boolean, V) -> Unit
 
-private inline fun <reified T> SupportMap.add(noinline action: FromJson<T>) {
+private inline fun <reified T> SupportMap.addSupport(noinline action: FromJson<T>) {
     this[T::class.java] = action
 }
 
@@ -140,17 +130,17 @@ private fun findGsonSupport(): JsonSupports? {
         val converter: FromJson<InputStream> = { data, type ->
             readerMethod.invoke(gson, InputStreamReader(data), type)
         }
-        types.add<Reader> { data, type ->
+        types.addSupport<Reader> { data, type ->
             readerMethod.invoke(gson, data, type)
         }
-        types.add(converter)
-        types.add<ByteArray> { data, type ->
+        types.addSupport(converter)
+        types.addSupport<ByteArray> { data, type ->
             converter(ByteArrayInputStream(data), type)
         }
-        types.add<File> { data, type ->
+        types.addSupport<File> { data, type ->
             converter(FileInputStream(data), type)
         }
-        types.add<String> { data, type ->
+        types.addSupport<String> { data, type ->
             stringMethod.invoke(gson, data, type)
         }
         return types
@@ -176,13 +166,13 @@ private fun findFastJsonSupport(): JsonSupports? {
         val converter: FromJson<InputStream> = { data, type ->
             isMethod.invoke(null, data, type, null)
         }
-        types.add<String> { data, type ->
+        types.addSupport<String> { data, type ->
             stringMethod.invoke(null, data, type)
         }
-        types.add<ByteArray> { data, type ->
+        types.addSupport<ByteArray> { data, type ->
             converter(ByteArrayInputStream(data), type)
         }
-        types.add<File> { data, type ->
+        types.addSupport<File> { data, type ->
             converter(FileInputStream(data), type)
         }
         return types
