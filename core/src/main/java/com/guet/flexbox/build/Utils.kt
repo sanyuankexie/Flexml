@@ -176,6 +176,7 @@ private fun findFastJsonSupport(): JsonSupports? {
         val converter: FromJson<InputStream> = { data, type ->
             isMethod.invoke(null, data, type, null)
         }
+        types.addSupport(converter)
         types.addSupport<String> { data, type ->
             stringMethod.invoke(null, data, type)
         }
