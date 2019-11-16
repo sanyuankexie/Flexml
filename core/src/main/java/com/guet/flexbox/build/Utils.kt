@@ -200,12 +200,6 @@ internal inline fun <reified T> fromJson(data: Any): T? {
     } as? T
 }
 
-internal inline fun Int.hasFlags(flag: Int, action: () -> Unit) {
-    if (this and flag == flag) {
-        action()
-    }
-}
-
 internal fun tryToMap(o: Any): Map<String, Any> {
     val javaClass = o.javaClass
     when {
