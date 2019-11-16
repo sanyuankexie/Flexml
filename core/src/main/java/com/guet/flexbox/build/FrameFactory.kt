@@ -44,7 +44,7 @@ internal object FrameFactory : WidgetFactory<Row.Builder>(), ThreadFactory {
             return
         }
         var width = if (attrs != null) {
-            dataBinding.tryGetValue(attrs["width"], Int.MIN_VALUE)
+            dataBinding.tryGetValue(attrs["borderWidth"], Int.MIN_VALUE)
         } else {
             Int.MIN_VALUE
         }

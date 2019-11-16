@@ -39,14 +39,10 @@ internal object NetworkImageSpec {
     fun onBoundsDefined(
             c: ComponentContext,
             layout: ComponentLayout,
-            layoutWidth: Output<Int>,
-            layoutHeight: Output<Int>,
-            horizontalPadding: Output<Int>,
-            verticalPadding: Output<Int>) {
-        horizontalPadding.set(layout.paddingLeft + layout.paddingRight)
-        verticalPadding.set(layout.paddingTop + layout.paddingBottom)
-        layoutWidth.set(layout.width)
-        layoutHeight.set(layout.height)
+            width: Output<Int>,
+            height: Output<Int>) {
+        width.set(layout.width - (layout.paddingLeft + layout.paddingRight))
+        height.set(layout.height - (layout.paddingTop + layout.paddingBottom))
     }
 
     @OnMount
@@ -59,16 +55,12 @@ internal object NetworkImageSpec {
                 @Prop(optional = true) blurRadius: Float,
                 @Prop(optional = true) blurSampling: Float,
                 @Prop(optional = true) scaleType: ScaleType,
-                @FromBoundsDefined layoutWidth: Int,
-                @FromBoundsDefined layoutHeight: Int,
-                @FromBoundsDefined horizontalPadding: Int,
-                @FromBoundsDefined verticalPadding: Int) {
+                @FromBoundsDefined width: Int,
+                @FromBoundsDefined height: Int) {
         drawable.mount(
                 url,
-                layoutWidth,
-                layoutHeight,
-                horizontalPadding,
-                verticalPadding,
+                width,
+                height,
                 borderRadius,
                 borderWidth,
                 borderColor,

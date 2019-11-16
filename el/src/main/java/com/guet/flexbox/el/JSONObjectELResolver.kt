@@ -38,7 +38,7 @@ internal object JSONObjectELResolver : ELResolver() {
             val feats = ArrayList<FeatureDescriptor>(base.length())
             base.keys().forEach { key ->
                 val desc = FeatureDescriptor()
-                desc.displayName = key.toString()
+                desc.displayName = key
                 desc.shortDescription = ""
                 desc.isExpert = false
                 desc.isHidden = false
