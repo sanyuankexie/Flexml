@@ -15,6 +15,7 @@ import org.json.JSONObject
 import java.io.*
 import java.lang.reflect.Array
 import java.lang.reflect.Type
+import kotlin.reflect.KClass
 
 internal inline fun <reified T : Number> T.toPx(): Int {
     return (this.toFloat() * Resources.getSystem().displayMetrics.widthPixels / 360f).toInt()
@@ -79,12 +80,21 @@ internal inline val CharSequence?.isExpr: Boolean
     get() = this != null && length > 3 && startsWith("\${") && endsWith('}')
 
 internal inline fun <reified N : Number> Number.safeCast(): N {
-    return safeCast(N::class.javaObjectType) as N
+    return safeCast(N::class) as N
 }
 
-private fun Number.safeCast(type: Class<*>) = type
-        .getMethod("valueOf", String::class.java)
-        .invoke(null, this.toString())
+private fun Number.safeCast(type: KClass<*>): Any {
+    return when (type) {
+        Byte::class -> this.toByte()
+        Char::class -> this.toChar()
+        Int::class -> this.toInt()
+        Short::class -> this.toShort()
+        Long::class -> this.toLong()
+        Float::class -> this.toFloat()
+        Double::class -> this.toDouble()
+        else -> error("no match number type ${type.java.name}")
+    }
+}
 
 private typealias FromJson<T> = (T, Type) -> Any
 
