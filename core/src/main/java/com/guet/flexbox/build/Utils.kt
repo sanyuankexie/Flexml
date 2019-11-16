@@ -17,6 +17,46 @@ import java.lang.reflect.Array
 import java.lang.reflect.Type
 import kotlin.reflect.KClass
 
+private typealias FromJson<T> = (T, Type) -> Any
+
+private typealias JsonSupports = Map<Class<*>, FromJson<*>>
+
+private typealias SupportMap = HashMap<Class<*>, FromJson<*>>
+
+internal typealias Mapping<T> = T.(DataContext, Map<String, String>, Boolean, String) -> Unit
+
+internal typealias Mappings<T> = HashMap<String, Mapping<T>>
+
+internal typealias Apply<T, V> = T.(Map<String, String>, Boolean, V) -> Unit
+
+private const val GSON_NAME = "com.google.gson.Gson"
+
+private const val GSON_METHOD_NAME = "fromJson"
+
+private const val FAST_JSON_NAME = "com.alibaba.fastjson.JSONObject"
+
+private const val FAST_JSON_PRAM_NAME = "com.alibaba.fastjson.parser.Feature"
+
+private const val FAST_JSON_METHOD_NAME = "parseObject"
+
+private val transforms = mapOf(
+        "Image" to ImageFactory,
+        "Flex" to FlexFactory,
+        "Text" to TextFactory,
+        "Frame" to FrameFactory,
+        "Native" to NativeFactory,
+        "Scroller" to ScrollerFactory,
+        "Empty" to EmptyFactory,
+        "for" to ForBehavior,
+        "foreach" to ForEachBehavior,
+        "if" to IfBehavior
+)
+
+private val jsonMatchTypes: JsonSupports = findGsonSupport() ?: findFastJsonSupport() ?: emptyMap()
+
+internal inline val CharSequence?.isExpr: Boolean
+    get() = this != null && length > 3 && startsWith("\${") && endsWith('}')
+
 internal inline fun <reified T : Number> T.toPx(): Int {
     return (this.toFloat() * Resources.getSystem().displayMetrics.widthPixels / 360f).toInt()
 }
@@ -76,9 +116,6 @@ internal fun DataContext.tryGetColor(expr: String?, @ColorInt fallback: Int): In
     }
 }
 
-internal inline val CharSequence?.isExpr: Boolean
-    get() = this != null && length > 3 && startsWith("\${") && endsWith('}')
-
 internal inline fun <reified N : Number> Number.safeCast(): N {
     return safeCast(N::class) as N
 }
@@ -96,31 +133,9 @@ private fun Number.safeCast(type: KClass<*>): Any {
     }
 }
 
-private typealias FromJson<T> = (T, Type) -> Any
-
-private typealias JsonSupports = Map<Class<*>, FromJson<*>>
-
-private typealias SupportMap = HashMap<Class<*>, FromJson<*>>
-
-internal typealias Mapping<T> = T.(DataContext, Map<String, String>, Boolean, String) -> Unit
-
-internal typealias Mappings<T> = HashMap<String, Mapping<T>>
-
-internal typealias Apply<T, V> = T.(Map<String, String>, Boolean, V) -> Unit
-
 private inline fun <reified T> SupportMap.addSupport(noinline action: FromJson<T>) {
     this[T::class.java] = action
 }
-
-private const val GSON_NAME = "com.google.gson.Gson"
-
-private const val GSON_METHOD_NAME = "fromJson"
-
-private const val FAST_JSON_NAME = "com.alibaba.fastjson.JSONObject"
-
-private const val FAST_JSON_PRAM_NAME = "com.alibaba.fastjson.parser.Feature"
-
-private const val FAST_JSON_METHOD_NAME = "parseObject"
 
 private fun findGsonSupport(): JsonSupports? {
     try {
@@ -192,8 +207,6 @@ private fun findFastJsonSupport(): JsonSupports? {
     }
 }
 
-private val jsonMatchTypes: JsonSupports = findGsonSupport() ?: findFastJsonSupport() ?: emptyMap()
-
 internal inline fun <reified T> fromJson(data: Any): T? {
     return jsonMatchTypes[T::class.java]?.let {
         @Suppress("UNCHECKED_CAST")
@@ -209,7 +222,7 @@ internal fun tryToMap(o: Any): Map<String, Any> {
             return o as Map<String, Any>
         }
         o is JSONObject -> {
-            val map = HashMap<String, Any>()
+            val map = HashMap<String, Any>(o.length())
             o.keys().forEach {
                 map[it] = o[it]
             }
@@ -248,16 +261,3 @@ internal fun ComponentContext.createFromElement(
             upperVisibility
     ) ?: emptyList()
 }
-
-private val transforms = mapOf(
-        "Image" to ImageFactory,
-        "Flex" to FlexFactory,
-        "Text" to TextFactory,
-        "Frame" to FrameFactory,
-        "Native" to NativeFactory,
-        "Scroller" to ScrollerFactory,
-        "Empty" to EmptyFactory,
-        "for" to ForBehavior,
-        "foreach" to ForEachBehavior,
-        "if" to IfBehavior
-)

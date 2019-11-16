@@ -15,6 +15,7 @@ import com.facebook.litho.annotations.OnEvent;
 import com.facebook.litho.annotations.Param;
 import com.facebook.litho.annotations.Prop;
 import com.guet.flexbox.build.DataContext;
+import com.guet.flexbox.build.WidgetFactory;
 
 @LayoutSpec
 final class DynamicBoxSpec {
@@ -24,7 +25,7 @@ final class DynamicBoxSpec {
                                     @Prop(optional = true) Object bind,
                                     @Prop(optional = true) DataContext dataContext,
                                     @Prop NodeInfo layout) {
-        return DataContext.createLayout(
+        return WidgetFactory.createLayout(
                 componentContext,
                 dataContext != null ? dataContext : new DataContext(bind),
                 layout

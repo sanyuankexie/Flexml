@@ -5,6 +5,7 @@ import android.graphics.drawable.Drawable
 import android.graphics.drawable.GradientDrawable
 import android.view.View
 import androidx.annotation.CallSuper
+import androidx.annotation.RestrictTo
 import com.facebook.litho.Component
 import com.facebook.litho.ComponentContext
 import com.facebook.litho.drawable.ComparableColorDrawable
@@ -301,7 +302,17 @@ internal abstract class WidgetFactory<T : Component.Builder<*>> : Transform {
         }
     }
 
-    internal companion object {
+    companion object {
+
+        @JvmStatic
+        @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
+        fun createLayout(
+                c: ComponentContext,
+                dataBinding: DataContext,
+                root: NodeInfo
+        ): Component {
+            return c.createFromElement(dataBinding, root).single()
+        }
 
         internal val edges = arrayOf("Left", "Right", "Top", "Bottom")
 
