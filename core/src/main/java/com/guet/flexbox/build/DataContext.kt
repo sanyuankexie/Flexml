@@ -5,11 +5,7 @@ import android.graphics.Color
 import android.graphics.Color.parseColor
 import android.graphics.drawable.GradientDrawable.Orientation
 import androidx.annotation.ColorInt
-import androidx.annotation.RestrictTo
-import com.facebook.litho.Component
-import com.facebook.litho.ComponentContext
 import com.facebook.litho.drawable.ComparableGradientDrawable
-import com.guet.flexbox.NodeInfo
 import com.guet.flexbox.el.ELException
 import com.guet.flexbox.el.ELManager
 import com.guet.flexbox.el.JSONArrayELResolver
@@ -77,16 +73,6 @@ class DataContext(data: Any?) {
     internal annotation class Prefix(val value: String)
 
     companion object {
-
-        @JvmStatic
-        @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
-        fun createLayout(
-                c: ComponentContext,
-                dataBinding: DataContext,
-                root: NodeInfo
-        ): Component {
-            return c.createFromElement(dataBinding, root).single()
-        }
 
         @Suppress("UNCHECKED_CAST")
         internal val colorMap = HashMap((Color::class.java
