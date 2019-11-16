@@ -47,7 +47,7 @@ internal inline fun <T> DataContext.scope(scope: Map<String, Any>, action: () ->
 internal inline fun <reified T : Enum<T>> DataContext.tryGetEnum(
         expr: String?,
         scope: Map<String, T>,
-        fallback: T = T::class.java.enumConstants[0]): T {
+        fallback: T = enumValues<T>()[0]): T {
     return when {
         expr == null -> fallback
         expr.isExpr -> scope(scope) {
@@ -108,7 +108,7 @@ internal typealias Mappings<T> = HashMap<String, Mapping<T>>
 
 internal typealias Apply<T, V> = T.(Map<String, String>, Boolean, V) -> Unit
 
-private inline fun <reified T> SupportMap.add(noinline action: FromJson<T>) {
+private inline fun <reified T> SupportMap.addSupport(noinline action: FromJson<T>) {
     this[T::class.java] = action
 }
 
@@ -140,17 +140,17 @@ private fun findGsonSupport(): JsonSupports? {
         val converter: FromJson<InputStream> = { data, type ->
             readerMethod.invoke(gson, InputStreamReader(data), type)
         }
-        types.add<Reader> { data, type ->
+        types.addSupport<Reader> { data, type ->
             readerMethod.invoke(gson, data, type)
         }
-        types.add(converter)
-        types.add<ByteArray> { data, type ->
+        types.addSupport(converter)
+        types.addSupport<ByteArray> { data, type ->
             converter(ByteArrayInputStream(data), type)
         }
-        types.add<File> { data, type ->
+        types.addSupport<File> { data, type ->
             converter(FileInputStream(data), type)
         }
-        types.add<String> { data, type ->
+        types.addSupport<String> { data, type ->
             stringMethod.invoke(gson, data, type)
         }
         return types
@@ -176,13 +176,13 @@ private fun findFastJsonSupport(): JsonSupports? {
         val converter: FromJson<InputStream> = { data, type ->
             isMethod.invoke(null, data, type, null)
         }
-        types.add<String> { data, type ->
+        types.addSupport<String> { data, type ->
             stringMethod.invoke(null, data, type)
         }
-        types.add<ByteArray> { data, type ->
+        types.addSupport<ByteArray> { data, type ->
             converter(ByteArrayInputStream(data), type)
         }
-        types.add<File> { data, type ->
+        types.addSupport<File> { data, type ->
             converter(FileInputStream(data), type)
         }
         return types
@@ -198,12 +198,6 @@ internal inline fun <reified T> fromJson(data: Any): T? {
         @Suppress("UNCHECKED_CAST")
         (it as FromJson<Any>).invoke(data, T::class.java)
     } as? T
-}
-
-internal inline fun Int.hasFlags(flag: Int, action: () -> Unit) {
-    if (this and flag == flag) {
-        action()
-    }
 }
 
 internal fun tryToMap(o: Any): Map<String, Any> {

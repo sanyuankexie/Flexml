@@ -17,7 +17,7 @@ import com.facebook.litho.DrawableMatrix
 import com.facebook.litho.Touchable
 
 internal class NetworkMatrixDrawable(c: Context)
-    : BorderDrawable<MatrixDrawable>(MatrixDrawable()), Touchable, WrapperTarget {
+    : BorderDrawable<MatrixDrawable>(MatrixDrawable()), Touchable, DrawableTarget {
 
     private val c: Context = c.applicationContext
     private var width: Int = 0
@@ -68,6 +68,10 @@ internal class NetworkMatrixDrawable(c: Context)
         }
     }
 
+    override fun onLoadFailed(errorDrawable: Drawable?) {
+        wrappedDrawable.unmount()
+    }
+
     override fun onResourceReady(
             resource: Drawable,
             transition: Transition<in Drawable>?
@@ -113,7 +117,7 @@ internal class NetworkMatrixDrawable(c: Context)
             drawableHeight = resource.intrinsicHeight
         }
         wrappedDrawable.mount(
-                WrapperTarget.transition(wrappedDrawable.mountedDrawable, resource),
+                DrawableTarget.transition(wrappedDrawable.mountedDrawable, resource),
                 matrix,
                 drawableWidth,
                 drawableHeight

@@ -14,7 +14,7 @@ import java.util.concurrent.atomic.AtomicBoolean
 internal class NetworkLazyDrawable(
         c: Context,
         private val url: CharSequence)
-    : ComparableDrawableWrapper(NoOpDrawable()), WrapperTarget {
+    : ComparableDrawableWrapper(NoOpDrawable()), DrawableTarget {
 
     private val trigger = AtomicBoolean(false)
     private val context = c.applicationContext
@@ -43,15 +43,11 @@ internal class NetworkLazyDrawable(
 
     override fun onResourceReady(resource: Drawable, transition: Transition<in Drawable>?) {
         resource.bounds = bounds
-        wrappedDrawable = WrapperTarget.transition(null, resource)
+        wrappedDrawable = DrawableTarget.transition(null, resource)
         invalidateSelf()
     }
 
-    override fun onLoadCleared(placeholder: Drawable?) {
-        if (placeholder != null) {
-            onResourceReady(placeholder, null)
-        } else {
-            onResourceReady(NoOpDrawable(), null)
-        }
+    override fun onLoadFailed(errorDrawable: Drawable?) {
+        trigger.set(false)
     }
 }
