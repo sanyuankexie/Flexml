@@ -12,6 +12,8 @@ import com.facebook.litho.drawable.ComparableGradientDrawable
 import com.guet.flexbox.NodeInfo
 import com.guet.flexbox.el.ELException
 import com.guet.flexbox.el.ELManager
+import com.guet.flexbox.el.JSONArrayELResolver
+import com.guet.flexbox.el.JSONObjectELResolver
 import java.lang.reflect.Modifier
 
 class DataContext(data: Any?) {
@@ -19,6 +21,8 @@ class DataContext(data: Any?) {
     private val el = ELManager()
 
     init {
+        el.addELResolver(JSONArrayELResolver)
+        el.addELResolver(JSONObjectELResolver)
         functions.forEach {
             el.mapFunction(it.first, it.second.name, it.second)
         }
