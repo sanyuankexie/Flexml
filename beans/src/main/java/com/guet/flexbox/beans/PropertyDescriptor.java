@@ -5,16 +5,15 @@ import java.util.Objects;
 
 public final class PropertyDescriptor extends FeatureDescriptor {
 
-    private final String _propertyName;
     private Method _readMethod;
     private Method _writeMethod;
 
     PropertyDescriptor(String propertyName) {
-        _propertyName = propertyName;
+        super.setName(propertyName);
     }
 
-    public String getName() {
-        return _propertyName;
+    @Override
+    public void setName(String name) {
     }
 
     public Class<?> getPropertyType() {

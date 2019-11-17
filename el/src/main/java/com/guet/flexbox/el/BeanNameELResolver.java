@@ -16,9 +16,6 @@
  */
 package com.guet.flexbox.el;
 
-import com.guet.flexbox.beans.FeatureDescriptor;
-
-import java.util.Iterator;
 import java.util.Objects;
 
 /**
@@ -142,12 +139,6 @@ public class BeanNameELResolver extends ELResolver {
 
         // Return value undefined
         return false;
-    }
-
-    @Override
-    public Iterator<FeatureDescriptor> getFeatureDescriptors(ELContext context,
-                                                             Object base) {
-        return null;
     }
 
     @Override

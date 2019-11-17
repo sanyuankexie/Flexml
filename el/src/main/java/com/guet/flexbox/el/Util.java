@@ -552,7 +552,7 @@ class Util {
      * making changes keep the code in sync.
      */
     static Method getMethod(Class<?> type, Method m) {
-        if (m == null || Modifier.isPublic(type.getModifiers())) {
+        if (m == null || Modifier.isPublic(m.getModifiers())) {
             return m;
         }
         Class<?>[] inf = type.getInterfaces();

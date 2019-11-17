@@ -16,15 +16,10 @@
  */
 package com.guet.flexbox.el;
 
-import com.guet.flexbox.beans.FeatureDescriptor;
-
-import java.util.Iterator;
-
 /**
  * @author Jacob Hookom [jacob/hookom.net]
  *
  */
-@SuppressWarnings("WeakerAccess")
 public abstract class ELResolver {
 
     public static final String TYPE = "type";
@@ -120,8 +115,6 @@ public abstract class ELResolver {
      */
     public abstract boolean isReadOnly(ELContext context, Object base,
             Object property);
-
-    public abstract Iterator<FeatureDescriptor> getFeatureDescriptors(ELContext context, Object base);
 
     public abstract Class<?> getCommonPropertyType(ELContext context,
             Object base);

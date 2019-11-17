@@ -16,11 +16,11 @@ internal class NetworkLazyDrawable(
         private val url: CharSequence)
     : ComparableDrawableWrapper(NoOpDrawable()), DrawableTarget {
 
-    private val trigger = AtomicBoolean(false)
+    private val hasDrawTask = AtomicBoolean(false)
     private val context = c.applicationContext
 
     override fun draw(canvas: Canvas) {
-        if (trigger.compareAndSet(false, true)) {
+        if (hasDrawTask.compareAndSet(false, true)) {
             Glide.with(context).load(url).into(this)
         } else {
             super.draw(canvas)
@@ -48,6 +48,6 @@ internal class NetworkLazyDrawable(
     }
 
     override fun onLoadFailed(errorDrawable: Drawable?) {
-        trigger.set(false)
+        hasDrawTask.set(false)
     }
 }

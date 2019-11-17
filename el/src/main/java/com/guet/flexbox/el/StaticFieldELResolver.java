@@ -16,14 +16,11 @@
  */
 package com.guet.flexbox.el;
 
-import com.guet.flexbox.beans.FeatureDescriptor;
-
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
-import java.util.Iterator;
 import java.util.Objects;
 
 /**
@@ -184,15 +181,6 @@ public class StaticFieldELResolver extends ELResolver {
         return true;
     }
 
-
-    /**
-     * Always returns <code>null</code>.
-     */
-    @Override
-    public Iterator<FeatureDescriptor> getFeatureDescriptors(ELContext context,
-                                                             Object base) {
-        return null;
-    }
 
     /**
      * Always returns <code>String.class</code>.

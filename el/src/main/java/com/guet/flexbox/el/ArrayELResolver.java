@@ -17,10 +17,7 @@
 
 package com.guet.flexbox.el;
 
-import com.guet.flexbox.beans.FeatureDescriptor;
-
 import java.lang.reflect.Array;
-import java.util.Iterator;
 import java.util.Objects;
 
 
@@ -112,11 +109,6 @@ public class ArrayELResolver extends ELResolver {
         }
 
         return this.readOnly;
-    }
-
-    @Override
-    public Iterator<FeatureDescriptor> getFeatureDescriptors(ELContext context, Object base) {
-        return null;
     }
 
     @Override

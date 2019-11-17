@@ -16,7 +16,6 @@
  */
 package org.apache.el.stream;
 
-import com.guet.flexbox.beans.FeatureDescriptor;
 import com.guet.flexbox.el.ELContext;
 import com.guet.flexbox.el.ELResolver;
 
@@ -46,12 +45,6 @@ public class StreamELResolverImpl extends ELResolver {
     @Override
     public boolean isReadOnly(ELContext context, Object base, Object property) {
         return false;
-    }
-
-    @Override
-    public Iterator<FeatureDescriptor> getFeatureDescriptors(ELContext context,
-                                                             Object base) {
-        return null;
     }
 
     @Override
