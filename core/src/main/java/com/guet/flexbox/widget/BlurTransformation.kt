@@ -41,7 +41,6 @@ internal class BlurTransformation(
         val bitmapPool = Glide.get(context).bitmapPool
         val toTransform = resource.get()
         val transformed = transform(context, bitmapPool, toTransform)
-        resource.recycle()
         return BitmapResource(transformed, bitmapPool)
     }
 
