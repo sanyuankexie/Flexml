@@ -24,7 +24,7 @@ Gbox是对**业务**以及**性能**友好的，它为了解决上述应用场�
 * **使用kotlin实现**。代码实现非常简洁，很适合阅读学习
 * **对旧逻辑友好**。支持原生View嵌入Gbox
 ### 4 开始使用
-[掘金文章：Gbox完全使用指南](https://juejin.im/post/5dbaceb5f265da4cf677b8c5)
+[✨ 掘金文章：Gbox完全使用指南](https://juejin.im/post/5dbaceb5f265da4cf677b8c5)
 ### 5 从Jitpack获取
 Gbox使用jitpack进行构建，在你的根项目的build.gradle中添加
 ```
@@ -43,4 +43,4 @@ Gbox使用jitpack进行构建，在你的根项目的build.gradle中添加
 ```
 
 ### 5 我们开源
-Gbox使用kotlin开发，在Apache 2.0开源协议下发布，是一个完全基于开源软件实现的开源软件。Gbox由[@LukeXeon](https://github.com/LukeXeon)主要维护。
+Gbox使用kotlin开发，在Apache 2.0开源协议下发布，是一个完全基于开源软件实现的开源软件。由[@LukeXeon](https://github.com/LukeXeon)维护。
