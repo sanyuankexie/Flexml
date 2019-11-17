@@ -1,6 +1,6 @@
 package com.guet.flexbox.el
 
-import lite.beans.FeatureDescriptor
+import com.guet.flexbox.beans.FeatureDescriptor
 import org.json.JSONObject
 
 internal object JSONObjectELResolver : ELResolver() {
@@ -38,12 +38,7 @@ internal object JSONObjectELResolver : ELResolver() {
             val feats = ArrayList<FeatureDescriptor>(base.length())
             base.keys().forEach { key ->
                 val desc = FeatureDescriptor()
-                desc.displayName = key
-                desc.shortDescription = ""
-                desc.isExpert = false
-                desc.isHidden = false
                 desc.name = key
-                desc.isPreferred = true
                 desc.setValue(RESOLVABLE_AT_DESIGN_TIME, true)
                 desc.setValue(TYPE, key.javaClass)
                 feats.add(desc)

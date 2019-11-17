@@ -17,6 +17,8 @@
 
 package com.guet.flexbox.el;
 
+import com.guet.flexbox.beans.FeatureDescriptor;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -24,8 +26,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-
-import lite.beans.FeatureDescriptor;
 
 public class MapELResolver extends ELResolver {
 
@@ -112,12 +112,7 @@ public class MapELResolver extends ELResolver {
             while (itr.hasNext()) {
                 key = itr.next();
                 desc = new FeatureDescriptor();
-                desc.setDisplayName(key.toString());
-                desc.setShortDescription("");
-                desc.setExpert(false);
-                desc.setHidden(false);
                 desc.setName(key.toString());
-                desc.setPreferred(true);
                 desc.setValue(RESOLVABLE_AT_DESIGN_TIME, Boolean.TRUE);
                 desc.setValue(TYPE, key.getClass());
                 feats.add(desc);

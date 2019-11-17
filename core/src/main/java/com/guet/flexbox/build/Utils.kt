@@ -9,8 +9,8 @@ import com.facebook.litho.Component
 import com.facebook.litho.ComponentContext
 import com.guet.flexbox.BuildConfig
 import com.guet.flexbox.NodeInfo
+import com.guet.flexbox.beans.Introspector
 import com.guet.flexbox.el.ELException
-import lite.beans.Introspector
 import org.json.JSONObject
 import java.io.*
 import java.lang.reflect.Array

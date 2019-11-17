@@ -17,13 +17,13 @@
 
 package com.guet.flexbox.el;
 
+import com.guet.flexbox.beans.FeatureDescriptor;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
-
-import lite.beans.FeatureDescriptor;
 
 public class ListELResolver extends ELResolver {
 

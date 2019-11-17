@@ -17,6 +17,12 @@
 
 package com.guet.flexbox.el;
 
+import com.guet.flexbox.beans.BeanInfo;
+import com.guet.flexbox.beans.FeatureDescriptor;
+import com.guet.flexbox.beans.IntrospectionException;
+import com.guet.flexbox.beans.Introspector;
+import com.guet.flexbox.beans.PropertyDescriptor;
+
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Arrays;
@@ -26,12 +32,6 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.WeakHashMap;
 import java.util.concurrent.ConcurrentHashMap;
-
-import lite.beans.BeanInfo;
-import lite.beans.FeatureDescriptor;
-import lite.beans.IntrospectionException;
-import lite.beans.Introspector;
-import lite.beans.PropertyDescriptor;
 
 public class BeanELResolver extends ELResolver {
 

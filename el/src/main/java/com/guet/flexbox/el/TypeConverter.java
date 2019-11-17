@@ -16,9 +16,9 @@
  */
 package com.guet.flexbox.el;
 
-import java.util.Iterator;
+import com.guet.flexbox.beans.FeatureDescriptor;
 
-import lite.beans.FeatureDescriptor;
+import java.util.Iterator;
 
 /**
  * @since EL 3.0

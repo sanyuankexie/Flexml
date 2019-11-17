@@ -16,6 +16,8 @@
  */
 package org.apache.el.lang;
 
+import com.guet.flexbox.beans.PropertyEditor;
+import com.guet.flexbox.beans.PropertyEditorManager;
 import com.guet.flexbox.el.ELContext;
 import com.guet.flexbox.el.ELException;
 
@@ -27,9 +29,6 @@ import java.math.BigInteger;
 import java.util.Collections;
 import java.util.Map;
 import java.util.Set;
-
-import lite.beans.PropertyEditor;
-import lite.beans.PropertyEditorManager;
 
 
 /**
