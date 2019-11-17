@@ -8,6 +8,7 @@
         <option name="modules">
           <set>
             <option value="$PROJECT_DIR$" />
+            <option value="$PROJECT_DIR$/beans" />
             <option value="$PROJECT_DIR$/core" />
             <option value="$PROJECT_DIR$/el" />
             <option value="$PROJECT_DIR$/mock" />

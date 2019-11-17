@@ -16,6 +16,7 @@
  */
 package org.apache.el.stream;
 
+import com.guet.flexbox.beans.FeatureDescriptor;
 import com.guet.flexbox.el.ELContext;
 import com.guet.flexbox.el.ELResolver;
 
@@ -23,8 +24,6 @@ import java.lang.reflect.Array;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
-
-import lite.beans.FeatureDescriptor;
 
 public class StreamELResolverImpl extends ELResolver {
 

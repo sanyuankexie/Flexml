@@ -1,6 +1,6 @@
 package com.guet.flexbox.el
 
-import lite.beans.FeatureDescriptor
+import com.guet.flexbox.beans.FeatureDescriptor
 import org.json.JSONArray
 
 internal object JSONArrayELResolver : ELResolver() {

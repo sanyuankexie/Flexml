@@ -17,6 +17,8 @@
 
 package com.guet.flexbox.el;
 
+import com.guet.flexbox.beans.FeatureDescriptor;
+
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.Iterator;
@@ -24,8 +26,6 @@ import java.util.List;
 import java.util.MissingResourceException;
 import java.util.Objects;
 import java.util.ResourceBundle;
-
-import lite.beans.FeatureDescriptor;
 
 public class ResourceBundleELResolver extends ELResolver {
 
@@ -100,12 +100,6 @@ public class ResourceBundleELResolver extends ELResolver {
             while (e.hasMoreElements()) {
                 key = e.nextElement();
                 feat = new FeatureDescriptor();
-                feat.setDisplayName(key);
-                feat.setShortDescription("");
-                feat.setExpert(false);
-                feat.setHidden(false);
-                feat.setName(key);
-                feat.setPreferred(true);
                 feat.setValue(RESOLVABLE_AT_DESIGN_TIME, Boolean.TRUE);
                 feat.setValue(TYPE, String.class);
                 feats.add(feat);

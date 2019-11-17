@@ -17,11 +17,11 @@
 
 package com.guet.flexbox.el;
 
+import com.guet.flexbox.beans.FeatureDescriptor;
+
 import java.lang.reflect.Array;
 import java.util.Iterator;
 import java.util.Objects;
-
-import lite.beans.FeatureDescriptor;
 
 
 public class ArrayELResolver extends ELResolver {

@@ -1,1 +1,1 @@
-include ':overview', ':core', ':el', ':mock'
+include ':overview', ':core', ':el', ':mock', ':beans'
