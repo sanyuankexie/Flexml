@@ -19,6 +19,7 @@ import com.guet.flexbox.widget.NetworkLazyDrawable
 import com.guet.flexbox.widget.NoOpDrawable
 import java.util.*
 
+@RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
 internal abstract class WidgetFactory<T : Component.Builder<*>> : Transform {
 
     internal val mappings = Mappings<T>()
@@ -305,13 +306,12 @@ internal abstract class WidgetFactory<T : Component.Builder<*>> : Transform {
     companion object {
 
         @JvmStatic
-        @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
         fun createLayout(
                 c: ComponentContext,
                 dataBinding: DataContext,
                 root: NodeInfo
-        ): Component {
-            return c.createFromElement(dataBinding, root).single()
+        ): Component? {
+            return c.createFromElement(dataBinding, root).singleOrNull()
         }
 
         internal val edges = arrayOf("Left", "Right", "Top", "Bottom")

@@ -47,7 +47,6 @@ internal class NetworkMatrixDrawable(c: Context)
             Glide.with(c).load(url).apply {
                 if (blurRadius > 0) {
                     transform(BlurTransformation(
-                            c,
                             blurRadius,
                             blurSampling
                     ))
