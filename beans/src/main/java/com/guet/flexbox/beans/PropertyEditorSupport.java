@@ -16,8 +16,6 @@
  */
 package com.guet.flexbox.beans;
 
-import org.apache.harmony.beans.internal.nls.Messages;
-
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -32,7 +30,7 @@ public class PropertyEditorSupport implements PropertyEditor {
 
     public PropertyEditorSupport(Object source) {
         if (source == null) {
-            throw new NullPointerException(Messages.getString("beans.0C")); //$NON-NLS-1$
+            throw new NullPointerException("source is null"); //$NON-NLS-1$
         }
         this.source = source;
     }

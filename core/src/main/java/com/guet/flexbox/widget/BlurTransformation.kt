@@ -4,7 +4,6 @@ import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.graphics.Paint
-import android.os.Build
 import android.renderscript.Allocation
 import android.renderscript.Element
 import android.renderscript.RenderScript
@@ -111,13 +110,7 @@ internal class BlurTransformation(
             blur.forEach(output)
             output.copyTo(bitmap)
         } finally {
-            if (rs != null) {
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                    RenderScript.releaseAllContexts()
-                } else {
-                    rs.destroy()
-                }
-            }
+            rs?.destroy()
             input?.destroy()
             output?.destroy()
             blur?.destroy()

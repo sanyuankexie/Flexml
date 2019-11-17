@@ -1,6 +1,5 @@
 package com.guet.flexbox.el
 
-import com.guet.flexbox.beans.FeatureDescriptor
 import org.json.JSONArray
 
 internal object JSONArrayELResolver : ELResolver() {
@@ -36,11 +35,6 @@ internal object JSONArrayELResolver : ELResolver() {
 
     override fun isReadOnly(context: ELContext, base: Any?, property: Any?): Boolean {
         return false
-    }
-
-    override fun getFeatureDescriptors(context: ELContext?, base: Any?)
-            : MutableIterator<FeatureDescriptor>? {
-        return null
     }
 
     override fun getCommonPropertyType(context: ELContext?, base: Any?): Class<*>? {
