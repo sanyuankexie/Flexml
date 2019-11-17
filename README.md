@@ -1,5 +1,5 @@
 
-<img src="https://s2.ax1x.com/2019/11/18/Msc64f.png" width="100%" align=center>
+<img src="https://s2.ax1x.com/2019/11/18/Msc64f.png" width="100%" align=”middle“/>
 
 # Gbox ![](https://img.shields.io/badge/language-kotlin%20%7C%20java-orange) ![](https://jitpack.io/v/LukeXeon/flexbox.svg) ![](https://img.shields.io/badge/platform-android-brightgreen) ![](https://img.shields.io/badge/license-Apache--2.0-blue) ![](https://img.shields.io/badge/email-imlkluo%40qq.com-green) ![](https://img.shields.io/badge/doc-%E6%8E%98%E9%87%91-blue)
 
@@ -24,11 +24,6 @@ Gbox是对**业务**以及**性能**友好的，它为了解决上述应用场�
 * **使用kotlin实现**。代码实现非常简洁，很适合阅读学习
 * **对旧逻辑友好**。支持原生View嵌入Gbox
 ### 4 开始使用
-* 预览截图：
-
-![](https://s2.ax1x.com/2019/11/12/M3oXtA.png)
-* 使用指南：👇
-
 [掘金文章：Gbox完全使用指南](https://juejin.im/post/5dbaceb5f265da4cf677b8c5)
 ### 5 从Jitpack获取
 Gbox使用jitpack进行构建，在你的根项目的build.gradle中添加
