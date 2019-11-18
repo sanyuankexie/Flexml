@@ -86,20 +86,19 @@ internal object FrameFactory : WidgetFactory<Row.Builder>(), ThreadFactory {
             if (children.size > 1) {
                 futures = wrappers.subList(1, children.size).map {
                     measureThreadPool.submit<Size> {
-                        val s = Size()
+                        val size = Size()
                         it.measure(
                                 c,
                                 widthSpec,
                                 heightSpec,
-                                s
+                                size
                         )
-                        s
+                        size
                     }
                 }
             }
             val size = Size()
-            val first = wrappers.first()
-            first.measure(
+            wrappers.first().measure(
                     c,
                     widthSpec,
                     heightSpec,
@@ -107,7 +106,6 @@ internal object FrameFactory : WidgetFactory<Row.Builder>(), ThreadFactory {
             )
             maxWidth = max(maxWidth, size.width)
             maxHeight = max(maxHeight, size.height)
-            owner.child(first)
             futures?.map {
                 it.get()
             }?.forEach {
@@ -122,4 +120,5 @@ internal object FrameFactory : WidgetFactory<Row.Builder>(), ThreadFactory {
             }
         }
     }
+
 }

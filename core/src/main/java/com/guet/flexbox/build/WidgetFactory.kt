@@ -1,7 +1,6 @@
 package com.guet.flexbox.build
 
 import android.graphics.Color
-import android.graphics.drawable.Drawable
 import android.graphics.drawable.GradientDrawable
 import android.view.View
 import androidx.annotation.CallSuper
@@ -9,6 +8,7 @@ import androidx.annotation.RestrictTo
 import com.facebook.litho.Component
 import com.facebook.litho.ComponentContext
 import com.facebook.litho.drawable.ComparableColorDrawable
+import com.facebook.litho.drawable.ComparableDrawable
 import com.facebook.litho.drawable.ComparableGradientDrawable
 import com.facebook.yoga.YogaAlign
 import com.facebook.yoga.YogaEdge
@@ -150,7 +150,7 @@ internal abstract class WidgetFactory<T : Component.Builder<*>> : Transform {
         val borderRadius = dataBinding.tryGetValue(attrs["borderRadius"], 0).toPx()
         val borderWidth = dataBinding.tryGetValue(attrs["borderWidth"], 0).toPx()
         val borderColor = dataBinding.tryGetColor(attrs["borderColor"], Color.TRANSPARENT)
-        var backgroundDrawable: Drawable? = null
+        var backgroundDrawable: ComparableDrawable? = null
         val background = attrs["background"]
         if (background != null) {
             try {
@@ -172,7 +172,7 @@ internal abstract class WidgetFactory<T : Component.Builder<*>> : Transform {
             }
         }
         if (backgroundDrawable == null) {
-            backgroundDrawable = NoOpDrawable()
+            backgroundDrawable = NoOpDrawable
         }
         this.background(BackgroundDrawable(
                 backgroundDrawable,

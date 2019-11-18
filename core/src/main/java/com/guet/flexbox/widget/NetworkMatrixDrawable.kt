@@ -16,10 +16,9 @@ import com.bumptech.glide.request.transition.Transition
 import com.facebook.litho.DrawableMatrix
 import com.facebook.litho.Touchable
 
-internal class NetworkMatrixDrawable(c: Context)
+internal class NetworkMatrixDrawable(private val c: Context)
     : BorderDrawable<MatrixDrawable>(MatrixDrawable()), Touchable, DrawableTarget {
 
-    private val c: Context = c.applicationContext
     private var width: Int = 0
     private var height: Int = 0
     private var scaleType = ScaleType.FIT_CENTER

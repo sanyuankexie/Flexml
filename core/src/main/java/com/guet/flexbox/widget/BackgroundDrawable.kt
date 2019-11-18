@@ -1,12 +1,11 @@
 package com.guet.flexbox.widget
 
 import android.graphics.Color
-import android.graphics.drawable.Drawable
 import com.facebook.litho.drawable.ComparableDrawable
 import com.facebook.litho.drawable.ComparableDrawableWrapper
 
 internal class BackgroundDrawable(
-        drawable: Drawable,
+        drawable: ComparableDrawable,
         radius: Int = 0,
         width: Int = 0,
         color: Int = Color.TRANSPARENT
@@ -17,32 +16,19 @@ internal class BackgroundDrawable(
             return true
         }
         if (other is BackgroundDrawable) {
-            val border = wrappedDrawable
-            val otherBorder = other.wrappedDrawable
-            if (border.borderWidth == otherBorder.borderWidth
-                    && border.borderColor == otherBorder.borderColor
-                    && border.radius == otherBorder.radius) {
-                val left = unwrap()
-                val right = other.unwrap()
-                return if (left is ComparableDrawable && right is ComparableDrawable) {
-                    ComparableDrawable.isEquivalentTo(left, right)
-                } else {
-                    left == right
-                }
+            if (border.borderWidth == other.border.borderWidth
+                    && border.borderColor == other.border.borderColor
+                    && border.radius == other.border.radius) {
+                return ComparableDrawable.isEquivalentTo(
+                        border.wrappedDrawable,
+                        other.border.wrappedDrawable
+                )
             }
         }
         return false
     }
 
-    override fun getWrappedDrawable(): BorderDrawable<*> {
-        return super.getWrappedDrawable() as BorderDrawable<*>
-    }
-
-    private fun unwrap(): Drawable {
-        var innerDrawable: Drawable = wrappedDrawable
-        while (innerDrawable is DrawableWrapper<*>) {
-            innerDrawable = innerDrawable.wrappedDrawable
-        }
-        return innerDrawable
-    }
+    @Suppress("UNCHECKED_CAST")
+    private val border: BorderDrawable<ComparableDrawable>
+        get() = wrappedDrawable as BorderDrawable<ComparableDrawable>
 }
