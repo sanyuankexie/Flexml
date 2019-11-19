@@ -31,6 +31,7 @@ import android.view.View;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.annotation.RestrictTo;
 
 import com.facebook.litho.DrawableMatrix;
 import com.facebook.litho.Touchable;
@@ -42,6 +43,7 @@ import static android.os.Build.VERSION_CODES.LOLLIPOP;
  * A Drawable that wraps another drawable.
  * modify from{@link com.facebook.litho.MatrixDrawable}
  */
+@RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
 final class MatrixDrawable extends Drawable implements Drawable.Callback, Touchable {
 
     private static final int UNSET = -1;

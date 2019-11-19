@@ -12,16 +12,15 @@ import com.facebook.litho.drawable.ComparableDrawableWrapper
 import java.util.concurrent.atomic.AtomicBoolean
 
 internal class NetworkLazyDrawable(
-        c: Context,
+        private val c: Context,
         private val url: CharSequence)
-    : ComparableDrawableWrapper(NoOpDrawable()), DrawableTarget {
+    : ComparableDrawableWrapper(NoOpDrawable), DrawableTarget {
 
     private val hasDrawTask = AtomicBoolean(false)
-    private val context = c.applicationContext
 
     override fun draw(canvas: Canvas) {
         if (hasDrawTask.compareAndSet(false, true)) {
-            Glide.with(context).load(url).into(this)
+            Glide.with(c).load(url).into(this)
         } else {
             super.draw(canvas)
         }
