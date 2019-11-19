@@ -172,7 +172,7 @@ internal abstract class WidgetFactory<T : Component.Builder<*>> : Transform {
             }
         }
         if (backgroundDrawable == null) {
-            backgroundDrawable = NoOpDrawable
+            backgroundDrawable = NoOpDrawable()
         }
         this.background(BackgroundDrawable(
                 backgroundDrawable,
@@ -308,10 +308,10 @@ internal abstract class WidgetFactory<T : Component.Builder<*>> : Transform {
         @JvmStatic
         fun createLayout(
                 c: ComponentContext,
-                dataBinding: DataContext,
+                data: Any?,
                 root: NodeInfo
         ): Component? {
-            return c.createFromElement(dataBinding, root).singleOrNull()
+            return c.createFromElement(DataContext(data), root).singleOrNull()
         }
 
         internal val edges = arrayOf("Left", "Right", "Top", "Bottom")

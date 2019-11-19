@@ -10,34 +10,18 @@ import com.facebook.litho.ComponentContext
 import com.guet.flexbox.BuildConfig
 import com.guet.flexbox.NodeInfo
 import com.guet.flexbox.beans.Introspector
+import com.guet.flexbox.beans.PropertyDescriptor
 import com.guet.flexbox.el.ELException
 import org.json.JSONObject
-import java.io.*
-import java.lang.reflect.Array
-import java.lang.reflect.Type
+import java.lang.reflect.Field
+import java.lang.reflect.Modifier
 import kotlin.reflect.KClass
-
-private typealias FromJson<T> = (T, Type) -> Any
-
-private typealias JsonSupports = Map<Class<*>, FromJson<*>>
-
-private typealias SupportMap = HashMap<Class<*>, FromJson<*>>
 
 internal typealias Mapping<T> = T.(DataContext, Map<String, String>, Boolean, String) -> Unit
 
 internal typealias Mappings<T> = HashMap<String, Mapping<T>>
 
 internal typealias Apply<T, V> = T.(Map<String, String>, Boolean, V) -> Unit
-
-private const val GSON_NAME = "com.google.gson.Gson"
-
-private const val GSON_METHOD_NAME = "fromJson"
-
-private const val FAST_JSON_NAME = "com.alibaba.fastjson.JSONObject"
-
-private const val FAST_JSON_PRAM_NAME = "com.alibaba.fastjson.parser.Feature"
-
-private const val FAST_JSON_METHOD_NAME = "parseObject"
 
 private val transforms = mapOf(
         "Image" to ImageFactory,
@@ -51,8 +35,6 @@ private val transforms = mapOf(
         "foreach" to ForEachBehavior,
         "if" to IfBehavior
 )
-
-private val jsonMatchTypes: JsonSupports = findGsonSupport() ?: findFastJsonSupport() ?: emptyMap()
 
 internal inline val CharSequence?.isExpr: Boolean
     get() = this != null && length > 3 && startsWith("\${") && endsWith('}')
@@ -133,120 +115,69 @@ private fun Number.safeCast(type: KClass<*>): Any {
     }
 }
 
-private inline fun <reified T> SupportMap.addSupport(noinline action: FromJson<T>) {
-    this[T::class.java] = action
-}
+private val jsonObjectInnerMap = JSONObject::class.java
+        .getField("nameValuePairs")
+        .apply { isAccessible = true }
 
-private fun findGsonSupport(): JsonSupports? {
-    try {
-        val types = SupportMap(5)
-        val gsonType = Class.forName(GSON_NAME)
-        val gson = gsonType.newInstance()
-        val readerMethod = gsonType.getMethod(
-                GSON_METHOD_NAME,
-                Reader::class.java,
-                Type::class.java
-        )
-        val stringMethod = gsonType.getMethod(
-                GSON_METHOD_NAME,
-                String::class.java,
-                Type::class.java
-        )
-        val converter: FromJson<InputStream> = { data, type ->
-            readerMethod.invoke(gson, InputStreamReader(data), type)
-        }
-        types.addSupport<Reader> { data, type ->
-            readerMethod.invoke(gson, data, type)
-        }
-        types.addSupport(converter)
-        types.addSupport<ByteArray> { data, type ->
-            converter(ByteArrayInputStream(data), type)
-        }
-        types.addSupport<File> { data, type ->
-            converter(FileInputStream(data), type)
-        }
-        types.addSupport<String> { data, type ->
-            stringMethod.invoke(gson, data, type)
-        }
-        return types
-    } catch (e: Exception) {
-        return null
-    }
-}
-
-private fun findFastJsonSupport(): JsonSupports? {
-    try {
-        val types = SupportMap(5)
-        val fastJson = Class.forName(FAST_JSON_NAME)
-        val stringMethod = fastJson.getMethod(
-                FAST_JSON_METHOD_NAME,
-                Class::class.java
-        )
-        val isMethod = fastJson.getMethod(
-                FAST_JSON_METHOD_NAME,
-                Type::class.java,
-                Array.newInstance(Class.forName(FAST_JSON_PRAM_NAME), 0)
-                        .javaClass
-        )
-        val converter: FromJson<InputStream> = { data, type ->
-            isMethod.invoke(null, data, type, null)
-        }
-        types.addSupport(converter)
-        types.addSupport<String> { data, type ->
-            stringMethod.invoke(null, data, type)
-        }
-        types.addSupport<ByteArray> { data, type ->
-            converter(ByteArrayInputStream(data), type)
-        }
-        types.addSupport<File> { data, type ->
-            converter(FileInputStream(data), type)
-        }
-        return types
-    } catch (e: Exception) {
-        return null
-    }
-}
-
-internal inline fun <reified T> fromJson(data: Any): T? {
-    return jsonMatchTypes[T::class.java]?.let {
-        @Suppress("UNCHECKED_CAST")
-        (it as FromJson<Any>).invoke(data, T::class.java)
-    } as? T
-}
-
-internal fun tryToMap(o: Any): Map<String, Any> {
+internal fun tryToMap(o: Any): Map<String, Any?> {
     val javaClass = o.javaClass
     when {
         o is Map<*, *> && o.keys.all { it is String } -> {
             @Suppress("UNCHECKED_CAST")
-            return o as Map<String, Any>
+            return o as Map<String, Any?>
         }
         o is JSONObject -> {
-            val map = HashMap<String, Any>(o.length())
-            o.keys().forEach {
-                map[it] = o[it]
-            }
-            return map
-        }
-        jsonMatchTypes.keys.any { it.isAssignableFrom(javaClass) } -> {
-            return fromJson(o) ?: error("convert ${javaClass.name} " +
-                    "request $GSON_NAME or $FAST_JSON_NAME")
+            @Suppress("UNCHECKED_CAST")
+            return jsonObjectInnerMap.get(o) as Map<String, Any?>
         }
         javaClass.methods.all { it.declaringClass == Any::class.java } -> {
-            return javaClass.fields.map {
-                it.name to it[o]
-            }.toMap()
+            return SimpleBeanMap(o)
         }
         else -> {
-            return Introspector.getBeanInfo(javaClass)
-                    .propertyDescriptors
-                    .filter {
-                        it.propertyType != Class::class.java
-                    }.map {
-                        it.name to it.readMethod.invoke(o)
-                    }.toMap()
+            return StandardBeanMap(o)
         }
     }
+}
+
+private class SimpleBeanMap(private val o: Any) : AbstractMap<String, Any?>() {
+
+    override val entries: Set<Map.Entry<String, Any?>> by lazy {
+        setOf(*o.javaClass.fields.filter {
+            !Modifier.isStatic(it.modifiers)
+        }.map {
+            Property(it)
+        }.toTypedArray())
+    }
+
+    private inner class Property(private val it: Field) : Map.Entry<String, Any?> {
+        override val key: String
+            get() = it.name
+        override val value: Any?
+            get() = it.get(o)
+    }
+
+}
+
+private class StandardBeanMap(private val o: Any) : AbstractMap<String, Any?>() {
+
+    override val entries: Set<Map.Entry<String, Any?>> by lazy {
+        setOf(*Introspector.getBeanInfo(javaClass)
+                .propertyDescriptors
+                .filter {
+                    it.propertyType != Class::class.java
+                }.map {
+                    Property(it)
+                }.toTypedArray())
+    }
+
+    private inner class Property(private val prop: PropertyDescriptor)
+        : Map.Entry<String, Any?> {
+        override val key: String
+            get() = prop.name
+        override val value: Any?
+            get() = prop.readMethod.invoke(o)
+    }
+
 }
 
 internal fun ComponentContext.createFromElement(

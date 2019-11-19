@@ -6,14 +6,14 @@ import android.graphics.PixelFormat
 import android.graphics.Rect
 import com.facebook.litho.drawable.ComparableDrawable
 
-internal object NoOpDrawable : ComparableDrawable() {
+internal class NoOpDrawable : ComparableDrawable() {
 
     init {
         super.setBounds(0, 0, 0, 0)
     }
 
     override fun isEquivalentTo(other: ComparableDrawable?): Boolean {
-        return other == this
+        return other is NoOpDrawable
     }
 
     override fun setBounds(left: Int, top: Int, right: Int, bottom: Int) {}

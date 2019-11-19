@@ -27,7 +27,7 @@ class DataContext(data: Any?) {
         }
     }
 
-    internal fun enterScope(scope: Map<String, Any>) {
+    internal fun enterScope(scope: Map<String, Any?>) {
         el.elContext.enterLambdaScope(scope)
     }
 

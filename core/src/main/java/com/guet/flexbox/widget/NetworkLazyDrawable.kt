@@ -14,7 +14,7 @@ import java.util.concurrent.atomic.AtomicBoolean
 internal class NetworkLazyDrawable(
         private val c: Context,
         private val url: CharSequence)
-    : ComparableDrawableWrapper(NoOpDrawable), DrawableTarget {
+    : ComparableDrawableWrapper(NoOpDrawable()), DrawableTarget {
 
     private val hasDrawTask = AtomicBoolean(false)
 
