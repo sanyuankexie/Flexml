@@ -15,13 +15,54 @@ import com.guet.flexbox.el.ELException
 import org.json.JSONObject
 import java.lang.reflect.Field
 import java.lang.reflect.Modifier
-import kotlin.reflect.KClass
 
 internal typealias Mapping<T> = T.(DataContext, Map<String, String>, Boolean, String) -> Unit
 
 internal typealias Mappings<T> = HashMap<String, Mapping<T>>
 
 internal typealias Apply<T, V> = T.(Map<String, String>, Boolean, V) -> Unit
+
+private class SimpleBeanMap(private val o: Any) : AbstractMap<String, Any?>() {
+
+    override val entries: Set<Map.Entry<String, Any?>> by lazy {
+        o.javaClass.fields.filter {
+            !Modifier.isStatic(it.modifiers)
+        }.map {
+            Property(it)
+        }.toSet()
+    }
+
+    private inner class Property(private val it: Field)
+        : Map.Entry<String, Any?> {
+        override val key: String
+            get() = it.name
+        override val value: Any?
+            get() = it.get(o)
+    }
+
+}
+
+private class StandardBeanMap(private val o: Any) : AbstractMap<String, Any?>() {
+
+    override val entries: Set<Map.Entry<String, Any?>> by lazy {
+        Introspector.getBeanInfo(javaClass)
+                .propertyDescriptors
+                .filter {
+                    it.propertyType != Class::class.java
+                }.map {
+                    Property(it)
+                }.toSet()
+    }
+
+    private inner class Property(private val prop: PropertyDescriptor)
+        : Map.Entry<String, Any?> {
+        override val key: String
+            get() = prop.name
+        override val value: Any?
+            get() = prop.readMethod.invoke(o)
+    }
+
+}
 
 private val transforms = mapOf(
         "Image" to ImageFactory,
@@ -36,8 +77,13 @@ private val transforms = mapOf(
         "if" to IfBehavior
 )
 
-internal inline val CharSequence?.isExpr: Boolean
-    get() = this != null && length > 3 && startsWith("\${") && endsWith('}')
+private val jsonObjectInnerMap = JSONObject::class.java
+        .getField("nameValuePairs")
+        .apply { isAccessible = true }
+
+internal inline val CharSequence.isExpr: Boolean
+    @JvmName("isExprNonNull")
+    get() = length > 3 && startsWith("\${") && endsWith('}')
 
 internal inline fun <reified T : Number> T.toPx(): Int {
     return (this.toFloat() * Resources.getSystem().displayMetrics.widthPixels / 360f).toInt()
@@ -99,85 +145,39 @@ internal fun DataContext.tryGetColor(expr: String?, @ColorInt fallback: Int): In
 }
 
 internal inline fun <reified N : Number> Number.safeCast(): N {
-    return safeCast(N::class) as N
+    return safeCast(N::class.javaObjectType) as N
 }
 
-private fun Number.safeCast(type: KClass<*>): Any {
+private fun Number.safeCast(type: Class<*>): Any {
     return when (type) {
-        Byte::class -> this.toByte()
-        Char::class -> this.toChar()
-        Int::class -> this.toInt()
-        Short::class -> this.toShort()
-        Long::class -> this.toLong()
-        Float::class -> this.toFloat()
-        Double::class -> this.toDouble()
-        else -> error("no match number type ${type.java.name}")
+        Byte::class.javaObjectType -> this.toByte()
+        Char::class.javaObjectType -> this.toChar()
+        Int::class.javaObjectType -> this.toInt()
+        Short::class.javaObjectType -> this.toShort()
+        Long::class.javaObjectType -> this.toLong()
+        Float::class.javaObjectType -> this.toFloat()
+        Double::class.javaObjectType -> this.toDouble()
+        else -> error("no match number type ${type.name}")
     }
 }
 
-private val jsonObjectInnerMap = JSONObject::class.java
-        .getField("nameValuePairs")
-        .apply { isAccessible = true }
-
-internal fun tryToMap(o: Any): Map<String, Any?> {
-    val javaClass = o.javaClass
-    when {
-        o is Map<*, *> && o.keys.all { it is String } -> {
-            @Suppress("UNCHECKED_CAST")
-            return o as Map<String, Any?>
+internal fun tryToMap(input: Any): Map<String, Any?> {
+    val javaClass = input.javaClass
+    @Suppress("UNCHECKED_CAST")
+    return when {
+        input is Map<*, *> && input.keys.all { it is String } -> {
+            input
         }
-        o is JSONObject -> {
-            @Suppress("UNCHECKED_CAST")
-            return jsonObjectInnerMap.get(o) as Map<String, Any?>
+        input is JSONObject -> {
+            jsonObjectInnerMap.get(input)
         }
         javaClass.methods.all { it.declaringClass == Any::class.java } -> {
-            return SimpleBeanMap(o)
+            SimpleBeanMap(input)
         }
         else -> {
-            return StandardBeanMap(o)
+            StandardBeanMap(input)
         }
-    }
-}
-
-private class SimpleBeanMap(private val o: Any) : AbstractMap<String, Any?>() {
-
-    override val entries: Set<Map.Entry<String, Any?>> by lazy {
-        setOf(*o.javaClass.fields.filter {
-            !Modifier.isStatic(it.modifiers)
-        }.map {
-            Property(it)
-        }.toTypedArray())
-    }
-
-    private inner class Property(private val it: Field) : Map.Entry<String, Any?> {
-        override val key: String
-            get() = it.name
-        override val value: Any?
-            get() = it.get(o)
-    }
-
-}
-
-private class StandardBeanMap(private val o: Any) : AbstractMap<String, Any?>() {
-
-    override val entries: Set<Map.Entry<String, Any?>> by lazy {
-        setOf(*Introspector.getBeanInfo(javaClass)
-                .propertyDescriptors
-                .filter {
-                    it.propertyType != Class::class.java
-                }.map {
-                    Property(it)
-                }.toTypedArray())
-    }
-
-    private inner class Property(private val prop: PropertyDescriptor)
-        : Map.Entry<String, Any?> {
-        override val key: String
-            get() = prop.name
-        override val value: Any?
-            get() = prop.readMethod.invoke(o)
-    }
-
+    } as Map<String, Any?>
 }
 
 internal fun ComponentContext.createFromElement(

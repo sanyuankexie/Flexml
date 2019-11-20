@@ -3,10 +3,8 @@
 package com.guet.flexbox.build
 
 import android.content.Context
-import android.graphics.Outline
 import android.view.View
 import android.view.ViewGroup
-import android.view.ViewOutlineProvider
 import com.facebook.litho.ComponentContext
 import com.facebook.litho.ViewCompatComponent
 import com.facebook.litho.viewcompat.ViewBinder
@@ -33,11 +31,13 @@ internal object NativeFactory : WidgetFactory<ViewCompatComponent.Builder<View>>
                         throw IllegalStateException("$type is not as 'View' type")
                     }
                 }
-                val radius = dataBinding.tryGetValue(attrs["borderRadius"], 0f)
-                val va = ViewAdapter(visibility, radius)
                 return ViewCompatComponent.get(view, type)
                         .create(c)
-                        .viewBinder(va)
+                        .viewBinder(if (visibility == View.VISIBLE) {
+                            Visibility.VISIBLE
+                        } else {
+                            Visibility.GONE
+                        })
             }
         }
 
@@ -52,27 +52,20 @@ internal object NativeFactory : WidgetFactory<ViewCompatComponent.Builder<View>>
         }
     }
 
-    internal class ViewAdapter(
-            private val visibility: Int,
-            private val radius: Float
-    ) : ViewOutlineProvider(), ViewBinder<View> {
+    internal enum class Visibility(val visibility: Int) : ViewBinder<View> {
 
-        override fun getOutline(view: View, outline: Outline) {
-            outline.setRoundRect(0, 0, view.width, view.height, radius)
+        VISIBLE(View.VISIBLE),
+        GONE(View.GONE);
+
+        override fun prepare() {
         }
-
-        override fun prepare() {}
 
         override fun bind(view: View) {
             view.visibility = visibility
-            if (radius > 0) {
-                view.outlineProvider = this
-            }
         }
 
         override fun unbind(view: View) {
             view.visibility = View.GONE
-            view.outlineProvider = BACKGROUND
         }
     }
 }

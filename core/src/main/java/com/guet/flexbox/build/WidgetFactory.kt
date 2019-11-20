@@ -2,6 +2,7 @@ package com.guet.flexbox.build
 
 import android.graphics.Color
 import android.graphics.drawable.GradientDrawable
+import android.net.Uri
 import android.view.View
 import androidx.annotation.CallSuper
 import androidx.annotation.RestrictTo
@@ -10,6 +11,7 @@ import com.facebook.litho.ComponentContext
 import com.facebook.litho.drawable.ComparableColorDrawable
 import com.facebook.litho.drawable.ComparableDrawable
 import com.facebook.litho.drawable.ComparableGradientDrawable
+import com.facebook.litho.drawable.ComparableResDrawable
 import com.facebook.yoga.YogaAlign
 import com.facebook.yoga.YogaEdge
 import com.guet.flexbox.DynamicBox
@@ -156,14 +158,35 @@ internal abstract class WidgetFactory<T : Component.Builder<*>> : Transform {
             try {
                 backgroundDrawable = ComparableColorDrawable.create(dataBinding.getColor(background))
             } catch (e: Exception) {
-                val backgroundELResult = dataBinding.scope(orientations) {
-                    dataBinding.scope(colorNameMap) {
-                        dataBinding.tryGetValue<Any>(background, Unit)
-                    }
+                val backgroundELResult = dataBinding.scope(colorNameMap) {
+                    dataBinding.tryGetValue(background, "")
                 }
-                if (backgroundELResult is ComparableGradientDrawable) {
-                    backgroundDrawable = backgroundELResult
-                } else if (backgroundELResult is CharSequence && backgroundELResult.isNotEmpty()) {
+                if (backgroundELResult.startsWith("res://")) {
+                    val uri = Uri.parse(backgroundELResult)
+                    if (uri.host == "gradient") {
+                        val type = uri.getQueryParameter("orientation")?.let {
+                            orientations[it]
+                        }
+                        val colors = uri.getQueryParameters("color")?.map {
+                            Color.parseColor(it)
+                        }?.toIntArray()
+                        if (type != null && colors != null && colors.isNotEmpty()) {
+                            backgroundDrawable = ComparableGradientDrawable(type, colors)
+                        }
+                    }
+                    if (uri.host == "load") {
+                        val name = uri.getQueryParameter("name")
+                        if (name != null) {
+                            backgroundDrawable = ComparableResDrawable.create(
+                                    c.androidContext,
+                                    c.resources.getIdentifier(
+                                            name,
+                                            "drawable",
+                                            c.androidContext.packageName
+                                    ))
+                        }
+                    }
+                } else if (backgroundELResult.isNotEmpty()) {
                     backgroundDrawable = NetworkLazyDrawable(
                             c.androidContext,
                             backgroundELResult
@@ -329,7 +352,7 @@ internal abstract class WidgetFactory<T : Component.Builder<*>> : Transform {
                 "gone" to View.GONE
         )
 
-        internal val orientations: Map<String, Any> = mapOf(
+        internal val orientations: Map<String, GradientDrawable.Orientation> = mapOf(
                 "t2b" to GradientDrawable.Orientation.TOP_BOTTOM,
                 "tr2bl" to GradientDrawable.Orientation.TR_BL,
                 "l2r" to GradientDrawable.Orientation.LEFT_RIGHT,

@@ -3,9 +3,8 @@ package com.guet.flexbox.build
 import android.content.res.Resources
 import android.graphics.Color
 import android.graphics.Color.parseColor
-import android.graphics.drawable.GradientDrawable.Orientation
+import android.net.Uri
 import androidx.annotation.ColorInt
-import com.facebook.litho.drawable.ComparableGradientDrawable
 import com.guet.flexbox.el.ELException
 import com.guet.flexbox.el.ELManager
 import com.guet.flexbox.el.JSONArrayELResolver
@@ -106,16 +105,30 @@ class DataContext(data: Any?) {
             }
         }
 
-        @Prefix("draw")
+        @Prefix("res")
         @JvmName("gradient")
         @JvmStatic
-        fun gradient(
-                orientation: Orientation,
-                vararg colors: String
-        ): ComparableGradientDrawable {
-            return ComparableGradientDrawable(orientation, colors.map {
-                parseColor(it)
-            }.toIntArray())
+        fun gradient(orientation: String, vararg colors: String): String {
+            return Uri.Builder()
+                    .path("res://gradient")
+                    .appendQueryParameter("orientation", orientation)
+                    .apply {
+                        colors.forEach {
+                            appendQueryParameter("color", it)
+                        }
+                    }.build()
+                    .toString()
+        }
+
+        @Prefix("res")
+        @JvmName("load")
+        @JvmStatic
+        fun load(name: String): String {
+            return Uri.Builder()
+                    .path("res://load")
+                    .appendQueryParameter("name", name)
+                    .build()
+                    .toString()
         }
 
         @Prefix("dimen")
