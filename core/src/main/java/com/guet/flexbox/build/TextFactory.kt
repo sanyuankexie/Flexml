@@ -15,9 +15,11 @@ internal object TextFactory : WidgetFactory<Text.Builder>() {
     private val invisibleColor = ColorStateList.valueOf(Color.TRANSPARENT)
 
     init {
-        enumAttr("verticalGravity", mapOf("top" to VerticalGravity.TOP,
+        enumAttr("verticalGravity", mapOf(
+                "top" to VerticalGravity.TOP,
                 "bottom" to VerticalGravity.BOTTOM,
-                "center" to VerticalGravity.CENTER)) { _, _, it ->
+                "center" to VerticalGravity.CENTER
+        )) { _, _, it ->
             verticalGravity(it)
         }
         @Suppress("NewApi")

@@ -49,7 +49,7 @@ internal interface DrawableTarget : Target<Drawable> {
 
     companion object  {
 
-        internal val requests = Collections.synchronizedMap(WeakHashMap<DrawableTarget, Request>())
+        private val requests = Collections.synchronizedMap(WeakHashMap<DrawableTarget, Request>())
 
         internal fun transition(current: Drawable?, next: Drawable): Drawable {
             val transitionDrawable = TransitionDrawable(arrayOf(

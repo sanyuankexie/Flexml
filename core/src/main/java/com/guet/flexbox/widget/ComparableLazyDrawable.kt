@@ -1,9 +1,9 @@
 package com.guet.flexbox.widget
 
 import android.content.Context
+import android.content.res.Configuration
 import android.graphics.Canvas
 import android.graphics.drawable.Drawable
-import android.text.TextUtils
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.target.SizeReadyCallback
 import com.bumptech.glide.request.transition.Transition
@@ -11,16 +11,18 @@ import com.facebook.litho.drawable.ComparableDrawable
 import com.facebook.litho.drawable.ComparableDrawableWrapper
 import java.util.concurrent.atomic.AtomicBoolean
 
-internal class NetworkLazyDrawable(
+internal class ComparableLazyDrawable(
         private val c: Context,
-        private val url: CharSequence)
-    : ComparableDrawableWrapper(NoOpDrawable()), DrawableTarget {
+        private val model: Any
+) : ComparableDrawableWrapper(NoOpDrawable()), DrawableTarget {
+
+    private val config = Configuration(c.resources.configuration)
 
     private val hasDrawTask = AtomicBoolean(false)
 
     override fun draw(canvas: Canvas) {
         if (hasDrawTask.compareAndSet(false, true)) {
-            Glide.with(c).load(url).into(this)
+            Glide.with(c).load(model).into(this)
         } else {
             super.draw(canvas)
         }
@@ -34,8 +36,8 @@ internal class NetworkLazyDrawable(
         if (other == this) {
             return true
         }
-        if (other is NetworkLazyDrawable) {
-            return TextUtils.equals(url, other.url)
+        if (other is ComparableLazyDrawable) {
+            return config == other.config && model == other.model
         }
         return false
     }

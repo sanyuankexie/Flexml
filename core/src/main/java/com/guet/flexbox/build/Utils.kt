@@ -22,18 +22,17 @@ internal typealias Mappings<T> = HashMap<String, Mapping<T>>
 
 internal typealias Apply<T, V> = T.(Map<String, String>, Boolean, V) -> Unit
 
-private class SimpleBeanMap(private val o: Any) : AbstractMap<String, Any?>() {
+private class SimpleWrapper(private val o: Any) : AbstractMap<String, Any?>() {
 
     override val entries: Set<Map.Entry<String, Any?>> by lazy {
         o.javaClass.fields.filter {
             !Modifier.isStatic(it.modifiers)
         }.map {
-            Property(it)
+            FieldEntry(it)
         }.toSet()
     }
 
-    private inner class Property(private val it: Field)
-        : Map.Entry<String, Any?> {
+    private inner class FieldEntry(private val it: Field) : Map.Entry<String, Any?> {
         override val key: String
             get() = it.name
         override val value: Any?
@@ -42,7 +41,7 @@ private class SimpleBeanMap(private val o: Any) : AbstractMap<String, Any?>() {
 
 }
 
-private class StandardBeanMap(private val o: Any) : AbstractMap<String, Any?>() {
+private class BeanWrapper(private val o: Any) : AbstractMap<String, Any?>() {
 
     override val entries: Set<Map.Entry<String, Any?>> by lazy {
         Introspector.getBeanInfo(javaClass)
@@ -50,11 +49,11 @@ private class StandardBeanMap(private val o: Any) : AbstractMap<String, Any?>() 
                 .filter {
                     it.propertyType != Class::class.java
                 }.map {
-                    Property(it)
+                    PropertyEntry(it)
                 }.toSet()
     }
 
-    private inner class Property(private val prop: PropertyDescriptor)
+    private inner class PropertyEntry(private val prop: PropertyDescriptor)
         : Map.Entry<String, Any?> {
         override val key: String
             get() = prop.name
@@ -172,10 +171,10 @@ internal fun tryToMap(input: Any): Map<String, Any?> {
             jsonObjectInnerMap.get(input)
         }
         javaClass.methods.all { it.declaringClass == Any::class.java } -> {
-            SimpleBeanMap(input)
+            SimpleWrapper(input)
         }
         else -> {
-            StandardBeanMap(input)
+            BeanWrapper(input)
         }
     } as Map<String, Any?>
 }

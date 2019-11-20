@@ -11,13 +11,12 @@ import com.facebook.litho.ComponentContext
 import com.facebook.litho.drawable.ComparableColorDrawable
 import com.facebook.litho.drawable.ComparableDrawable
 import com.facebook.litho.drawable.ComparableGradientDrawable
-import com.facebook.litho.drawable.ComparableResDrawable
 import com.facebook.yoga.YogaAlign
 import com.facebook.yoga.YogaEdge
 import com.guet.flexbox.DynamicBox
 import com.guet.flexbox.NodeInfo
 import com.guet.flexbox.widget.BackgroundDrawable
-import com.guet.flexbox.widget.NetworkLazyDrawable
+import com.guet.flexbox.widget.ComparableLazyDrawable
 import com.guet.flexbox.widget.NoOpDrawable
 import java.util.*
 
@@ -177,17 +176,21 @@ internal abstract class WidgetFactory<T : Component.Builder<*>> : Transform {
                     if (uri.host == "load") {
                         val name = uri.getQueryParameter("name")
                         if (name != null) {
-                            backgroundDrawable = ComparableResDrawable.create(
-                                    c.androidContext,
-                                    c.resources.getIdentifier(
-                                            name,
-                                            "drawable",
-                                            c.androidContext.packageName
-                                    ))
+                            val id = c.resources.getIdentifier(
+                                    name,
+                                    "drawable",
+                                    c.androidContext.packageName
+                            )
+                            if (id != 0) {
+                                backgroundDrawable = ComparableLazyDrawable(
+                                        c.androidContext,
+                                        id
+                                )
+                            }
                         }
                     }
                 } else if (backgroundELResult.isNotEmpty()) {
-                    backgroundDrawable = NetworkLazyDrawable(
+                    backgroundDrawable = ComparableLazyDrawable(
                             c.androidContext,
                             backgroundELResult
                     )
