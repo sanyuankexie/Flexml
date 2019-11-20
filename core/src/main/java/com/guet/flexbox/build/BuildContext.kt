@@ -11,7 +11,7 @@ import com.guet.flexbox.el.JSONArrayELResolver
 import com.guet.flexbox.el.JSONObjectELResolver
 import java.lang.reflect.Modifier
 
-class DataContext(data: Any?) {
+class BuildContext(data: Any?) {
 
     private val el = ELManager()
 

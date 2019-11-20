@@ -16,12 +16,12 @@ internal object NativeFactory : WidgetFactory<ViewCompatComponent.Builder<View>>
 
     override fun onCreateWidget(
             c: ComponentContext,
-            dataBinding: DataContext,
+            buildContext: BuildContext,
             attrs: Map<String, String>?,
             visibility: Int
     ): ViewCompatComponent.Builder<View> {
         if (attrs != null) {
-            val type = dataBinding.tryGetValue(attrs["type"], "")
+            val type = buildContext.tryGetValue(attrs["type"], "")
             if (type.isNotEmpty()) {
                 val view = viewTypeCache.getOrPut(type) {
                     val viewType = Class.forName(type)

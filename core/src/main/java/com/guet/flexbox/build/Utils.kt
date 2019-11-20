@@ -16,7 +16,7 @@ import org.json.JSONObject
 import java.lang.reflect.Field
 import java.lang.reflect.Modifier
 
-internal typealias Mapping<T> = T.(DataContext, Map<String, String>, Boolean, String) -> Unit
+internal typealias Mapping<T> = T.(BuildContext, Map<String, String>, Boolean, String) -> Unit
 
 internal typealias Mappings<T> = HashMap<String, Mapping<T>>
 
@@ -88,7 +88,7 @@ internal inline fun <reified T : Number> T.toPx(): Int {
     return (this.toFloat() * Resources.getSystem().displayMetrics.widthPixels / 360f).toInt()
 }
 
-internal inline fun <reified T : Any> DataContext.tryGetValue(expr: String?, fallback: T): T {
+internal inline fun <reified T : Any> BuildContext.tryGetValue(expr: String?, fallback: T): T {
     if (expr == null) {
         return fallback
     }
@@ -102,7 +102,7 @@ internal inline fun <reified T : Any> DataContext.tryGetValue(expr: String?, fal
     }
 }
 
-internal inline fun <T> DataContext.scope(scope: Map<String, Any>, action: () -> T): T {
+internal inline fun <T> BuildContext.scope(scope: Map<String, Any>, action: () -> T): T {
     enterScope(scope)
     try {
         return action()
@@ -111,7 +111,7 @@ internal inline fun <T> DataContext.scope(scope: Map<String, Any>, action: () ->
     }
 }
 
-internal inline fun <reified T : Enum<T>> DataContext.tryGetEnum(
+internal inline fun <reified T : Enum<T>> BuildContext.tryGetEnum(
         expr: String?,
         scope: Map<String, T>,
         fallback: T = enumValues<T>()[0]): T {
@@ -124,7 +124,7 @@ internal inline fun <reified T : Enum<T>> DataContext.tryGetEnum(
     }
 }
 
-internal inline fun <reified T : Any> DataContext.requestValue(
+internal inline fun <reified T : Any> BuildContext.requestValue(
         name: String,
         attrs: Map<String, String>
 ): T {
@@ -132,7 +132,7 @@ internal inline fun <reified T : Any> DataContext.requestValue(
 }
 
 @ColorInt
-internal fun DataContext.tryGetColor(expr: String?, @ColorInt fallback: Int): Int {
+internal fun BuildContext.tryGetColor(expr: String?, @ColorInt fallback: Int): Int {
     if (expr == null) {
         return fallback
     }
@@ -180,7 +180,7 @@ internal fun tryToMap(input: Any): Map<String, Any?> {
 }
 
 internal fun ComponentContext.createFromElement(
-        dataBinding: DataContext,
+        dataBinding: BuildContext,
         element: NodeInfo,
         upperVisibility: Int = View.VISIBLE
 ): List<Component> {

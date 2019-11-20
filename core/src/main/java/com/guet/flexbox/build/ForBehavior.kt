@@ -8,18 +8,18 @@ import java.util.*
 internal object ForBehavior : Behavior() {
     override fun onApply(
             c: ComponentContext,
-            dataBinding: DataContext,
+            buildContext: BuildContext,
             attrs: Map<String, String>,
             children: List<NodeInfo>,
             upperVisibility: Int
     ): List<Component> {
-        val name = dataBinding.requestValue<String>("var", attrs)
-        val from = dataBinding.requestValue<Int>("from", attrs)
-        val to = dataBinding.requestValue<Int>("to", attrs)
+        val name = buildContext.requestValue<String>("var", attrs)
+        val from = buildContext.requestValue<Int>("from", attrs)
+        val to = buildContext.requestValue<Int>("to", attrs)
         return (from..to).map {
-            return@map dataBinding.scope(Collections.singletonMap(name, it)) {
+            return@map buildContext.scope(Collections.singletonMap(name, it)) {
                 children.map { item ->
-                    c.createFromElement(dataBinding, item, upperVisibility)
+                    c.createFromElement(buildContext, item, upperVisibility)
                 }.flatten()
             }
         }.flatten()
