@@ -12,8 +12,6 @@ internal object CommonMappings : Mapper<Component.Builder<*>>() {
     override val mappings: Mappings<Component.Builder<*>>
         get() = common
 
-    private val edges = arrayOf("Left", "Right", "Top", "Bottom")
-
     init {
         numberAttr<Double>("borderWidth") { _, _, it ->
             this.widthPx(it.toPx())
@@ -45,6 +43,7 @@ internal object CommonMappings : Mapper<Component.Builder<*>>() {
         numberAttr<Double>("padding") { _, _, it ->
             this.paddingPx(YogaEdge.ALL, it.toPx())
         }
+        val edges = arrayOf("Left", "Right", "Top", "Bottom")
         for (index in edges.indices) {
             val yogaEdge = YogaEdge.valueOf(edges[index].toUpperCase(Locale.US))
             numberAttr<Double>("margin" + edges[index]) { map, _, it ->
