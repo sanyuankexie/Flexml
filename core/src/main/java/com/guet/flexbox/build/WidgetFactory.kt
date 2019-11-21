@@ -11,8 +11,6 @@ import com.facebook.litho.ComponentContext
 import com.facebook.litho.drawable.ComparableColorDrawable
 import com.facebook.litho.drawable.ComparableDrawable
 import com.facebook.litho.drawable.ComparableGradientDrawable
-import com.facebook.yoga.YogaAlign
-import com.facebook.yoga.YogaEdge
 import com.guet.flexbox.DynamicBox
 import com.guet.flexbox.NodeInfo
 import com.guet.flexbox.widget.BackgroundDrawable
@@ -21,55 +19,9 @@ import com.guet.flexbox.widget.NoOpDrawable
 import java.util.*
 
 @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
-internal abstract class WidgetFactory<T : Component.Builder<*>> : Transform {
+internal abstract class WidgetFactory<T : Component.Builder<*>> : Mapper<T>(), Transform {
 
-    internal val mappings = Mappings<T>()
-
-    init {
-        numberAttr<Double>("borderWidth") { _, _, it ->
-            this.widthPx(it.toPx())
-        }
-        numberAttr<Double>("height") { _, _, it ->
-            this.heightPx(it.toPx())
-        }
-        numberAttr<Float>("flexGrow") { _, _, it ->
-            this.flexGrow(it)
-        }
-        numberAttr<Float>("flexShrink") { _, _, it ->
-            this.flexShrink(it)
-        }
-        enumAttr("alignSelf",
-                mapOf(
-                        "auto" to YogaAlign.AUTO,
-                        "flexStart" to YogaAlign.FLEX_START,
-                        "flexEnd" to YogaAlign.FLEX_END,
-                        "center" to YogaAlign.CENTER,
-                        "baseline" to YogaAlign.BASELINE,
-                        "stretch" to YogaAlign.STRETCH
-                )
-        ) { _, _, it ->
-            this.alignSelf(it)
-        }
-        numberAttr<Double>("margin") { _, _, it ->
-            this.marginPx(YogaEdge.ALL, it.toPx())
-        }
-        numberAttr<Double>("padding") { _, _, it ->
-            this.paddingPx(YogaEdge.ALL, it.toPx())
-        }
-        for (index in edges.indices) {
-            val yogaEdge = YogaEdge.valueOf(edges[index].toUpperCase(Locale.US))
-            numberAttr<Double>("margin" + edges[index]) { map, _, it ->
-                if (!map.containsKey("margin")) {
-                    this.marginPx(yogaEdge, it.toPx())
-                }
-            }
-            numberAttr<Double>("padding" + edges[index]) { map, _, it ->
-                if (!map.containsKey("padding")) {
-                    this.paddingPx(yogaEdge, it.toPx())
-                }
-            }
-        }
-    }
+    override val mappings by CommonMappings.createByType<T>()
 
     final override fun transform(
             c: ComponentContext,
@@ -229,7 +181,8 @@ internal abstract class WidgetFactory<T : Component.Builder<*>> : Transform {
         if (reportView.isNotEmpty() && display) {
             visibleHandler(DynamicBox.onView(
                     c,
-                    reportView))
+                    reportView
+            ))
         }
     }
 
@@ -251,84 +204,6 @@ internal abstract class WidgetFactory<T : Component.Builder<*>> : Transform {
         }
     }
 
-    protected inline fun <reified V : Any> scopeAttr(
-            name: String,
-            scope: Map<String, V>,
-            fallback: V,
-            crossinline action: Apply<T, V>
-    ) {
-        mappings[name] = { c, map, display, value ->
-            action(map, display, if (value.isExpr) {
-                c.scope(scope) {
-                    c.tryGetValue(value, fallback)
-                }
-            } else {
-                scope[value] ?: fallback
-            })
-        }
-    }
-
-    protected inline fun <reified V : Enum<V>> enumAttr(
-            name: String,
-            scope: Map<String, V>,
-            fallback: V = enumValues<V>()[0],
-            crossinline action: Apply<T, V>
-    ) {
-        scopeAttr(name, scope, fallback, action)
-    }
-
-    protected inline fun textAttr(
-            name: String,
-            fallback: String = "",
-            crossinline action: Apply<T, String>) {
-        mappings[name] = { c, map, display, value ->
-            action(map, display, c.tryGetValue(value, fallback))
-        }
-    }
-
-    protected inline fun boolAttr(
-            name: String,
-            fallback: Boolean = false,
-            crossinline action: Apply<T, Boolean>) {
-        mappings[name] = { c, map, display, value ->
-            action(map, display, if (value.isExpr) {
-                c.tryGetValue(value, fallback)
-            } else {
-                try {
-                    value.toBoolean()
-                } catch (e: Exception) {
-                    fallback
-                }
-            })
-        }
-    }
-
-    protected inline fun <reified N : Number> numberAttr(
-            name: String,
-            fallback: N = 0.safeCast(),
-            crossinline action: Apply<T, N>) {
-        mappings[name] = { c, map, display, value ->
-            action(map, display, c.tryGetValue(value, fallback))
-        }
-    }
-
-    protected inline fun colorAttr(
-            name: String,
-            fallback: Int = Color.TRANSPARENT,
-            crossinline action: Apply<T, Int>) {
-        mappings[name] = { c, map, display, value ->
-            action(map, display, if (value.isExpr) {
-                c.tryGetColor(value, fallback)
-            } else {
-                try {
-                    Color.parseColor(value)
-                } catch (e: Exception) {
-                    fallback
-                }
-            })
-        }
-    }
-
     companion object {
 
         @JvmStatic
@@ -339,8 +214,6 @@ internal abstract class WidgetFactory<T : Component.Builder<*>> : Transform {
         ): Component? {
             return c.createFromElement(BuildContext(data), root).singleOrNull()
         }
-
-        internal val edges = arrayOf("Left", "Right", "Top", "Bottom")
 
         @Suppress("UNCHECKED_CAST")
         internal val colorNameMap = (Color::class.java
