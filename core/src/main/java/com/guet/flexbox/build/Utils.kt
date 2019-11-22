@@ -78,7 +78,7 @@ private val transforms = mapOf(
 )
 
 private val jsonObjectInnerMap = JSONObject::class.java
-        .getField("nameValuePairs")
+        .getDeclaredField("nameValuePairs")
         .apply { isAccessible = true }
 
 private val orientations: Map<String, Orientation> = mapOf(
@@ -95,7 +95,7 @@ internal inline val CharSequence.isExpr: Boolean
     @JvmName("isExprNonNull")
     get() = length > 3 && startsWith("\${") && endsWith('}')
 
-internal fun String.toOrientation():Orientation {
+internal fun String.toOrientation(): Orientation {
     return orientations.getValue(this)
 }
 

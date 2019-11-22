@@ -13,7 +13,7 @@ import com.facebook.litho.drawable.ComparableGradientDrawable
 import com.guet.flexbox.DynamicBox
 import com.guet.flexbox.NodeInfo
 import com.guet.flexbox.widget.BackgroundDrawable
-import com.guet.flexbox.widget.ComparableLazyDrawable
+import com.guet.flexbox.widget.ComparableLazyLoadDrawable
 import com.guet.flexbox.widget.NoOpDrawable
 import java.util.*
 
@@ -121,8 +121,7 @@ internal abstract class WidgetFactory<T : Component.Builder<*>> : Mapper<T>(), T
                         if (type != null && colors != null && colors.isNotEmpty()) {
                             backgroundDrawable = ComparableGradientDrawable(type, colors)
                         }
-                    }
-                    if (uri.host == "load") {
+                    } else if (uri.host == "load") {
                         val name = uri.getQueryParameter("name")
                         if (name != null) {
                             val id = c.resources.getIdentifier(
@@ -131,7 +130,7 @@ internal abstract class WidgetFactory<T : Component.Builder<*>> : Mapper<T>(), T
                                     c.androidContext.packageName
                             )
                             if (id != 0) {
-                                backgroundDrawable = ComparableLazyDrawable(
+                                backgroundDrawable = ComparableLazyLoadDrawable(
                                         c.androidContext,
                                         id
                                 )
@@ -139,7 +138,7 @@ internal abstract class WidgetFactory<T : Component.Builder<*>> : Mapper<T>(), T
                         }
                     }
                 } else if (backgroundELResult.isNotEmpty()) {
-                    backgroundDrawable = ComparableLazyDrawable(
+                    backgroundDrawable = ComparableLazyLoadDrawable(
                             c.androidContext,
                             backgroundELResult
                     )

@@ -10,6 +10,7 @@ import com.guet.flexbox.el.ELManager
 import com.guet.flexbox.el.JSONArrayELResolver
 import com.guet.flexbox.el.JSONObjectELResolver
 import java.lang.reflect.Modifier
+import java.util.*
 
 class BuildContext(data: Any?) {
 
@@ -74,7 +75,7 @@ class BuildContext(data: Any?) {
     companion object {
 
         @Suppress("UNCHECKED_CAST")
-        internal val colorMap = HashMap((Color::class.java
+        internal val colorMap = Collections.unmodifiableMap((Color::class.java
                 .getDeclaredField("sColorNameMap")
                 .apply { isAccessible = true }
                 .get(null) as Map<String, Int>))
@@ -110,7 +111,8 @@ class BuildContext(data: Any?) {
         @JvmStatic
         fun gradient(orientation: String, vararg colors: String): String {
             return Uri.Builder()
-                    .path("res://gradient")
+                    .scheme("res")
+                    .authority("gradient")
                     .appendQueryParameter("orientation", orientation)
                     .apply {
                         colors.forEach {
@@ -125,7 +127,8 @@ class BuildContext(data: Any?) {
         @JvmStatic
         fun load(name: String): String {
             return Uri.Builder()
-                    .path("res://load")
+                    .scheme("res")
+                    .authority("load")
                     .appendQueryParameter("name", name)
                     .build()
                     .toString()

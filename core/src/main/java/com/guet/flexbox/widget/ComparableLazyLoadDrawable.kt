@@ -9,14 +9,13 @@ import com.bumptech.glide.request.target.SizeReadyCallback
 import com.bumptech.glide.request.target.Target
 import com.bumptech.glide.request.transition.Transition
 import com.facebook.litho.drawable.ComparableDrawable
-import com.facebook.litho.drawable.ComparableDrawableWrapper
 import java.util.concurrent.atomic.AtomicBoolean
 
-internal class ComparableLazyDrawable(
+internal class ComparableLazyLoadDrawable(
         private val c: Context,
         private val model: Any,
         target: (Target<Drawable>) = DelegateTarget()
-) : ComparableDrawableWrapper(NoOpDrawable()), Target<Drawable> by target {
+) : ComparableDrawableWrapper<Drawable>(NoOpDrawable()), Target<Drawable> by target {
 
     private val config = Configuration(c.resources.configuration)
 
@@ -38,7 +37,7 @@ internal class ComparableLazyDrawable(
         if (other == this) {
             return true
         }
-        if (other is ComparableLazyDrawable) {
+        if (other is ComparableLazyLoadDrawable) {
             return config == other.config && model == other.model
         }
         return false
