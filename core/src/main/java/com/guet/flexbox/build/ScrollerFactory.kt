@@ -29,11 +29,11 @@ internal object ScrollerFactory : WidgetFactory<Component.Builder<*>>() {
 
     override fun onCreateWidget(
             c: ComponentContext,
-            dataBinding: DataContext,
+            buildContext: BuildContext,
             attrs: Map<String, String>?,
             visibility: Int
     ): Component.Builder<*> {
-        return if (attrs != null && dataBinding.tryGetEnum(
+        return if (attrs != null && buildContext.tryGetEnum(
                         attrs["orientation"],
                         orientations
                 ) == Orientation.HORIZONTAL) {
@@ -46,7 +46,7 @@ internal object ScrollerFactory : WidgetFactory<Component.Builder<*>>() {
     override fun onInstallChildren(
             owner: Component.Builder<*>,
             c: ComponentContext,
-            dataBinding: DataContext,
+            dataBinding: BuildContext,
             attrs: Map<String, String>?,
             children: List<Component>?,
             visibility: Int

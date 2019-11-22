@@ -14,22 +14,16 @@ import com.facebook.litho.annotations.OnCreateLayout;
 import com.facebook.litho.annotations.OnEvent;
 import com.facebook.litho.annotations.Param;
 import com.facebook.litho.annotations.Prop;
-import com.guet.flexbox.build.DataContext;
 import com.guet.flexbox.build.WidgetFactory;
 
 @LayoutSpec
 final class DynamicBoxSpec {
 
     @OnCreateLayout
-    static Component onCreateLayout(ComponentContext componentContext,
+    static Component onCreateLayout(ComponentContext c,
                                     @Prop(optional = true) Object bind,
-                                    @Prop(optional = true) DataContext dataContext,
                                     @Prop NodeInfo layout) {
-        return WidgetFactory.createLayout(
-                componentContext,
-                dataContext != null ? dataContext : new DataContext(bind),
-                layout
-        );
+        return WidgetFactory.createLayout(c, bind, layout);
     }
 
     @OnEvent(VisibleEvent.class)

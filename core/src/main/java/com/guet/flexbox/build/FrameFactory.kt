@@ -26,7 +26,7 @@ internal object FrameFactory : WidgetFactory<Row.Builder>(), ThreadFactory {
 
     override fun onCreateWidget(
             c: ComponentContext,
-            dataBinding: DataContext,
+            buildContext: BuildContext,
             attrs: Map<String, String>?,
             visibility: Int
     ): Row.Builder {
@@ -36,7 +36,7 @@ internal object FrameFactory : WidgetFactory<Row.Builder>(), ThreadFactory {
     override fun onInstallChildren(
             owner: Row.Builder,
             c: ComponentContext,
-            dataBinding: DataContext,
+            dataBinding: BuildContext,
             attrs: Map<String, String>?,
             children: List<Component>?,
             visibility: Int) {

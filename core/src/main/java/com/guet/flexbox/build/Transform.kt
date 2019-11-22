@@ -8,7 +8,7 @@ internal interface Transform {
 
     fun transform(
             c: ComponentContext,
-            dataBinding: DataContext,
+            buildContext: BuildContext,
             nodeInfo: NodeInfo,
             upperVisibility: Int
     ): List<Component>

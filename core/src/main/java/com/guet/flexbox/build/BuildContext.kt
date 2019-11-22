@@ -3,16 +3,16 @@ package com.guet.flexbox.build
 import android.content.res.Resources
 import android.graphics.Color
 import android.graphics.Color.parseColor
-import android.graphics.drawable.GradientDrawable.Orientation
+import android.net.Uri
 import androidx.annotation.ColorInt
-import com.facebook.litho.drawable.ComparableGradientDrawable
 import com.guet.flexbox.el.ELException
 import com.guet.flexbox.el.ELManager
 import com.guet.flexbox.el.JSONArrayELResolver
 import com.guet.flexbox.el.JSONObjectELResolver
 import java.lang.reflect.Modifier
+import java.util.*
 
-class DataContext(data: Any?) {
+class BuildContext(data: Any?) {
 
     private val el = ELManager()
 
@@ -27,7 +27,7 @@ class DataContext(data: Any?) {
         }
     }
 
-    internal fun enterScope(scope: Map<String, Any>) {
+    internal fun enterScope(scope: Map<String, Any?>) {
         el.elContext.enterLambdaScope(scope)
     }
 
@@ -75,7 +75,7 @@ class DataContext(data: Any?) {
     companion object {
 
         @Suppress("UNCHECKED_CAST")
-        internal val colorMap = HashMap((Color::class.java
+        internal val colorMap = Collections.unmodifiableMap((Color::class.java
                 .getDeclaredField("sColorNameMap")
                 .apply { isAccessible = true }
                 .get(null) as Map<String, Int>))
@@ -106,16 +106,32 @@ class DataContext(data: Any?) {
             }
         }
 
-        @Prefix("draw")
+        @Prefix("res")
         @JvmName("gradient")
         @JvmStatic
-        fun gradient(
-                orientation: Orientation,
-                vararg colors: String
-        ): ComparableGradientDrawable {
-            return ComparableGradientDrawable(orientation, colors.map {
-                parseColor(it)
-            }.toIntArray())
+        fun gradient(orientation: String, vararg colors: String): String {
+            return Uri.Builder()
+                    .scheme("res")
+                    .authority("gradient")
+                    .appendQueryParameter("orientation", orientation)
+                    .apply {
+                        colors.forEach {
+                            appendQueryParameter("color", it)
+                        }
+                    }.build()
+                    .toString()
+        }
+
+        @Prefix("res")
+        @JvmName("load")
+        @JvmStatic
+        fun load(name: String): String {
+            return Uri.Builder()
+                    .scheme("res")
+                    .authority("load")
+                    .appendQueryParameter("name", name)
+                    .build()
+                    .toString()
         }
 
         @Prefix("dimen")

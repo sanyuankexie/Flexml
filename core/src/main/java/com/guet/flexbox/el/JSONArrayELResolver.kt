@@ -39,7 +39,7 @@ internal object JSONArrayELResolver : ELResolver() {
 
     override fun getCommonPropertyType(context: ELContext?, base: Any?): Class<*>? {
         if (base is JSONArray) {
-            return Int::class.java
+            return Int::class.javaObjectType
         }
         return null
     }

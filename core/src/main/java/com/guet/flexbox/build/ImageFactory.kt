@@ -1,5 +1,6 @@
 package com.guet.flexbox.build
 
+import android.view.View
 import android.widget.ImageView.ScaleType.*
 import com.facebook.litho.ComponentContext
 import com.guet.flexbox.widget.NetworkImage
@@ -7,13 +8,6 @@ import com.guet.flexbox.widget.NetworkImage
 internal object ImageFactory : WidgetFactory<NetworkImage.Builder>() {
 
     init {
-        textAttr("url") { _, display, it ->
-            if (display) {
-                url(it)
-            } else {
-                url("")
-            }
-        }
         enumAttr("scaleType",
                 mapOf(
                         "center" to CENTER,
@@ -47,10 +41,14 @@ internal object ImageFactory : WidgetFactory<NetworkImage.Builder>() {
 
     override fun onCreateWidget(
             c: ComponentContext,
-            dataBinding: DataContext,
+            buildContext: BuildContext,
             attrs: Map<String, String>?,
             visibility: Int
     ): NetworkImage.Builder {
-        return NetworkImage.create(c)
+        return NetworkImage.create(c).url(if (visibility == View.GONE) {
+            ""
+        } else {
+            buildContext.tryGetValue(attrs?.get("url"), "")
+        })
     }
 }

@@ -15,9 +15,11 @@ internal object TextFactory : WidgetFactory<Text.Builder>() {
     private val invisibleColor = ColorStateList.valueOf(Color.TRANSPARENT)
 
     init {
-        enumAttr("verticalGravity", mapOf("top" to VerticalGravity.TOP,
+        enumAttr("verticalGravity", mapOf(
+                "top" to VerticalGravity.TOP,
                 "bottom" to VerticalGravity.BOTTOM,
-                "center" to VerticalGravity.CENTER)) { _, _, it ->
+                "center" to VerticalGravity.CENTER
+        )) { _, _, it ->
             verticalGravity(it)
         }
         @Suppress("NewApi")
@@ -68,7 +70,7 @@ internal object TextFactory : WidgetFactory<Text.Builder>() {
 
     override fun onCreateWidget(
             c: ComponentContext,
-            dataBinding: DataContext,
+            buildContext: BuildContext,
             attrs: Map<String, String>?,
             visibility: Int
     ): Text.Builder {
@@ -78,7 +80,7 @@ internal object TextFactory : WidgetFactory<Text.Builder>() {
     override fun onLoadStyles(
             owner: Text.Builder,
             c: ComponentContext,
-            dataBinding: DataContext,
+            dataBinding: BuildContext,
             attrs: Map<String, String>?,
             visibility: Int
     ) {

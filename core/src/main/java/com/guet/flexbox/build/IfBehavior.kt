@@ -7,14 +7,14 @@ import com.guet.flexbox.NodeInfo
 internal object IfBehavior : Behavior() {
     override fun onApply(
             c: ComponentContext,
-            dataBinding: DataContext,
+            buildContext: BuildContext,
             attrs: Map<String, String>,
             children: List<NodeInfo>,
             upperVisibility: Int
     ): List<Component> {
-        return if (dataBinding.requestValue("test", attrs)) {
+        return if (buildContext.requestValue("test", attrs)) {
             return children.map {
-                c.createFromElement(dataBinding, it, upperVisibility)
+                c.createFromElement(buildContext, it, upperVisibility)
             }.flatten()
         } else {
             emptyList()

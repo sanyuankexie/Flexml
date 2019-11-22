@@ -3,6 +3,7 @@
 package com.guet.flexbox.build
 
 import android.content.res.Resources
+import android.graphics.drawable.GradientDrawable.Orientation
 import android.view.View
 import androidx.annotation.ColorInt
 import com.facebook.litho.Component
@@ -10,34 +11,58 @@ import com.facebook.litho.ComponentContext
 import com.guet.flexbox.BuildConfig
 import com.guet.flexbox.NodeInfo
 import com.guet.flexbox.beans.Introspector
+import com.guet.flexbox.beans.PropertyDescriptor
 import com.guet.flexbox.el.ELException
 import org.json.JSONObject
-import java.io.*
-import java.lang.reflect.Array
-import java.lang.reflect.Type
-import kotlin.reflect.KClass
+import java.lang.reflect.Field
+import java.lang.reflect.Modifier
 
-private typealias FromJson<T> = (T, Type) -> Any
-
-private typealias JsonSupports = Map<Class<*>, FromJson<*>>
-
-private typealias SupportMap = HashMap<Class<*>, FromJson<*>>
-
-internal typealias Mapping<T> = T.(DataContext, Map<String, String>, Boolean, String) -> Unit
+internal typealias Mapping<T> = T.(BuildContext, Map<String, String>, Boolean, String) -> Unit
 
 internal typealias Mappings<T> = HashMap<String, Mapping<T>>
 
 internal typealias Apply<T, V> = T.(Map<String, String>, Boolean, V) -> Unit
 
-private const val GSON_NAME = "com.google.gson.Gson"
+private class SimpleWrapper(private val o: Any) : AbstractMap<String, Any?>() {
 
-private const val GSON_METHOD_NAME = "fromJson"
+    override val entries: Set<Map.Entry<String, Any?>> by lazy {
+        o.javaClass.fields.filter {
+            !Modifier.isStatic(it.modifiers)
+        }.map {
+            FieldEntry(it)
+        }.toSet()
+    }
 
-private const val FAST_JSON_NAME = "com.alibaba.fastjson.JSONObject"
+    private inner class FieldEntry(private val it: Field) : Map.Entry<String, Any?> {
+        override val key: String
+            get() = it.name
+        override val value: Any?
+            get() = it.get(o)
+    }
 
-private const val FAST_JSON_PRAM_NAME = "com.alibaba.fastjson.parser.Feature"
+}
 
-private const val FAST_JSON_METHOD_NAME = "parseObject"
+private class BeanWrapper(private val o: Any) : AbstractMap<String, Any?>() {
+
+    override val entries: Set<Map.Entry<String, Any?>> by lazy {
+        Introspector.getBeanInfo(javaClass)
+                .propertyDescriptors
+                .filter {
+                    it.propertyType != Class::class.java
+                }.map {
+                    PropertyEntry(it)
+                }.toSet()
+    }
+
+    private inner class PropertyEntry(private val prop: PropertyDescriptor)
+        : Map.Entry<String, Any?> {
+        override val key: String
+            get() = prop.name
+        override val value: Any?
+            get() = prop.readMethod.invoke(o)
+    }
+
+}
 
 private val transforms = mapOf(
         "Image" to ImageFactory,
@@ -52,16 +77,33 @@ private val transforms = mapOf(
         "if" to IfBehavior
 )
 
-private val jsonMatchTypes: JsonSupports = findGsonSupport() ?: findFastJsonSupport() ?: emptyMap()
+private val jsonObjectInnerMap = JSONObject::class.java
+        .getDeclaredField("nameValuePairs")
+        .apply { isAccessible = true }
 
-internal inline val CharSequence?.isExpr: Boolean
-    get() = this != null && length > 3 && startsWith("\${") && endsWith('}')
+private val orientations: Map<String, Orientation> = mapOf(
+        "t2b" to Orientation.TOP_BOTTOM,
+        "tr2bl" to Orientation.TR_BL,
+        "l2r" to Orientation.LEFT_RIGHT,
+        "br2tl" to Orientation.BR_TL,
+        "b2t" to Orientation.BOTTOM_TOP,
+        "r2l" to Orientation.RIGHT_LEFT,
+        "tl2br" to Orientation.TL_BR
+)
+
+internal inline val CharSequence.isExpr: Boolean
+    @JvmName("isExprNonNull")
+    get() = length > 3 && startsWith("\${") && endsWith('}')
+
+internal fun String.toOrientation(): Orientation {
+    return orientations.getValue(this)
+}
 
 internal inline fun <reified T : Number> T.toPx(): Int {
     return (this.toFloat() * Resources.getSystem().displayMetrics.widthPixels / 360f).toInt()
 }
 
-internal inline fun <reified T : Any> DataContext.tryGetValue(expr: String?, fallback: T): T {
+internal inline fun <reified T : Any> BuildContext.tryGetValue(expr: String?, fallback: T): T {
     if (expr == null) {
         return fallback
     }
@@ -75,7 +117,7 @@ internal inline fun <reified T : Any> DataContext.tryGetValue(expr: String?, fal
     }
 }
 
-internal inline fun <T> DataContext.scope(scope: Map<String, Any>, action: () -> T): T {
+internal inline fun <T> BuildContext.scope(scope: Map<String, Any>, action: () -> T): T {
     enterScope(scope)
     try {
         return action()
@@ -84,7 +126,7 @@ internal inline fun <T> DataContext.scope(scope: Map<String, Any>, action: () ->
     }
 }
 
-internal inline fun <reified T : Enum<T>> DataContext.tryGetEnum(
+internal inline fun <reified T : Enum<T>> BuildContext.tryGetEnum(
         expr: String?,
         scope: Map<String, T>,
         fallback: T = enumValues<T>()[0]): T {
@@ -97,7 +139,7 @@ internal inline fun <reified T : Enum<T>> DataContext.tryGetEnum(
     }
 }
 
-internal inline fun <reified T : Any> DataContext.requestValue(
+internal inline fun <reified T : Any> BuildContext.requestValue(
         name: String,
         attrs: Map<String, String>
 ): T {
@@ -105,7 +147,7 @@ internal inline fun <reified T : Any> DataContext.requestValue(
 }
 
 @ColorInt
-internal fun DataContext.tryGetColor(expr: String?, @ColorInt fallback: Int): Int {
+internal fun BuildContext.tryGetColor(expr: String?, @ColorInt fallback: Int): Int {
     if (expr == null) {
         return fallback
     }
@@ -117,140 +159,43 @@ internal fun DataContext.tryGetColor(expr: String?, @ColorInt fallback: Int): In
 }
 
 internal inline fun <reified N : Number> Number.safeCast(): N {
-    return safeCast(N::class) as N
+    return safeCast(N::class.javaObjectType) as N
 }
 
-private fun Number.safeCast(type: KClass<*>): Any {
+private fun Number.safeCast(type: Class<*>): Any {
     return when (type) {
-        Byte::class -> this.toByte()
-        Char::class -> this.toChar()
-        Int::class -> this.toInt()
-        Short::class -> this.toShort()
-        Long::class -> this.toLong()
-        Float::class -> this.toFloat()
-        Double::class -> this.toDouble()
-        else -> error("no match number type ${type.java.name}")
+        Byte::class.javaObjectType -> this.toByte()
+        Char::class.javaObjectType -> this.toChar()
+        Int::class.javaObjectType -> this.toInt()
+        Short::class.javaObjectType -> this.toShort()
+        Long::class.javaObjectType -> this.toLong()
+        Float::class.javaObjectType -> this.toFloat()
+        Double::class.javaObjectType -> this.toDouble()
+        else -> error("no match number type ${type.name}")
     }
 }
 
-private inline fun <reified T> SupportMap.addSupport(noinline action: FromJson<T>) {
-    this[T::class.java] = action
-}
-
-private fun findGsonSupport(): JsonSupports? {
-    try {
-        val types = SupportMap(5)
-        val gsonType = Class.forName(GSON_NAME)
-        val gson = gsonType.newInstance()
-        val readerMethod = gsonType.getMethod(
-                GSON_METHOD_NAME,
-                Reader::class.java,
-                Type::class.java
-        )
-        val stringMethod = gsonType.getMethod(
-                GSON_METHOD_NAME,
-                String::class.java,
-                Type::class.java
-        )
-        val converter: FromJson<InputStream> = { data, type ->
-            readerMethod.invoke(gson, InputStreamReader(data), type)
+internal fun tryToMap(input: Any): Map<String, Any?> {
+    val javaClass = input.javaClass
+    @Suppress("UNCHECKED_CAST")
+    return when {
+        input is Map<*, *> && input.keys.all { it is String } -> {
+            input
         }
-        types.addSupport<Reader> { data, type ->
-            readerMethod.invoke(gson, data, type)
-        }
-        types.addSupport(converter)
-        types.addSupport<ByteArray> { data, type ->
-            converter(ByteArrayInputStream(data), type)
-        }
-        types.addSupport<File> { data, type ->
-            converter(FileInputStream(data), type)
-        }
-        types.addSupport<String> { data, type ->
-            stringMethod.invoke(gson, data, type)
-        }
-        return types
-    } catch (e: Exception) {
-        return null
-    }
-}
-
-private fun findFastJsonSupport(): JsonSupports? {
-    try {
-        val types = SupportMap(5)
-        val fastJson = Class.forName(FAST_JSON_NAME)
-        val stringMethod = fastJson.getMethod(
-                FAST_JSON_METHOD_NAME,
-                Class::class.java
-        )
-        val isMethod = fastJson.getMethod(
-                FAST_JSON_METHOD_NAME,
-                Type::class.java,
-                Array.newInstance(Class.forName(FAST_JSON_PRAM_NAME), 0)
-                        .javaClass
-        )
-        val converter: FromJson<InputStream> = { data, type ->
-            isMethod.invoke(null, data, type, null)
-        }
-        types.addSupport(converter)
-        types.addSupport<String> { data, type ->
-            stringMethod.invoke(null, data, type)
-        }
-        types.addSupport<ByteArray> { data, type ->
-            converter(ByteArrayInputStream(data), type)
-        }
-        types.addSupport<File> { data, type ->
-            converter(FileInputStream(data), type)
-        }
-        return types
-    } catch (e: Exception) {
-        return null
-    }
-}
-
-internal inline fun <reified T> fromJson(data: Any): T? {
-    return jsonMatchTypes[T::class.java]?.let {
-        @Suppress("UNCHECKED_CAST")
-        (it as FromJson<Any>).invoke(data, T::class.java)
-    } as? T
-}
-
-internal fun tryToMap(o: Any): Map<String, Any> {
-    val javaClass = o.javaClass
-    when {
-        o is Map<*, *> && o.keys.all { it is String } -> {
-            @Suppress("UNCHECKED_CAST")
-            return o as Map<String, Any>
-        }
-        o is JSONObject -> {
-            val map = HashMap<String, Any>(o.length())
-            o.keys().forEach {
-                map[it] = o[it]
-            }
-            return map
-        }
-        jsonMatchTypes.keys.any { it.isAssignableFrom(javaClass) } -> {
-            return fromJson(o) ?: error("convert ${javaClass.name} " +
-                    "request $GSON_NAME or $FAST_JSON_NAME")
+        input is JSONObject -> {
+            jsonObjectInnerMap.get(input)
         }
         javaClass.methods.all { it.declaringClass == Any::class.java } -> {
-            return javaClass.fields.map {
-                it.name to it[o]
-            }.toMap()
+            SimpleWrapper(input)
         }
         else -> {
-            return Introspector.getBeanInfo(javaClass)
-                    .propertyDescriptors
-                    .filter {
-                        it.propertyType != Class::class.java
-                    }.map {
-                        it.name to it.readMethod.invoke(o)
-                    }.toMap()
+            BeanWrapper(input)
         }
-    }
+    } as Map<String, Any?>
 }
 
 internal fun ComponentContext.createFromElement(
-        dataBinding: DataContext,
+        dataBinding: BuildContext,
         element: NodeInfo,
         upperVisibility: Int = View.VISIBLE
 ): List<Component> {

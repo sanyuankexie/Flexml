@@ -24,7 +24,7 @@ public class PropertyEditorManager {
 
     private static String[] path = { "org.apache.harmony.beans.editors" }; //$NON-NLS-1$
 
-    private static final Map<Class<?>, Class<?>> registeredEditors = new HashMap<Class<?>, Class<?>>();
+    private static final Map<Class<?>, Class<?>> registeredEditors = new HashMap<>();
 
     public PropertyEditorManager() {
         // expected
@@ -33,11 +33,6 @@ public class PropertyEditorManager {
     public static void registerEditor(Class<?> targetType, Class<?> editorClass) {
         if (targetType == null) {
             throw new NullPointerException();
-        }
-        SecurityManager sm = System.getSecurityManager();
-
-        if (sm != null) {
-            sm.checkPropertiesAccess();
         }
 
         if (editorClass != null) {
@@ -105,10 +100,6 @@ public class PropertyEditorManager {
     }
 
     public static void setEditorSearchPath(String[] apath) {
-        SecurityManager sm = System.getSecurityManager();
-        if (sm != null) {
-            sm.checkPropertiesAccess();
-        }
         synchronized(PropertyEditorManager.class){
             path = (apath == null)? new String[0] : apath;
         }

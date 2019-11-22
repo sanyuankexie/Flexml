@@ -18,7 +18,6 @@ package com.guet.flexbox.el;
 
 import android.os.Build;
 
-import java.lang.ref.WeakReference;
 import java.lang.reflect.Array;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
@@ -32,10 +31,6 @@ import java.util.Map;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.locks.Lock;
-import java.util.concurrent.locks.ReadWriteLock;
-import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 class Util {
 
@@ -45,6 +40,7 @@ class Util {
     /**
      * Checks whether the supplied Throwable is one that needs to be
      * rethrown and swallows all others.
+     *
      * @param t the Throwable to check
      */
     static void handleThrowable(Throwable t) {
@@ -83,7 +79,7 @@ class Util {
     }
 
 
-    static <K,V> V putIfAbsent(Map<K,V> map ,K key, V value) {
+    static <K, V> V putIfAbsent(Map<K, V> map, K key, V value) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
             return map.putIfAbsent(key, value);
         }
@@ -95,127 +91,30 @@ class Util {
     }
 
 
-    private static final CacheValue nullTcclFactory = new CacheValue();
-    private static final Map<CacheKey, CacheValue> factoryCache = new ConcurrentHashMap<>();
+    private static ExpressionFactory factory;
 
-    /**
-     * Provides a per class loader cache of ExpressionFactory instances without
-     * pinning any in memory as that could trigger a memory leak.
-     */
+    private static final Object lock = new Object();
+
     static ExpressionFactory getExpressionFactory() {
-
-        ClassLoader tccl = getContextClassLoader();
-
-        CacheValue cacheValue = null;
-        ExpressionFactory factory = null;
-
-        if (tccl == null) {
-            cacheValue = nullTcclFactory;
-        } else {
-            CacheKey key = new CacheKey(tccl);
-            cacheValue = factoryCache.get(key);
-            if (cacheValue == null) {
-                CacheValue newCacheValue = new CacheValue();
-                cacheValue = putIfAbsent(factoryCache, key, newCacheValue);
-                if (cacheValue == null) {
-                    cacheValue = newCacheValue;
-                }
+        synchronized (lock) {
+            if (factory == null) {
+                factory = ExpressionFactory.newInstance();
             }
         }
-
-        final Lock readLock = cacheValue.getLock().readLock();
-        readLock.lock();
-        try {
-            factory = cacheValue.getExpressionFactory();
-        } finally {
-            readLock.unlock();
-        }
-
-        if (factory == null) {
-            final Lock writeLock = cacheValue.getLock().writeLock();
-            writeLock.lock();
-            try {
-                factory = cacheValue.getExpressionFactory();
-                if (factory == null) {
-                    factory = ExpressionFactory.newInstance();
-                    cacheValue.setExpressionFactory(factory);
-                }
-            } finally {
-                writeLock.unlock();
-            }
-        }
-
         return factory;
     }
-
-
-    /**
-     * Key used to cache default ExpressionFactory information per class
-     * loader. The class loader reference is never {@code null}, because
-     * {@code null} tccl is handled separately.
-     */
-    private static class CacheKey {
-        private final int hash;
-        private final WeakReference<ClassLoader> ref;
-
-        public CacheKey(ClassLoader key) {
-            hash = key.hashCode();
-            ref = new WeakReference<>(key);
-        }
-
-        @Override
-        public int hashCode() {
-            return hash;
-        }
-
-        @Override
-        public boolean equals(Object obj) {
-            if (obj == this) {
-                return true;
-            }
-            if (!(obj instanceof CacheKey)) {
-                return false;
-            }
-            ClassLoader thisKey = ref.get();
-            if (thisKey == null) {
-                return false;
-            }
-            return thisKey == ((CacheKey) obj).ref.get();
-        }
-    }
-
-    private static class CacheValue {
-        private final ReadWriteLock lock = new ReentrantReadWriteLock();
-        private WeakReference<ExpressionFactory> ref;
-
-        public CacheValue() {
-        }
-
-        public ReadWriteLock getLock() {
-            return lock;
-        }
-
-        public ExpressionFactory getExpressionFactory() {
-            return ref != null ? ref.get() : null;
-        }
-
-        public void setExpressionFactory(ExpressionFactory factory) {
-            ref = new WeakReference<>(factory);
-        }
-    }
-
 
     /*
      * This method duplicates code in org.apache.el.util.ReflectionUtil. When
      * making changes keep the code in sync.
      */
     static Method findMethod(Class<?> clazz, String methodName,
-            Class<?>[] paramTypes, Object[] paramValues) {
+                             Class<?>[] paramTypes, Object[] paramValues) {
 
         if (clazz == null || methodName == null) {
             throw new MethodNotFoundException(
                     message(null, "util.method.notfound", clazz, methodName,
-                    paramString(paramTypes)));
+                            paramString(paramTypes)));
         }
 
         if (paramTypes == null) {
@@ -237,9 +136,9 @@ class Util {
      */
     @SuppressWarnings("null")
     private static Wrapper findWrapper(Class<?> clazz, List<Wrapper> wrappers,
-            String name, Class<?>[] paramTypes, Object[] paramValues) {
+                                       String name, Class<?>[] paramTypes, Object[] paramValues) {
 
-        Map<Wrapper,MatchResult> candidates = new HashMap<>();
+        Map<Wrapper, MatchResult> candidates = new HashMap<>();
 
         int paramCount = paramTypes.length;
 
@@ -258,12 +157,12 @@ class Util {
                 // Method has wrong number of parameters
                 continue;
             }
-            if (w.isVarArgs() && paramCount < mParamCount -1) {
+            if (w.isVarArgs() && paramCount < mParamCount - 1) {
                 // Method has wrong number of parameters
                 continue;
             }
             if (w.isVarArgs() && paramCount == mParamCount && paramValues != null &&
-                    paramValues.length > paramCount && !paramTypes[mParamCount -1].isArray()) {
+                    paramValues.length > paramCount && !paramTypes[mParamCount - 1].isArray()) {
                 // Method arguments don't match
                 continue;
             }
@@ -375,14 +274,14 @@ class Util {
                 throw new MethodNotFoundException(message(
                         null, "util.method.ambiguous", clazz, name,
                         paramString(paramTypes)));
-                }
+            }
         }
 
         // Handle case where no match at all was found
         if (match == null) {
             throw new MethodNotFoundException(message(
-                        null, "util.method.notfound", clazz, name,
-                        paramString(paramTypes)));
+                    null, "util.method.notfound", clazz, name,
+                    paramString(paramTypes)));
         }
 
         return match;
@@ -413,7 +312,7 @@ class Util {
      * making changes keep the code in sync.
      */
     private static Wrapper resolveAmbiguousWrapper(Set<Wrapper> candidates,
-            Class<?>[] paramTypes) {
+                                                   Class<?>[] paramTypes) {
         // Identify which parameter isn't an exact match
         Wrapper w = candidates.iterator().next();
 
@@ -434,12 +333,12 @@ class Util {
         }
 
         for (Wrapper c : candidates) {
-           if (c.getParameterTypes()[nonMatchIndex] ==
-                   paramTypes[nonMatchIndex]) {
-               // Methods have different non-matching parameters
-               // Result is ambiguous
-               return null;
-           }
+            if (c.getParameterTypes()[nonMatchIndex] ==
+                    paramTypes[nonMatchIndex]) {
+                // Methods have different non-matching parameters
+                // Result is ambiguous
+                return null;
+            }
         }
 
         // Can't be null
@@ -585,14 +484,14 @@ class Util {
 
 
     static Constructor<?> findConstructor(Class<?> clazz, Class<?>[] paramTypes,
-            Object[] paramValues) {
+                                          Object[] paramValues) {
 
         String methodName = "<init>";
 
         if (clazz == null) {
             throw new MethodNotFoundException(
                     message(null, "util.method.notfound", null, methodName,
-                    paramString(paramTypes)));
+                            paramString(paramTypes)));
         }
 
         if (paramTypes == null) {
@@ -631,7 +530,7 @@ class Util {
 
 
     static Object[] buildParameters(Class<?>[] parameterTypes,
-            boolean isVarArgs,Object[] params) {
+                                    boolean isVarArgs, Object[] params) {
         ExpressionFactory factory = getExpressionFactory();
         Object[] parameters = null;
         if (parameterTypes.length > 0) {
@@ -650,10 +549,10 @@ class Util {
                 }
                 // Last parameter is the varargs
                 Class<?> varArgClass =
-                    parameterTypes[varArgIndex].getComponentType();
+                        parameterTypes[varArgIndex].getComponentType();
                 final Object varargs = Array.newInstance(
-                    varArgClass,
-                    (paramCount - varArgIndex));
+                        varArgClass,
+                        (paramCount - varArgIndex));
                 for (int i = (varArgIndex); i < paramCount; i++) {
                     Array.set(varargs, i - varArgIndex,
                             factory.coerceToType(params[i], varArgClass));
@@ -697,8 +596,11 @@ class Util {
         }
 
         public abstract Object unWrap();
+
         public abstract Class<?>[] getParameterTypes();
+
         public abstract boolean isVarArgs();
+
         public abstract boolean isBridge();
     }
 
@@ -813,19 +715,17 @@ class Util {
         }
 
         @Override
-        public boolean equals(Object o)
-        {
+        public boolean equals(Object o) {
             return o == this || (null != o &&
                     this.getClass().equals(o.getClass()) &&
-                    ((MatchResult)o).getExact() == this.getExact() &&
-                    ((MatchResult)o).getAssignable() == this.getAssignable() &&
-                    ((MatchResult)o).getCoercible() == this.getCoercible() &&
-                    ((MatchResult)o).isBridge() == this.isBridge());
+                    ((MatchResult) o).getExact() == this.getExact() &&
+                    ((MatchResult) o).getAssignable() == this.getAssignable() &&
+                    ((MatchResult) o).getCoercible() == this.getCoercible() &&
+                    ((MatchResult) o).isBridge() == this.isBridge());
         }
 
         @Override
-        public int hashCode()
-        {
+        public int hashCode() {
             return (this.isBridge() ? 1 << 24 : 0) ^
                     this.getExact() << 16 ^
                     this.getAssignable() << 8 ^
