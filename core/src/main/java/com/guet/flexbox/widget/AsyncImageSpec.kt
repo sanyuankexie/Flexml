@@ -8,7 +8,7 @@ import com.facebook.litho.annotations.*
 import com.facebook.litho.utils.MeasureUtils
 
 @MountSpec(isPureRender = true, poolSize = 30)
-internal object NetworkImageSpec {
+internal object AsyncImageSpec {
 
     @PropDefault
     val scaleType = ScaleType.FIT_CENTER
@@ -16,8 +16,8 @@ internal object NetworkImageSpec {
     val imageAspectRatio = 1f
 
     @OnCreateMountContent
-    fun onCreateMountContent(c: Context): NetworkMatrixDrawable {
-        return NetworkMatrixDrawable(c)
+    fun onCreateMountContent(c: Context): AsyncMatrixDrawable {
+        return AsyncMatrixDrawable(c)
     }
 
     @OnMeasure
@@ -47,7 +47,7 @@ internal object NetworkImageSpec {
 
     @OnMount
     fun onMount(c: ComponentContext,
-                drawable: NetworkMatrixDrawable,
+                drawable: AsyncMatrixDrawable,
                 @Prop url: CharSequence,
                 @Prop(optional = true) borderRadius: Int,
                 @Prop(optional = true) borderWidth: Int,
@@ -72,7 +72,7 @@ internal object NetworkImageSpec {
 
     @OnUnmount
     fun onUnmount(c: ComponentContext,
-                  drawable: NetworkMatrixDrawable) {
+                  drawable: AsyncMatrixDrawable) {
         drawable.unmount()
     }
 

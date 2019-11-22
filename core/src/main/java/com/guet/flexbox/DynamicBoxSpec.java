@@ -20,9 +20,11 @@ import com.guet.flexbox.build.WidgetFactory;
 final class DynamicBoxSpec {
 
     @OnCreateLayout
-    static Component onCreateLayout(ComponentContext c,
-                                    @Prop(optional = true) Object bind,
-                                    @Prop NodeInfo layout) {
+    static Component onCreateLayout(
+            ComponentContext c,
+            @Prop(optional = true) Object bind,
+            @Prop NodeInfo layout
+    ) {
         return WidgetFactory.createLayout(c, bind, layout);
     }
 

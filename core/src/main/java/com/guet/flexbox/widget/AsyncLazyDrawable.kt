@@ -11,7 +11,7 @@ import com.bumptech.glide.request.transition.Transition
 import com.facebook.litho.drawable.ComparableDrawable
 import java.util.concurrent.atomic.AtomicBoolean
 
-internal class ComparableLazyLoadDrawable(
+internal class AsyncLazyDrawable(
         private val c: Context,
         private val model: Any,
         target: (Target<Drawable>) = DelegateTarget()
@@ -19,10 +19,10 @@ internal class ComparableLazyLoadDrawable(
 
     private val config = Configuration(c.resources.configuration)
 
-    private val hasDrawTask = AtomicBoolean(false)
+    private val isInitialized = AtomicBoolean(false)
 
     override fun draw(canvas: Canvas) {
-        if (hasDrawTask.compareAndSet(false, true)) {
+        if (isInitialized.compareAndSet(false, true)) {
             Glide.with(c).load(model).into(this)
         } else {
             super.draw(canvas)
@@ -37,7 +37,7 @@ internal class ComparableLazyLoadDrawable(
         if (other == this) {
             return true
         }
-        if (other is ComparableLazyLoadDrawable) {
+        if (other is AsyncLazyDrawable) {
             return config == other.config && model == other.model
         }
         return false
@@ -50,6 +50,6 @@ internal class ComparableLazyLoadDrawable(
     }
 
     override fun onLoadFailed(errorDrawable: Drawable?) {
-        hasDrawTask.set(false)
+        isInitialized.set(false)
     }
 }

@@ -16,6 +16,7 @@ class BuildContext(data: Any?) {
 
     private val el = ELManager()
 
+
     init {
         el.addELResolver(JSONArrayELResolver)
         el.addELResolver(JSONObjectELResolver)

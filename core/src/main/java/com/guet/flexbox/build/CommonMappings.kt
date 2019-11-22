@@ -56,7 +56,7 @@ internal object CommonMappings : Mapper<Component.Builder<*>>() {
         }
     }
 
-    internal fun <T> typedMappings(): Lazy<Mappings<T>> {
+    internal fun <T> newMappings(): Lazy<Mappings<T>> {
         @Suppress("UNCHECKED_CAST")
         return lazyOf(Mappings(mappings as Mappings<T>))
     }

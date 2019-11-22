@@ -3,9 +3,9 @@ package com.guet.flexbox.build
 import android.view.View
 import android.widget.ImageView.ScaleType.*
 import com.facebook.litho.ComponentContext
-import com.guet.flexbox.widget.NetworkImage
+import com.guet.flexbox.widget.AsyncImage
 
-internal object ImageFactory : WidgetFactory<NetworkImage.Builder>() {
+internal object ImageFactory : WidgetFactory<AsyncImage.Builder>() {
 
     init {
         enumAttr("scaleType",
@@ -44,8 +44,8 @@ internal object ImageFactory : WidgetFactory<NetworkImage.Builder>() {
             buildContext: BuildContext,
             attrs: Map<String, String>?,
             visibility: Int
-    ): NetworkImage.Builder {
-        return NetworkImage.create(c).url(if (visibility == View.GONE) {
+    ): AsyncImage.Builder {
+        return AsyncImage.create(c).url(if (visibility == View.GONE) {
             ""
         } else {
             buildContext.tryGetValue(attrs?.get("url"), "")

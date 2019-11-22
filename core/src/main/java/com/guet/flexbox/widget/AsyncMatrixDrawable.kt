@@ -19,7 +19,7 @@ import com.facebook.litho.DrawableMatrix
 import com.facebook.litho.Touchable
 import com.guet.flexbox.build.toOrientation
 
-internal class NetworkMatrixDrawable(
+internal class AsyncMatrixDrawable(
         private val c: Context,
         target: (Target<Drawable>) = DelegateTarget()
 ) : BorderDrawable<MatrixDrawable>(MatrixDrawable()), Touchable, Target<Drawable> by target {

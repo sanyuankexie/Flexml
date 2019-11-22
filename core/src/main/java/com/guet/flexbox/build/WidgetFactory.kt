@@ -12,15 +12,15 @@ import com.facebook.litho.drawable.ComparableDrawable
 import com.facebook.litho.drawable.ComparableGradientDrawable
 import com.guet.flexbox.DynamicBox
 import com.guet.flexbox.NodeInfo
+import com.guet.flexbox.widget.AsyncLazyDrawable
 import com.guet.flexbox.widget.BackgroundDrawable
-import com.guet.flexbox.widget.ComparableLazyLoadDrawable
 import com.guet.flexbox.widget.NoOpDrawable
 import java.util.*
 
 @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
 internal abstract class WidgetFactory<T : Component.Builder<*>> : Mapper<T>(), Transform {
 
-    override val mappings by CommonMappings.typedMappings<T>()
+    override val mappings by CommonMappings.newMappings<T>()
 
     final override fun transform(
             c: ComponentContext,
@@ -130,7 +130,7 @@ internal abstract class WidgetFactory<T : Component.Builder<*>> : Mapper<T>(), T
                                     c.androidContext.packageName
                             )
                             if (id != 0) {
-                                backgroundDrawable = ComparableLazyLoadDrawable(
+                                backgroundDrawable = AsyncLazyDrawable(
                                         c.androidContext,
                                         id
                                 )
@@ -138,7 +138,7 @@ internal abstract class WidgetFactory<T : Component.Builder<*>> : Mapper<T>(), T
                         }
                     }
                 } else if (backgroundELResult.isNotEmpty()) {
-                    backgroundDrawable = ComparableLazyLoadDrawable(
+                    backgroundDrawable = AsyncLazyDrawable(
                             c.androidContext,
                             backgroundELResult
                     )
