@@ -2,7 +2,6 @@ package com.guet.flexbox;
 
 
 import android.text.TextUtils;
-import android.view.View;
 
 import com.facebook.litho.ClickEvent;
 import com.facebook.litho.Component;
@@ -14,6 +13,7 @@ import com.facebook.litho.annotations.OnCreateLayout;
 import com.facebook.litho.annotations.OnEvent;
 import com.facebook.litho.annotations.Param;
 import com.facebook.litho.annotations.Prop;
+import com.facebook.litho.widget.TextChangedEvent;
 import com.guet.flexbox.build.WidgetFactory;
 
 @LayoutSpec
@@ -29,25 +29,40 @@ final class DynamicBoxSpec {
     }
 
     @OnEvent(VisibleEvent.class)
-    static void onView(ComponentContext c,
-                       @Param String json,
-                       @Prop(optional = true) EventListener eventListener) {
+    static void onView(
+            ComponentContext c,
+            @Param String json,
+            @Prop(optional = true) EventListener eventListener
+    ) {
         if (eventListener != null && !TextUtils.isEmpty(json)) {
-            eventListener.onEvent(EventType.REPORT_VIEW, json);
+            eventListener.onEvent("report_view", json);
         }
     }
 
     @OnEvent(ClickEvent.class)
-    static void onClick(ComponentContext c,
-                        @FromEvent View view,
-                        @Param String click,
-                        @Param String json,
-                        @Prop(optional = true) EventListener eventListener) {
+    static void onClick(
+            ComponentContext c,
+            @Param String click,
+            @Param String json,
+            @Prop(optional = true) EventListener eventListener
+    ) {
         if (eventListener != null) {
-            eventListener.onEvent(EventType.CLICK, click);
+            eventListener.onEvent("click", click);
             if (!TextUtils.isEmpty(json)) {
-                eventListener.onEvent(EventType.REPORT_CLICK, json);
+                eventListener.onEvent("report_click", json);
             }
+        }
+    }
+
+    @OnEvent(TextChangedEvent.class)
+    static void onTextChanged(
+            ComponentContext c,
+            @FromEvent String text,
+            @Param String key,
+            @Prop(optional = true) EventListener eventListener
+    ) {
+        if (eventListener != null) {
+            eventListener.onEvent(key, text);
         }
     }
 }

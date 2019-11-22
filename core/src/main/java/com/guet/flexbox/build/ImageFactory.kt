@@ -45,7 +45,18 @@ internal object ImageFactory : WidgetFactory<AsyncImage.Builder>() {
             attrs: Map<String, String>?,
             visibility: Int
     ): AsyncImage.Builder {
-        return AsyncImage.create(c).url(if (visibility == View.GONE) {
+        return AsyncImage.create(c)
+    }
+
+    override fun onLoadStyles(
+            owner: AsyncImage.Builder,
+            c: ComponentContext,
+            buildContext: BuildContext,
+            attrs: Map<String, String>?,
+            visibility: Int
+    ) {
+        super.onLoadStyles(owner, c, buildContext, attrs, visibility)
+        owner.url(if (visibility == View.GONE) {
             ""
         } else {
             buildContext.tryGetValue(attrs?.get("url"), "")

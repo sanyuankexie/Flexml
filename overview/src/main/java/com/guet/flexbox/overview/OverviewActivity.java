@@ -31,7 +31,6 @@ import com.facebook.yoga.YogaAlign;
 import com.facebook.yoga.YogaEdge;
 import com.guet.flexbox.DynamicBox;
 import com.guet.flexbox.EventListener;
-import com.guet.flexbox.EventType;
 import com.guet.flexbox.NodeInfo;
 
 import java.util.Map;
@@ -204,10 +203,10 @@ public class OverviewActivity
 
     @Override
     public void onEvent(
-            @NonNull EventType type,
+            @NonNull String type,
             @Nullable String action
     ) {
-        mAdapter.add("event type=" + type.name() + " : event action=" + action);
+        mAdapter.add("event type=" + type + " : event action=" + action);
     }
 
     @Override

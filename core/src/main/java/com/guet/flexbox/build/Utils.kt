@@ -72,6 +72,7 @@ private val transforms = mapOf(
         "Native" to NativeFactory,
         "Scroller" to ScrollerFactory,
         "Empty" to EmptyFactory,
+        "TextInput" to TextInputFactory,
         "for" to ForBehavior,
         "foreach" to ForEachBehavior,
         "if" to IfBehavior

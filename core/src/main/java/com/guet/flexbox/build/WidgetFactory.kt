@@ -56,20 +56,20 @@ internal abstract class WidgetFactory<T : Component.Builder<*>> : Mapper<T>(), T
     protected open fun onLoadStyles(
             owner: T,
             c: ComponentContext,
-            dataBinding: BuildContext,
+            buildContext: BuildContext,
             attrs: Map<String, String>?,
             visibility: Int
     ) {
         if (!attrs.isNullOrEmpty()) {
-            owner.applyEvent(c, dataBinding, attrs, visibility)
+            owner.applyEvent(c, buildContext, attrs, visibility)
             if (visibility == View.VISIBLE) {
-                owner.applyBackground(c, dataBinding, attrs)
+                owner.applyBackground(c, buildContext, attrs)
             }
         }
         val display = visibility == View.VISIBLE
         if (!attrs.isNullOrEmpty()) {
             for ((key, value) in attrs) {
-                mappings[key]?.invoke(owner, dataBinding, attrs, display, value)
+                mappings[key]?.invoke(owner, buildContext, attrs, display, value)
             }
         }
     }

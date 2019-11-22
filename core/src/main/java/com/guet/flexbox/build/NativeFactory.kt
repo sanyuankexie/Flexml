@@ -11,8 +11,9 @@ import com.facebook.litho.viewcompat.ViewBinder
 import com.facebook.litho.viewcompat.ViewCreator
 import java.lang.reflect.Constructor
 
-
 internal object NativeFactory : WidgetFactory<ViewCompatComponent.Builder<View>>() {
+
+    private val viewTypeCache = HashMap<String, ReflectViewCreator>(32)
 
     override fun onCreateWidget(
             c: ComponentContext,
@@ -33,18 +34,26 @@ internal object NativeFactory : WidgetFactory<ViewCompatComponent.Builder<View>>
                 }
                 return ViewCompatComponent.get(view, type)
                         .create(c)
-                        .viewBinder(if (visibility == View.VISIBLE) {
-                            Visibility.VISIBLE
-                        } else {
-                            Visibility.GONE
-                        })
             }
         }
 
         throw IllegalArgumentException("can not found View type")
     }
 
-    private val viewTypeCache = HashMap<String, ReflectViewCreator>(32)
+    override fun onLoadStyles(
+            owner: ViewCompatComponent.Builder<View>,
+            c: ComponentContext,
+            buildContext: BuildContext,
+            attrs: Map<String, String>?,
+            visibility: Int
+    ) {
+        super.onLoadStyles(owner, c, buildContext, attrs, visibility)
+        owner.viewBinder(if (visibility == View.VISIBLE) {
+            Visibility.VISIBLE
+        } else {
+            Visibility.GONE
+        })
+    }
 
     internal class ReflectViewCreator(private val constructor: Constructor<*>) : ViewCreator<View> {
         override fun createView(c: Context, parent: ViewGroup?): View {
