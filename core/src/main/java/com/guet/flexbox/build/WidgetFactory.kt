@@ -1,7 +1,6 @@
 package com.guet.flexbox.build
 
 import android.graphics.Color
-import android.graphics.drawable.GradientDrawable
 import android.net.Uri
 import android.view.View
 import androidx.annotation.CallSuper
@@ -97,27 +96,25 @@ internal abstract class WidgetFactory<T : Component.Builder<*>> : Mapper<T>(), T
 
     private fun T.applyBackground(
             c: ComponentContext,
-            dataBinding: BuildContext,
+            buildContext: BuildContext,
             attrs: Map<String, String>
     ) {
-        val borderRadius = dataBinding.tryGetValue(attrs["borderRadius"], 0).toPx()
-        val borderWidth = dataBinding.tryGetValue(attrs["borderWidth"], 0).toPx()
-        val borderColor = dataBinding.tryGetColor(attrs["borderColor"], Color.TRANSPARENT)
+        val borderRadius = buildContext.tryGetValue(attrs["borderRadius"], 0).toPx()
+        val borderWidth = buildContext.tryGetValue(attrs["borderWidth"], 0).toPx()
+        val borderColor = buildContext.tryGetColor(attrs["borderColor"], Color.TRANSPARENT)
         var backgroundDrawable: ComparableDrawable? = null
         val background = attrs["background"]
         if (background != null) {
             try {
-                backgroundDrawable = ComparableColorDrawable.create(dataBinding.getColor(background))
+                backgroundDrawable = ComparableColorDrawable.create(buildContext.getColor(background))
             } catch (e: Exception) {
-                val backgroundELResult = dataBinding.scope(colorNameMap) {
-                    dataBinding.tryGetValue(background, "")
-                }
+                val backgroundELResult = buildContext.tryGetValue(background, "")
                 if (backgroundELResult.startsWith("res://")) {
                     val uri = Uri.parse(backgroundELResult)
                     if (uri.host == "gradient") {
-                        val type = uri.getQueryParameter("orientation")?.let {
-                            orientations[it]
-                        }
+                        val type = uri.getQueryParameter(
+                                "orientation"
+                        )?.toOrientation()
                         val colors = uri.getQueryParameters("color")?.map {
                             Color.parseColor(it)
                         }?.toIntArray()
@@ -215,27 +212,10 @@ internal abstract class WidgetFactory<T : Component.Builder<*>> : Mapper<T>(), T
             return c.createFromElement(BuildContext(data), root).singleOrNull()
         }
 
-        @Suppress("UNCHECKED_CAST")
-        internal val colorNameMap = (Color::class.java
-                .getDeclaredField("sColorNameMap")
-                .apply { isAccessible = true }
-                .get(null) as Map<String, *>)
-                .map { it.key to it.key }.toMap()
-
         internal val visibilityValues = mapOf(
                 "visible" to View.VISIBLE,
                 "invisible" to View.INVISIBLE,
                 "gone" to View.GONE
-        )
-
-        internal val orientations: Map<String, GradientDrawable.Orientation> = mapOf(
-                "t2b" to GradientDrawable.Orientation.TOP_BOTTOM,
-                "tr2bl" to GradientDrawable.Orientation.TR_BL,
-                "l2r" to GradientDrawable.Orientation.LEFT_RIGHT,
-                "br2tl" to GradientDrawable.Orientation.BR_TL,
-                "b2t" to GradientDrawable.Orientation.BOTTOM_TOP,
-                "r2l" to GradientDrawable.Orientation.RIGHT_LEFT,
-                "tl2br" to GradientDrawable.Orientation.TL_BR
         )
     }
 }

@@ -3,8 +3,9 @@ package com.guet.flexbox.widget
 import android.annotation.TargetApi
 import android.content.Context
 import android.graphics.Color
-import android.graphics.drawable.ColorDrawable
 import android.graphics.drawable.Drawable
+import android.graphics.drawable.GradientDrawable
+import android.net.Uri
 import android.os.Build.VERSION_CODES.LOLLIPOP
 import android.text.TextUtils
 import android.view.MotionEvent
@@ -16,6 +17,7 @@ import com.bumptech.glide.request.target.Target
 import com.bumptech.glide.request.transition.Transition
 import com.facebook.litho.DrawableMatrix
 import com.facebook.litho.Touchable
+import com.guet.flexbox.build.toOrientation
 
 internal class NetworkMatrixDrawable(
         private val c: Context,
@@ -43,18 +45,69 @@ internal class NetworkMatrixDrawable(
         this.borderWidth = borderWidth
         this.borderColor = borderColor
         this.scaleType = scaleType
-        if (TextUtils.isEmpty(url)) {
-            notifyChanged(scaleType, ColorDrawable(Color.TRANSPARENT))
-        } else {
-            Glide.with(c).load(url).apply {
-                if (blurRadius > 0) {
-                    transform(BlurTransformation(
-                            blurRadius,
-                            blurSampling
-                    ))
+        when {
+            TextUtils.isEmpty(url) -> {
+                setToEmpty()
+            }
+            url.startsWith("res://") -> {
+                val uri = Uri.parse(url.toString())
+                when (uri.host) {
+                    "gradient" -> {
+                        val type = uri.getQueryParameter(
+                                "orientation"
+                        )?.toOrientation()
+                        val colors = uri.getQueryParameters("color")?.map {
+                            Color.parseColor(it)
+                        }?.toIntArray()
+                        if (type != null && colors != null && colors.isNotEmpty()) {
+                            notifyChanged(scaleType, GradientDrawable(type, colors))
+                        } else {
+                            setToEmpty()
+                        }
+                    }
+                    "load" -> {
+                        val name = uri.getQueryParameter("name")
+                        if (name != null) {
+                            val id = c.resources.getIdentifier(
+                                    name,
+                                    "drawable",
+                                    c.packageName
+                            )
+                            if (id != 0) {
+                                loadModel(id, blurRadius, blurSampling)
+                            } else {
+                                setToEmpty()
+                            }
+                        }
+                    }
+                    else -> {
+                        setToEmpty()
+                    }
                 }
-            }.into(this)
+            }
+            else -> {
+                loadModel(url, blurRadius, blurSampling)
+            }
         }
+    }
+
+    private fun setToEmpty() {
+        wrappedDrawable.mount(NoOpDrawable(), null, 0, 0)
+    }
+
+    private fun loadModel(
+            model: Any,
+            blurRadius: Float,
+            blurSampling: Float
+    ) {
+        Glide.with(c).load(model).apply {
+            if (blurRadius > 0) {
+                transform(BlurTransformation(
+                        blurRadius,
+                        blurSampling
+                ))
+            }
+        }.into(this)
     }
 
     override fun getSize(cb: SizeReadyCallback) {

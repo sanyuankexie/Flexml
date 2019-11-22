@@ -19,7 +19,7 @@
             marginTop="2"
             paddingLeft="4"
             paddingRight="4"
-            background="${res:gradient('l2r',red,'#EE9611','#F7C709')}"
+            background="${res:gradient('l2r','red','#EE9611','#F7C709')}"
             borderRadius="3"
             marginLeft="12"
             text="Game"
