@@ -6,6 +6,7 @@ import android.graphics.Canvas
 import android.graphics.drawable.Drawable
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.target.SizeReadyCallback
+import com.bumptech.glide.request.target.Target
 import com.bumptech.glide.request.transition.Transition
 import com.facebook.litho.drawable.ComparableDrawable
 import com.facebook.litho.drawable.ComparableDrawableWrapper
@@ -13,8 +14,9 @@ import java.util.concurrent.atomic.AtomicBoolean
 
 internal class ComparableLazyDrawable(
         private val c: Context,
-        private val model: Any
-) : ComparableDrawableWrapper(NoOpDrawable()), DrawableTarget {
+        private val model: Any,
+        target: (Target<Drawable>) = DelegateTarget()
+) : ComparableDrawableWrapper(NoOpDrawable()), Target<Drawable> by target {
 
     private val config = Configuration(c.resources.configuration)
 
@@ -44,7 +46,7 @@ internal class ComparableLazyDrawable(
 
     override fun onResourceReady(resource: Drawable, transition: Transition<in Drawable>?) {
         resource.bounds = bounds
-        wrappedDrawable = DrawableTarget.transition(null, resource)
+        wrappedDrawable = DelegateTarget.transition(null, resource)
         invalidateSelf()
     }
 

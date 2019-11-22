@@ -17,25 +17,10 @@
 
 package com.guet.flexbox.el;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.UnsupportedEncodingException;
-import java.lang.ref.WeakReference;
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
+import org.apache.el.ExpressionFactoryImpl;
+
 import java.lang.reflect.Method;
-import java.nio.charset.StandardCharsets;
 import java.util.Map;
-import java.util.Properties;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.locks.Lock;
-import java.util.concurrent.locks.ReadWriteLock;
-import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 /**
  *
@@ -43,17 +28,6 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
  */
 @SuppressWarnings("WeakerAccess")
 public abstract class ExpressionFactory {
-
-    private static final String SERVICE_RESOURCE_NAME =
-        "META-INF/services/javax.el.ExpressionFactory";
-
-    private static final String PROPERTY_NAME = "javax.el.ExpressionFactory";
-
-    private static final String PROPERTY_FILE = System.getProperty("java.home") + File.separator +
-            "lib" + File.separator + "el.properties";
-
-    private static final CacheValue nullTcclFactory = new CacheValue();
-    private static final Map<CacheKey, CacheValue> factoryCache = new ConcurrentHashMap<>();
 
     /**
      * Create a new {@link ExpressionFactory}. The class to use is determined by
@@ -68,100 +42,7 @@ public abstract class ExpressionFactory {
      * @return the new ExpressionFactory
      */
     public static ExpressionFactory newInstance() {
-        return newInstance(null);
-    }
-
-    /**
-     * Create a new {@link ExpressionFactory} passing in the provided
-     * {@link Properties}. Search order is the same as {@link #newInstance()}.
-     *
-     * @param properties the properties to be passed to the new instance (may be null)
-     * @return the new ExpressionFactory
-     */
-    public static ExpressionFactory newInstance(Properties properties) {
-        ExpressionFactory result;
-
-        ClassLoader tccl = Util.getContextClassLoader();
-
-        CacheValue cacheValue;
-        Class<?> clazz;
-
-        if (tccl == null) {
-            cacheValue = nullTcclFactory;
-        } else {
-            CacheKey key = new CacheKey(tccl);
-            cacheValue = factoryCache.get(key);
-            if (cacheValue == null) {
-                CacheValue newCacheValue = new CacheValue();
-                cacheValue = Util.putIfAbsent(factoryCache, key, newCacheValue);
-                if (cacheValue == null) {
-                    cacheValue = newCacheValue;
-                }
-            }
-        }
-
-        final Lock readLock = cacheValue.getLock().readLock();
-        readLock.lock();
-        try {
-            clazz = cacheValue.getFactoryClass();
-        } finally {
-            readLock.unlock();
-        }
-
-        if (clazz == null) {
-            String className = null;
-            try {
-                final Lock writeLock = cacheValue.getLock().writeLock();
-                writeLock.lock();
-                try {
-                    className = cacheValue.getFactoryClassName();
-                    if (className == null) {
-                        className = discoverClassName(tccl);
-                        cacheValue.setFactoryClassName(className);
-                    }
-                    if (tccl == null) {
-                        clazz = Class.forName(className);
-                    } else {
-                        clazz = tccl.loadClass(className);
-                    }
-                    cacheValue.setFactoryClass(clazz);
-                } finally {
-                    writeLock.unlock();
-                }
-            } catch (ClassNotFoundException e) {
-                throw new ELException(Util.message(null, "expressionFactory.cannotFind", className), e);
-            }
-        }
-
-        try {
-            Constructor<?> constructor = null;
-            // Do we need to look for a constructor that will take properties?
-            if (properties != null) {
-                try {
-                    constructor = clazz.getConstructor(Properties.class);
-                } catch (SecurityException se) {
-                    throw new ELException(se);
-                } catch (NoSuchMethodException nsme) {
-                    // This can be ignored
-                    // This is OK for this constructor not to exist
-                }
-            }
-            if (constructor == null) {
-                result = (ExpressionFactory) clazz.getConstructor().newInstance();
-            } else {
-                result =
-                    (ExpressionFactory) constructor.newInstance(properties);
-            }
-
-        } catch (InvocationTargetException e) {
-            Throwable cause = e.getCause();
-            Util.handleThrowable(cause);
-            throw new ELException(Util.message(null, "expressionFactory.cannotCreate", clazz.getName()), e);
-        } catch (ReflectiveOperationException | IllegalArgumentException e) {
-            throw new ELException(Util.message(null, "expressionFactory.cannotCreate", clazz.getName()), e);
-        }
-
-        return result;
+        return new ExpressionFactoryImpl();
     }
 
     /**
@@ -234,156 +115,6 @@ public abstract class ExpressionFactory {
      * @since EL 3.0
      */
     public Map<String,Method> getInitFunctionMap() {
-        return null;
-    }
-
-    /**
-     * Key used to cache ExpressionFactory discovery information per class
-     * loader. The class loader reference is never {@code null}, because
-     * {@code null} tccl is handled separately.
-     */
-    private static class CacheKey {
-        private final int hash;
-        private final WeakReference<ClassLoader> ref;
-
-        public CacheKey(ClassLoader cl) {
-            hash = cl.hashCode();
-            ref = new WeakReference<>(cl);
-        }
-
-        @Override
-        public int hashCode() {
-            return hash;
-        }
-
-        @Override
-        public boolean equals(Object obj) {
-            if (obj == this) {
-                return true;
-            }
-            if (!(obj instanceof CacheKey)) {
-                return false;
-            }
-            ClassLoader thisCl = ref.get();
-            if (thisCl == null) {
-                return false;
-            }
-            return thisCl == ((CacheKey) obj).ref.get();
-        }
-    }
-
-    private static class CacheValue {
-        private final ReadWriteLock lock = new ReentrantReadWriteLock();
-        private String className;
-        private WeakReference<Class<?>> ref;
-
-        public CacheValue() {
-        }
-
-        public ReadWriteLock getLock() {
-            return lock;
-        }
-
-        public String getFactoryClassName() {
-            return className;
-        }
-
-        public void setFactoryClassName(String className) {
-            this.className = className;
-        }
-
-        public Class<?> getFactoryClass() {
-            return ref != null ? ref.get() : null;
-        }
-
-        public void setFactoryClass(Class<?> clazz) {
-            ref = new WeakReference<Class<?>>(clazz);
-        }
-    }
-
-    /**
-     * Discover the name of class that implements ExpressionFactory.
-     *
-     * @param tccl
-     *            {@code ClassLoader}
-     * @return Class name. There is default, so it is never {@code null}.
-     */
-    private static String discoverClassName(ClassLoader tccl) {
-        String className;
-
-        // First services API
-        className = getClassNameServices(tccl);
-        if (className == null) {
-            // Second el.properties file
-            className = getClassNameJreDir();
-        }
-        if (className == null) {
-            // Third system property
-            className = getClassNameSysProp();
-        }
-        if (className == null) {
-            // Fourth - default
-            className = "org.apache.el.ExpressionFactoryImpl";
-        }
-        return className;
-    }
-
-    private static String getClassNameServices(ClassLoader tccl) {
-        InputStream is;
-
-        if (tccl == null) {
-            is = ClassLoader.getSystemResourceAsStream(SERVICE_RESOURCE_NAME);
-        } else {
-            is = tccl.getResourceAsStream(SERVICE_RESOURCE_NAME);
-        }
-
-        if (is != null) {
-            String line;
-            try (InputStreamReader isr = new InputStreamReader(is, StandardCharsets.UTF_8);
-                 BufferedReader br = new BufferedReader(isr)) {
-                line = br.readLine();
-                if (line != null && line.trim().length() > 0) {
-                    return line.trim();
-                }
-            } catch (UnsupportedEncodingException e) {
-                // Should never happen with UTF-8
-                // If it does - ignore & return null
-            } catch (IOException e) {
-                throw new ELException(Util.message(null, "expressionFactory.readFailed", SERVICE_RESOURCE_NAME), e);
-            } finally {
-                try {
-                    is.close();
-                } catch (IOException ioe) {/*Ignore*/}
-            }
-        }
-
-        return null;
-    }
-
-    private static String getClassNameJreDir() {
-        File file = new File(PROPERTY_FILE);
-        if (file.canRead()) {
-            try (InputStream is = new FileInputStream(file)){
-                Properties props = new Properties();
-                props.load(is);
-                String value = props.getProperty(PROPERTY_NAME);
-                if (value != null && value.trim().length() > 0) {
-                    return value.trim();
-                }
-            } catch (FileNotFoundException e) {
-                // Should not happen - ignore it if it does
-            } catch (IOException e) {
-                throw new ELException(Util.message(null, "expressionFactory.readFailed", PROPERTY_FILE), e);
-            }
-        }
-        return null;
-    }
-
-    private static String getClassNameSysProp() {
-        String value = System.getProperty(PROPERTY_NAME);
-        if (value != null && value.trim().length() > 0) {
-            return value.trim();
-        }
         return null;
     }
 

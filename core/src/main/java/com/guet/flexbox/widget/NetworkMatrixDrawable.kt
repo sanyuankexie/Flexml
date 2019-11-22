@@ -12,12 +12,15 @@ import android.view.View
 import android.widget.ImageView.ScaleType
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.target.SizeReadyCallback
+import com.bumptech.glide.request.target.Target
 import com.bumptech.glide.request.transition.Transition
 import com.facebook.litho.DrawableMatrix
 import com.facebook.litho.Touchable
 
-internal class NetworkMatrixDrawable(private val c: Context)
-    : BorderDrawable<MatrixDrawable>(MatrixDrawable()), Touchable, DrawableTarget {
+internal class NetworkMatrixDrawable(
+        private val c: Context,
+        target: (Target<Drawable>) = DelegateTarget()
+) : BorderDrawable<MatrixDrawable>(MatrixDrawable()), Touchable, Target<Drawable> by target {
 
     private var width: Int = 0
     private var height: Int = 0
@@ -115,7 +118,7 @@ internal class NetworkMatrixDrawable(private val c: Context)
             drawableHeight = resource.intrinsicHeight
         }
         wrappedDrawable.mount(
-                DrawableTarget.transition(wrappedDrawable.mountedDrawable, resource),
+                DelegateTarget.transition(wrappedDrawable.mountedDrawable, resource),
                 matrix,
                 drawableWidth,
                 drawableHeight

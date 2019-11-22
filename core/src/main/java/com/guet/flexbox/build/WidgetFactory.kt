@@ -21,7 +21,7 @@ import java.util.*
 @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
 internal abstract class WidgetFactory<T : Component.Builder<*>> : Mapper<T>(), Transform {
 
-    override val mappings by CommonMappings.createByType<T>()
+    override val mappings by CommonMappings.typedMappings<T>()
 
     final override fun transform(
             c: ComponentContext,

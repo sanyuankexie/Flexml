@@ -7,9 +7,19 @@ import android.graphics.drawable.TransitionDrawable
 import com.bumptech.glide.request.Request
 import com.bumptech.glide.request.target.SizeReadyCallback
 import com.bumptech.glide.request.target.Target
-import java.util.*
+import com.bumptech.glide.request.transition.Transition
 
-internal interface DrawableTarget : Target<Drawable> {
+internal class DelegateTarget : Target<Drawable> {
+
+    private var request: Request? = null
+
+    override fun getSize(cb: SizeReadyCallback) {
+        // Intentionally empty, this can be optionally implemented by subclasses.
+    }
+
+    override fun onResourceReady(resource: Drawable, transition: Transition<in Drawable>?) {
+        // Intentionally empty, this can be optionally implemented by subclasses.
+    }
 
     override fun onLoadFailed(errorDrawable: Drawable?) {
         // Intentionally empty, this can be optionally implemented by subclasses.
@@ -40,16 +50,14 @@ internal interface DrawableTarget : Target<Drawable> {
     }
 
     override fun setRequest(request: Request?) {
-        requests[this] = request
+        this.request = request
     }
 
     override fun getRequest(): Request? {
-        return requests[this]
+        return request
     }
 
-    companion object  {
-
-        private val requests = Collections.synchronizedMap(WeakHashMap<DrawableTarget, Request>())
+    internal companion object {
 
         internal fun transition(current: Drawable?, next: Drawable): Drawable {
             val transitionDrawable = TransitionDrawable(arrayOf(

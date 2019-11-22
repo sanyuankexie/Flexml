@@ -7,10 +7,7 @@ import java.util.*
 
 internal object CommonMappings : Mapper<Component.Builder<*>>() {
 
-    private val common = Mappings<Component.Builder<*>>(8)
-
-    override val mappings: Mappings<Component.Builder<*>>
-        get() = common
+    override val mappings: Mappings<Component.Builder<*>> by lazyOf(Mappings())
 
     init {
         numberAttr<Double>("borderWidth") { _, _, it ->
@@ -59,8 +56,8 @@ internal object CommonMappings : Mapper<Component.Builder<*>>() {
         }
     }
 
-    internal fun <T> createByType(): Lazy<Mappings<T>> {
+    internal fun <T> typedMappings(): Lazy<Mappings<T>> {
         @Suppress("UNCHECKED_CAST")
-        return lazyOf(Mappings(common as Mappings<T>))
+        return lazyOf(Mappings(mappings as Mappings<T>))
     }
 }
