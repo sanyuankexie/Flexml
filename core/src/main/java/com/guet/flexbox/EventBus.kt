@@ -4,10 +4,10 @@ import androidx.annotation.MainThread
 
 class EventBus : EventHandler {
 
-    private val channels = HashMap<String, ArrayList<Pair<Class<*>, Channel<*>>>>()
+    private val channels = HashMap<String, HashMap<Class<*>, Channel<*>>>()
 
     override fun onEvent(key: String, action: Any) {
-        channels[key]?.firstOrNull { it.first == action.javaClass }?.let {
+        channels[key]?.get(action.javaClass)?.let {
             @Suppress("UNCHECKED_CAST")
             it as Channel<Any>
         }?.handleEvent(action)
@@ -16,7 +16,7 @@ class EventBus : EventHandler {
     @MainThread
     fun remove(key: String, type: Class<*>) {
         channels[key]?.let {
-            it.removeAt(it.indexOfFirst { item -> item.first == type })
+            it.remove(type)
             if (it.isEmpty()) {
                 channels.remove(key)
             }
@@ -30,11 +30,7 @@ class EventBus : EventHandler {
 
     @MainThread
     fun <T> channel(key: String, type: Class<T>, handler: Channel<T>) {
-        channels.getOrPut(key) { ArrayList() }.run {
-            if (none { it.first == type }) {
-                add(type to handler)
-            }
-        }
+        channels.getOrPut(key) { HashMap() }[type] = handler
     }
 
     @FunctionalInterface
