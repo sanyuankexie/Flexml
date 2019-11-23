@@ -32,10 +32,10 @@ final class DynamicBoxSpec {
     static void onView(
             ComponentContext c,
             @Param String json,
-            @Prop(optional = true) EventListener eventListener
+            @Prop(optional = true) EventHandler eventHandler
     ) {
-        if (eventListener != null && !TextUtils.isEmpty(json)) {
-            eventListener.onEvent("report_view", json);
+        if (eventHandler != null && !TextUtils.isEmpty(json)) {
+            eventHandler.onEvent("report_view", json);
         }
     }
 
@@ -44,12 +44,12 @@ final class DynamicBoxSpec {
             ComponentContext c,
             @Param String click,
             @Param String json,
-            @Prop(optional = true) EventListener eventListener
+            @Prop(optional = true) EventHandler eventHandler
     ) {
-        if (eventListener != null) {
-            eventListener.onEvent("click", click);
+        if (eventHandler != null) {
+            eventHandler.onEvent("click", click);
             if (!TextUtils.isEmpty(json)) {
-                eventListener.onEvent("report_click", json);
+                eventHandler.onEvent("report_click", json);
             }
         }
     }
@@ -59,10 +59,10 @@ final class DynamicBoxSpec {
             ComponentContext c,
             @FromEvent String text,
             @Param String key,
-            @Prop(optional = true) EventListener eventListener
+            @Prop(optional = true) EventHandler eventHandler
     ) {
-        if (eventListener != null) {
-            eventListener.onEvent(key, text);
+        if (eventHandler != null) {
+            eventHandler.onEvent(key, text);
         }
     }
 }

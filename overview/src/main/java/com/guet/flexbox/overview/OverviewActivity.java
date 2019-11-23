@@ -30,7 +30,7 @@ import com.facebook.litho.widget.VerticalScroll;
 import com.facebook.yoga.YogaAlign;
 import com.facebook.yoga.YogaEdge;
 import com.guet.flexbox.DynamicBox;
-import com.guet.flexbox.EventListener;
+import com.guet.flexbox.EventHandler;
 import com.guet.flexbox.NodeInfo;
 
 import java.util.Map;
@@ -45,7 +45,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 public class OverviewActivity
         extends AppCompatActivity
         implements View.OnClickListener,
-        EventListener,
+        EventHandler,
         Runnable,
         NestedScrollView.OnScrollChangeListener,
         SwipeRefreshLayout.OnRefreshListener {
@@ -108,7 +108,7 @@ public class OverviewActivity
                                             .bind(mData)
                                             .layout(mLayout)
                                             .marginPx(YogaEdge.TOP, dp2px(20))
-                                            .eventListener(this))
+                                            .eventHandler(this))
                                     .child(Text.create(c)
                                             .widthPx(toPx(360))
                                             .heightPx(toPx(40))
@@ -204,7 +204,7 @@ public class OverviewActivity
     @Override
     public void onEvent(
             @NonNull String type,
-            @Nullable String action
+            @NonNull Object action
     ) {
         mAdapter.add("event type=" + type + " : event action=" + action);
     }

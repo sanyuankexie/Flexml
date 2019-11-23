@@ -67,7 +67,7 @@ private val transforms = mapOf(
         "Image" to ImageFactory,
         "Flex" to FlexFactory,
         "Text" to TextFactory,
-        "Frame" to FrameFactory,
+        "Stack" to StackFactory,
         "Native" to NativeFactory,
         "Scroller" to ScrollerFactory,
         "Empty" to EmptyFactory,
@@ -128,7 +128,7 @@ internal inline fun <T> BuildContext.scope(scope: Map<String, Any>, action: () -
 internal inline fun <reified T : Enum<T>> BuildContext.tryGetEnum(
         expr: String?,
         scope: Map<String, T>,
-        fallback: T = enumValues<T>()[0]): T {
+        fallback: T = enumValues<T>().first()): T {
     return when {
         expr == null -> fallback
         expr.isExpr -> scope(scope) {
