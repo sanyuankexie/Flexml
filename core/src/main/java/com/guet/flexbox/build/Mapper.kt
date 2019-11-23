@@ -27,7 +27,7 @@ internal abstract class Mapper<T : Component.Builder<*>> {
     protected inline fun <reified V : Enum<V>> enumAttr(
             name: String,
             scope: Map<String, V>,
-            fallback: V = enumValues<V>()[0],
+            fallback: V = enumValues<V>().first(),
             crossinline action: Apply<T, V>
     ) {
         scopeAttr(name, scope, fallback, action)
