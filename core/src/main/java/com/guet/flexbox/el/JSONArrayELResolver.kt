@@ -28,7 +28,6 @@ internal object JSONArrayELResolver : ELResolver() {
         if (base is JSONArray) {
             context.setPropertyResolved(base, property)
             val idx = coerce(property)
-            checkBounds(base, idx)
             base.put(idx, value)
         }
     }

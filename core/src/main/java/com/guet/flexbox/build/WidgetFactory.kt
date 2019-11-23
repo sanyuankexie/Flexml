@@ -60,14 +60,12 @@ internal abstract class WidgetFactory<T : Component.Builder<*>> : Mapper<T>(), T
             attrs: Map<String, String>?,
             visibility: Int
     ) {
-        if (!attrs.isNullOrEmpty()) {
-            owner.applyEvent(c, buildContext, attrs, visibility)
-            if (visibility == View.VISIBLE) {
-                owner.applyBackground(c, buildContext, attrs)
-            }
-        }
         val display = visibility == View.VISIBLE
         if (!attrs.isNullOrEmpty()) {
+            owner.applyEvent(c, buildContext, attrs, visibility)
+            if (display) {
+                owner.applyBackground(c, buildContext, attrs)
+            }
             for ((key, value) in attrs) {
                 mappings[key]?.invoke(owner, buildContext, attrs, display, value)
             }

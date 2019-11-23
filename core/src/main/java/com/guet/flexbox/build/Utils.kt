@@ -54,8 +54,7 @@ private class BeanWrapper(private val o: Any) : AbstractMap<String, Any?>() {
                 }.toSet()
     }
 
-    private inner class PropertyEntry(private val prop: PropertyDescriptor)
-        : Map.Entry<String, Any?> {
+    private inner class PropertyEntry(private val prop: PropertyDescriptor) : Map.Entry<String, Any?> {
         override val key: String
             get() = prop.name
         override val value: Any?
@@ -93,7 +92,6 @@ private val orientations: Map<String, Orientation> = mapOf(
 )
 
 internal inline val CharSequence.isExpr: Boolean
-    @JvmName("isExprNonNull")
     get() = length > 3 && startsWith("\${") && endsWith('}')
 
 internal fun String.toOrientation(): Orientation {

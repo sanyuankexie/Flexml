@@ -16,7 +16,6 @@ class BuildContext(data: Any?) {
 
     private val el = ELManager()
 
-
     init {
         el.addELResolver(JSONArrayELResolver)
         el.addELResolver(JSONObjectELResolver)
@@ -119,7 +118,8 @@ class BuildContext(data: Any?) {
                         colors.forEach {
                             appendQueryParameter("color", it)
                         }
-                    }.build()
+                    }
+                    .build()
                     .toString()
         }
 

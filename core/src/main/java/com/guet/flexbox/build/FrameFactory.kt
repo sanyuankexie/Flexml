@@ -1,9 +1,12 @@
 package com.guet.flexbox.build
 
+import androidx.core.math.MathUtils
 import com.facebook.litho.*
 import com.facebook.yoga.YogaEdge
 import com.facebook.yoga.YogaPositionType
-import java.util.concurrent.*
+import java.util.concurrent.Executors
+import java.util.concurrent.Future
+import java.util.concurrent.ThreadFactory
 import java.util.concurrent.atomic.AtomicInteger
 import kotlin.math.max
 
@@ -11,12 +14,8 @@ internal object FrameFactory : WidgetFactory<Row.Builder>(), ThreadFactory {
 
     private val count = AtomicInteger()
 
-    private val measureThreadPool = ThreadPoolExecutor(
-            0,
-            Int.MAX_VALUE,
-            30L,
-            TimeUnit.SECONDS,
-            SynchronousQueue<Runnable>(),
+    private val measureThreadPool = Executors.newFixedThreadPool(
+            MathUtils.clamp(Runtime.getRuntime().availableProcessors(), 2, 4),
             this
     )
 
@@ -39,7 +38,8 @@ internal object FrameFactory : WidgetFactory<Row.Builder>(), ThreadFactory {
             dataBinding: BuildContext,
             attrs: Map<String, String>?,
             children: List<Component>?,
-            visibility: Int) {
+            visibility: Int
+    ) {
         if (children.isNullOrEmpty()) {
             return
         }
