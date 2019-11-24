@@ -13,9 +13,8 @@ import java.util.concurrent.atomic.AtomicBoolean
 
 internal class AsyncLazyDrawable(
         private val c: Context,
-        private val model: Any,
-        target: (Target<Drawable>) = DelegateTarget()
-) : ComparableDrawableWrapper<Drawable>(NoOpDrawable()), Target<Drawable> by target {
+        private val model: Any
+) : ComparableDrawableWrapper<Drawable>(NoOpDrawable()), Target<Drawable> by DelegateTarget() {
 
     private val config = Configuration(c.resources.configuration)
 

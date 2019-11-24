@@ -10,58 +10,16 @@ import com.facebook.litho.Component
 import com.facebook.litho.ComponentContext
 import com.guet.flexbox.BuildConfig
 import com.guet.flexbox.NodeInfo
-import com.guet.flexbox.beans.Introspector
-import com.guet.flexbox.beans.PropertyDescriptor
+import com.guet.flexbox.beans.BeanWrapper
+import com.guet.flexbox.beans.ObjWrapper
 import com.guet.flexbox.el.ELException
 import org.json.JSONObject
-import java.lang.reflect.Field
-import java.lang.reflect.Modifier
 
 internal typealias Mapping<T> = T.(BuildContext, Map<String, String>, Boolean, String) -> Unit
 
 internal typealias Mappings<T> = HashMap<String, Mapping<T>>
 
 internal typealias Apply<T, V> = T.(Map<String, String>, Boolean, V) -> Unit
-
-private class SimpleWrapper(private val o: Any) : AbstractMap<String, Any?>() {
-
-    override val entries: Set<Map.Entry<String, Any?>> by lazy {
-        o.javaClass.fields.filter {
-            !Modifier.isStatic(it.modifiers)
-        }.map {
-            FieldEntry(it)
-        }.toSet()
-    }
-
-    private inner class FieldEntry(private val it: Field) : Map.Entry<String, Any?> {
-        override val key: String
-            get() = it.name
-        override val value: Any?
-            get() = it.get(o)
-    }
-
-}
-
-private class BeanWrapper(private val o: Any) : AbstractMap<String, Any?>() {
-
-    override val entries: Set<Map.Entry<String, Any?>> by lazy {
-        Introspector.getBeanInfo(javaClass)
-                .propertyDescriptors
-                .filter {
-                    it.propertyType != Class::class.java
-                }.map {
-                    PropertyEntry(it)
-                }.toSet()
-    }
-
-    private inner class PropertyEntry(private val prop: PropertyDescriptor) : Map.Entry<String, Any?> {
-        override val key: String
-            get() = prop.name
-        override val value: Any?
-            get() = prop.readMethod.invoke(o)
-    }
-
-}
 
 private val transforms = mapOf(
         "Image" to ImageFactory,
@@ -185,7 +143,7 @@ internal fun tryToMap(input: Any): Map<String, Any?> {
             jsonObjectInnerMap.get(input)
         }
         javaClass.methods.all { it.declaringClass == Any::class.java } -> {
-            SimpleWrapper(input)
+            ObjWrapper(input)
         }
         else -> {
             BeanWrapper(input)
