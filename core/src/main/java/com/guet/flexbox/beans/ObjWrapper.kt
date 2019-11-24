@@ -9,7 +9,8 @@ internal class ObjWrapper(private val o: Any) : AbstractMutableMap<String, Any?>
         o.javaClass.fields.filter {
             !Modifier.isStatic(it.modifiers)
         }.map {
-            Entry(it)
+            @Suppress("USELESS_CAST")
+            Entry(it) as MutableMap.MutableEntry<String, Any?>
         }.toMutableSet()
     }
 

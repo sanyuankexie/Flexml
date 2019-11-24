@@ -8,7 +8,8 @@ internal class BeanWrapper(private val o: Any) : AbstractMutableMap<String, Any?
                 .filter {
                     it.propertyType != Class::class.java && it.name == "class"
                 }.map {
-                    Entry(it)
+                    @Suppress("USELESS_CAST")
+                    Entry(it) as MutableMap.MutableEntry<String, Any?>
                 }.toMutableSet()
     }
 
