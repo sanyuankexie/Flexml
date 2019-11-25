@@ -61,7 +61,15 @@ internal abstract class Mapper<T : Component.Builder<*>> {
 
     protected inline fun <reified N : Number> numberAttr(
             name: String,
-            fallback: N = 0.safeCast(),
+            crossinline action: Apply<T, N>) {
+        mappings[name] = { c, map, display, value ->
+            action(map, display, c.tryGetValue(value, c.getValue("0")))
+        }
+    }
+
+    protected inline fun <reified N : Number> numberAttr(
+            name: String,
+            fallback: N,
             crossinline action: Apply<T, N>) {
         mappings[name] = { c, map, display, value ->
             action(map, display, c.tryGetValue(value, fallback))

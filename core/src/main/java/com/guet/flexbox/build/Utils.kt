@@ -108,23 +108,6 @@ internal fun BuildContext.tryGetColor(expr: String?, @ColorInt fallback: Int): I
     }
 }
 
-internal inline fun <reified N : Number> Number.safeCast(): N {
-    return safeCast(N::class.javaObjectType) as N
-}
-
-private fun Number.safeCast(type: Class<*>): Any {
-    return when (type) {
-        Byte::class.javaObjectType -> this.toByte()
-        Char::class.javaObjectType -> this.toChar()
-        Int::class.javaObjectType -> this.toInt()
-        Short::class.javaObjectType -> this.toShort()
-        Long::class.javaObjectType -> this.toLong()
-        Float::class.javaObjectType -> this.toFloat()
-        Double::class.javaObjectType -> this.toDouble()
-        else -> error("no match number type ${type.name}")
-    }
-}
-
 internal fun ComponentContext.createFromElement(
         buildContext: BuildContext,
         element: NodeInfo,
