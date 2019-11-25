@@ -23,7 +23,7 @@ class BuildContext(data: Any?) {
             el.mapFunction(it.first, it.second.name, it.second)
         }
         if (data != null) {
-            enterScope(tryToMap(data))
+            el.addBeanNameResolver(toWrapper(data))
         }
     }
 

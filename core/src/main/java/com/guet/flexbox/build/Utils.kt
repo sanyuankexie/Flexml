@@ -10,10 +10,10 @@ import com.facebook.litho.Component
 import com.facebook.litho.ComponentContext
 import com.guet.flexbox.BuildConfig
 import com.guet.flexbox.NodeInfo
-import com.guet.flexbox.beans.BeanWrapper
-import com.guet.flexbox.beans.ObjWrapper
+import com.guet.flexbox.el.BeanNameResolver
 import com.guet.flexbox.el.ELException
-import org.json.JSONObject
+import com.guet.flexbox.el.MapWrapper
+import com.guet.flexbox.el.ObjWrapper
 
 internal typealias Mapping<T> = T.(BuildContext, Map<String, String>, Boolean, String) -> Unit
 
@@ -34,10 +34,6 @@ private val transforms = mapOf(
         "foreach" to ForEachBehavior,
         "if" to IfBehavior
 )
-
-private val jsonObjectInnerMap = JSONObject::class.java
-        .getDeclaredField("nameValuePairs")
-        .apply { isAccessible = true }
 
 private val orientations: Map<String, Orientation> = mapOf(
         "t2b" to Orientation.TOP_BOTTOM,
@@ -132,33 +128,23 @@ private fun Number.safeCast(type: Class<*>): Any {
     }
 }
 
-internal fun tryToMap(input: Any): Map<String, Any?> {
-    val javaClass = input.javaClass
-    @Suppress("UNCHECKED_CAST")
-    return when {
-        input is Map<*, *> && input.keys.all { it is String } -> {
-            input
-        }
-        input is JSONObject -> {
-            jsonObjectInnerMap.get(input)
-        }
-        javaClass.methods.all { it.declaringClass == Any::class.java } -> {
-            ObjWrapper(input)
-        }
-        else -> {
-            BeanWrapper(input)
-        }
-    } as Map<String, Any?>
+internal fun toWrapper(input: Any): BeanNameResolver {
+    if (input is Map<*, *> && input.keys.all { it is String }) {
+        @Suppress("UNCHECKED_CAST")
+        return MapWrapper(input as MutableMap<String, Any?>)
+    } else {
+        return ObjWrapper(input)
+    }
 }
 
 internal fun ComponentContext.createFromElement(
-        dataBinding: BuildContext,
+        buildContext: BuildContext,
         element: NodeInfo,
         upperVisibility: Int = View.VISIBLE
 ): List<Component> {
     return transforms[element.type]?.transform(
             this,
-            dataBinding,
+            buildContext,
             element,
             upperVisibility
     ) ?: emptyList()
