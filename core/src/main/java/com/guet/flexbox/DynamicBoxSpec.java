@@ -35,7 +35,7 @@ final class DynamicBoxSpec {
             @Prop(optional = true) EventHandler eventHandler
     ) {
         if (eventHandler != null && !TextUtils.isEmpty(json)) {
-            eventHandler.onEvent("report_view", json);
+            eventHandler.onEvent("event://report_view", json);
         }
     }
 
@@ -47,9 +47,9 @@ final class DynamicBoxSpec {
             @Prop(optional = true) EventHandler eventHandler
     ) {
         if (eventHandler != null) {
-            eventHandler.onEvent("click", click);
+            eventHandler.onEvent("event://click", click);
             if (!TextUtils.isEmpty(json)) {
-                eventHandler.onEvent("report_click", json);
+                eventHandler.onEvent("event://report_click", json);
             }
         }
     }
