@@ -56,12 +56,6 @@ internal object JSONArrayELResolver : ELResolver() {
         if (property is String) {
             return property.toInt()
         }
-        throw IllegalArgumentException(property?.toString() ?: "null")
-    }
-
-    private fun checkBounds(base: JSONArray, idx: Int) {
-        if (idx < 0 || idx >= base.length()) {
-            throw PropertyNotFoundException(ArrayIndexOutOfBoundsException(idx).message)
-        }
+        throw IllegalArgumentException(property.toString())
     }
 }

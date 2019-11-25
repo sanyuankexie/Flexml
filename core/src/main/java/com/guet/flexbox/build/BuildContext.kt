@@ -5,10 +5,7 @@ import android.graphics.Color
 import android.graphics.Color.parseColor
 import android.net.Uri
 import androidx.annotation.ColorInt
-import com.guet.flexbox.el.ELException
-import com.guet.flexbox.el.ELManager
-import com.guet.flexbox.el.JSONArrayELResolver
-import com.guet.flexbox.el.JSONObjectELResolver
+import com.guet.flexbox.el.*
 import java.lang.reflect.Modifier
 import java.util.*
 
@@ -19,11 +16,22 @@ class BuildContext(data: Any?) {
     init {
         el.addELResolver(JSONArrayELResolver)
         el.addELResolver(JSONObjectELResolver)
-        functions.forEach {
-            el.mapFunction(it.first, it.second.name, it.second)
-        }
-        if (data != null) {
-            el.addBeanNameResolver(toWrapper(data))
+        functions.forEach { el.mapFunction(it.first, it.second.name, it.second) }
+        attach(data)
+    }
+
+    private fun attach(input: Any?) {
+        when {
+            input == null -> {
+                return
+            }
+            input is Map<*, *> && input.keys.all { it is String } -> {
+                @Suppress("UNCHECKED_CAST")
+                el.addBeanNameResolver(MapWrapper(input as MutableMap<String, Any?>))
+            }
+            else -> {
+                el.addBeanNameResolver(ObjWrapper(input))
+            }
         }
     }
 
@@ -92,7 +100,7 @@ class BuildContext(data: Any?) {
                 }.toTypedArray()
     }
 
-    internal object Functions {
+    private object Functions {
 
         @Prefix("utils")
         @JvmName("check")

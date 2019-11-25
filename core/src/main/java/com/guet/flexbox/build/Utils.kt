@@ -10,10 +10,7 @@ import com.facebook.litho.Component
 import com.facebook.litho.ComponentContext
 import com.guet.flexbox.BuildConfig
 import com.guet.flexbox.NodeInfo
-import com.guet.flexbox.el.BeanNameResolver
 import com.guet.flexbox.el.ELException
-import com.guet.flexbox.el.MapWrapper
-import com.guet.flexbox.el.ObjWrapper
 
 internal typealias Mapping<T> = T.(BuildContext, Map<String, String>, Boolean, String) -> Unit
 
@@ -125,15 +122,6 @@ private fun Number.safeCast(type: Class<*>): Any {
         Float::class.javaObjectType -> this.toFloat()
         Double::class.javaObjectType -> this.toDouble()
         else -> error("no match number type ${type.name}")
-    }
-}
-
-internal fun toWrapper(input: Any): BeanNameResolver {
-    if (input is Map<*, *> && input.keys.all { it is String }) {
-        @Suppress("UNCHECKED_CAST")
-        return MapWrapper(input as MutableMap<String, Any?>)
-    } else {
-        return ObjWrapper(input)
     }
 }
 
