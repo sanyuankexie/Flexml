@@ -5,7 +5,12 @@ import com.facebook.litho.ComponentContext
 import com.guet.flexbox.NodeInfo
 
 internal object RootTransform : Transform {
-    override fun transform(c: ComponentContext, pager: PagerContext, nodeInfo: NodeInfo, upperVisibility: Int): List<Component>? {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    override fun transform(
+            c: ComponentContext,
+            pager: PagerContext,
+            nodeInfo: NodeInfo,
+            upperVisibility: Int
+    ): List<Component>? {
+        TODO("not implemented")
     }
 }

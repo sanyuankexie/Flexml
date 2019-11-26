@@ -28,7 +28,6 @@ internal class PagerContext(
         el.addELResolver(JSONObjectELResolver)
         functions.forEach { el.mapFunction(it.first, it.second.name, it.second) }
         el.defineBean("eventBus", EventBus(eventListener))
-
         attach(data)
     }
 

@@ -1,7 +1,6 @@
 package com.guet.flexbox.build
 
 import android.graphics.Color
-import android.net.Uri
 import android.view.View
 import androidx.annotation.CallSuper
 import androidx.annotation.RestrictTo
@@ -9,7 +8,6 @@ import com.facebook.litho.Component
 import com.facebook.litho.ComponentContext
 import com.facebook.litho.drawable.ComparableColorDrawable
 import com.facebook.litho.drawable.ComparableDrawable
-import com.facebook.litho.drawable.ComparableGradientDrawable
 import com.guet.flexbox.DynamicBox
 import com.guet.flexbox.NodeInfo
 import com.guet.flexbox.el.LambdaExpression
@@ -107,39 +105,16 @@ internal abstract class WidgetFactory<T : Component.Builder<*>> : Mapper<T>(), T
                 backgroundDrawable = ComparableColorDrawable.create(pager.getColor(background))
             } catch (e: Exception) {
                 val backgroundELResult = pager.tryGetValue(background, "")
-                if (backgroundELResult.startsWith("res://")) {
-                    val uri = Uri.parse(backgroundELResult)
-                    if (uri.host == "gradient") {
-                        val type = uri.getQueryParameter(
-                                "orientation"
-                        )?.toOrientation()
-                        val colors = uri.getQueryParameters("color")?.map {
-                            Color.parseColor(it)
-                        }?.toIntArray()
-                        if (type != null && colors != null && colors.isNotEmpty()) {
-                            backgroundDrawable = ComparableGradientDrawable(type, colors)
-                        }
-                    } else if (uri.host == "load") {
-                        val name = uri.getQueryParameter("name")
-                        if (name != null) {
-                            val id = c.resources.getIdentifier(
-                                    name,
-                                    "drawable",
-                                    c.androidContext.packageName
-                            )
-                            if (id != 0) {
-                                backgroundDrawable = AsyncLazyDrawable(
-                                        c.androidContext,
-                                        id
-                                )
-                            }
-                        }
+                when (val model = parseUrl(c.androidContext, backgroundELResult)) {
+                    is ComparableDrawable -> {
+                        backgroundDrawable = model
                     }
-                } else if (backgroundELResult.isNotEmpty()) {
-                    backgroundDrawable = AsyncLazyDrawable(
-                            c.androidContext,
-                            backgroundELResult
-                    )
+                    is CharSequence, is Int -> {
+                        backgroundDrawable = AsyncLazyDrawable(
+                                c.androidContext,
+                                model
+                        )
+                    }
                 }
             }
         }
@@ -162,26 +137,18 @@ internal abstract class WidgetFactory<T : Component.Builder<*>> : Mapper<T>(), T
     ) {
         val display = visibility == View.VISIBLE
         val onClick = pager.tryGetValue<Any>(attrs["onClick"], "")
-        val reportClick = pager.tryGetValue<Any>(attrs["onReportClick"], Unit).let {
-            if (it is LambdaExpression) {
-                it
-            } else {
-                null
-            }
-        }
         if (onClick is LambdaExpression) {
             clipChildren(false)
             clickHandler(DynamicBox.onClick(
                     c,
-                    onClick,
-                    reportClick
+                    onClick
             ))
         }
-        val reportView = pager.tryGetValue<Any>(attrs["onReportView"], Unit)
-        if (reportView is LambdaExpression && display) {
+        val onView = pager.tryGetValue<Any>(attrs["onView"], Unit)
+        if (onView is LambdaExpression && display) {
             visibleHandler(DynamicBox.onView(
                     c,
-                    reportView
+                    onView
             ))
         }
     }

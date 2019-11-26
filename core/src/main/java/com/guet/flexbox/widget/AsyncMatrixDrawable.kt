@@ -2,12 +2,8 @@ package com.guet.flexbox.widget
 
 import android.annotation.TargetApi
 import android.content.Context
-import android.graphics.Color
 import android.graphics.drawable.Drawable
-import android.graphics.drawable.GradientDrawable
-import android.net.Uri
 import android.os.Build.VERSION_CODES.LOLLIPOP
-import android.text.TextUtils
 import android.view.MotionEvent
 import android.view.View
 import android.widget.ImageView.ScaleType
@@ -17,7 +13,8 @@ import com.bumptech.glide.request.target.Target
 import com.bumptech.glide.request.transition.Transition
 import com.facebook.litho.DrawableMatrix
 import com.facebook.litho.Touchable
-import com.guet.flexbox.build.toOrientation
+import com.facebook.litho.drawable.ComparableDrawable
+import com.guet.flexbox.build.parseUrl
 
 internal class AsyncMatrixDrawable(
         private val c: Context
@@ -44,48 +41,15 @@ internal class AsyncMatrixDrawable(
         this.borderWidth = borderWidth
         this.borderColor = borderColor
         this.scaleType = scaleType
-        when {
-            TextUtils.isEmpty(url) -> {
-                setToEmpty()
+        when (val model = parseUrl(c, url.toString())) {
+            is ComparableDrawable -> {
+                notifyChanged(scaleType, model)
             }
-            url.startsWith("res://") -> {
-                val uri = Uri.parse(url.toString())
-                when (uri.host) {
-                    "gradient" -> {
-                        val type = uri.getQueryParameter(
-                                "orientation"
-                        )?.toOrientation()
-                        val colors = uri.getQueryParameters("color")?.map {
-                            Color.parseColor(it)
-                        }?.toIntArray()
-                        if (type != null && colors != null && colors.isNotEmpty()) {
-                            notifyChanged(scaleType, GradientDrawable(type, colors))
-                        } else {
-                            setToEmpty()
-                        }
-                    }
-                    "load" -> {
-                        val name = uri.getQueryParameter("name")
-                        if (name != null) {
-                            val id = c.resources.getIdentifier(
-                                    name,
-                                    "drawable",
-                                    c.packageName
-                            )
-                            if (id != 0) {
-                                loadModel(id, blurRadius, blurSampling)
-                            } else {
-                                setToEmpty()
-                            }
-                        }
-                    }
-                    else -> {
-                        setToEmpty()
-                    }
-                }
+            is CharSequence, is Int -> {
+                loadModel(model, blurRadius, blurSampling)
             }
             else -> {
-                loadModel(url, blurRadius, blurSampling)
+                setToEmpty()
             }
         }
     }

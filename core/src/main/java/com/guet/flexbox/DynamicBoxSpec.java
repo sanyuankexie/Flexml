@@ -54,13 +54,9 @@ final class DynamicBoxSpec {
     @OnEvent(ClickEvent.class)
     static void onClick(
             ComponentContext c,
-            @Param LambdaExpression click,
-            @Param LambdaExpression report
+            @Param LambdaExpression click
     ) {
         click.invoke();
-        if (report != null) {
-            report.invoke();
-        }
     }
 
     @OnEvent(TextChangedEvent.class)
