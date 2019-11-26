@@ -204,7 +204,7 @@ public class OverviewActivity
     @Override
     public void onEvent(
             @NonNull String type,
-            @NonNull String action
+            @NonNull Object action
     ) {
         mAdapter.add("event type=" + type + " : event action=" + action);
     }
