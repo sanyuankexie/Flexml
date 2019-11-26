@@ -1,56 +1,65 @@
 package com.guet.flexbox;
 
 
-import android.text.TextUtils;
-
 import com.facebook.litho.ClickEvent;
 import com.facebook.litho.Component;
 import com.facebook.litho.ComponentContext;
+import com.facebook.litho.StateValue;
 import com.facebook.litho.VisibleEvent;
 import com.facebook.litho.annotations.FromEvent;
 import com.facebook.litho.annotations.LayoutSpec;
+import com.facebook.litho.annotations.OnCreateInitialState;
 import com.facebook.litho.annotations.OnCreateLayout;
 import com.facebook.litho.annotations.OnEvent;
 import com.facebook.litho.annotations.Param;
 import com.facebook.litho.annotations.Prop;
+import com.facebook.litho.annotations.State;
 import com.facebook.litho.widget.TextChangedEvent;
-import com.guet.flexbox.build.WidgetFactory;
+import com.guet.flexbox.build.PagerContext;
+import com.guet.flexbox.el.LambdaExpression;
+
+import java.util.List;
 
 @LayoutSpec
 final class DynamicBoxSpec {
 
+    @OnCreateInitialState
+    static void onCreateInitialState(
+            ComponentContext c,
+            @Prop(optional = true) Object data,
+            @Prop(optional = true) EventListener eventListener,
+            StateValue<PagerContext> pagerContext
+    ) {
+        pagerContext.set(new PagerContext(data, eventListener));
+    }
+
     @OnCreateLayout
     static Component onCreateLayout(
             ComponentContext c,
-            @Prop(optional = true) Object bind,
+            @State PagerContext pagerContext,
             @Prop NodeInfo layout
     ) {
-        return WidgetFactory.createLayout(c, bind, layout);
+        List<Component> components = pagerContext.inflate(c, layout);
+        return components.isEmpty() ? null : components.get(0);
     }
 
     @OnEvent(VisibleEvent.class)
     static void onView(
             ComponentContext c,
-            @Param String json,
-            @Prop(optional = true) EventHandler eventHandler
+            @Param LambdaExpression report
     ) {
-        if (eventHandler != null && !TextUtils.isEmpty(json)) {
-            eventHandler.onEvent("event://report_view", json);
-        }
+        report.invoke();
     }
 
     @OnEvent(ClickEvent.class)
     static void onClick(
             ComponentContext c,
-            @Param String click,
-            @Param String json,
-            @Prop(optional = true) EventHandler eventHandler
+            @Param LambdaExpression click,
+            @Param LambdaExpression report
     ) {
-        if (eventHandler != null) {
-            eventHandler.onEvent("event://click", click);
-            if (!TextUtils.isEmpty(json)) {
-                eventHandler.onEvent("event://report_click", json);
-            }
+        click.invoke();
+        if (report != null) {
+            report.invoke();
         }
     }
 
@@ -58,11 +67,8 @@ final class DynamicBoxSpec {
     static void onTextChanged(
             ComponentContext c,
             @FromEvent String text,
-            @Param String key,
-            @Prop(optional = true) EventHandler eventHandler
+            @Param LambdaExpression lambda
     ) {
-        if (eventHandler != null) {
-            eventHandler.onEvent(key, text);
-        }
+        lambda.invoke(text);
     }
 }

@@ -17,12 +17,12 @@ internal object NativeFactory : WidgetFactory<ViewCompatComponent.Builder<View>>
 
     override fun onCreateWidget(
             c: ComponentContext,
-            buildContext: BuildContext,
+            pager: PagerContext,
             attrs: Map<String, String>?,
             visibility: Int
     ): ViewCompatComponent.Builder<View> {
         if (attrs != null) {
-            val type = buildContext.tryGetValue(attrs["type"], "")
+            val type = pager.tryGetValue(attrs["type"], "")
             if (type.isNotEmpty()) {
                 val view = viewTypeCache.getOrPut(type) {
                     val viewType = Class.forName(type)
@@ -43,11 +43,11 @@ internal object NativeFactory : WidgetFactory<ViewCompatComponent.Builder<View>>
     override fun onLoadStyles(
             owner: ViewCompatComponent.Builder<View>,
             c: ComponentContext,
-            buildContext: BuildContext,
+            pager: PagerContext,
             attrs: Map<String, String>?,
             visibility: Int
     ) {
-        super.onLoadStyles(owner, c, buildContext, attrs, visibility)
+        super.onLoadStyles(owner, c, pager, attrs, visibility)
         owner.viewBinder(if (visibility == View.VISIBLE) {
             Visibility.VISIBLE
         } else {

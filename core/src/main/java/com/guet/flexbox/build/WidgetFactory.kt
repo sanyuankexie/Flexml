@@ -12,6 +12,7 @@ import com.facebook.litho.drawable.ComparableDrawable
 import com.facebook.litho.drawable.ComparableGradientDrawable
 import com.guet.flexbox.DynamicBox
 import com.guet.flexbox.NodeInfo
+import com.guet.flexbox.el.LambdaExpression
 import com.guet.flexbox.widget.AsyncLazyDrawable
 import com.guet.flexbox.widget.BackgroundDrawable
 import com.guet.flexbox.widget.NoOpDrawable
@@ -24,21 +25,20 @@ internal abstract class WidgetFactory<T : Component.Builder<*>> : Mapper<T>(), T
 
     final override fun transform(
             c: ComponentContext,
-            buildContext: BuildContext,
+            pager: PagerContext,
             nodeInfo: NodeInfo,
             upperVisibility: Int
-    ): List<Component> {
-        val value = create(c, buildContext, nodeInfo, upperVisibility)
-        return if (value != null) {
-            Collections.singletonList(value)
-        } else {
-            emptyList()
+    ): List<Component>? {
+        val component = create(c, pager, nodeInfo, upperVisibility)
+        if (component != null) {
+            return Collections.singletonList(component)
         }
+        return null
     }
 
     protected abstract fun onCreateWidget(
             c: ComponentContext,
-            buildContext: BuildContext,
+            pager: PagerContext,
             attrs: Map<String, String>?,
             visibility: Int
     ): T
@@ -46,7 +46,7 @@ internal abstract class WidgetFactory<T : Component.Builder<*>> : Mapper<T>(), T
     protected open fun onInstallChildren(
             owner: T,
             c: ComponentContext,
-            dataBinding: BuildContext,
+            pager: PagerContext,
             attrs: Map<String, String>?,
             children: List<Component>?,
             visibility: Int) {
@@ -56,57 +56,57 @@ internal abstract class WidgetFactory<T : Component.Builder<*>> : Mapper<T>(), T
     protected open fun onLoadStyles(
             owner: T,
             c: ComponentContext,
-            buildContext: BuildContext,
+            pager: PagerContext,
             attrs: Map<String, String>?,
             visibility: Int
     ) {
         val display = visibility == View.VISIBLE
         if (!attrs.isNullOrEmpty()) {
-            owner.applyEvent(c, buildContext, attrs, visibility)
+            owner.applyEvent(c, pager, attrs, visibility)
             if (display) {
-                owner.applyBackground(c, buildContext, attrs)
+                owner.applyBackground(c, pager, attrs)
             }
             for ((key, value) in attrs) {
-                mappings[key]?.invoke(owner, buildContext, attrs, display, value)
+                mappings[key]?.invoke(owner, pager, attrs, display, value)
             }
         }
     }
 
     private fun create(
             c: ComponentContext,
-            dataBinding: BuildContext,
+            pager: PagerContext,
             nodeInfo: NodeInfo,
             upperVisibility: Int
     ): Component? {
         val attrs = nodeInfo.attrs
         val childrenNodes = nodeInfo.children
-        val visibility = calculateVisibility(dataBinding, attrs, upperVisibility)
+        val visibility = calculateVisibility(c, pager, attrs, upperVisibility)
         if (visibility == View.GONE) {
             return null
         }
-        val builder = onCreateWidget(c, dataBinding, attrs, visibility)
-        onLoadStyles(builder, c, dataBinding, attrs, visibility)
-        onInstallChildren(builder, c, dataBinding, attrs, childrenNodes?.map {
-            c.createFromElement(dataBinding, it, visibility)
+        val builder = onCreateWidget(c, pager, attrs, visibility)
+        onLoadStyles(builder, c, pager, attrs, visibility)
+        onInstallChildren(builder, c, pager, attrs, childrenNodes?.map {
+            pager.inflate(c, it, visibility)
         }?.flatten(), visibility)
         return builder.build()
     }
 
     private fun T.applyBackground(
             c: ComponentContext,
-            buildContext: BuildContext,
+            pager: PagerContext,
             attrs: Map<String, String>
     ) {
-        val borderRadius = buildContext.tryGetValue(attrs["borderRadius"], 0).toPx()
-        val borderWidth = buildContext.tryGetValue(attrs["borderWidth"], 0).toPx()
-        val borderColor = buildContext.tryGetColor(attrs["borderColor"], Color.TRANSPARENT)
+        val borderRadius = pager.tryGetValue(attrs["borderRadius"], 0).toPx()
+        val borderWidth = pager.tryGetValue(attrs["borderWidth"], 0).toPx()
+        val borderColor = pager.tryGetColor(attrs["borderColor"], Color.TRANSPARENT)
         var backgroundDrawable: ComparableDrawable? = null
         val background = attrs["background"]
         if (background != null) {
             try {
-                backgroundDrawable = ComparableColorDrawable.create(buildContext.getColor(background))
+                backgroundDrawable = ComparableColorDrawable.create(pager.getColor(background))
             } catch (e: Exception) {
-                val backgroundELResult = buildContext.tryGetValue(background, "")
+                val backgroundELResult = pager.tryGetValue(background, "")
                 if (backgroundELResult.startsWith("res://")) {
                     val uri = Uri.parse(backgroundELResult)
                     if (uri.host == "gradient") {
@@ -156,23 +156,29 @@ internal abstract class WidgetFactory<T : Component.Builder<*>> : Mapper<T>(), T
 
     private fun T.applyEvent(
             c: ComponentContext,
-            dataBinding: BuildContext,
+            pager: PagerContext,
             attrs: Map<String, String>,
             visibility: Int
     ) {
         val display = visibility == View.VISIBLE
-        val clickUrl = dataBinding.tryGetValue(attrs["clickUrl"], "")
-        val reportClick = dataBinding.tryGetValue(attrs["reportClick"], "")
-        if (clickUrl.isNotEmpty()) {
+        val onClick = pager.tryGetValue<Any>(attrs["onClick"], "")
+        val reportClick = pager.tryGetValue<Any>(attrs["onReportClick"], Unit).let {
+            if (it is LambdaExpression) {
+                it
+            } else {
+                null
+            }
+        }
+        if (onClick is LambdaExpression) {
             clipChildren(false)
             clickHandler(DynamicBox.onClick(
                     c,
-                    clickUrl,
+                    onClick,
                     reportClick
             ))
         }
-        val reportView = dataBinding.tryGetValue(attrs["reportView"], "")
-        if (reportView.isNotEmpty() && display) {
+        val reportView = pager.tryGetValue<Any>(attrs["onReportView"], Unit)
+        if (reportView is LambdaExpression && display) {
             visibleHandler(DynamicBox.onView(
                     c,
                     reportView
@@ -181,14 +187,15 @@ internal abstract class WidgetFactory<T : Component.Builder<*>> : Mapper<T>(), T
     }
 
     protected open fun calculateVisibility(
-            dataBinding: BuildContext,
+            c: ComponentContext,
+            pager: PagerContext,
             attrs: Map<String, String>?,
             upperVisibility: Int
     ): Int {
         return if (upperVisibility == View.VISIBLE
                 && attrs != null) {
-            dataBinding.scope(visibilityValues) {
-                dataBinding.tryGetValue(
+            pager.scope(visibilityValues) {
+                pager.tryGetValue(
                         attrs["visibility"],
                         View.VISIBLE
                 )
@@ -201,14 +208,6 @@ internal abstract class WidgetFactory<T : Component.Builder<*>> : Mapper<T>(), T
     companion object {
 
         @JvmStatic
-        fun createLayout(
-                c: ComponentContext,
-                data: Any?,
-                root: NodeInfo
-        ): Component? {
-            return c.createFromElement(BuildContext(data), root).singleOrNull()
-        }
-
         internal val visibilityValues = mapOf(
                 "visible" to View.VISIBLE,
                 "invisible" to View.INVISIBLE,

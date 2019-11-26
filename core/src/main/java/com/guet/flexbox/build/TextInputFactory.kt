@@ -5,6 +5,7 @@ import android.text.TextUtils.TruncateAt.*
 import com.facebook.litho.ComponentContext
 import com.facebook.litho.widget.TextInput
 import com.guet.flexbox.DynamicBox
+import com.guet.flexbox.el.LambdaExpression
 
 internal object TextInputFactory : WidgetFactory<TextInput.Builder>() {
 
@@ -40,7 +41,7 @@ internal object TextInputFactory : WidgetFactory<TextInput.Builder>() {
 
     override fun onCreateWidget(
             c: ComponentContext,
-            buildContext: BuildContext,
+            pager: PagerContext,
             attrs: Map<String, String>?,
             visibility: Int
     ): TextInput.Builder {
@@ -50,15 +51,14 @@ internal object TextInputFactory : WidgetFactory<TextInput.Builder>() {
     override fun onLoadStyles(
             owner: TextInput.Builder,
             c: ComponentContext,
-            buildContext: BuildContext,
+            pager: PagerContext,
             attrs: Map<String, String>?,
             visibility: Int
     ) {
-        super.onLoadStyles(owner, c, buildContext, attrs, visibility)
-        buildContext.tryGetValue(attrs?.get("onTextChanged"), "").run {
-            if (isNotEmpty()) {
-                owner.textChangedEventHandler(DynamicBox.onTextChanged(c, this))
-            }
+        super.onLoadStyles(owner, c, pager, attrs, visibility)
+        val expr = pager.tryGetValue<Any>(attrs?.get("onTextChanged"), Unit)
+        if (expr is LambdaExpression) {
+            owner.textChangedEventHandler(DynamicBox.onTextChanged(c, expr))
         }
     }
 }

@@ -5,9 +5,10 @@ import com.facebook.litho.ComponentContext
 import com.facebook.litho.widget.EmptyComponent
 
 internal object EmptyFactory : WidgetFactory<EmptyComponent.Builder>() {
+
     override fun onCreateWidget(
             c: ComponentContext,
-            buildContext: BuildContext,
+            pager: PagerContext,
             attrs: Map<String, String>?,
             visibility: Int
     ): EmptyComponent.Builder {
@@ -15,10 +16,11 @@ internal object EmptyFactory : WidgetFactory<EmptyComponent.Builder>() {
     }
 
     override fun calculateVisibility(
-            dataBinding: BuildContext,
+            c: ComponentContext,
+            pager: PagerContext,
             attrs: Map<String, String>?,
             upperVisibility: Int): Int {
-        val value = super.calculateVisibility(dataBinding, attrs, upperVisibility)
+        val value = super.calculateVisibility(c, pager, attrs, upperVisibility)
         return if (value == View.VISIBLE) {
             View.INVISIBLE
         } else {

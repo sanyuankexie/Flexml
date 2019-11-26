@@ -30,9 +30,10 @@ import com.facebook.litho.widget.VerticalScroll;
 import com.facebook.yoga.YogaAlign;
 import com.facebook.yoga.YogaEdge;
 import com.guet.flexbox.DynamicBox;
-import com.guet.flexbox.EventHandler;
+import com.guet.flexbox.EventListener;
 import com.guet.flexbox.NodeInfo;
 
+import java.util.Arrays;
 import java.util.Map;
 
 import ch.ielse.view.SwitchView;
@@ -45,7 +46,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 public class OverviewActivity
         extends AppCompatActivity
         implements View.OnClickListener,
-        EventHandler,
+        EventListener,
         Runnable,
         NestedScrollView.OnScrollChangeListener,
         SwipeRefreshLayout.OnRefreshListener {
@@ -97,6 +98,7 @@ public class OverviewActivity
 
     private void apply() {
         if (mLayout != null) {
+            mLithoView.release();
             ComponentContext c = mLithoView.getComponentContext();
             mLithoView.setComponentAsync(
                     VerticalScroll.create(c)
@@ -105,10 +107,10 @@ public class OverviewActivity
                                     .widthPx(toPx(360))
                                     .alignItems(YogaAlign.CENTER)
                                     .child(DynamicBox.create(c)
-                                            .bind(mData)
+                                            .data(mData)
                                             .layout(mLayout)
                                             .marginPx(YogaEdge.TOP, dp2px(20))
-                                            .eventHandler(this))
+                                            .eventListener(this))
                                     .child(Text.create(c)
                                             .widthPx(toPx(360))
                                             .heightPx(toPx(40))
@@ -202,11 +204,11 @@ public class OverviewActivity
 
 
     @Override
-    public void onEvent(
+    public void handleEvent(
             @NonNull String type,
-            @NonNull Object action
+            @NonNull Object[] action
     ) {
-        mAdapter.add("event type=" + type + " : event action=" + action);
+        mAdapter.add("event type=" + type + " : event action=" + Arrays.toString(action));
     }
 
     @Override

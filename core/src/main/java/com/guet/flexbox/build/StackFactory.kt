@@ -25,7 +25,7 @@ internal object StackFactory : WidgetFactory<Row.Builder>(), ThreadFactory {
 
     override fun onCreateWidget(
             c: ComponentContext,
-            buildContext: BuildContext,
+            pager: PagerContext,
             attrs: Map<String, String>?,
             visibility: Int
     ): Row.Builder {
@@ -35,7 +35,7 @@ internal object StackFactory : WidgetFactory<Row.Builder>(), ThreadFactory {
     override fun onInstallChildren(
             owner: Row.Builder,
             c: ComponentContext,
-            dataBinding: BuildContext,
+            pager: PagerContext,
             attrs: Map<String, String>?,
             children: List<Component>?,
             visibility: Int
@@ -44,12 +44,12 @@ internal object StackFactory : WidgetFactory<Row.Builder>(), ThreadFactory {
             return
         }
         var width = if (attrs != null) {
-            dataBinding.tryGetValue(attrs["borderWidth"], Int.MIN_VALUE)
+            pager.tryGetValue(attrs["borderWidth"], Int.MIN_VALUE)
         } else {
             Int.MIN_VALUE
         }
         var height = if (attrs != null) {
-            dataBinding.tryGetValue(attrs["height"], Int.MIN_VALUE)
+            pager.tryGetValue(attrs["height"], Int.MIN_VALUE)
         } else {
             Int.MIN_VALUE
         }
@@ -84,11 +84,12 @@ internal object StackFactory : WidgetFactory<Row.Builder>(), ThreadFactory {
             var maxHeight = 0
             var futures: List<Future<Size>>? = null
             if (children.size > 1) {
+                val componentContext: ComponentContext = c
                 futures = wrappers.subList(1, children.size).map {
                     measureThreadPool.submit<Size> {
                         val size = Size()
                         it.measure(
-                                c,
+                                componentContext,
                                 widthSpec,
                                 heightSpec,
                                 size

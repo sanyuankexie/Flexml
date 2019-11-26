@@ -4,12 +4,22 @@ import android.content.res.Resources
 import android.graphics.Color
 import android.graphics.Color.parseColor
 import android.net.Uri
+import android.view.View
 import androidx.annotation.ColorInt
+import androidx.annotation.RestrictTo
+import com.facebook.litho.Component
+import com.facebook.litho.ComponentContext
+import com.guet.flexbox.BuildConfig
+import com.guet.flexbox.EventListener
+import com.guet.flexbox.NodeInfo
 import com.guet.flexbox.el.*
 import java.lang.reflect.Modifier
 import java.util.*
 
-class BuildContext(data: Any?) {
+internal class PagerContext(
+        data: Any?,
+        eventListener: EventListener?
+) {
 
     private val el = ELManager()
 
@@ -17,6 +27,8 @@ class BuildContext(data: Any?) {
         el.addELResolver(JSONArrayELResolver)
         el.addELResolver(JSONObjectELResolver)
         functions.forEach { el.mapFunction(it.first, it.second.name, it.second) }
+        el.defineBean("eventBus", EventBus(eventListener))
+
         attach(data)
     }
 
@@ -35,16 +47,16 @@ class BuildContext(data: Any?) {
         }
     }
 
-    internal fun enterScope(scope: Map<String, Any?>) {
+    private fun enterScope(scope: Map<String, Any?>) {
         el.elContext.enterLambdaScope(scope)
     }
 
-    internal fun exitScope() {
+    private fun exitScope() {
         el.elContext.exitLambdaScope()
     }
 
     @Throws(ELException::class)
-    internal fun getValue(expr: String, type: Class<*>): Any {
+    private fun getValue(expr: String, type: Class<*>): Any {
         return ELManager.getExpressionFactory()
                 .createValueExpression(
                         el.elContext,
@@ -76,11 +88,96 @@ class BuildContext(data: Any?) {
         }
     }
 
+    internal inline fun <reified T : Any> tryGetValue(expr: String?, fallback: T): T {
+        if (expr == null) {
+            return fallback
+        }
+        return try {
+            getValue(expr)
+        } catch (e: ELException) {
+            if (BuildConfig.DEBUG) {
+                e.printStackTrace()
+            }
+            fallback
+        }
+    }
+
+    internal inline fun <T> scope(scope: Map<String, Any>, action: () -> T): T {
+        enterScope(scope)
+        try {
+            return action()
+        } finally {
+            exitScope()
+        }
+    }
+
+    internal inline fun <reified T : Enum<T>> tryGetEnum(
+            expr: String?,
+            scope: Map<String, T>,
+            fallback: T = enumValues<T>().first()): T {
+        return when {
+            expr == null -> fallback
+            expr.isExpr -> scope(scope) {
+                tryGetValue(expr, fallback)
+            }
+            else -> scope[expr] ?: fallback
+        }
+    }
+
+    internal inline fun <reified T : Any> requestValue(
+            name: String,
+            attrs: Map<String, String>
+    ): T {
+        return getValue(attrs[name] ?: error("request attr '$name'"))
+    }
+
+    @ColorInt
+    internal fun tryGetColor(expr: String?, @ColorInt fallback: Int): Int {
+        if (expr == null) {
+            return fallback
+        }
+        return try {
+            getColor(expr)
+        } catch (e: ELException) {
+            fallback
+        }
+    }
+
+    @JvmOverloads
+    @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
+    fun inflate(
+            c: ComponentContext,
+            element: NodeInfo,
+            upperVisibility: Int = View.VISIBLE
+    ): List<Component> {
+        return standardTransforms[element.type]?.transform(
+                c,
+                this,
+                element,
+                upperVisibility
+        ) ?: emptyList()
+    }
+
     @Target(AnnotationTarget.FUNCTION)
     @Retention(AnnotationRetention.RUNTIME)
     internal annotation class Prefix(val value: String)
 
-    companion object {
+    internal companion object {
+
+        private val standardTransforms = mapOf(
+                "Image" to ImageFactory,
+                "Flex" to FlexFactory,
+                "Text" to TextFactory,
+                "Stack" to StackFactory,
+                "Native" to NativeFactory,
+                "Scroller" to ScrollerFactory,
+                "Empty" to EmptyFactory,
+                "TextInput" to TextInputFactory,
+                "root" to RootTransform,
+                "for" to ForBehavior,
+                "foreach" to ForEachBehavior,
+                "if" to IfBehavior
+        )
 
         @Suppress("UNCHECKED_CAST")
         internal val colorMap = Collections.unmodifiableMap((Color::class.java

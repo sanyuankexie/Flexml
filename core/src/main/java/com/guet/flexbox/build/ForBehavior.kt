@@ -8,18 +8,18 @@ import java.util.*
 internal object ForBehavior : Behavior() {
     override fun onApply(
             c: ComponentContext,
-            buildContext: BuildContext,
+            pager: PagerContext,
             attrs: Map<String, String>,
             children: List<NodeInfo>,
             upperVisibility: Int
     ): List<Component> {
-        val name = buildContext.requestValue<String>("var", attrs)
-        val from = buildContext.requestValue<Int>("from", attrs)
-        val to = buildContext.requestValue<Int>("to", attrs)
+        val name = pager.requestValue<String>("var", attrs)
+        val from = pager.requestValue<Int>("from", attrs)
+        val to = pager.requestValue<Int>("to", attrs)
         return (from..to).map {
-            return@map buildContext.scope(Collections.singletonMap(name, it)) {
+            return@map pager.scope(Collections.singletonMap(name, it)) {
                 children.map { item ->
-                    c.createFromElement(buildContext, item, upperVisibility)
+                    pager.inflate(c, item, upperVisibility)
                 }.flatten()
             }
         }.flatten()

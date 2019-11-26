@@ -3,6 +3,12 @@ package com.guet.flexbox.build
 import android.graphics.Color
 import com.facebook.litho.Component
 
+private typealias Mapping<T> = T.(PagerContext, Map<String, String>, Boolean, String) -> Unit
+
+private typealias Apply<T, V> = T.(Map<String, String>, Boolean, V) -> Unit
+
+internal typealias Mappings<T> = HashMap<String, Mapping<T>>
+
 internal abstract class Mapper<T : Component.Builder<*>> {
 
     protected abstract val mappings: Mappings<T>

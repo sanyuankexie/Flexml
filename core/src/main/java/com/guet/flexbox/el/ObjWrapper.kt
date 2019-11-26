@@ -4,11 +4,13 @@ import com.guet.flexbox.beans.Introspector
 import org.json.JSONObject
 import java.lang.reflect.Modifier
 
+private typealias Property = Pair<(Any) -> Any?, (Any, Any?) -> Unit>
+
 internal class ObjWrapper(private val o: Any) : BeanNameResolver() {
 
-    private val props: HashMap<String, Pair<(Any) -> Any?, (Any, Any?) -> Unit>>
+    private val props: HashMap<String, Property>
 
-    private inline var Pair<(Any) -> Any?, (Any, Any?) -> Unit>.value: Any?
+    private inline var Property.value: Any?
         get() = this.first(o)
         set(value) = this.second(o, value)
 

@@ -8,17 +8,17 @@ internal abstract class Behavior : Transform {
 
     final override fun transform(
             c: ComponentContext,
-            buildContext: BuildContext,
+            pager: PagerContext,
             nodeInfo: NodeInfo,
             upperVisibility: Int
-    ): List<Component> {
+    ): List<Component>? {
         val attrs = nodeInfo.attrs
         val elements = nodeInfo.children
         if (!attrs.isNullOrEmpty()) {
             if (elements.isNullOrEmpty()) {
                 return emptyList()
             }
-            return onApply(c, buildContext, attrs, elements, upperVisibility)
+            return onApply(c, pager, attrs, elements, upperVisibility)
         } else {
             error("must has attr")
         }
@@ -26,9 +26,9 @@ internal abstract class Behavior : Transform {
 
     protected abstract fun onApply(
             c: ComponentContext,
-            buildContext: BuildContext,
+            pager: PagerContext,
             attrs: Map<String, String>,
             children: List<NodeInfo>,
             upperVisibility: Int
-    ): List<Component>
+    ): List<Component>?
 }

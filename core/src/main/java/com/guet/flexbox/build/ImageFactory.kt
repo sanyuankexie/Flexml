@@ -41,7 +41,7 @@ internal object ImageFactory : WidgetFactory<AsyncImage.Builder>() {
 
     override fun onCreateWidget(
             c: ComponentContext,
-            buildContext: BuildContext,
+            pager: PagerContext,
             attrs: Map<String, String>?,
             visibility: Int
     ): AsyncImage.Builder {
@@ -51,15 +51,15 @@ internal object ImageFactory : WidgetFactory<AsyncImage.Builder>() {
     override fun onLoadStyles(
             owner: AsyncImage.Builder,
             c: ComponentContext,
-            buildContext: BuildContext,
+            pager: PagerContext,
             attrs: Map<String, String>?,
             visibility: Int
     ) {
-        super.onLoadStyles(owner, c, buildContext, attrs, visibility)
+        super.onLoadStyles(owner, c, pager, attrs, visibility)
         owner.url(if (visibility == View.GONE) {
             ""
         } else {
-            buildContext.tryGetValue(attrs?.get("url"), "")
+            pager.tryGetValue(attrs?.get("url"), "")
         })
     }
 }

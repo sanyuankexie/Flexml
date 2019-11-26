@@ -70,7 +70,7 @@ internal object TextFactory : WidgetFactory<Text.Builder>() {
 
     override fun onCreateWidget(
             c: ComponentContext,
-            buildContext: BuildContext,
+            pager: PagerContext,
             attrs: Map<String, String>?,
             visibility: Int
     ): Text.Builder {
@@ -80,11 +80,11 @@ internal object TextFactory : WidgetFactory<Text.Builder>() {
     override fun onLoadStyles(
             owner: Text.Builder,
             c: ComponentContext,
-            buildContext: BuildContext,
+            pager: PagerContext,
             attrs: Map<String, String>?,
             visibility: Int
     ) {
-        super.onLoadStyles(owner, c, buildContext, attrs, visibility)
+        super.onLoadStyles(owner, c, pager, attrs, visibility)
         if (visibility == View.INVISIBLE) {
             owner.textColor(Color.TRANSPARENT)
             owner.textColorStateList(invisibleColor)

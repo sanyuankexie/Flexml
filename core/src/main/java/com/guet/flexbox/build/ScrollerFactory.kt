@@ -29,11 +29,11 @@ internal object ScrollerFactory : WidgetFactory<Component.Builder<*>>() {
 
     override fun onCreateWidget(
             c: ComponentContext,
-            buildContext: BuildContext,
+            pager: PagerContext,
             attrs: Map<String, String>?,
             visibility: Int
     ): Component.Builder<*> {
-        return if (attrs != null && buildContext.tryGetEnum(
+        return if (attrs != null && pager.tryGetEnum(
                         attrs["orientation"],
                         orientations
                 ) == Orientation.HORIZONTAL) {
@@ -46,7 +46,7 @@ internal object ScrollerFactory : WidgetFactory<Component.Builder<*>>() {
     override fun onInstallChildren(
             owner: Component.Builder<*>,
             c: ComponentContext,
-            dataBinding: BuildContext,
+            pager: PagerContext,
             attrs: Map<String, String>?,
             children: List<Component>?,
             visibility: Int

@@ -8,9 +8,9 @@ internal interface Transform {
 
     fun transform(
             c: ComponentContext,
-            buildContext: BuildContext,
+            pager: PagerContext,
             nodeInfo: NodeInfo,
             upperVisibility: Int
-    ): List<Component>
+    ): List<Component>?
 
 }
