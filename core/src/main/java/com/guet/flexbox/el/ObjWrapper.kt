@@ -4,15 +4,13 @@ import com.guet.flexbox.beans.Introspector
 import org.json.JSONObject
 import java.lang.reflect.Modifier
 
-private typealias Property = Pair<() -> Any?, (Any?) -> Unit>
-
-private inline var Property.value: Any?
-    get() = this.first()
-    set(value) = this.second(value)
-
 internal class ObjWrapper(private val o: Any) : BeanNameResolver() {
 
-    private val props: HashMap<String, Property>
+    private val props: HashMap<String, Pair<(Any) -> Any?, (Any, Any?) -> Unit>>
+
+    private inline var Pair<(Any) -> Any?, (Any, Any?) -> Unit>.value: Any?
+        get() = this.first(o)
+        set(value) = this.second(o, value)
 
     init {
         val javaClass = o.javaClass
@@ -20,7 +18,7 @@ internal class ObjWrapper(private val o: Any) : BeanNameResolver() {
             o is JSONObject -> {
                 props = HashMap(o.length())
                 o.keys().forEach { key ->
-                    props[key] = { o[key] } to { value -> o.put(key, value) }
+                    props[key] = { obj: Any -> obj.run { this as JSONObject }[key] } to { obj, value -> obj.run { this as JSONObject }.put(key, value) }
                 }
             }
             javaClass.methods.all { it.declaringClass == Any::class.java } -> {
@@ -29,7 +27,7 @@ internal class ObjWrapper(private val o: Any) : BeanNameResolver() {
                 fields.filter {
                     !Modifier.isStatic(it.modifiers)
                 }.forEach { f ->
-                    props[f.name] = { f.get(o) } to { value -> f.set(o, value) }
+                    props[f.name] = { obj: Any -> f.get(obj) } to { obj, value -> f.set(obj, value) }
                 }
             }
             else -> {
@@ -41,7 +39,7 @@ internal class ObjWrapper(private val o: Any) : BeanNameResolver() {
                 }.forEach { pd ->
                     val read = pd.readMethod
                     val write = pd.writeMethod
-                    props[pd.name] = { read.invoke(o) } to { value -> write.invoke(o, value) }
+                    props[pd.name] = { obj: Any -> read.invoke(obj) } to { obj, value -> write.invoke(obj, value) }
                 }
             }
         }
@@ -58,6 +56,7 @@ internal class ObjWrapper(private val o: Any) : BeanNameResolver() {
     override fun setBeanValue(beanName: String?, value: Any?) {
         props[beanName]?.value = value
     }
+
 
     override fun isReadOnly(beanName: String?): Boolean {
         return false
