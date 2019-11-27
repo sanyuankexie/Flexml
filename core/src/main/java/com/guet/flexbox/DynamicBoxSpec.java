@@ -20,9 +20,7 @@ import java.util.List;
 final class DynamicBoxSpec {
 
     @OnCalculateCachedValue(name = "propsELContext")
-    static PropsELContext onCreateELContext(
-            @Prop(optional = true) Object data
-    ) {
+    static PropsELContext onCreateELContext(@Prop(optional = true) Object data) {
         return new PropsELContext(data);
     }
 
