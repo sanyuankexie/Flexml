@@ -31,13 +31,13 @@ internal inline fun <reified T : Number> T.toPx(): Int {
     return (this.toFloat() * Resources.getSystem().displayMetrics.widthPixels / 360f).toInt()
 }
 
-internal fun parseUrl(c: Context, url: String): Any? {
+internal fun parseUrl(c: Context, url: CharSequence): Any? {
     when {
         TextUtils.isEmpty(url) -> {
             return null
         }
         url.startsWith("res://") -> {
-            val uri = Uri.parse(url)
+            val uri = Uri.parse(url.toString())
             when (uri.host) {
                 "gradient" -> {
                     val type = uri.getQueryParameter(

@@ -10,7 +10,6 @@ import com.facebook.litho.drawable.ComparableColorDrawable
 import com.facebook.litho.drawable.ComparableDrawable
 import com.guet.flexbox.DynamicBox
 import com.guet.flexbox.NodeInfo
-import com.guet.flexbox.el.LambdaExpression
 import com.guet.flexbox.el.PropsELContext
 import com.guet.flexbox.widget.AsyncLazyDrawable
 import com.guet.flexbox.widget.BackgroundDrawable
@@ -137,19 +136,27 @@ internal abstract class WidgetFactory<T : Component.Builder<*>> : Mapper<T>(), T
             visibility: Int
     ) {
         val display = visibility == View.VISIBLE
-        val onClick = data.tryGetValue<Any>(attrs["onClick"], "")
-        if (onClick is LambdaExpression) {
+        val click = data.tryGetValue(attrs["clickUrl"], "")
+        val clickReport = data.tryGetValue(attrs["clickReport"], "").run {
+            if (isNotEmpty()) {
+                this
+            } else {
+                null
+            }
+        }
+        if (click.isNotEmpty()) {
             clipChildren(false)
             clickHandler(DynamicBox.onClick(
                     c,
-                    onClick
+                    click,
+                    clickReport
             ))
         }
-        val onView = data.tryGetValue<Any>(attrs["onView"], Unit)
-        if (onView is LambdaExpression && display) {
+        val viewReport = data.tryGetValue(attrs["viewReport"], "")
+        if (viewReport.isNotEmpty() && display) {
             visibleHandler(DynamicBox.onView(
                     c,
-                    onView
+                    viewReport
             ))
         }
     }

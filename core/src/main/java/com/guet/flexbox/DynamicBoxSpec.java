@@ -6,15 +6,12 @@ import com.facebook.litho.Component;
 import com.facebook.litho.ComponentContext;
 import com.facebook.litho.VisibleEvent;
 import com.facebook.litho.annotations.CachedValue;
-import com.facebook.litho.annotations.FromEvent;
 import com.facebook.litho.annotations.LayoutSpec;
 import com.facebook.litho.annotations.OnCalculateCachedValue;
 import com.facebook.litho.annotations.OnCreateLayout;
 import com.facebook.litho.annotations.OnEvent;
 import com.facebook.litho.annotations.Param;
 import com.facebook.litho.annotations.Prop;
-import com.facebook.litho.widget.TextChangedEvent;
-import com.guet.flexbox.el.LambdaExpression;
 import com.guet.flexbox.el.PropsELContext;
 
 import java.util.List;
@@ -24,10 +21,9 @@ final class DynamicBoxSpec {
 
     @OnCalculateCachedValue(name = "propsELContext")
     static PropsELContext onCreateELContext(
-            @Prop(optional = true) Object data,
-            @Prop(optional = true) EventListener eventListener
+            @Prop(optional = true) Object data
     ) {
-        return new PropsELContext(data, eventListener);
+        return new PropsELContext(data);
     }
 
     @OnCreateLayout
@@ -43,25 +39,23 @@ final class DynamicBoxSpec {
     @OnEvent(VisibleEvent.class)
     static void onView(
             ComponentContext c,
-            @Param LambdaExpression report
+            @Prop(optional = true) EventListener eventListener,
+            @Param String report
     ) {
-        report.invoke();
+        if (eventListener != null) {
+            eventListener.handleEvent("onView", new Object[]{report});
+        }
     }
 
     @OnEvent(ClickEvent.class)
     static void onClick(
             ComponentContext c,
-            @Param LambdaExpression click
+            @Prop(optional = true) EventListener eventListener,
+            @Param String click,
+            @Param String report
     ) {
-        click.invoke();
-    }
-
-    @OnEvent(TextChangedEvent.class)
-    static void onTextChanged(
-            ComponentContext c,
-            @FromEvent String text,
-            @Param LambdaExpression lambda
-    ) {
-        lambda.invoke(text);
+        if (eventListener != null) {
+            eventListener.handleEvent("onClick", new Object[]{click, report});
+        }
     }
 }

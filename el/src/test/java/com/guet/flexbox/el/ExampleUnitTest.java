@@ -14,6 +14,7 @@ public class ExampleUnitTest {
     public void addition_isCorrect() {
         ELProcessor elProcessor = new ELProcessor();
         elProcessor.defineBean("test",new TestBean());
+        System.out.println(elProcessor.eval("(_)->1"));
         assertEquals(4, 2 + 2);
     }
 }

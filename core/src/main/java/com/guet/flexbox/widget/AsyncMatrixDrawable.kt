@@ -41,7 +41,7 @@ internal class AsyncMatrixDrawable(
         this.borderWidth = borderWidth
         this.borderColor = borderColor
         this.scaleType = scaleType
-        when (val model = parseUrl(c, url.toString())) {
+        when (val model = parseUrl(c, url)) {
             is ComparableDrawable -> {
                 notifyChanged(scaleType, model)
             }

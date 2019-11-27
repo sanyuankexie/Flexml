@@ -9,17 +9,13 @@ import androidx.annotation.RestrictTo
 import com.facebook.litho.Component
 import com.facebook.litho.ComponentContext
 import com.guet.flexbox.BuildConfig
-import com.guet.flexbox.EventListener
 import com.guet.flexbox.NodeInfo
 import com.guet.flexbox.build.*
 import java.lang.reflect.Method
 import java.lang.reflect.Modifier
 import java.util.*
 
-class PropsELContext(
-        data: Any?,
-        listener: EventListener?
-) : ELContext() {
+class PropsELContext(data: Any?) : ELContext() {
 
     private val variableMapper = StandardVariableMapper()
     private val functionMapper = StandardFunctionMapper()
@@ -39,7 +35,7 @@ class PropsELContext(
                 ))
             }
         }
-        ELManager.getExpressionFactory().streamELResolver?.let { standardResolver.add(it) }
+        expressionFactory.streamELResolver?.let { standardResolver.add(it) }
         standardResolver.add(StaticFieldELResolver())
         standardResolver.add(MapELResolver(true))
         standardResolver.add(ResourceBundleELResolver())
@@ -58,7 +54,7 @@ class PropsELContext(
 
     @Throws(ELException::class)
     private fun getValue(expr: String, type: Class<*>): Any {
-        return ELManager.getExpressionFactory()
+        return expressionFactory
                 .createValueExpression(
                         this,
                         expr,
@@ -214,6 +210,8 @@ class PropsELContext(
 
     private companion object {
 
+        private val expressionFactory = ExpressionFactory.newInstance()
+
         private val standardTransforms = mapOf(
                 "Image" to ImageFactory,
                 "Flex" to FlexFactory,
@@ -222,7 +220,6 @@ class PropsELContext(
                 "Native" to NativeFactory,
                 "Scroller" to ScrollerFactory,
                 "Empty" to EmptyFactory,
-                "TextInput" to TextInputFactory,
                 "for" to ForBehavior,
                 "foreach" to ForEachBehavior,
                 "if" to IfBehavior
