@@ -2,7 +2,7 @@ package com.guet.flexbox.el
 
 import org.json.JSONArray
 
-internal object JSONArrayELResolver : ELResolver() {
+internal class JSONArrayELResolver(private val isReadOnly: Boolean=false) : ELResolver() {
 
     override fun getValue(context: ELContext, base: Any?, property: Any?): Any? {
         if (base is JSONArray) {
@@ -25,6 +25,9 @@ internal object JSONArrayELResolver : ELResolver() {
     }
 
     override fun setValue(context: ELContext, base: Any?, property: Any?, value: Any?) {
+        if (isReadOnly) {
+            throw PropertyNotWritableException()
+        }
         if (base is JSONArray) {
             context.setPropertyResolved(base, property)
             val idx = coerce(property)
@@ -33,7 +36,7 @@ internal object JSONArrayELResolver : ELResolver() {
     }
 
     override fun isReadOnly(context: ELContext, base: Any?, property: Any?): Boolean {
-        return false
+        return isReadOnly
     }
 
     override fun getCommonPropertyType(context: ELContext?, base: Any?): Class<*>? {

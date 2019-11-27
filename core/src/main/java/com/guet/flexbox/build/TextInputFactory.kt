@@ -6,6 +6,7 @@ import com.facebook.litho.ComponentContext
 import com.facebook.litho.widget.TextInput
 import com.guet.flexbox.DynamicBox
 import com.guet.flexbox.el.LambdaExpression
+import com.guet.flexbox.el.PropsELContext
 
 internal object TextInputFactory : WidgetFactory<TextInput.Builder>() {
 
@@ -41,7 +42,7 @@ internal object TextInputFactory : WidgetFactory<TextInput.Builder>() {
 
     override fun onCreateWidget(
             c: ComponentContext,
-            pager: PagerContext,
+            data: PropsELContext,
             attrs: Map<String, String>?,
             visibility: Int
     ): TextInput.Builder {
@@ -51,7 +52,7 @@ internal object TextInputFactory : WidgetFactory<TextInput.Builder>() {
     override fun onLoadStyles(
             owner: TextInput.Builder,
             c: ComponentContext,
-            pager: PagerContext,
+            pager: PropsELContext,
             attrs: Map<String, String>?,
             visibility: Int
     ) {

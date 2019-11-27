@@ -3,6 +3,7 @@ package com.guet.flexbox.build
 import android.view.View
 import android.widget.ImageView.ScaleType.*
 import com.facebook.litho.ComponentContext
+import com.guet.flexbox.el.PropsELContext
 import com.guet.flexbox.widget.AsyncImage
 
 internal object ImageFactory : WidgetFactory<AsyncImage.Builder>() {
@@ -41,7 +42,7 @@ internal object ImageFactory : WidgetFactory<AsyncImage.Builder>() {
 
     override fun onCreateWidget(
             c: ComponentContext,
-            pager: PagerContext,
+            data: PropsELContext,
             attrs: Map<String, String>?,
             visibility: Int
     ): AsyncImage.Builder {
@@ -51,7 +52,7 @@ internal object ImageFactory : WidgetFactory<AsyncImage.Builder>() {
     override fun onLoadStyles(
             owner: AsyncImage.Builder,
             c: ComponentContext,
-            pager: PagerContext,
+            pager: PropsELContext,
             attrs: Map<String, String>?,
             visibility: Int
     ) {

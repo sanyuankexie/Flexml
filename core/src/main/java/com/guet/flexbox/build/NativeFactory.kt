@@ -9,6 +9,7 @@ import com.facebook.litho.ComponentContext
 import com.facebook.litho.ViewCompatComponent
 import com.facebook.litho.viewcompat.ViewBinder
 import com.facebook.litho.viewcompat.ViewCreator
+import com.guet.flexbox.el.PropsELContext
 import java.lang.reflect.Constructor
 
 internal object NativeFactory : WidgetFactory<ViewCompatComponent.Builder<View>>() {
@@ -17,12 +18,12 @@ internal object NativeFactory : WidgetFactory<ViewCompatComponent.Builder<View>>
 
     override fun onCreateWidget(
             c: ComponentContext,
-            pager: PagerContext,
+            data: PropsELContext,
             attrs: Map<String, String>?,
             visibility: Int
     ): ViewCompatComponent.Builder<View> {
         if (attrs != null) {
-            val type = pager.tryGetValue(attrs["type"], "")
+            val type = data.tryGetValue(attrs["type"], "")
             if (type.isNotEmpty()) {
                 val view = viewTypeCache.getOrPut(type) {
                     val viewType = Class.forName(type)
@@ -43,7 +44,7 @@ internal object NativeFactory : WidgetFactory<ViewCompatComponent.Builder<View>>
     override fun onLoadStyles(
             owner: ViewCompatComponent.Builder<View>,
             c: ComponentContext,
-            pager: PagerContext,
+            pager: PropsELContext,
             attrs: Map<String, String>?,
             visibility: Int
     ) {

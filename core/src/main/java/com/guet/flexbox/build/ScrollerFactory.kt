@@ -4,6 +4,7 @@ import com.facebook.litho.Component
 import com.facebook.litho.ComponentContext
 import com.facebook.litho.widget.HorizontalScroll
 import com.facebook.litho.widget.VerticalScroll
+import com.guet.flexbox.el.PropsELContext
 
 internal object ScrollerFactory : WidgetFactory<Component.Builder<*>>() {
 
@@ -29,11 +30,11 @@ internal object ScrollerFactory : WidgetFactory<Component.Builder<*>>() {
 
     override fun onCreateWidget(
             c: ComponentContext,
-            pager: PagerContext,
+            data: PropsELContext,
             attrs: Map<String, String>?,
             visibility: Int
     ): Component.Builder<*> {
-        return if (attrs != null && pager.tryGetEnum(
+        return if (attrs != null && data.tryGetEnum(
                         attrs["orientation"],
                         orientations
                 ) == Orientation.HORIZONTAL) {
@@ -46,7 +47,7 @@ internal object ScrollerFactory : WidgetFactory<Component.Builder<*>>() {
     override fun onInstallChildren(
             owner: Component.Builder<*>,
             c: ComponentContext,
-            pager: PagerContext,
+            data: PropsELContext,
             attrs: Map<String, String>?,
             children: List<Component>?,
             visibility: Int

@@ -4,6 +4,7 @@ import androidx.core.math.MathUtils
 import com.facebook.litho.*
 import com.facebook.yoga.YogaEdge
 import com.facebook.yoga.YogaPositionType
+import com.guet.flexbox.el.PropsELContext
 import java.util.concurrent.Executors
 import java.util.concurrent.Future
 import java.util.concurrent.ThreadFactory
@@ -25,7 +26,7 @@ internal object StackFactory : WidgetFactory<Row.Builder>(), ThreadFactory {
 
     override fun onCreateWidget(
             c: ComponentContext,
-            pager: PagerContext,
+            data: PropsELContext,
             attrs: Map<String, String>?,
             visibility: Int
     ): Row.Builder {
@@ -35,7 +36,7 @@ internal object StackFactory : WidgetFactory<Row.Builder>(), ThreadFactory {
     override fun onInstallChildren(
             owner: Row.Builder,
             c: ComponentContext,
-            pager: PagerContext,
+            data: PropsELContext,
             attrs: Map<String, String>?,
             children: List<Component>?,
             visibility: Int
@@ -44,12 +45,12 @@ internal object StackFactory : WidgetFactory<Row.Builder>(), ThreadFactory {
             return
         }
         var width = if (attrs != null) {
-            pager.tryGetValue(attrs["borderWidth"], Int.MIN_VALUE)
+            data.tryGetValue(attrs["borderWidth"], Int.MIN_VALUE)
         } else {
             Int.MIN_VALUE
         }
         var height = if (attrs != null) {
-            pager.tryGetValue(attrs["height"], Int.MIN_VALUE)
+            data.tryGetValue(attrs["height"], Int.MIN_VALUE)
         } else {
             Int.MIN_VALUE
         }

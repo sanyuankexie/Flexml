@@ -1,6 +1,9 @@
 package com.guet.flexbox.el
 
-internal class MapWrapper(private val map: MutableMap<String, Any?>) : BeanNameResolver() {
+internal class MapPropsNameResolver(
+        private val map: MutableMap<String, Any?>,
+        private val isReadOnly: Boolean = false
+) : BeanNameResolver() {
 
     override fun setBeanValue(beanName: String, value: Any?) {
         map[beanName] = value
@@ -11,10 +14,13 @@ internal class MapWrapper(private val map: MutableMap<String, Any?>) : BeanNameR
     }
 
     override fun isNameResolved(beanName: String?): Boolean {
+        if (isReadOnly) {
+            throw PropertyNotWritableException()
+        }
         return map.containsKey(beanName)
     }
 
     override fun isReadOnly(beanName: String?): Boolean {
-        return false
+        return isReadOnly
     }
 }

@@ -6,7 +6,10 @@ import java.lang.reflect.Modifier
 
 private typealias Property = Pair<(Any) -> Any?, (Any, Any?) -> Unit>
 
-internal class ObjWrapper(private val o: Any) : BeanNameResolver() {
+internal class ObjPropsNameResolver(
+        private val o: Any,
+        private val isReadOnly: Boolean = false
+) : BeanNameResolver() {
 
     private val props: HashMap<String, Property>
 
@@ -56,11 +59,13 @@ internal class ObjWrapper(private val o: Any) : BeanNameResolver() {
     }
 
     override fun setBeanValue(beanName: String?, value: Any?) {
+        if (isReadOnly) {
+            throw PropertyNotWritableException()
+        }
         props[beanName]?.value = value
     }
 
-
     override fun isReadOnly(beanName: String?): Boolean {
-        return false
+        return isReadOnly
     }
 }

@@ -9,6 +9,7 @@ import android.view.View
 import com.facebook.litho.ComponentContext
 import com.facebook.litho.widget.Text
 import com.facebook.litho.widget.VerticalGravity
+import com.guet.flexbox.el.PropsELContext
 
 internal object TextFactory : WidgetFactory<Text.Builder>() {
 
@@ -70,7 +71,7 @@ internal object TextFactory : WidgetFactory<Text.Builder>() {
 
     override fun onCreateWidget(
             c: ComponentContext,
-            pager: PagerContext,
+            data: PropsELContext,
             attrs: Map<String, String>?,
             visibility: Int
     ): Text.Builder {
@@ -80,7 +81,7 @@ internal object TextFactory : WidgetFactory<Text.Builder>() {
     override fun onLoadStyles(
             owner: Text.Builder,
             c: ComponentContext,
-            pager: PagerContext,
+            pager: PropsELContext,
             attrs: Map<String, String>?,
             visibility: Int
     ) {

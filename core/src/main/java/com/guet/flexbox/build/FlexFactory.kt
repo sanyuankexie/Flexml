@@ -8,6 +8,7 @@ import com.facebook.yoga.YogaAlign
 import com.facebook.yoga.YogaFlexDirection
 import com.facebook.yoga.YogaJustify.*
 import com.facebook.yoga.YogaWrap.*
+import com.guet.flexbox.el.PropsELContext
 
 internal object FlexFactory : WidgetFactory<Component.ContainerBuilder<*>>() {
 
@@ -67,13 +68,13 @@ internal object FlexFactory : WidgetFactory<Component.ContainerBuilder<*>>() {
 
     override fun onCreateWidget(
             c: ComponentContext,
-            pager: PagerContext,
+            data: PropsELContext,
             attrs: Map<String, String>?,
             visibility: Int
     ): Component.ContainerBuilder<*> {
         val component: Component.ContainerBuilder<*>
         when (if (attrs != null) {
-            pager.tryGetEnum(attrs["flexDirection"], flexDirections, YogaFlexDirection.ROW)
+            data.tryGetEnum(attrs["flexDirection"], flexDirections, YogaFlexDirection.ROW)
         } else {
             YogaFlexDirection.ROW
         }) {
@@ -101,7 +102,7 @@ internal object FlexFactory : WidgetFactory<Component.ContainerBuilder<*>>() {
     override fun onInstallChildren(
             owner: Component.ContainerBuilder<*>,
             c: ComponentContext,
-            pager: PagerContext,
+            data: PropsELContext,
             attrs: Map<String, String>?,
             children: List<Component>?,
             visibility: Int

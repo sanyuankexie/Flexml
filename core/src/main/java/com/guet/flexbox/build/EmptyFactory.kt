@@ -3,12 +3,13 @@ package com.guet.flexbox.build
 import android.view.View
 import com.facebook.litho.ComponentContext
 import com.facebook.litho.widget.EmptyComponent
+import com.guet.flexbox.el.PropsELContext
 
 internal object EmptyFactory : WidgetFactory<EmptyComponent.Builder>() {
 
     override fun onCreateWidget(
             c: ComponentContext,
-            pager: PagerContext,
+            data: PropsELContext,
             attrs: Map<String, String>?,
             visibility: Int
     ): EmptyComponent.Builder {
@@ -17,7 +18,7 @@ internal object EmptyFactory : WidgetFactory<EmptyComponent.Builder>() {
 
     override fun calculateVisibility(
             c: ComponentContext,
-            pager: PagerContext,
+            pager: PropsELContext,
             attrs: Map<String, String>?,
             upperVisibility: Int): Int {
         val value = super.calculateVisibility(c, pager, attrs, upperVisibility)

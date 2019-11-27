@@ -2,8 +2,9 @@ package com.guet.flexbox.build
 
 import android.graphics.Color
 import com.facebook.litho.Component
+import com.guet.flexbox.el.PropsELContext
 
-private typealias Mapping<T> = T.(PagerContext, Map<String, String>, Boolean, String) -> Unit
+private typealias Mapping<T> = T.(PropsELContext, Map<String, String>, Boolean, String) -> Unit
 
 private typealias Apply<T, V> = T.(Map<String, String>, Boolean, V) -> Unit
 

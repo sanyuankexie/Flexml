@@ -3,12 +3,13 @@ package com.guet.flexbox.build
 import com.facebook.litho.Component
 import com.facebook.litho.ComponentContext
 import com.guet.flexbox.NodeInfo
+import com.guet.flexbox.el.PropsELContext
 
 internal abstract class Behavior : Transform {
 
     final override fun transform(
             c: ComponentContext,
-            pager: PagerContext,
+            data: PropsELContext,
             nodeInfo: NodeInfo,
             upperVisibility: Int
     ): List<Component>? {
@@ -18,7 +19,7 @@ internal abstract class Behavior : Transform {
             if (elements.isNullOrEmpty()) {
                 return emptyList()
             }
-            return onApply(c, pager, attrs, elements, upperVisibility)
+            return onApply(c, data, attrs, elements, upperVisibility)
         } else {
             error("must has attr")
         }
@@ -26,7 +27,7 @@ internal abstract class Behavior : Transform {
 
     protected abstract fun onApply(
             c: ComponentContext,
-            pager: PagerContext,
+            data: PropsELContext,
             attrs: Map<String, String>,
             children: List<NodeInfo>,
             upperVisibility: Int

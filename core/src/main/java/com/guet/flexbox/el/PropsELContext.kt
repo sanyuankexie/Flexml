@@ -1,8 +1,7 @@
-package com.guet.flexbox.build
+package com.guet.flexbox.el
 
 import android.content.res.Resources
 import android.graphics.Color
-import android.graphics.Color.parseColor
 import android.net.Uri
 import android.view.View
 import androidx.annotation.ColorInt
@@ -12,56 +11,59 @@ import com.facebook.litho.ComponentContext
 import com.guet.flexbox.BuildConfig
 import com.guet.flexbox.EventListener
 import com.guet.flexbox.NodeInfo
-import com.guet.flexbox.el.*
+import com.guet.flexbox.build.*
+import java.lang.reflect.Method
 import java.lang.reflect.Modifier
 import java.util.*
 
-internal class PagerContext(
+class PropsELContext(
         data: Any?,
-        eventListener: EventListener?
-) {
+        listener: EventListener?
+) : ELContext() {
 
-    private val el = ELManager()
+    private val variableMapper = StandardVariableMapper()
+    private val functionMapper = StandardFunctionMapper()
+    private val standardResolver = CompositeELResolver()
 
     init {
-        el.addELResolver(JSONArrayELResolver)
-        el.addELResolver(JSONObjectELResolver)
-        functions.forEach { el.mapFunction(it.first, it.second.name, it.second) }
-        el.defineBean("eventBus", EventBus(eventListener))
-        attach(data)
-    }
-
-    private fun attach(input: Any?) {
         when {
-            input == null -> {
-                return
-            }
-            input is Map<*, *> && input.keys.all { it is String } -> {
+            data is Map<*, *> && data.keys.all { it is String } -> {
                 @Suppress("UNCHECKED_CAST")
-                el.addBeanNameResolver(MapWrapper(input as MutableMap<String, Any?>))
+                standardResolver.add(BeanNameELResolver(
+                        MapPropsNameResolver(data as MutableMap<String, Any?>)
+                ))
             }
-            else -> {
-                el.addBeanNameResolver(ObjWrapper(input))
+            data != null -> {
+                standardResolver.add(BeanNameELResolver(
+                        ObjPropsNameResolver(data)
+                ))
             }
         }
+        ELManager.getExpressionFactory().streamELResolver?.let { standardResolver.add(it) }
+        standardResolver.add(StaticFieldELResolver())
+        standardResolver.add(MapELResolver(true))
+        standardResolver.add(ResourceBundleELResolver())
+        standardResolver.add(ListELResolver(true))
+        standardResolver.add(ArrayELResolver(true))
+        standardResolver.add(BeanELResolver(true))
+        standardResolver.add(JSONObjectELResolver(true))
+        standardResolver.add(JSONArrayELResolver(true))
     }
 
-    private fun enterScope(scope: Map<String, Any?>) {
-        el.elContext.enterLambdaScope(scope)
-    }
+    override fun getELResolver(): ELResolver = standardResolver
 
-    private fun exitScope() {
-        el.elContext.exitLambdaScope()
-    }
+    override fun getFunctionMapper(): FunctionMapper = functionMapper
+
+    override fun getVariableMapper(): VariableMapper = variableMapper
 
     @Throws(ELException::class)
     private fun getValue(expr: String, type: Class<*>): Any {
         return ELManager.getExpressionFactory()
                 .createValueExpression(
-                        el.elContext,
+                        this,
                         expr,
                         type
-                ).getValue(el.elContext)
+                ).getValue(this)
                 ?: throw ELException()
     }
 
@@ -74,14 +76,14 @@ internal class PagerContext(
     @Throws(ELException::class)
     internal fun getColor(expr: String): Int {
         return try {
-            parseColor(expr)
+            Color.parseColor(expr)
         } catch (e: IllegalArgumentException) {
             scope(colorMap) {
                 val value = getValue<Any>(expr)
                 if (value is Number) {
                     value.toInt()
                 } else {
-                    parseColor(value.toString())
+                    Color.parseColor(value.toString())
                 }
             }
         }
@@ -102,11 +104,11 @@ internal class PagerContext(
     }
 
     internal inline fun <T> scope(scope: Map<String, Any>, action: () -> T): T {
-        enterScope(scope)
+        enterLambdaScope(scope)
         try {
             return action()
         } finally {
-            exitScope()
+            exitLambdaScope()
         }
     }
 
@@ -157,11 +159,60 @@ internal class PagerContext(
         ) ?: emptyList()
     }
 
+    private class StandardVariableMapper : VariableMapper() {
+
+        private lateinit var vars: MutableMap<String, ValueExpression>
+
+        override fun resolveVariable(variable: String): ValueExpression? {
+            return if (!this::vars.isInitialized) {
+                null
+            } else vars[variable]
+        }
+
+        override fun setVariable(variable: String,
+                                 expression: ValueExpression?
+        ): ValueExpression? {
+            if (!this::vars.isInitialized)
+                vars = HashMap()
+            return if (expression == null) {
+                vars.remove(variable)
+            } else {
+                vars.put(variable, expression)
+            }
+        }
+    }
+
+    private class StandardFunctionMapper : FunctionMapper() {
+
+        private val methods = HashMap<String, Method>(functions)
+
+        override fun resolveFunction(
+                prefix: String,
+                localName: String
+        ): Method? {
+            val key = "$prefix:$localName"
+            return methods[key]
+        }
+
+        override fun mapFunction(
+                prefix: String,
+                localName: String,
+                method: Method?
+        ) {
+            val key = "$prefix:$localName"
+            if (method == null) {
+                methods.remove(key)
+            } else {
+                methods[key] = method
+            }
+        }
+    }
+
     @Target(AnnotationTarget.FUNCTION)
     @Retention(AnnotationRetention.RUNTIME)
-    internal annotation class Prefix(val value: String)
+    private annotation class Prefix(val value: String)
 
-    internal companion object {
+    private companion object {
 
         private val standardTransforms = mapOf(
                 "Image" to ImageFactory,
@@ -172,7 +223,6 @@ internal class PagerContext(
                 "Scroller" to ScrollerFactory,
                 "Empty" to EmptyFactory,
                 "TextInput" to TextInputFactory,
-                "root" to RootTransform,
                 "for" to ForBehavior,
                 "foreach" to ForEachBehavior,
                 "if" to IfBehavior
@@ -190,10 +240,12 @@ internal class PagerContext(
                         Modifier.isPublic(mod) && Modifier.isStatic(mod)
                     } && it.isAnnotationPresent(Prefix::class.java)
                 }.map {
-                    it.apply { it.isAccessible = true }
-                }.map {
-                    it.getAnnotation(Prefix::class.java).value to it
-                }.toTypedArray()
+                    it.apply {
+                        it.isAccessible = true
+                    }.let { m ->
+                        "${m.getAnnotation(Prefix::class.java).value}:${m.name}" to m
+                    }
+                }.toMap()
     }
 
     private object Functions {
@@ -208,6 +260,13 @@ internal class PagerContext(
                 is Number -> o.toInt() != 0
                 else -> o != null
             }
+        }
+
+        @Prefix("utils")
+        @JvmName("arrayOf")
+        @JvmStatic
+        fun arrayOf(vararg value: Any): Array<Any> {
+            return kotlin.arrayOf(value)
         }
 
         @Prefix("res")

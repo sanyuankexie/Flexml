@@ -11,6 +11,7 @@ import com.facebook.litho.drawable.ComparableDrawable
 import com.guet.flexbox.DynamicBox
 import com.guet.flexbox.NodeInfo
 import com.guet.flexbox.el.LambdaExpression
+import com.guet.flexbox.el.PropsELContext
 import com.guet.flexbox.widget.AsyncLazyDrawable
 import com.guet.flexbox.widget.BackgroundDrawable
 import com.guet.flexbox.widget.NoOpDrawable
@@ -23,11 +24,11 @@ internal abstract class WidgetFactory<T : Component.Builder<*>> : Mapper<T>(), T
 
     final override fun transform(
             c: ComponentContext,
-            pager: PagerContext,
+            data: PropsELContext,
             nodeInfo: NodeInfo,
             upperVisibility: Int
     ): List<Component>? {
-        val component = create(c, pager, nodeInfo, upperVisibility)
+        val component = create(c, data, nodeInfo, upperVisibility)
         if (component != null) {
             return Collections.singletonList(component)
         }
@@ -36,7 +37,7 @@ internal abstract class WidgetFactory<T : Component.Builder<*>> : Mapper<T>(), T
 
     protected abstract fun onCreateWidget(
             c: ComponentContext,
-            pager: PagerContext,
+            data: PropsELContext,
             attrs: Map<String, String>?,
             visibility: Int
     ): T
@@ -44,7 +45,7 @@ internal abstract class WidgetFactory<T : Component.Builder<*>> : Mapper<T>(), T
     protected open fun onInstallChildren(
             owner: T,
             c: ComponentContext,
-            pager: PagerContext,
+            data: PropsELContext,
             attrs: Map<String, String>?,
             children: List<Component>?,
             visibility: Int) {
@@ -54,7 +55,7 @@ internal abstract class WidgetFactory<T : Component.Builder<*>> : Mapper<T>(), T
     protected open fun onLoadStyles(
             owner: T,
             c: ComponentContext,
-            pager: PagerContext,
+            pager: PropsELContext,
             attrs: Map<String, String>?,
             visibility: Int
     ) {
@@ -72,39 +73,39 @@ internal abstract class WidgetFactory<T : Component.Builder<*>> : Mapper<T>(), T
 
     private fun create(
             c: ComponentContext,
-            pager: PagerContext,
+            data: PropsELContext,
             nodeInfo: NodeInfo,
             upperVisibility: Int
     ): Component? {
         val attrs = nodeInfo.attrs
         val childrenNodes = nodeInfo.children
-        val visibility = calculateVisibility(c, pager, attrs, upperVisibility)
+        val visibility = calculateVisibility(c, data, attrs, upperVisibility)
         if (visibility == View.GONE) {
             return null
         }
-        val builder = onCreateWidget(c, pager, attrs, visibility)
-        onLoadStyles(builder, c, pager, attrs, visibility)
-        onInstallChildren(builder, c, pager, attrs, childrenNodes?.map {
-            pager.inflate(c, it, visibility)
+        val builder = onCreateWidget(c, data, attrs, visibility)
+        onLoadStyles(builder, c, data, attrs, visibility)
+        onInstallChildren(builder, c, data, attrs, childrenNodes?.map {
+            data.inflate(c, it, visibility)
         }?.flatten(), visibility)
         return builder.build()
     }
 
     private fun T.applyBackground(
             c: ComponentContext,
-            pager: PagerContext,
+            data: PropsELContext,
             attrs: Map<String, String>
     ) {
-        val borderRadius = pager.tryGetValue(attrs["borderRadius"], 0).toPx()
-        val borderWidth = pager.tryGetValue(attrs["borderWidth"], 0).toPx()
-        val borderColor = pager.tryGetColor(attrs["borderColor"], Color.TRANSPARENT)
+        val borderRadius = data.tryGetValue(attrs["borderRadius"], 0).toPx()
+        val borderWidth = data.tryGetValue(attrs["borderWidth"], 0).toPx()
+        val borderColor = data.tryGetColor(attrs["borderColor"], Color.TRANSPARENT)
         var backgroundDrawable: ComparableDrawable? = null
         val background = attrs["background"]
         if (background != null) {
             try {
-                backgroundDrawable = ComparableColorDrawable.create(pager.getColor(background))
+                backgroundDrawable = ComparableColorDrawable.create(data.getColor(background))
             } catch (e: Exception) {
-                val backgroundELResult = pager.tryGetValue(background, "")
+                val backgroundELResult = data.tryGetValue(background, "")
                 when (val model = parseUrl(c.androidContext, backgroundELResult)) {
                     is ComparableDrawable -> {
                         backgroundDrawable = model
@@ -131,12 +132,12 @@ internal abstract class WidgetFactory<T : Component.Builder<*>> : Mapper<T>(), T
 
     private fun T.applyEvent(
             c: ComponentContext,
-            pager: PagerContext,
+            data: PropsELContext,
             attrs: Map<String, String>,
             visibility: Int
     ) {
         val display = visibility == View.VISIBLE
-        val onClick = pager.tryGetValue<Any>(attrs["onClick"], "")
+        val onClick = data.tryGetValue<Any>(attrs["onClick"], "")
         if (onClick is LambdaExpression) {
             clipChildren(false)
             clickHandler(DynamicBox.onClick(
@@ -144,7 +145,7 @@ internal abstract class WidgetFactory<T : Component.Builder<*>> : Mapper<T>(), T
                     onClick
             ))
         }
-        val onView = pager.tryGetValue<Any>(attrs["onView"], Unit)
+        val onView = data.tryGetValue<Any>(attrs["onView"], Unit)
         if (onView is LambdaExpression && display) {
             visibleHandler(DynamicBox.onView(
                     c,
@@ -155,7 +156,7 @@ internal abstract class WidgetFactory<T : Component.Builder<*>> : Mapper<T>(), T
 
     protected open fun calculateVisibility(
             c: ComponentContext,
-            pager: PagerContext,
+            pager: PropsELContext,
             attrs: Map<String, String>?,
             upperVisibility: Int
     ): Int {
@@ -172,7 +173,7 @@ internal abstract class WidgetFactory<T : Component.Builder<*>> : Mapper<T>(), T
         }
     }
 
-    companion object {
+    private companion object {
 
         @JvmStatic
         internal val visibilityValues = mapOf(
