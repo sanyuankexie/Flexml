@@ -152,12 +152,18 @@ class PropsELContext(data: Any?) : ELContext() {
         }
     }
 
-    @JvmOverloads
     @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
     fun inflate(
             c: ComponentContext,
+            element: NodeInfo
+    ): Component? {
+        return inflate(c, element, View.VISIBLE).singleOrNull()
+    }
+
+    internal fun inflate(
+            c: ComponentContext,
             element: NodeInfo,
-            upperVisibility: Int = View.VISIBLE
+            upperVisibility: Int
     ): List<Component> {
         return standardTransforms[element.type]?.transform(
                 c,

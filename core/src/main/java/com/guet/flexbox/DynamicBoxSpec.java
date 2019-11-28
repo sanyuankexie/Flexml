@@ -18,7 +18,6 @@ import com.guet.flexbox.el.LambdaExpression;
 import com.guet.flexbox.el.PropsELContext;
 
 import java.util.Collections;
-import java.util.List;
 
 @LayoutSpec
 final class DynamicBoxSpec {
@@ -39,8 +38,7 @@ final class DynamicBoxSpec {
             @CachedValue PropsELContext propsELContext,
             @Prop NodeInfo layout
     ) {
-        List<Component> components = propsELContext.inflate(c, layout);
-        return components.isEmpty() ? null : components.get(0);
+        return propsELContext.inflate(c, layout);
     }
 
 
