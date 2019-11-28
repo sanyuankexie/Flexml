@@ -33,7 +33,6 @@ import com.guet.flexbox.DynamicBox;
 import com.guet.flexbox.EventListener;
 import com.guet.flexbox.NodeInfo;
 
-import java.util.Arrays;
 import java.util.Map;
 
 import ch.ielse.view.SwitchView;
@@ -206,9 +205,9 @@ public class OverviewActivity
     @Override
     public void handleEvent(
             @NonNull String type,
-            @NonNull Object[] values
+            @NonNull Object value
     ) {
-        mAdapter.add("event type=" + type + " : event values=" + Arrays.toString(values));
+        mAdapter.add("event type=" + type + " : event values=" + value);
     }
 
     @Override

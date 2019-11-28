@@ -64,7 +64,7 @@ class PropsELContext(data: Any?) : ELContext() {
     }
 
     @Throws(ELException::class)
-    internal inline fun <reified T : Any> getValue(expr: String): T {
+    internal inline fun <reified T> getValue(expr: String): T {
         return getValue(expr, T::class.java) as T
     }
 
@@ -85,7 +85,7 @@ class PropsELContext(data: Any?) : ELContext() {
         }
     }
 
-    internal inline fun <reified T : Any> tryGetValue(expr: String?, fallback: T): T {
+    internal inline fun <reified T> tryGetValue(expr: String?, fallback: T): T {
         if (expr == null) {
             return fallback
         }
@@ -119,6 +119,18 @@ class PropsELContext(data: Any?) : ELContext() {
             }
             else -> scope[expr] ?: fallback
         }
+    }
+
+    internal fun tryGetLambda(expr: String?): LambdaExpression? {
+        if (expr == null) {
+            return null
+        }
+        @Suppress("RemoveExplicitTypeArguments")
+        return tryGetValue<LambdaExpression?>(if (!expr.isExpr) {
+            "\${$expr}"
+        } else {
+            expr
+        }, null)
     }
 
     internal inline fun <reified T : Any> requestValue(
@@ -218,6 +230,7 @@ class PropsELContext(data: Any?) : ELContext() {
                 "Text" to TextFactory,
                 "Stack" to StackFactory,
                 "Native" to NativeFactory,
+                "TextInput" to TextInputFactory,
                 "Scroller" to ScrollerFactory,
                 "Empty" to EmptyFactory,
                 "for" to ForBehavior,

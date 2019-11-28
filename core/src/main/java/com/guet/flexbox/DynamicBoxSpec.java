@@ -6,14 +6,18 @@ import com.facebook.litho.Component;
 import com.facebook.litho.ComponentContext;
 import com.facebook.litho.VisibleEvent;
 import com.facebook.litho.annotations.CachedValue;
+import com.facebook.litho.annotations.FromEvent;
 import com.facebook.litho.annotations.LayoutSpec;
 import com.facebook.litho.annotations.OnCalculateCachedValue;
 import com.facebook.litho.annotations.OnCreateLayout;
 import com.facebook.litho.annotations.OnEvent;
 import com.facebook.litho.annotations.Param;
 import com.facebook.litho.annotations.Prop;
+import com.facebook.litho.widget.TextChangedEvent;
+import com.guet.flexbox.el.LambdaExpression;
 import com.guet.flexbox.el.PropsELContext;
 
+import java.util.Collections;
 import java.util.List;
 
 @LayoutSpec
@@ -22,6 +26,11 @@ final class DynamicBoxSpec {
     @OnCalculateCachedValue(name = "propsELContext")
     static PropsELContext onCreateELContext(@Prop(optional = true) Object data) {
         return new PropsELContext(data);
+    }
+
+    @OnCalculateCachedValue(name = "sender")
+    static EventSender onCreateSender(@Prop(optional = true) EventListener eventListener) {
+        return new EventSender(eventListener);
     }
 
     @OnCreateLayout
@@ -34,26 +43,62 @@ final class DynamicBoxSpec {
         return components.isEmpty() ? null : components.get(0);
     }
 
+
+    @OnEvent(TextChangedEvent.class)
+    static void onTextChanged(
+            ComponentContext c,
+            @FromEvent String text,
+            @CachedValue PropsELContext propsELContext,
+            @CachedValue EventSender sender,
+            @Param LambdaExpression lambda
+    ) {
+        try {
+            propsELContext.enterLambdaScope(
+                    Collections.singletonMap(
+                            "sender", (Object) sender
+                    )
+            );
+            lambda.invoke(propsELContext, text);
+        } finally {
+            propsELContext.exitLambdaScope();
+        }
+    }
+
     @OnEvent(VisibleEvent.class)
     static void onView(
             ComponentContext c,
-            @Prop(optional = true) EventListener eventListener,
-            @Param String report
+            @CachedValue PropsELContext propsELContext,
+            @CachedValue EventSender sender,
+            @Param LambdaExpression lambda
     ) {
-        if (eventListener != null) {
-            eventListener.handleEvent("onView", new Object[]{report});
+        try {
+            propsELContext.enterLambdaScope(
+                    Collections.singletonMap(
+                            "sender", (Object) sender
+                    )
+            );
+            lambda.invoke(propsELContext);
+        } finally {
+            propsELContext.exitLambdaScope();
         }
     }
 
     @OnEvent(ClickEvent.class)
     static void onClick(
             ComponentContext c,
-            @Prop(optional = true) EventListener eventListener,
-            @Param String click,
-            @Param String report
+            @CachedValue PropsELContext propsELContext,
+            @CachedValue EventSender sender,
+            @Param LambdaExpression lambda
     ) {
-        if (eventListener != null) {
-            eventListener.handleEvent("onClick", new Object[]{click, report});
+        try {
+            propsELContext.enterLambdaScope(
+                    Collections.singletonMap(
+                            "sender", (Object) sender
+                    )
+            );
+            lambda.invoke(propsELContext);
+        } finally {
+            propsELContext.exitLambdaScope();
         }
     }
 }

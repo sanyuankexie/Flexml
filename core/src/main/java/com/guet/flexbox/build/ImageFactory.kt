@@ -52,15 +52,15 @@ internal object ImageFactory : WidgetFactory<AsyncImage.Builder>() {
     override fun onLoadStyles(
             owner: AsyncImage.Builder,
             c: ComponentContext,
-            pager: PropsELContext,
+            data: PropsELContext,
             attrs: Map<String, String>?,
             visibility: Int
     ) {
-        super.onLoadStyles(owner, c, pager, attrs, visibility)
+        super.onLoadStyles(owner, c, data, attrs, visibility)
         owner.url(if (visibility == View.GONE) {
             ""
         } else {
-            pager.tryGetValue(attrs?.get("url"), "")
+            data.tryGetValue(attrs?.get("url"), "")
         })
     }
 }

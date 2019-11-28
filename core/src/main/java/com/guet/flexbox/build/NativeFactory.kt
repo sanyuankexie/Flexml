@@ -44,11 +44,11 @@ internal object NativeFactory : WidgetFactory<ViewCompatComponent.Builder<View>>
     override fun onLoadStyles(
             owner: ViewCompatComponent.Builder<View>,
             c: ComponentContext,
-            pager: PropsELContext,
+            data: PropsELContext,
             attrs: Map<String, String>?,
             visibility: Int
     ) {
-        super.onLoadStyles(owner, c, pager, attrs, visibility)
+        super.onLoadStyles(owner, c, data, attrs, visibility)
         owner.viewBinder(if (visibility == View.VISIBLE) {
             Visibility.VISIBLE
         } else {

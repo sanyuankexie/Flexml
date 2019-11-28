@@ -10,6 +10,7 @@ import com.facebook.litho.drawable.ComparableColorDrawable
 import com.facebook.litho.drawable.ComparableDrawable
 import com.guet.flexbox.DynamicBox
 import com.guet.flexbox.NodeInfo
+import com.guet.flexbox.el.LambdaExpression
 import com.guet.flexbox.el.PropsELContext
 import com.guet.flexbox.widget.AsyncLazyDrawable
 import com.guet.flexbox.widget.BackgroundDrawable
@@ -54,18 +55,18 @@ internal abstract class WidgetFactory<T : Component.Builder<*>> : Mapper<T>(), T
     protected open fun onLoadStyles(
             owner: T,
             c: ComponentContext,
-            pager: PropsELContext,
+            data: PropsELContext,
             attrs: Map<String, String>?,
             visibility: Int
     ) {
         val display = visibility == View.VISIBLE
         if (!attrs.isNullOrEmpty()) {
-            owner.applyEvent(c, pager, attrs, visibility)
+            owner.applyEvent(c, data, attrs, visibility)
             if (display) {
-                owner.applyBackground(c, pager, attrs)
+                owner.applyBackground(c, data, attrs)
             }
             for ((key, value) in attrs) {
-                mappings[key]?.invoke(owner, pager, attrs, display, value)
+                mappings[key]?.invoke(owner, data, attrs, display, value)
             }
         }
     }
@@ -136,27 +137,27 @@ internal abstract class WidgetFactory<T : Component.Builder<*>> : Mapper<T>(), T
             visibility: Int
     ) {
         val display = visibility == View.VISIBLE
-        val click = data.tryGetValue(attrs["clickUrl"], "")
-        val clickReport = data.tryGetValue(attrs["clickReport"], "").run {
-            if (isNotEmpty()) {
-                this
-            } else {
-                null
-            }
-        }
-        if (click.isNotEmpty()) {
-            clipChildren(false)
+        val clickUrl = data.tryGetValue(attrs["clickUrl"], "")
+        if (clickUrl.isNotEmpty()) {
             clickHandler(DynamicBox.onClick(
                     c,
-                    click,
-                    clickReport
+                    data.tryGetLambda("()->sender.send('${this}')")
             ))
+        } else {
+            val onClick = data.tryGetLambda(attrs["onClick"])
+            if (onClick != null) {
+                clipChildren(false)
+                clickHandler(DynamicBox.onClick(
+                        c,
+                        onClick
+                ))
+            }
         }
-        val viewReport = data.tryGetValue(attrs["viewReport"], "")
-        if (viewReport.isNotEmpty() && display) {
+        val onView = data.tryGetValue<LambdaExpression?>(attrs["onView"], null)
+        if (onView != null && display) {
             visibleHandler(DynamicBox.onView(
                     c,
-                    viewReport
+                    onView
             ))
         }
     }
