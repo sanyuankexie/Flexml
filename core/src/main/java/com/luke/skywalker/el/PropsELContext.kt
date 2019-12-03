@@ -11,6 +11,7 @@ import com.facebook.litho.ComponentContext
 import com.luke.skywalker.BuildConfig
 import com.luke.skywalker.NodeInfo
 import com.luke.skywalker.build.*
+import org.json.JSONArray
 import java.lang.reflect.Method
 import java.lang.reflect.Modifier
 import java.util.*
@@ -22,27 +23,28 @@ class PropsELContext(data: Any?) : ELContext() {
     private val standardResolver = CompositeELResolver()
 
     init {
+        val map = MapELResolver(true)
+        val bean = BeanELResolver(true)
+        val json = JSONObjectELResolver(true)
         when {
             data is Map<*, *> && data.keys.all { it is String } -> {
-                @Suppress("UNCHECKED_CAST")
-                standardResolver.add(BeanNameELResolver(
-                        MapPropsNameResolver(data as MutableMap<String, Any?>)
-                ))
+                standardResolver.add(PropsELResolver(data, map))
+            }
+            data is JSONArray -> {
+                standardResolver.add(PropsELResolver(data, json))
             }
             data != null -> {
-                standardResolver.add(BeanNameELResolver(
-                        ObjPropsNameResolver(data)
-                ))
+                standardResolver.add(PropsELResolver(data, bean))
             }
         }
         expressionFactory.streamELResolver?.let { standardResolver.add(it) }
         standardResolver.add(StaticFieldELResolver())
-        standardResolver.add(MapELResolver(true))
+        standardResolver.add(map)
         standardResolver.add(ResourceBundleELResolver())
         standardResolver.add(ListELResolver(true))
         standardResolver.add(ArrayELResolver(true))
         standardResolver.add(BeanELResolver(true))
-        standardResolver.add(JSONObjectELResolver(true))
+        standardResolver.add(json)
         standardResolver.add(JSONArrayELResolver(true))
     }
 
