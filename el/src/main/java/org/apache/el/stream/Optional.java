@@ -16,8 +16,8 @@
  */
 package org.apache.el.stream;
 
-import com.guet.flexbox.el.ELException;
-import com.guet.flexbox.el.LambdaExpression;
+import com.luke.skywalker.el.ELException;
+import com.luke.skywalker.el.LambdaExpression;
 
 import org.apache.el.util.MessageFactory;
 
