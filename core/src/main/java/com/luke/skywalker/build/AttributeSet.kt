@@ -5,7 +5,7 @@ import com.facebook.litho.Component
 
 internal class AttributeSet<T : Component.Builder<*>> {
 
-    val values = HashMap<String, Mapping<T>>()
+    val values: (HashMap<String, Mapping<T>>) = HashMap()
 
     inline fun <reified V : Any> scopeAttr(
             name: String,

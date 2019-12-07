@@ -23,29 +23,26 @@ class PropsELContext(data: Any?) : ELContext() {
     private val standardResolver = CompositeELResolver()
 
     init {
-        val map = MapELResolver(true)
-        val bean = BeanELResolver(true)
-        val json = JSONObjectELResolver(true)
         when {
             data is Map<*, *> && data.keys.all { it is String } -> {
                 standardResolver.add(PropsELResolver(data, map))
             }
             data is JSONArray -> {
-                standardResolver.add(PropsELResolver(data, json))
+                standardResolver.add(PropsELResolver(data, jsonObject))
             }
             data != null -> {
                 standardResolver.add(PropsELResolver(data, bean))
             }
         }
         expressionFactory.streamELResolver?.let { standardResolver.add(it) }
-        standardResolver.add(StaticFieldELResolver())
+        standardResolver.add(staticField)
         standardResolver.add(map)
-        standardResolver.add(ResourceBundleELResolver())
-        standardResolver.add(ListELResolver(true))
-        standardResolver.add(ArrayELResolver(true))
-        standardResolver.add(BeanELResolver(true))
-        standardResolver.add(json)
-        standardResolver.add(JSONArrayELResolver(true))
+        standardResolver.add(resources)
+        standardResolver.add(list)
+        standardResolver.add(array)
+        standardResolver.add(bean)
+        standardResolver.add(jsonObject)
+        standardResolver.add(jsonArray)
     }
 
     override fun getELResolver(): ELResolver = standardResolver
@@ -229,6 +226,16 @@ class PropsELContext(data: Any?) : ELContext() {
     private annotation class Prefix(val value: String)
 
     private companion object {
+
+        private val array = ArrayELResolver(true)
+        private val bean = BeanELResolver(true)
+        private val map = MapELResolver(true)
+        private val list = ListELResolver(true)
+        private val jsonObject = JSONObjectELResolver(true)
+        private val jsonArray = JSONArrayELResolver(true)
+        private val staticField = StaticFieldELResolver()
+        private val resources = ResourceBundleELResolver()
+
 
         private val expressionFactory = ExpressionFactory.newInstance()
 

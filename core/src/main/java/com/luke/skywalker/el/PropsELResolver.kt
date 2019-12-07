@@ -43,7 +43,12 @@ class PropsELResolver(
         }
     }
 
-    override fun setValue(context: ELContext?, base: Any?, property: Any?, value: Any?) {
+    override fun setValue(
+            context: ELContext?,
+            base: Any?,
+            property: Any?,
+            value: Any?
+    ) {
         if (base == null) {
             adapt.setValue(context, props, property, value)
         }
