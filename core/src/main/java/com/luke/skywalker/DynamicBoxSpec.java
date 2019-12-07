@@ -53,7 +53,7 @@ final class DynamicBoxSpec {
         try {
             propsELContext.enterLambdaScope(
                     Collections.singletonMap(
-                            "sender", (Object) sender
+                            "sender", sender
                     )
             );
             lambda.invoke(propsELContext, text);
@@ -72,7 +72,7 @@ final class DynamicBoxSpec {
         try {
             propsELContext.enterLambdaScope(
                     Collections.singletonMap(
-                            "sender", (Object) sender
+                            "sender", sender
                     )
             );
             lambda.invoke(propsELContext);
@@ -91,7 +91,7 @@ final class DynamicBoxSpec {
         try {
             propsELContext.enterLambdaScope(
                     Collections.singletonMap(
-                            "sender", (Object) sender
+                            "sender", sender
                     )
             );
             lambda.invoke(propsELContext);
