@@ -4,7 +4,6 @@ import com.facebook.litho.Component
 import com.facebook.litho.ComponentContext
 import com.luke.skywalker.NodeInfo
 import com.luke.skywalker.el.PropsELContext
-import java.util.*
 
 internal object ForBehavior : Behavior() {
     override fun onApply(
@@ -18,7 +17,7 @@ internal object ForBehavior : Behavior() {
         val from = data.requestValue<Int>("from", attrs)
         val to = data.requestValue<Int>("to", attrs)
         return (from..to).map {
-            return@map data.scope(Collections.singletonMap(name, it)) {
+            return@map data.scope(mapOf(name to it)) {
                 children.map { item ->
                     data.inflate(c, item, upperVisibility)
                 }.flatten()

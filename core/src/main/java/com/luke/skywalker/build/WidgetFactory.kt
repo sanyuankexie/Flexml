@@ -8,6 +8,8 @@ import com.facebook.litho.Component
 import com.facebook.litho.ComponentContext
 import com.facebook.litho.drawable.ComparableColorDrawable
 import com.facebook.litho.drawable.ComparableDrawable
+import com.facebook.yoga.YogaAlign
+import com.facebook.yoga.YogaEdge
 import com.luke.skywalker.DynamicBox
 import com.luke.skywalker.NodeInfo
 import com.luke.skywalker.el.LambdaExpression
@@ -15,12 +17,22 @@ import com.luke.skywalker.el.PropsELContext
 import com.luke.skywalker.widget.AsyncLazyDrawable
 import com.luke.skywalker.widget.BackgroundDrawable
 import com.luke.skywalker.widget.NoOpDrawable
-import java.util.*
 
 @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
-internal abstract class WidgetFactory<T : Component.Builder<*>> : Mapper<T>(), Transform {
+internal abstract class WidgetFactory<T : Component.Builder<*>>(
+        vararg actions: AttributeSet<T>.() -> Unit
+) : Transform {
 
-    override val mappings by CommonMappings.newMappings<T>()
+    private val mappings = HashMap<String, Mapping<*>>()
+
+    init {
+        mappings.putAll(commonProps)
+        for (action in actions) {
+            val attrs = AttributeSet<T>()
+            attrs.action()
+            mappings.putAll(attrs.values)
+        }
+    }
 
     final override fun transform(
             c: ComponentContext,
@@ -30,10 +42,11 @@ internal abstract class WidgetFactory<T : Component.Builder<*>> : Mapper<T>(), T
     ): List<Component>? {
         val component = create(c, data, nodeInfo, upperVisibility)
         if (component != null) {
-            return Collections.singletonList(component)
+            return listOf(component)
         }
         return null
     }
+
 
     protected abstract fun onCreateWidget(
             c: ComponentContext,
@@ -66,7 +79,11 @@ internal abstract class WidgetFactory<T : Component.Builder<*>> : Mapper<T>(), T
                 owner.applyBackground(c, data, attrs)
             }
             for ((key, value) in attrs) {
-                mappings[key]?.invoke(owner, data, attrs, display, value)
+                if (key.isNotEmpty() && value.isNotEmpty()) {
+                    @Suppress("UNCHECKED_CAST")
+                    (mappings[key] as? Mapping<Component.Builder<*>>)
+                            ?.invoke(owner, data, attrs, display, value)
+                }
             }
         }
     }
@@ -182,6 +199,54 @@ internal abstract class WidgetFactory<T : Component.Builder<*>> : Mapper<T>(), T
     }
 
     private companion object {
+
+        internal val commonProps = AttributeSet<Component.Builder<*>>()
+                .apply {
+                    numberAttr<Double>("borderWidth") { _, _, it ->
+                        this.widthPx(it.toPx())
+                    }
+                    numberAttr<Double>("height") { _, _, it ->
+                        this.heightPx(it.toPx())
+                    }
+                    numberAttr<Float>("flexGrow") { _, _, it ->
+                        this.flexGrow(it)
+                    }
+                    numberAttr<Float>("flexShrink") { _, _, it ->
+                        this.flexShrink(it)
+                    }
+                    enumAttr("alignSelf",
+                            mapOf(
+                                    "auto" to YogaAlign.AUTO,
+                                    "flexStart" to YogaAlign.FLEX_START,
+                                    "flexEnd" to YogaAlign.FLEX_END,
+                                    "center" to YogaAlign.CENTER,
+                                    "baseline" to YogaAlign.BASELINE,
+                                    "stretch" to YogaAlign.STRETCH
+                            )
+                    ) { _, _, it ->
+                        this.alignSelf(it)
+                    }
+                    numberAttr<Double>("margin") { _, _, it ->
+                        this.marginPx(YogaEdge.ALL, it.toPx())
+                    }
+                    numberAttr<Double>("padding") { _, _, it ->
+                        this.paddingPx(YogaEdge.ALL, it.toPx())
+                    }
+                    val edges = arrayOf("Left", "Right", "Top", "Bottom")
+                    for (index in edges.indices) {
+                        val yogaEdge = YogaEdge.valueOf(edges[index].toUpperCase())
+                        numberAttr<Double>("margin" + edges[index]) { map, _, it ->
+                            if (!map.containsKey("margin")) {
+                                this.marginPx(yogaEdge, it.toPx())
+                            }
+                        }
+                        numberAttr<Double>("padding" + edges[index]) { map, _, it ->
+                            if (!map.containsKey("padding")) {
+                                this.paddingPx(yogaEdge, it.toPx())
+                            }
+                        }
+                    }
+                }.values
 
         @JvmStatic
         internal val visibilityValues = mapOf(

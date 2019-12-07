@@ -6,7 +6,17 @@ import com.facebook.litho.widget.HorizontalScroll
 import com.facebook.litho.widget.VerticalScroll
 import com.luke.skywalker.el.PropsELContext
 
-internal object ScrollerFactory : WidgetFactory<Component.Builder<*>>() {
+internal object ScrollerFactory : WidgetFactory<Component.Builder<*>>(
+        {
+            boolAttr("scrollBarEnable") { _, _, it ->
+                if (this is HorizontalScroll.Builder) {
+                    scrollbarEnabled(it)
+                } else if (this is VerticalScroll.Builder) {
+                    scrollbarEnabled(it)
+                }
+            }
+        }
+) {
 
     internal enum class Orientation {
         VERTICAL,
@@ -17,16 +27,6 @@ internal object ScrollerFactory : WidgetFactory<Component.Builder<*>>() {
             "vertical" to Orientation.VERTICAL,
             "horizontal" to Orientation.HORIZONTAL
     )
-
-    init {
-        boolAttr("scrollBarEnable") { _, _, it ->
-            if (this is HorizontalScroll.Builder) {
-                scrollbarEnabled(it)
-            } else if (this is VerticalScroll.Builder) {
-                scrollbarEnabled(it)
-            }
-        }
-    }
 
     override fun onCreateWidget(
             c: ComponentContext,

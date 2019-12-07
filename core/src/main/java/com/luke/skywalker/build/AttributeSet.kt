@@ -2,25 +2,18 @@ package com.luke.skywalker.build
 
 import android.graphics.Color
 import com.facebook.litho.Component
-import com.luke.skywalker.el.PropsELContext
 
-private typealias Mapping<T> = T.(PropsELContext, Map<String, String>, Boolean, String) -> Unit
+internal class AttributeSet<T : Component.Builder<*>> {
 
-private typealias Apply<T, V> = T.(Map<String, String>, Boolean, V) -> Unit
+    val values = HashMap<String, Mapping<T>>()
 
-internal typealias Mappings<T> = HashMap<String, Mapping<T>>
-
-internal abstract class Mapper<T : Component.Builder<*>> {
-
-    protected abstract val mappings: Mappings<T>
-
-    protected inline fun <reified V : Any> scopeAttr(
+    inline fun <reified V : Any> scopeAttr(
             name: String,
             scope: Map<String, V>,
             fallback: V,
             crossinline action: Apply<T, V>
     ) {
-        mappings[name] = { c, map, display, value ->
+        values[name] = { c, map, display, value ->
             action(map, display, if (value.isExpr) {
                 c.scope(scope) {
                     c.tryGetValue(value, fallback)
@@ -31,7 +24,7 @@ internal abstract class Mapper<T : Component.Builder<*>> {
         }
     }
 
-    protected inline fun <reified V : Enum<V>> enumAttr(
+    inline fun <reified V : Enum<V>> enumAttr(
             name: String,
             scope: Map<String, V>,
             fallback: V = enumValues<V>().first(),
@@ -40,20 +33,20 @@ internal abstract class Mapper<T : Component.Builder<*>> {
         scopeAttr(name, scope, fallback, action)
     }
 
-    protected inline fun textAttr(
+    inline fun textAttr(
             name: String,
             fallback: String = "",
             crossinline action: Apply<T, String>) {
-        mappings[name] = { c, map, display, value ->
+        values[name] = { c, map, display, value ->
             action(map, display, c.tryGetValue(value, fallback))
         }
     }
 
-    protected inline fun boolAttr(
+    inline fun boolAttr(
             name: String,
             fallback: Boolean = false,
             crossinline action: Apply<T, Boolean>) {
-        mappings[name] = { c, map, display, value ->
+        values[name] = { c, map, display, value ->
             action(map, display, if (value.isExpr) {
                 c.tryGetValue(value, fallback)
             } else {
@@ -66,28 +59,28 @@ internal abstract class Mapper<T : Component.Builder<*>> {
         }
     }
 
-    protected inline fun <reified N : Number> numberAttr(
+    inline fun <reified N : Number> numberAttr(
             name: String,
             crossinline action: Apply<T, N>) {
-        mappings[name] = { c, map, display, value ->
+        values[name] = { c, map, display, value ->
             action(map, display, c.tryGetValue(value, c.getValue("0")))
         }
     }
 
-    protected inline fun <reified N : Number> numberAttr(
+    inline fun <reified N : Number> numberAttr(
             name: String,
             fallback: N,
             crossinline action: Apply<T, N>) {
-        mappings[name] = { c, map, display, value ->
+        values[name] = { c, map, display, value ->
             action(map, display, c.tryGetValue(value, fallback))
         }
     }
 
-    protected inline fun colorAttr(
+    inline fun colorAttr(
             name: String,
             fallback: Int = Color.TRANSPARENT,
             crossinline action: Apply<T, Int>) {
-        mappings[name] = { c, map, display, value ->
+        values[name] = { c, map, display, value ->
             action(map, display, if (value.isExpr) {
                 c.tryGetColor(value, fallback)
             } else {

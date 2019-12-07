@@ -9,6 +9,11 @@ import android.graphics.drawable.GradientDrawable.Orientation
 import android.net.Uri
 import android.text.TextUtils
 import com.facebook.litho.drawable.ComparableGradientDrawable
+import com.luke.skywalker.el.PropsELContext
+
+internal typealias Mapping<T> = T.(PropsELContext, Map<String, String>, Boolean, String) -> Unit
+
+internal typealias Apply<T, V> = T.(Map<String, String>, Boolean, V) -> Unit
 
 private val orientations: Map<String, Orientation> = mapOf(
         "t2b" to Orientation.TOP_BOTTOM,
