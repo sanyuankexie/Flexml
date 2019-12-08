@@ -20,14 +20,16 @@ import com.luke.skywalker.widget.NoOpDrawable
 
 @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
 internal abstract class WidgetFactory<T : Component.Builder<*>>(
-        extraProps: Map<String, Mapping<T>>
+        extraProps: (Map<String, Mapping<T>>) = emptyMap()
 ) : Transform {
 
-    private val mappings = HashMap<String, Mapping<*>>()
+    private val mappings: Map<String, Mapping<*>>
 
     init {
+        val mappings = HashMap<String, Mapping<*>>()
         mappings.putAll(commonProps)
         mappings.putAll(extraProps)
+        this.mappings = mappings
     }
 
     final override fun transform(
@@ -77,8 +79,9 @@ internal abstract class WidgetFactory<T : Component.Builder<*>>(
             for ((key, value) in attrs) {
                 if (key.isNotEmpty() && value.isNotEmpty()) {
                     @Suppress("UNCHECKED_CAST")
-                    (mappings[key] as? Mapping<Component.Builder<*>>)
-                            ?.invoke(owner, data, attrs, display, value)
+                    (mappings[key] as? Mapping<Component.Builder<*>>)?.invoke(
+                            owner, data, attrs, display, value
+                    )
                 }
             }
         }
