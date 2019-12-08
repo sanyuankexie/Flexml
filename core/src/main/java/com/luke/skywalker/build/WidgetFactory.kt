@@ -20,18 +20,14 @@ import com.luke.skywalker.widget.NoOpDrawable
 
 @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
 internal abstract class WidgetFactory<T : Component.Builder<*>>(
-        vararg actions: AttributeSet<T>.() -> Unit
+        extraProps: Map<String, Mapping<T>>
 ) : Transform {
 
     private val mappings = HashMap<String, Mapping<*>>()
 
     init {
         mappings.putAll(commonProps)
-        for (action in actions) {
-            val attrs = AttributeSet<T>()
-            attrs.action()
-            mappings.putAll(attrs.values)
-        }
+        mappings.putAll(extraProps)
     }
 
     final override fun transform(
@@ -200,53 +196,52 @@ internal abstract class WidgetFactory<T : Component.Builder<*>>(
 
     private companion object {
 
-        internal val commonProps = AttributeSet<Component.Builder<*>>()
-                .apply {
-                    numberAttr<Double>("borderWidth") { _, _, it ->
-                        this.widthPx(it.toPx())
+        internal val commonProps = AttributeSet<Component.Builder<*>> {
+            numberAttr<Double>("borderWidth") { _, _, it ->
+                this.widthPx(it.toPx())
+            }
+            numberAttr<Double>("height") { _, _, it ->
+                this.heightPx(it.toPx())
+            }
+            numberAttr<Float>("flexGrow") { _, _, it ->
+                this.flexGrow(it)
+            }
+            numberAttr<Float>("flexShrink") { _, _, it ->
+                this.flexShrink(it)
+            }
+            enumAttr("alignSelf",
+                    mapOf(
+                            "auto" to YogaAlign.AUTO,
+                            "flexStart" to YogaAlign.FLEX_START,
+                            "flexEnd" to YogaAlign.FLEX_END,
+                            "center" to YogaAlign.CENTER,
+                            "baseline" to YogaAlign.BASELINE,
+                            "stretch" to YogaAlign.STRETCH
+                    )
+            ) { _, _, it ->
+                this.alignSelf(it)
+            }
+            numberAttr<Double>("margin") { _, _, it ->
+                this.marginPx(YogaEdge.ALL, it.toPx())
+            }
+            numberAttr<Double>("padding") { _, _, it ->
+                this.paddingPx(YogaEdge.ALL, it.toPx())
+            }
+            val edges = arrayOf("Left", "Right", "Top", "Bottom")
+            for (index in edges.indices) {
+                val yogaEdge = YogaEdge.valueOf(edges[index].toUpperCase())
+                numberAttr<Double>("margin" + edges[index]) { map, _, it ->
+                    if (!map.containsKey("margin")) {
+                        this.marginPx(yogaEdge, it.toPx())
                     }
-                    numberAttr<Double>("height") { _, _, it ->
-                        this.heightPx(it.toPx())
+                }
+                numberAttr<Double>("padding" + edges[index]) { map, _, it ->
+                    if (!map.containsKey("padding")) {
+                        this.paddingPx(yogaEdge, it.toPx())
                     }
-                    numberAttr<Float>("flexGrow") { _, _, it ->
-                        this.flexGrow(it)
-                    }
-                    numberAttr<Float>("flexShrink") { _, _, it ->
-                        this.flexShrink(it)
-                    }
-                    enumAttr("alignSelf",
-                            mapOf(
-                                    "auto" to YogaAlign.AUTO,
-                                    "flexStart" to YogaAlign.FLEX_START,
-                                    "flexEnd" to YogaAlign.FLEX_END,
-                                    "center" to YogaAlign.CENTER,
-                                    "baseline" to YogaAlign.BASELINE,
-                                    "stretch" to YogaAlign.STRETCH
-                            )
-                    ) { _, _, it ->
-                        this.alignSelf(it)
-                    }
-                    numberAttr<Double>("margin") { _, _, it ->
-                        this.marginPx(YogaEdge.ALL, it.toPx())
-                    }
-                    numberAttr<Double>("padding") { _, _, it ->
-                        this.paddingPx(YogaEdge.ALL, it.toPx())
-                    }
-                    val edges = arrayOf("Left", "Right", "Top", "Bottom")
-                    for (index in edges.indices) {
-                        val yogaEdge = YogaEdge.valueOf(edges[index].toUpperCase())
-                        numberAttr<Double>("margin" + edges[index]) { map, _, it ->
-                            if (!map.containsKey("margin")) {
-                                this.marginPx(yogaEdge, it.toPx())
-                            }
-                        }
-                        numberAttr<Double>("padding" + edges[index]) { map, _, it ->
-                            if (!map.containsKey("padding")) {
-                                this.paddingPx(yogaEdge, it.toPx())
-                            }
-                        }
-                    }
-                }.values
+                }
+            }
+        }
 
         @JvmStatic
         internal val visibilityValues = mapOf(

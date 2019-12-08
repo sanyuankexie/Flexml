@@ -5,11 +5,10 @@ import android.text.TextUtils
 import com.facebook.litho.ComponentContext
 import com.facebook.litho.widget.TextInput
 import com.luke.skywalker.DynamicBox
-import com.luke.skywalker.el.LambdaExpression
 import com.luke.skywalker.el.PropsELContext
 
 internal object TextInputFactory : WidgetFactory<TextInput.Builder>(
-        {
+        AttributeSet {
             numberAttr("maxLines", Int.MAX_VALUE) { _, _, it ->
                 this.maxLines(it)
             }
@@ -57,7 +56,7 @@ internal object TextInputFactory : WidgetFactory<TextInput.Builder>(
             visibility: Int
     ) {
         super.onLoadStyles(owner, c, data, attrs, visibility)
-        data.tryGetValue<LambdaExpression?>(attrs?.get("onTextChanged"), null)?.run {
+        data.tryGetLambda(attrs?.get("onTextChanged"))?.run {
             owner.textChangedEventHandler(DynamicBox.onTextChanged(c, this))
         }
     }

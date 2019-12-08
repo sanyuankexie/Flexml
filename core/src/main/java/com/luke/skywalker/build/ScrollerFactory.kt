@@ -7,7 +7,7 @@ import com.facebook.litho.widget.VerticalScroll
 import com.luke.skywalker.el.PropsELContext
 
 internal object ScrollerFactory : WidgetFactory<Component.Builder<*>>(
-        {
+        AttributeSet {
             boolAttr("scrollBarEnable") { _, _, it ->
                 if (this is HorizontalScroll.Builder) {
                     scrollbarEnabled(it)

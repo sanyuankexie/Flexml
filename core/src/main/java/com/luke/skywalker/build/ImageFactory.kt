@@ -7,7 +7,7 @@ import com.luke.skywalker.el.PropsELContext
 import com.luke.skywalker.widget.AsyncImage
 
 internal object ImageFactory : WidgetFactory<AsyncImage.Builder>(
-        {
+        AttributeSet {
             enumAttr("scaleType",
                     mapOf(
                             "center" to ImageView.ScaleType.CENTER,

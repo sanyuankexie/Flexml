@@ -11,7 +11,7 @@ import com.facebook.yoga.YogaWrap
 import com.luke.skywalker.el.PropsELContext
 
 internal object FlexFactory : WidgetFactory<Component.ContainerBuilder<*>>(
-        {
+        AttributeSet {
             enumAttr("flexWrap",
                     mapOf(
                             "wrap" to YogaWrap.WRAP,
@@ -111,5 +111,4 @@ internal object FlexFactory : WidgetFactory<Component.ContainerBuilder<*>>(
             owner.child(it)
         }
     }
-
 }

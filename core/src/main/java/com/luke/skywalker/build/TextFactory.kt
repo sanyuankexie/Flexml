@@ -12,7 +12,7 @@ import com.facebook.litho.widget.VerticalGravity
 import com.luke.skywalker.el.PropsELContext
 
 internal object TextFactory : WidgetFactory<Text.Builder>(
-        {
+        AttributeSet {
             enumAttr("verticalGravity", mapOf(
                     "top" to VerticalGravity.TOP,
                     "bottom" to VerticalGravity.BOTTOM,

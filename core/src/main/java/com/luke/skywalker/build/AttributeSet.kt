@@ -3,9 +3,9 @@ package com.luke.skywalker.build
 import android.graphics.Color
 import com.facebook.litho.Component
 
-internal class AttributeSet<T : Component.Builder<*>> {
+internal class AttributeSet<T : Component.Builder<*>> private constructor() {
 
-    val values: (HashMap<String, Mapping<T>>) = HashMap()
+    private val values = HashMap<String, Mapping<T>>()
 
     inline fun <reified V : Any> scopeAttr(
             name: String,
@@ -90,6 +90,14 @@ internal class AttributeSet<T : Component.Builder<*>> {
                     fallback
                 }
             })
+        }
+    }
+
+    internal companion object {
+        inline operator fun <T : Component.Builder<*>> invoke(
+                action: AttributeSet<T>.() -> Unit
+        ): Map<String, Mapping<T>> {
+            return AttributeSet<T>().apply(action).values
         }
     }
 }
