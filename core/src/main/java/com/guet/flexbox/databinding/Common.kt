@@ -65,7 +65,7 @@ internal object Common : Declaration() {
     ): List<LockedInfo> {
         val list = ArrayList<LockedInfo>(children.size)
         for (item in children) {
-            val b = DataBindingUtils.bind(c, item, data)
+            val b = DataBindingUtils.bind(c, item, data, selfVisibility)
             if (b != null) {
                 list.add(b)
             }

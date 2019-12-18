@@ -5,7 +5,7 @@ import android.graphics.Path
 import android.graphics.RectF
 import android.graphics.drawable.Drawable
 
-internal open class RoundedDrawable<T : Drawable>(
+internal open class ClipDrawable<T : Drawable>(
         drawable: T,
         var radius: Int = 0
 ) : DrawableWrapper<T>(drawable) {
@@ -15,16 +15,16 @@ internal open class RoundedDrawable<T : Drawable>(
 
     override fun draw(canvas: Canvas) {
         rectF.set(bounds)
-        val sc = canvas.saveLayer(rectF, null, Canvas.ALL_SAVE_FLAG)
-        path.apply {
-            reset()
-            addRoundRect(rectF, radius.toFloat(), radius.toFloat(), Path.Direction.CW)
-            close()
-        }
-        if (radius > 0) {
-            canvas.clipPath(path)
-        }
+//        val sc = canvas.saveLayer(rectF, null, Canvas.ALL_SAVE_FLAG)
+//        path.apply {
+//            reset()
+//            addRoundRect(rectF, radius.toFloat(), radius.toFloat(), Path.Direction.CW)
+//            close()
+//        }
+//        if (radius > 0) {
+//            canvas.clipPath(path)
+//        }
         wrappedDrawable.draw(canvas)
-        canvas.restoreToCount(sc)
+        //canvas.restoreToCount(sc)
     }
 }

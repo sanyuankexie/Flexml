@@ -9,7 +9,11 @@ internal class ValueAttribute(scope: Map<String, Double>, fallback: Double?)
         return if (raw.isExpr) {
             props.tryGetValue(raw, fallback)
         } else {
-            scope[raw] ?: fallback
+            scope[raw] ?: try {
+                raw.toDouble()
+            } catch (e: Exception) {
+                fallback
+            }
         }
     }
 }

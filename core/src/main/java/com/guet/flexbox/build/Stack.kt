@@ -20,7 +20,8 @@ internal object Stack : Widget<Component.ContainerBuilder<*>>(Common), ThreadFac
             this
     )
 
-    override val attributeSet: AttributeSet<Component.ContainerBuilder<*>> by lazyOf(emptyMap())
+    override val attributeSet: AttributeSet<Component.ContainerBuilder<*>>
+        get() = emptyMap()
 
     override fun onCreate(
             c: ComponentContext,
@@ -37,8 +38,8 @@ internal object Stack : Widget<Component.ContainerBuilder<*>>(Common), ThreadFac
         if (children.isEmpty()) {
             return
         }
-        var width = lockedInfo.attrs.getOrElse("width") { Int.MIN_VALUE } as Int
-        var height = lockedInfo.attrs.getOrElse("height") { Int.MIN_VALUE } as Int
+        var width = (lockedInfo.attrs.getOrElse("width") { Int.MIN_VALUE } as Number).toInt()
+        var height = (lockedInfo.attrs.getOrElse("height") { Int.MIN_VALUE } as Number).toInt()
         val wrappers = children.map {
             Row.create(owner.getContext())
                     .positionType(YogaPositionType.ABSOLUTE)

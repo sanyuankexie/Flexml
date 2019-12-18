@@ -85,8 +85,8 @@ object DataBindingUtils {
             "Flex" to Flex,
             "Image" to Image,
             "Scroller" to Scroller,
+            "TextInput" to AbstractText,
             "Text" to Text,
-            "TextInput" to TextInput,
             "for" to For,
             "foreach" to ForEach,
             "if" to If

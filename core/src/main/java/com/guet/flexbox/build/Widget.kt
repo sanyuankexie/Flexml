@@ -46,8 +46,8 @@ internal abstract class Widget<C : Component.Builder<*>>(private val parent: Wid
     }
 
     private fun createBackground(c: C, attrs: Map<String, Any>) {
-        val borderRadius = (attrs.getOrElse("borderRadius") { 0 } as Double).toPx()
-        val borderWidth = (attrs.getOrElse("borderWidth") { 0 } as Double).toPx()
+        val borderRadius = (attrs.getOrElse("borderRadius") { 0 } as Number).toPx()
+        val borderWidth = (attrs.getOrElse("borderWidth") { 0 } as Number).toPx()
         val borderColor = attrs.getOrElse("borderColor") { Color.TRANSPARENT } as Int
         var backgroundDrawable: ComparableDrawable? = null
         val background = attrs["background"] as? String

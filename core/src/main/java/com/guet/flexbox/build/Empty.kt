@@ -6,7 +6,8 @@ import com.guet.flexbox.data.LockedInfo
 
 internal object Empty : Widget<EmptyComponent.Builder>(Common) {
 
-    override val attributeSet: AttributeSet<EmptyComponent.Builder> by lazyOf(emptyMap())
+    override val attributeSet: AttributeSet<EmptyComponent.Builder>
+        get() = emptyMap()
 
     override fun onCreate(c: ComponentContext, lockedInfo: LockedInfo): EmptyComponent.Builder {
         return EmptyComponent.create(c)

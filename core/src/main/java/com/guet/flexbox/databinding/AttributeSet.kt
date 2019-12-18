@@ -7,7 +7,7 @@ internal inline val CharSequence.isExpr: Boolean
 
 internal typealias AttributeSet = Map<String, AttributeInfo<*>>
 
-internal inline fun create(crossinline a: AttributeSet.() -> Unit): Lazy<AttributeSet> {
+internal inline fun create(crossinline a: HashMap<String, AttributeInfo<*>>.() -> Unit): Lazy<AttributeSet> {
     return lazy {
         HashMap<String, AttributeInfo<*>>().apply(a)
     }

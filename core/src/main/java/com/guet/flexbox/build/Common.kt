@@ -19,6 +19,11 @@ internal object Common : Widget<Component.Builder<*>>() {
                 heightPx(value.toPx())
             }
         }
+        this["flexGrow"] = object : Assignment<Component.Builder<*>, Double>() {
+            override fun Component.Builder<*>.assign(display: Boolean, other: Map<String, Any>, value: Double) {
+                flexGrow(value.toFloat())
+            }
+        }
         this["flexShrink"] = object : Assignment<Component.Builder<*>, Double>() {
             override fun Component.Builder<*>.assign(display: Boolean, other: Map<String, Any>, value: Double) {
                 flexShrink(value.toFloat())

@@ -38,6 +38,9 @@ class AssetDisplay(
                 ), singletonMap("url", it))
                 input.close()
                 lockedInfo
+            }.toMutableList()
+            (0..100).forEach { _ ->
+                feed.add(feed[0])
             }
             val functionPath = res.getString(R.string.function_path)
             val input = assets.open(functionPath)

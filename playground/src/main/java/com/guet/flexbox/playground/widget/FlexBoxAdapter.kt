@@ -16,8 +16,12 @@ class FlexBoxAdapter : BaseQuickAdapter<LockedInfo, BaseViewHolder>(R.layout.fee
 
     var onClickListener: ((String) -> Unit)? = null
 
+    init {
+        closeLoadAnimation()
+    }
+
     override fun convert(helper: BaseViewHolder, item: LockedInfo) {
-        val lithoView = helper.itemView as LithoView
+        val lithoView = helper.getView<LithoView>(R.id.litho)
         val c = lithoView.componentContext
         lithoView.setComponentAsync(Row.create(c)
                 .alignItems(YogaAlign.CENTER)

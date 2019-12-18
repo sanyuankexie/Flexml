@@ -14,7 +14,8 @@ internal object Native : Widget<ViewCompatComponent.Builder<View>>(Common) {
 
     private val viewTypeCache = HashMap<Class<*>, ReflectViewCreator>(32)
 
-    override val attributeSet: AttributeSet<ViewCompatComponent.Builder<View>> by lazyOf(emptyMap())
+    override val attributeSet: AttributeSet<ViewCompatComponent.Builder<View>>
+        get() = emptyMap()
 
     override fun onCreate(c: ComponentContext, lockedInfo: LockedInfo): ViewCompatComponent.Builder<View> {
         val type = Class.forName(lockedInfo.attrs.getValue("type") as String)
