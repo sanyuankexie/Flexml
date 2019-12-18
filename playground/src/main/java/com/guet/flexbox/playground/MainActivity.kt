@@ -15,7 +15,7 @@ import com.facebook.litho.Row
 import com.facebook.yoga.YogaAlign
 import com.facebook.yoga.YogaJustify
 import com.guet.flexbox.DynamicBox
-import com.guet.flexbox.data.LockedInfo
+import com.guet.flexbox.data.RenderNode
 import com.guet.flexbox.playground.widget.BannerHolder
 import com.guet.flexbox.playground.widget.FlexBoxAdapter
 import com.guet.flexbox.playground.widget.PullToRefreshLayout
@@ -32,7 +32,7 @@ class MainActivity : AppCompatActivity() {
     private val loaded = AtomicBoolean(false)
     private lateinit var pullToRefresh: PullToRefreshLayout
     private lateinit var floatToolbar: LinearLayout
-    private lateinit var banner: MZBannerView<LockedInfo>
+    private lateinit var banner: MZBannerView<RenderNode>
     private lateinit var feed: RecyclerView
     private lateinit var function: LithoView
 

@@ -10,7 +10,7 @@ import com.facebook.yoga.YogaJustify
 import com.google.gson.Gson
 import com.guet.flexbox.DynamicBox
 import com.guet.flexbox.compiler.Compiler
-import com.guet.flexbox.data.NodeInfo
+import com.guet.flexbox.data.LayoutNode
 import com.guet.flexbox.databinding.DataBindingUtils
 import io.github.kbiakov.codeview.CodeView
 import io.github.kbiakov.codeview.adapters.Options
@@ -43,7 +43,7 @@ class CodeActivity : AppCompatActivity() {
             val code = input.reader().readText()
             val data = Collections.singletonMap("url", url)
             val s = Compiler.compile(input)
-            val contentRaw = gson.fromJson(s, NodeInfo::class.java)
+            val contentRaw = gson.fromJson(s, LayoutNode::class.java)
             val content = DataBindingUtils.bind(this, contentRaw, data)
             runOnUiThread {
                 val c = lithoView.componentContext

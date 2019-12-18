@@ -4,7 +4,7 @@ import com.facebook.litho.Component
 import com.facebook.litho.ComponentContext
 import com.facebook.yoga.YogaAlign
 import com.facebook.yoga.YogaEdge
-import com.guet.flexbox.data.LockedInfo
+import com.guet.flexbox.data.RenderNode
 
 internal object Common : Widget<Component.Builder<*>>() {
 
@@ -59,7 +59,7 @@ internal object Common : Widget<Component.Builder<*>>() {
         }
     }
 
-    override fun onCreate(c: ComponentContext, lockedInfo: LockedInfo): Component.Builder<*> {
+    override fun onCreate(c: ComponentContext, renderNode: RenderNode): Component.Builder<*> {
         throw UnsupportedOperationException()
     }
 }

@@ -7,7 +7,7 @@ import com.facebook.litho.ComponentContext
 import com.facebook.litho.ViewCompatComponent
 import com.facebook.litho.viewcompat.ViewBinder
 import com.facebook.litho.viewcompat.ViewCreator
-import com.guet.flexbox.data.LockedInfo
+import com.guet.flexbox.data.RenderNode
 import java.lang.reflect.Constructor
 
 internal object Native : Widget<ViewCompatComponent.Builder<View>>(Common) {
@@ -17,8 +17,8 @@ internal object Native : Widget<ViewCompatComponent.Builder<View>>(Common) {
     override val attributeSet: AttributeSet<ViewCompatComponent.Builder<View>>
         get() = emptyMap()
 
-    override fun onCreate(c: ComponentContext, lockedInfo: LockedInfo): ViewCompatComponent.Builder<View> {
-        val type = Class.forName(lockedInfo.attrs.getValue("type") as String)
+    override fun onCreate(c: ComponentContext, renderNode: RenderNode): ViewCompatComponent.Builder<View> {
+        val type = Class.forName(renderNode.attrs.getValue("type") as String)
         if (!View::class.java.isAssignableFrom(type)) {
             throw IllegalStateException("$type is not as 'View' type")
         }
@@ -28,7 +28,7 @@ internal object Native : Widget<ViewCompatComponent.Builder<View>>(Common) {
         return ViewCompatComponent.get(creator, type.simpleName)
                 .create(c)
                 .apply {
-                    viewBinder(if (lockedInfo.attrs["visibility"] == View.VISIBLE) {
+                    viewBinder(if (renderNode.attrs["visibility"] == View.VISIBLE) {
                         Visibility.VISIBLE
                     } else {
                         Visibility.GONE

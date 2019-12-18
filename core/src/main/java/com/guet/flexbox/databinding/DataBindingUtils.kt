@@ -2,8 +2,8 @@ package com.guet.flexbox.databinding
 
 import android.content.Context
 import androidx.annotation.WorkerThread
-import com.guet.flexbox.data.LockedInfo
-import com.guet.flexbox.data.NodeInfo
+import com.guet.flexbox.data.RenderNode
+import com.guet.flexbox.data.LayoutNode
 import com.guet.flexbox.data.Visibility
 import com.guet.flexbox.el.PropsELContext
 
@@ -11,23 +11,23 @@ object DataBindingUtils {
 
     @WorkerThread
     @JvmStatic
-    fun bind(c: Context, nodeInfo: NodeInfo, data: Any?): LockedInfo {
-        return bind(c, nodeInfo, PropsELContext(data), true)!!
+    fun bind(c: Context, layoutNode: LayoutNode, data: Any?): RenderNode {
+        return bind(c, layoutNode, PropsELContext(data), true)!!
     }
 
     internal fun bind(
             c: Context,
-            nodeInfo: NodeInfo,
+            layoutNode: LayoutNode,
             data: PropsELContext,
             upperVisibility: Boolean
-    ): LockedInfo? {
-        val type = nodeInfo.type
+    ): RenderNode? {
+        val type = layoutNode.type
         var visibility = true
         val declaration = declarations[type]
         if (declaration != null) {
-            val values = if (nodeInfo.attrs != null) {
-                val map = HashMap<String, Any>(nodeInfo.attrs.size)
-                for ((key, raw) in nodeInfo.attrs) {
+            val values = if (layoutNode.attrs != null) {
+                val map = HashMap<String, Any>(layoutNode.attrs.size)
+                for ((key, raw) in layoutNode.attrs) {
                     val result = declaration[key]?.cast(c, data, raw)
                     if (result != null) {
                         if (key == "visibility") {
@@ -49,21 +49,21 @@ object DataBindingUtils {
                 emptyMap<String, Any>()
             }
             val selfVisibility = visibility && upperVisibility
-            val children = checkList(nodeInfo.children) {
+            val children = checkList(layoutNode.children) {
                 declaration.transform(c, values, data, it, selfVisibility)
             }
-            return LockedInfo(
+            return RenderNode(
                     type,
                     values,
                     selfVisibility,
                     children
             )
         } else {
-            return LockedInfo(
+            return RenderNode(
                     type,
                     emptyMap(),
                     true,
-                    checkList(nodeInfo.children) {
+                    checkList(layoutNode.children) {
                         Common.transform(c, emptyMap(), data, it, true)
                     }
             )
@@ -71,9 +71,9 @@ object DataBindingUtils {
     }
 
     private inline fun checkList(
-            list: List<NodeInfo>?,
-            action: (List<NodeInfo>) -> List<LockedInfo>
-    ): List<LockedInfo> {
+            list: List<LayoutNode>?,
+            action: (List<LayoutNode>) -> List<RenderNode>
+    ): List<RenderNode> {
         return if (list.isNullOrEmpty()) {
             emptyList()
         } else {

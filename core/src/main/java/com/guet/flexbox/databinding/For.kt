@@ -1,8 +1,8 @@
 package com.guet.flexbox.databinding
 
 import android.content.Context
-import com.guet.flexbox.data.LockedInfo
-import com.guet.flexbox.data.NodeInfo
+import com.guet.flexbox.data.RenderNode
+import com.guet.flexbox.data.LayoutNode
 import com.guet.flexbox.el.PropsELContext
 
 internal object For : Declaration() {
@@ -16,9 +16,9 @@ internal object For : Declaration() {
             c: Context,
             attrs: Map<String, Any>,
             data: PropsELContext,
-            children: List<NodeInfo>,
+            children: List<LayoutNode>,
             selfVisibility: Boolean
-    ): List<LockedInfo> {
+    ): List<RenderNode> {
         val name = attrs.getValue("var") as String
         val from = (attrs.getValue("from") as Double).toInt()
         val to = (attrs.getValue("to") as Double).toInt()

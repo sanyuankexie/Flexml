@@ -4,7 +4,7 @@ import com.facebook.litho.Component
 import com.facebook.litho.ComponentContext
 import com.facebook.litho.widget.HorizontalScroll
 import com.facebook.litho.widget.VerticalScroll
-import com.guet.flexbox.data.LockedInfo
+import com.guet.flexbox.data.RenderNode
 import com.guet.flexbox.data.Orientation
 
 internal object Scroller : Widget<Component.Builder<*>>(Common) {
@@ -21,8 +21,8 @@ internal object Scroller : Widget<Component.Builder<*>>(Common) {
         }
     }
 
-    override fun onCreate(c: ComponentContext, lockedInfo: LockedInfo): Component.Builder<*> {
-        return when (lockedInfo.attrs.getOrElse("orientation") { Orientation.HORIZONTAL }) {
+    override fun onCreate(c: ComponentContext, renderNode: RenderNode): Component.Builder<*> {
+        return when (renderNode.attrs.getOrElse("orientation") { Orientation.HORIZONTAL }) {
             Orientation.HORIZONTAL -> {
                 HorizontalScroll.create(c)
             }
@@ -32,7 +32,7 @@ internal object Scroller : Widget<Component.Builder<*>>(Common) {
         }
     }
 
-    override fun onInstallChildren(owner: Component.Builder<*>, lockedInfo: LockedInfo, children: List<Component>) {
+    override fun onInstallChildren(owner: Component.Builder<*>, renderNode: RenderNode, children: List<Component>) {
         if (children.isNotEmpty()) {
             if (owner is HorizontalScroll.Builder) {
                 owner.contentProps(children.single())

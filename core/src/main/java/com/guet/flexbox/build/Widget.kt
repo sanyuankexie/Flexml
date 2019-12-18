@@ -5,7 +5,7 @@ import android.graphics.drawable.Drawable
 import com.facebook.litho.Component
 import com.facebook.litho.ComponentContext
 import com.facebook.litho.drawable.ComparableColorDrawable
-import com.guet.flexbox.data.LockedInfo
+import com.guet.flexbox.data.RenderNode
 import com.guet.flexbox.widget.AsyncLazyDrawable
 import com.guet.flexbox.widget.BackgroundDrawable
 import com.guet.flexbox.widget.NoOpDrawable
@@ -33,15 +33,15 @@ internal abstract class Widget<C : Component.Builder<*>>(private val parent: Wid
 
     fun create(
             c: ComponentContext,
-            lockedInfo: LockedInfo,
+            renderNode: RenderNode,
             children: List<Component>
     ): Component {
-        val com = onCreate(c, lockedInfo)
-        for ((key, value) in lockedInfo.attrs) {
-            assign(com, key, value, lockedInfo.visibility, lockedInfo.attrs)
+        val com = onCreate(c, renderNode)
+        for ((key, value) in renderNode.attrs) {
+            assign(com, key, value, renderNode.visibility, renderNode.attrs)
         }
-        createBackground(com, lockedInfo.attrs)
-        onInstallChildren(com, lockedInfo, children)
+        createBackground(com, renderNode.attrs)
+        onInstallChildren(com, renderNode, children)
         return com.build()
     }
 
@@ -82,13 +82,13 @@ internal abstract class Widget<C : Component.Builder<*>>(private val parent: Wid
 
     protected open fun onInstallChildren(
             owner: C,
-            lockedInfo: LockedInfo,
+            renderNode: RenderNode,
             children: List<Component>
     ) {
     }
 
     protected abstract fun onCreate(
             c: ComponentContext,
-            lockedInfo: LockedInfo
+            renderNode: RenderNode
     ): C
 }

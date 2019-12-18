@@ -8,11 +8,11 @@ import com.facebook.yoga.YogaAlign
 import com.facebook.yoga.YogaJustify
 import com.guet.flexbox.DynamicBox
 import com.guet.flexbox.EventListener
-import com.guet.flexbox.data.LockedInfo
+import com.guet.flexbox.data.RenderNode
 import com.guet.flexbox.playground.R
 
 
-class FlexBoxAdapter : BaseQuickAdapter<LockedInfo, BaseViewHolder>(R.layout.feed_item), EventListener {
+class FlexBoxAdapter : BaseQuickAdapter<RenderNode, BaseViewHolder>(R.layout.feed_item), EventListener {
 
     var onClickListener: ((String) -> Unit)? = null
 
@@ -20,7 +20,7 @@ class FlexBoxAdapter : BaseQuickAdapter<LockedInfo, BaseViewHolder>(R.layout.fee
         closeLoadAnimation()
     }
 
-    override fun convert(helper: BaseViewHolder, item: LockedInfo) {
+    override fun convert(helper: BaseViewHolder, item: RenderNode) {
         val lithoView = helper.getView<LithoView>(R.id.litho)
         val c = lithoView.componentContext
         lithoView.setComponentAsync(Row.create(c)

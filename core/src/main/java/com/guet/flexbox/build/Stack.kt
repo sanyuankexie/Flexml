@@ -4,7 +4,7 @@ import androidx.core.math.MathUtils
 import com.facebook.litho.*
 import com.facebook.yoga.YogaEdge
 import com.facebook.yoga.YogaPositionType
-import com.guet.flexbox.data.LockedInfo
+import com.guet.flexbox.data.RenderNode
 import java.util.concurrent.Executors
 import java.util.concurrent.Future
 import java.util.concurrent.ThreadFactory
@@ -25,21 +25,21 @@ internal object Stack : Widget<Component.ContainerBuilder<*>>(Common), ThreadFac
 
     override fun onCreate(
             c: ComponentContext,
-            lockedInfo: LockedInfo
+            renderNode: RenderNode
     ): Component.ContainerBuilder<*> {
         return Row.create(c)
     }
 
     override fun onInstallChildren(
             owner: Component.ContainerBuilder<*>,
-            lockedInfo: LockedInfo,
+            renderNode: RenderNode,
             children: List<Component>
     ) {
         if (children.isEmpty()) {
             return
         }
-        var width = (lockedInfo.attrs.getOrElse("width") { Int.MIN_VALUE } as Number).toInt()
-        var height = (lockedInfo.attrs.getOrElse("height") { Int.MIN_VALUE } as Number).toInt()
+        var width = (renderNode.attrs.getOrElse("width") { Int.MIN_VALUE } as Number).toInt()
+        var height = (renderNode.attrs.getOrElse("height") { Int.MIN_VALUE } as Number).toInt()
         val wrappers = children.map {
             Row.create(owner.getContext())
                     .positionType(YogaPositionType.ABSOLUTE)

@@ -4,7 +4,7 @@ import android.graphics.Typeface
 import android.text.TextUtils.TruncateAt
 import com.facebook.litho.ComponentContext
 import com.facebook.litho.widget.TextInput
-import com.guet.flexbox.data.LockedInfo
+import com.guet.flexbox.data.RenderNode
 
 internal object TextInput : Widget<TextInput.Builder>(Common) {
     override val attributeSet: AttributeSet<TextInput.Builder> by create {
@@ -35,7 +35,7 @@ internal object TextInput : Widget<TextInput.Builder>(Common) {
         }
     }
 
-    override fun onCreate(c: ComponentContext, lockedInfo: LockedInfo): TextInput.Builder {
+    override fun onCreate(c: ComponentContext, renderNode: RenderNode): TextInput.Builder {
         return TextInput.create(c)
     }
 }

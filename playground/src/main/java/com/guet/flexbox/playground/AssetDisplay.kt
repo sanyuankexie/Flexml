@@ -4,15 +4,15 @@ import android.content.Context
 import androidx.annotation.WorkerThread
 import com.google.gson.Gson
 import com.guet.flexbox.compiler.Compiler
-import com.guet.flexbox.data.LockedInfo
-import com.guet.flexbox.data.NodeInfo
+import com.guet.flexbox.data.RenderNode
+import com.guet.flexbox.data.LayoutNode
 import com.guet.flexbox.databinding.DataBindingUtils
 import java.util.Collections.singletonMap
 
 class AssetDisplay(
-        val banner: List<LockedInfo>,
-        val function: LockedInfo,
-        val feed: List<LockedInfo>
+        val banner: List<RenderNode>,
+        val function: RenderNode,
+        val feed: List<RenderNode>
 ) {
     companion object Default {
         @JvmStatic
@@ -25,7 +25,7 @@ class AssetDisplay(
                 val input = assets.open(it)
                 val lockedInfo = DataBindingUtils.bind(c, gson.fromJson(
                         Compiler.compile(input),
-                        NodeInfo::class.java
+                        LayoutNode::class.java
                 ), singletonMap("url", it))
                 input.close()
                 lockedInfo
@@ -34,7 +34,7 @@ class AssetDisplay(
                 val input = assets.open(it)
                 val lockedInfo = DataBindingUtils.bind(c, gson.fromJson(
                         Compiler.compile(input),
-                        NodeInfo::class.java
+                        LayoutNode::class.java
                 ), singletonMap("url", it))
                 input.close()
                 lockedInfo
@@ -46,7 +46,7 @@ class AssetDisplay(
             val input = assets.open(functionPath)
             val function = DataBindingUtils.bind(c, gson.fromJson(
                     Compiler.compile(input),
-                    NodeInfo::class.java
+                    LayoutNode::class.java
             ), singletonMap("url", functionPath))
             input.close()
             return AssetDisplay(banner, function, feed)

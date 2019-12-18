@@ -2,7 +2,7 @@ package com.guet.flexbox.build
 
 import android.widget.ImageView.ScaleType
 import com.facebook.litho.ComponentContext
-import com.guet.flexbox.data.LockedInfo
+import com.guet.flexbox.data.RenderNode
 import com.guet.flexbox.widget.AsyncImage
 
 internal object Image : Widget<AsyncImage.Builder>(Common) {
@@ -47,7 +47,7 @@ internal object Image : Widget<AsyncImage.Builder>(Common) {
         }
     }
 
-    override fun onCreate(c: ComponentContext, lockedInfo: LockedInfo): AsyncImage.Builder {
+    override fun onCreate(c: ComponentContext, renderNode: RenderNode): AsyncImage.Builder {
         return AsyncImage.create(c)
     }
 }

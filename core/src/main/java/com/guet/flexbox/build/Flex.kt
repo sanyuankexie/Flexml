@@ -8,7 +8,7 @@ import com.facebook.yoga.YogaAlign
 import com.facebook.yoga.YogaFlexDirection
 import com.facebook.yoga.YogaJustify
 import com.facebook.yoga.YogaWrap
-import com.guet.flexbox.data.LockedInfo
+import com.guet.flexbox.data.RenderNode
 
 internal object Flex : Widget<Component.ContainerBuilder<*>>(Common) {
 
@@ -37,10 +37,10 @@ internal object Flex : Widget<Component.ContainerBuilder<*>>(Common) {
 
     override fun onCreate(
             c: ComponentContext,
-            lockedInfo: LockedInfo
+            renderNode: RenderNode
     ): Component.ContainerBuilder<*> {
         val component: Component.ContainerBuilder<*>
-        when (lockedInfo.attrs.getOrElse("flexDirection") { YogaFlexDirection.ROW }) {
+        when (renderNode.attrs.getOrElse("flexDirection") { YogaFlexDirection.ROW }) {
             YogaFlexDirection.COLUMN -> {
                 component = Column.create(c)
             }
@@ -61,7 +61,7 @@ internal object Flex : Widget<Component.ContainerBuilder<*>>(Common) {
 
     override fun onInstallChildren(
             owner: Component.ContainerBuilder<*>,
-            lockedInfo: LockedInfo,
+            renderNode: RenderNode,
             children: List<Component>
     ) {
         children.forEach {

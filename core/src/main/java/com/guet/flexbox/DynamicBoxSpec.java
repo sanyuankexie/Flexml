@@ -15,7 +15,7 @@ import com.facebook.litho.annotations.Param;
 import com.facebook.litho.annotations.Prop;
 import com.facebook.litho.widget.TextChangedEvent;
 import com.guet.flexbox.build.Inflater;
-import com.guet.flexbox.data.LockedInfo;
+import com.guet.flexbox.data.RenderNode;
 import com.guet.flexbox.el.LambdaExpression;
 
 @LayoutSpec
@@ -26,7 +26,7 @@ final class DynamicBoxSpec {
     @OnCreateLayout
     static Component onCreateLayout(
             ComponentContext c,
-            @Prop LockedInfo content
+            @Prop RenderNode content
     ) {
         Log.i(TAG, "onCreateLayout: " + Thread.currentThread().getName());
         return Inflater.INSTANCE.inflate(c, content);

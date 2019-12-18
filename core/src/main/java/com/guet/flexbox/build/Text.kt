@@ -8,7 +8,7 @@ import android.text.TextUtils.TruncateAt
 import com.facebook.litho.ComponentContext
 import com.facebook.litho.widget.Text
 import com.facebook.litho.widget.VerticalGravity
-import com.guet.flexbox.data.LockedInfo
+import com.guet.flexbox.data.RenderNode
 
 internal object Text : Widget<Text.Builder>(Common) {
 
@@ -76,7 +76,7 @@ internal object Text : Widget<Text.Builder>(Common) {
         }
     }
 
-    override fun onCreate(c: ComponentContext, lockedInfo: LockedInfo): Text.Builder {
+    override fun onCreate(c: ComponentContext, renderNode: RenderNode): Text.Builder {
         return Text.create(c)
     }
 }

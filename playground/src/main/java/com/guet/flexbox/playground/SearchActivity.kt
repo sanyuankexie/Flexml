@@ -30,7 +30,7 @@ import com.google.gson.Gson
 import com.guet.flexbox.DynamicBox
 import com.guet.flexbox.EventListener
 import com.guet.flexbox.compiler.Compiler
-import com.guet.flexbox.data.NodeInfo
+import com.guet.flexbox.data.LayoutNode
 import com.guet.flexbox.databinding.DataBindingUtils
 import java.util.*
 import kotlin.collections.HashSet
@@ -135,7 +135,7 @@ class SearchActivity : AppCompatActivity(), EventListener {
             val gson = Gson()
             val input = resources.assets.open("layout/search/history_list.xml")
             val s = Compiler.compile(input)
-            val contentRaw = gson.fromJson(s, NodeInfo::class.java)
+            val contentRaw = gson.fromJson(s, LayoutNode::class.java)
             val data = Collections.singletonMap(
                     "list",
                     sharedPreferences.getStringSet(

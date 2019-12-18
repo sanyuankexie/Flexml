@@ -2,15 +2,15 @@ package com.guet.flexbox.build
 
 import com.facebook.litho.Component
 import com.facebook.litho.ComponentContext
-import com.guet.flexbox.data.LockedInfo
+import com.guet.flexbox.data.RenderNode
 
 object Inflater {
 
-    fun inflate(c: ComponentContext, lockedInfo: LockedInfo): Component? {
-        return widgets[lockedInfo.type]?.create(
+    fun inflate(c: ComponentContext, renderNode: RenderNode): Component? {
+        return widgets[renderNode.type]?.create(
                 c,
-                lockedInfo,
-                lockedInfo.children.mapNotNull {
+                renderNode,
+                renderNode.children.mapNotNull {
                     inflate(c, it)
                 }
         )

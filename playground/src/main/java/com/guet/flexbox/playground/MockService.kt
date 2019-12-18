@@ -1,6 +1,6 @@
 package com.guet.flexbox.playground
 
-import com.guet.flexbox.data.NodeInfo
+import com.guet.flexbox.data.LayoutNode
 import retrofit2.Call
 import retrofit2.http.GET
 
@@ -9,5 +9,5 @@ interface MockService {
     fun data(): Call<Map<String, Any>>
 
     @GET("/layout")
-    fun layout(): Call<NodeInfo>
+    fun layout(): Call<LayoutNode>
 }

@@ -6,15 +6,15 @@ import com.facebook.litho.LithoView
 import com.facebook.litho.Row
 import com.guet.flexbox.DynamicBox
 import com.guet.flexbox.EventListener
-import com.guet.flexbox.data.LockedInfo
+import com.guet.flexbox.data.RenderNode
 import com.zhouwei.mzbanner.holder.MZViewHolder
 
 class BannerHolder(private val onClickListener: ((String) -> Unit))
-    : MZViewHolder<LockedInfo>, EventListener {
+    : MZViewHolder<RenderNode>, EventListener {
 
     private lateinit var lithoView: LithoView
 
-    override fun onBind(p0: Context?, p1: Int, item: LockedInfo) {
+    override fun onBind(p0: Context?, p1: Int, item: RenderNode) {
         val c = lithoView.componentContext
         lithoView.setComponentAsync(Row.create(c)
                 .flexGrow(1f)
