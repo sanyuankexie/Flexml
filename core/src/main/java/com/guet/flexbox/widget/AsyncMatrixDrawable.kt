@@ -13,11 +13,12 @@ import com.bumptech.glide.request.target.Target
 import com.bumptech.glide.request.transition.Transition
 import com.facebook.litho.DrawableMatrix
 import com.facebook.litho.Touchable
-import com.facebook.litho.drawable.ComparableDrawable
 
 internal class AsyncMatrixDrawable(
         private val c: Context
-) : BorderDrawable<MatrixDrawable>(MatrixDrawable()), Touchable, Target<Drawable> by DelegateTarget() {
+) : BorderDrawable<MatrixDrawable>(MatrixDrawable()),
+        Touchable,
+        Target<Drawable> by DelegateTarget() {
 
     private var width: Int = 0
     private var height: Int = 0
@@ -41,7 +42,7 @@ internal class AsyncMatrixDrawable(
         this.borderColor = borderColor
         this.scaleType = scaleType
         when (val model = parseUrl(c, url)) {
-            is ComparableDrawable -> {
+            is Drawable -> {
                 notifyChanged(scaleType, model)
             }
             is CharSequence, is Int -> {

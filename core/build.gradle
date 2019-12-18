@@ -40,11 +40,12 @@ dependencies {
     implementation project(':el')
     implementation project(':beans')
 
-    api 'com.facebook.litho:litho-core:0.32.0'
-    api 'com.facebook.litho:litho-widget:0.32.0'
+
+    api 'com.facebook.litho:litho-core:0.33.0'
+    api 'com.facebook.litho:litho-widget:0.33.0'
     api 'com.facebook.soloader:soloader:0.5.1'
 
-    kapt 'com.facebook.litho:litho-processor:0.32.0'
+    kapt 'com.facebook.litho:litho-processor:0.33.0'
 
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'androidx.test:runner:1.2.0'

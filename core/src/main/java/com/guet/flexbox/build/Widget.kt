@@ -1,10 +1,10 @@
 package com.guet.flexbox.build
 
 import android.graphics.Color
+import android.graphics.drawable.Drawable
 import com.facebook.litho.Component
 import com.facebook.litho.ComponentContext
 import com.facebook.litho.drawable.ComparableColorDrawable
-import com.facebook.litho.drawable.ComparableDrawable
 import com.guet.flexbox.data.LockedInfo
 import com.guet.flexbox.widget.AsyncLazyDrawable
 import com.guet.flexbox.widget.BackgroundDrawable
@@ -49,7 +49,7 @@ internal abstract class Widget<C : Component.Builder<*>>(private val parent: Wid
         val borderRadius = (attrs.getOrElse("borderRadius") { 0 } as Number).toPx()
         val borderWidth = (attrs.getOrElse("borderWidth") { 0 } as Number).toPx()
         val borderColor = attrs.getOrElse("borderColor") { Color.TRANSPARENT } as Int
-        var backgroundDrawable: ComparableDrawable? = null
+        var backgroundDrawable: Drawable? = null
         val background = attrs["background"] as? String
         val context = c.getContext()!!.androidContext
         if (background != null) {
@@ -57,7 +57,7 @@ internal abstract class Widget<C : Component.Builder<*>>(private val parent: Wid
                 backgroundDrawable = ComparableColorDrawable.create(Color.parseColor(background))
             } catch (e: Exception) {
                 when (val model = parseUrl(context, background)) {
-                    is ComparableDrawable -> {
+                    is Drawable -> {
                         backgroundDrawable = model
                     }
                     is CharSequence, is Int -> {
