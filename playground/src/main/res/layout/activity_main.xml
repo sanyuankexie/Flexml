@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout
+    android:background="@color/whitesmoke"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <com.guet.flexbox.playground.widget.PullToRefreshLayout
+        android:layout_width="match_parent"
+        android:id="@+id/pull_to_refresh"
+        android:layout_height="match_parent">
+        <androidx.recyclerview.widget.RecyclerView
+            android:overScrollMode="never"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+            android:id="@+id/feed"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"/>
+    </com.guet.flexbox.playground.widget.PullToRefreshLayout>
+    <LinearLayout
+        android:visibility="visible"
+        android:id="@+id/toolbar"
+        android:paddingTop="10dp"
+        android:paddingBottom="10dp"
+        android:background="@color/colorPrimary"
+        android:gravity="center"
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="60dp">
+        <ImageView
+            android:id="@+id/qr_code"
+            android:src="@drawable/ic_saoma"
+            android:scaleType="fitXY"
+            android:layout_marginLeft="15dp"
+            android:layout_width="25dp"
+            android:layout_height="25dp" />
+        <TextView
+            android:transitionName="search"
+            android:id="@+id/search"
+            android:textSize="16dp"
+            android:gravity="center_vertical"
+            android:hint="模板链接"
+            android:background="@drawable/ic_search_background"
+            android:layout_marginLeft="15dp"
+            android:layout_marginRight="15dp"
+            android:layout_weight="1"
+            android:layout_width="0dp"
+            android:layout_height="36dp" />
+        <ImageView
+            android:id="@+id/jump"
+            android:src="@drawable/ic_dingwei"
+            android:scaleType="fitXY"
+            android:layout_marginRight="15dp"
+            android:layout_width="25dp"
+            android:layout_height="25dp" />
+    </LinearLayout>
+</FrameLayout>

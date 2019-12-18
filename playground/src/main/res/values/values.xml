@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="banner_paths">
+        <item><![CDATA[layout/homepage/banners/ad1.xml]]></item>
+        <item><![CDATA[layout/homepage/banners/ad2.xml]]></item>
+    </string-array>
+    <string name="function_path">
+        <![CDATA[layout/homepage/function.xml]]>
+    </string>
+    <string-array name="feed_paths">
+        <item><![CDATA[layout/homepage/feeds/three_entries1.xml]]></item>
+        <item><![CDATA[layout/homepage/feeds/three_entries2.xml]]></item>
+        <item><![CDATA[layout/homepage/feeds/three_entries3.xml]]></item>
+    </string-array>
+</resources>

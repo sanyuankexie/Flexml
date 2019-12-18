@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Flex
+    marginLeft="5"
+    marginRight="5"
+    flexGrow="1">
+    <Image
+        borderRadius="12"
+        flexGrow="1"
+        scaleType="centerCrop"
+        url="https://gss2.bdstatic.com/-fo3dSag_xI4khGkpoWK1HF6hhy/baike/c0%3Dbaike150%2C5%2C5%2C150%2C50/sign=91a1b96c114c510fbac9ea4801304e48/d1a20cf431adcbef60ec19a2a7af2edda2cc9fbd.jpg" />
+</Flex>

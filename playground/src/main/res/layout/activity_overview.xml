@@ -2,6 +2,7 @@
 <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
     android:background="@color/background"
     android:id="@+id/pull"
+    tools:context=".OverviewActivity"
     xmlns:tools="http://schemas.android.com/tools"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:android="http://schemas.android.com/apk/res/android"

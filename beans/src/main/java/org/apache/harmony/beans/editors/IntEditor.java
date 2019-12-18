@@ -17,7 +17,7 @@
 
 package org.apache.harmony.beans.editors;
 
-import com.luke.skywalker.beans.PropertyEditorSupport;
+import com.guet.flexbox.beans.PropertyEditorSupport;
 
 public final class IntEditor extends PropertyEditorSupport {
 
