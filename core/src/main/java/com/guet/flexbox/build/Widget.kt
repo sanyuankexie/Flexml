@@ -71,7 +71,6 @@ internal abstract class Widget<C : Component.Builder<*>>(private val parent: Wid
             }
             c.outlineProvider(outline)
             c.clipToOutline(true)
-            c.wrapInView()
         }
     }
 
