@@ -20,6 +20,7 @@ class FlexBoxAdapter : BaseQuickAdapter<RenderNode, BaseViewHolder>(R.layout.fee
     override fun convert(helper: BaseViewHolder, item: RenderNode) {
         val lithoView = helper.getView<LithoView>(R.id.litho)
         val c = lithoView.componentContext
+        lithoView.release()
         lithoView.setComponentAsync(
                 Row.create(c)
                         .alignItems(YogaAlign.CENTER)
