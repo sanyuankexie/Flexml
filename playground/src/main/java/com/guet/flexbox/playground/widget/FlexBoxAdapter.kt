@@ -16,20 +16,19 @@ class FlexBoxAdapter : BaseQuickAdapter<RenderNode, BaseViewHolder>(R.layout.fee
 
     var onClickListener: ((String) -> Unit)? = null
 
-    init {
-        closeLoadAnimation()
-    }
 
     override fun convert(helper: BaseViewHolder, item: RenderNode) {
         val lithoView = helper.getView<LithoView>(R.id.litho)
         val c = lithoView.componentContext
-        lithoView.setComponentAsync(Row.create(c)
-                .alignItems(YogaAlign.CENTER)
-                .flexGrow(1f)
-                .justifyContent(YogaJustify.CENTER)
-                .child(DynamicBox.create(c)
-                        .content(item)
-                ).build())
+        lithoView.setComponentAsync(
+                Row.create(c)
+                        .alignItems(YogaAlign.CENTER)
+                        .flexGrow(1f)
+                        .justifyContent(YogaJustify.CENTER)
+                        .child(DynamicBox.create(c)
+                                .content(item)
+                        ).build()
+        )
     }
 
     override fun handleEvent(key: String, value: Array<out Any>) {

@@ -118,20 +118,20 @@ class MainActivity : AppCompatActivity() {
     private fun loadAssetsDisplay() {
         AsyncTask.THREAD_POOL_EXECUTOR.execute {
             val assetsDisplay = AssetDisplay.loadDefault(this)
-            runOnUiThread {
-                val bannerData = assetsDisplay.banner.let {
-                    return@let when (it.size) {
-                        1 -> {
-                            listOf(it[0], it[0], it[0])
-                        }
-                        2 -> {
-                            listOf(it[0], it[1], it[0])
-                        }
-                        else -> {
-                            it
-                        }
+            val bannerData = assetsDisplay.banner.let {
+                return@let when (it.size) {
+                    1 -> {
+                        listOf(it[0], it[0], it[0])
+                    }
+                    2 -> {
+                        listOf(it[0], it[1], it[0])
+                    }
+                    else -> {
+                        it
                     }
                 }
+            }
+            runOnUiThread {
                 banner.setPages(bannerData) {
                     BannerHolder(this::handleEvent)
                 }
