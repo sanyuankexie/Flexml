@@ -136,12 +136,12 @@ class SearchActivity : AppCompatActivity(), EventListener {
             val input = resources.assets.open("layout/search/history_list.xml")
             val s = Compiler.compile(input)
             val contentRaw = gson.fromJson(s, LayoutNode::class.java)
-            val data = Collections.singletonMap(
+            val data: Map<String, Any> = Collections.singletonMap(
                     "list",
                     sharedPreferences.getStringSet(
                             "history_list",
-                            emptySet()
-                    )!!.toList()
+                            null
+                    ) ?: emptyMap<String, Any>()
             )
             val content = DataBindingUtils.bind(this, contentRaw, data)
             runOnUiThread {
@@ -162,8 +162,8 @@ class SearchActivity : AppCompatActivity(), EventListener {
         }
         val set = HashSet<String>(sharedPreferences.getStringSet(
                 "history_list",
-                emptySet()
-        )!!)
+                null
+        ) ?: emptySet())
         set.add(key)
         sharedPreferences.edit()
                 .putStringSet("list", set)

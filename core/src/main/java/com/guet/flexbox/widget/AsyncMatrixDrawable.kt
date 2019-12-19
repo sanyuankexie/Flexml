@@ -21,10 +21,12 @@ import com.facebook.litho.drawable.ComparableGradientDrawable
 
 internal class AsyncMatrixDrawable(
         private val c: Context
-) : BorderDrawable<MatrixDrawable>(MatrixDrawable()),
+) : DrawableWrapper<MatrixDrawable>(MatrixDrawable()),
         Touchable,
         Target<Drawable> by DelegateTarget() {
-
+    private var borderWidth: Int = 0
+    private var borderColor: Int = Color.TRANSPARENT
+    private var radius: Int = 0
     private var width: Int = 0
     private var height: Int = 0
     private var scaleType = ScaleType.FIT_CENTER

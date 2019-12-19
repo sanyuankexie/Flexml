@@ -1,14 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.guet.flexbox.playground.widget.PullToRefreshLayout
+<FrameLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="com.guet.flexbox.playground.test.TestActivity">
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/host"
+    <com.guet.flexbox.playground.test.TestView
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
-    </androidx.recyclerview.widget.RecyclerView>
-</com.guet.flexbox.playground.widget.PullToRefreshLayout>
+        android:layout_height="match_parent" />
+</FrameLayout>

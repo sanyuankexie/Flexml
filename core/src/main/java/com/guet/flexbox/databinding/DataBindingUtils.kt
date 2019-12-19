@@ -2,8 +2,8 @@ package com.guet.flexbox.databinding
 
 import android.content.Context
 import androidx.annotation.WorkerThread
-import com.guet.flexbox.data.RenderNode
 import com.guet.flexbox.data.LayoutNode
+import com.guet.flexbox.data.RenderNode
 import com.guet.flexbox.data.Visibility
 import com.guet.flexbox.el.PropsELContext
 
@@ -12,10 +12,10 @@ object DataBindingUtils {
     @WorkerThread
     @JvmStatic
     fun bind(c: Context, layoutNode: LayoutNode, data: Any?): RenderNode {
-        return bind(c, layoutNode, PropsELContext(data), true)!!
+        return bindNode(c, layoutNode, PropsELContext(data), true)!!
     }
 
-    internal fun bind(
+    internal fun bindNode(
             c: Context,
             layoutNode: LayoutNode,
             data: PropsELContext,

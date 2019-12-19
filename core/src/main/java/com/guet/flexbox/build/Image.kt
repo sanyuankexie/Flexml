@@ -42,6 +42,8 @@ internal object Image : Widget<AsyncImage.Builder>(Common) {
             override fun AsyncImage.Builder.assign(display: Boolean, other: Map<String, Any>, value: String) {
                 if (display) {
                     url(value)
+                } else {
+                    url("")
                 }
             }
         }

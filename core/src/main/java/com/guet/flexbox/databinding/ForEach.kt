@@ -1,8 +1,8 @@
 package com.guet.flexbox.databinding
 
 import android.content.Context
-import com.guet.flexbox.data.RenderNode
 import com.guet.flexbox.data.LayoutNode
+import com.guet.flexbox.data.RenderNode
 import com.guet.flexbox.el.PropsELContext
 
 internal object ForEach : Declaration() {
@@ -31,7 +31,7 @@ internal object ForEach : Declaration() {
         return items.map {
             data.scope(mapOf(name to items)) {
                 children.mapNotNull {
-                    DataBindingUtils.bind(c, it, data, selfVisibility)
+                    DataBindingUtils.bindNode(c, it, data, selfVisibility)
                 }
             }
         }.flatten()

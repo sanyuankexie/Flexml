@@ -35,7 +35,7 @@ class StartupActivity : AppCompatActivity() {
                         .setTitle("提示")
                         .setMessage("需要授予权限才能正常使用哦！")
                         .setCancelable(false)
-                        .setNegativeButton("确认") { _: DialogInterface?, which: Int -> finish() }
+                        .setNegativeButton("确认") { _: DialogInterface?, _: Int -> finish() }
                         .show()
                 return
             }

@@ -2,8 +2,8 @@ package com.guet.flexbox.databinding
 
 import android.content.Context
 import com.facebook.yoga.YogaAlign
-import com.guet.flexbox.data.RenderNode
 import com.guet.flexbox.data.LayoutNode
+import com.guet.flexbox.data.RenderNode
 import com.guet.flexbox.data.Visibility
 import com.guet.flexbox.el.LambdaExpression
 import com.guet.flexbox.el.PropsELContext
@@ -65,7 +65,7 @@ internal object Common : Declaration() {
     ): List<RenderNode> {
         val list = ArrayList<RenderNode>(children.size)
         for (item in children) {
-            val b = DataBindingUtils.bind(c, item, data, selfVisibility)
+            val b = DataBindingUtils.bindNode(c, item, data, selfVisibility)
             if (b != null) {
                 list.add(b)
             }

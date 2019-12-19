@@ -19,7 +19,6 @@ object Inflater {
     private val widgets = mapOf(
             "Flex" to Flex,
             "Image" to Image,
-            "Empty" to Empty,
             "Native" to Native,
             "Scroller" to Scroller,
             "Stack" to Stack,
