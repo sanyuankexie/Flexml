@@ -241,13 +241,6 @@ class PropsELContext(data: Any?) : ELContext() {
             }
         }
 
-        @Prefix("utils")
-        @JvmName("arrayOf")
-        @JvmStatic
-        fun arrayOf(vararg value: Any): Array<Any> {
-            return kotlin.arrayOf(value)
-        }
-
         @Prefix("res")
         @JvmName("gradient")
         @JvmStatic
@@ -265,12 +258,12 @@ class PropsELContext(data: Any?) : ELContext() {
         }
 
         @Prefix("res")
-        @JvmName("load")
+        @JvmName("drawable")
         @JvmStatic
         fun load(name: String): String {
             return Uri.Builder()
                     .scheme("res")
-                    .authority("load")
+                    .authority("drawable")
                     .appendQueryParameter("name", name)
                     .build()
                     .toString()

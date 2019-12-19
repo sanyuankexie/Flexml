@@ -13,21 +13,6 @@ internal object Image : Widget<AsyncImage.Builder>(Common) {
                 scaleType(value)
             }
         }
-        this["borderColor"] = object : Assignment<AsyncImage.Builder, Int>() {
-            override fun AsyncImage.Builder.assign(display: Boolean, other: Map<String, Any>, value: Int) {
-                borderColor(value)
-            }
-        }
-        this["borderRadius"] = object : Assignment<AsyncImage.Builder, Double>() {
-            override fun AsyncImage.Builder.assign(display: Boolean, other: Map<String, Any>, value: Double) {
-                borderRadius(value.toPx())
-            }
-        }
-        this["borderWidth"] = object : Assignment<AsyncImage.Builder, Double>() {
-            override fun AsyncImage.Builder.assign(display: Boolean, other: Map<String, Any>, value: Double) {
-                borderWidth(value.toPx())
-            }
-        }
         this["blurRadius"] = object : Assignment<AsyncImage.Builder, Double>() {
             override fun AsyncImage.Builder.assign(display: Boolean, other: Map<String, Any>, value: Double) {
                 blurRadius(value.toFloat())

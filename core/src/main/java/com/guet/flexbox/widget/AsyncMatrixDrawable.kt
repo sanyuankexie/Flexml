@@ -24,9 +24,6 @@ internal class AsyncMatrixDrawable(
 ) : DrawableWrapper<MatrixDrawable>(MatrixDrawable()),
         Touchable,
         Target<Drawable> by DelegateTarget() {
-    private var borderWidth: Int = 0
-    private var borderColor: Int = Color.TRANSPARENT
-    private var radius: Int = 0
     private var width: Int = 0
     private var height: Int = 0
     private var scaleType = ScaleType.FIT_CENTER
@@ -35,18 +32,12 @@ internal class AsyncMatrixDrawable(
             url: CharSequence,
             width: Int,
             height: Int,
-            radius: Int,
-            borderWidth: Int,
-            borderColor: Int,
             blurRadius: Float,
             blurSampling: Float,
             scaleType: ScaleType
     ) {
         this.width = width
         this.height = height
-        this.radius = radius
-        this.borderWidth = borderWidth
-        this.borderColor = borderColor
         this.scaleType = scaleType
         when (val model = parseUrl(c, url)) {
             is Drawable -> {
@@ -184,7 +175,7 @@ internal fun parseUrl(c: Context, url: CharSequence): Any? {
                         null
                     }
                 }
-                "load" -> {
+                "drawable" -> {
                     val name = uri.getQueryParameter("name")
                     if (name != null) {
                         val id = c.resources.getIdentifier(

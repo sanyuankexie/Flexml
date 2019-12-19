@@ -3,13 +3,22 @@
     <string-array name="banner_paths">
         <item><![CDATA[layout/homepage/banners/ad1.xml]]></item>
         <item><![CDATA[layout/homepage/banners/ad2.xml]]></item>
+        <item><![CDATA[layout/homepage/banners/ad3.xml]]></item>
     </string-array>
     <string name="function_path">
         <![CDATA[layout/homepage/function.xml]]>
     </string>
     <string-array name="feed_paths">
         <item><![CDATA[layout/homepage/feeds/three_entries1.xml]]></item>
-        <item><![CDATA[layout/homepage/feeds/three_entries2.xml]]></item>
-        <item><![CDATA[layout/homepage/feeds/three_entries3.xml]]></item>
+    </string-array>
+    <string-array name="function_icons">
+        <item><![CDATA[res://drawable?name=ic_01]]></item>
+        <item><![CDATA[res://drawable?name=ic_02]]></item>
+        <item><![CDATA[res://drawable?name=ic_03]]></item>
+        <item><![CDATA[res://drawable?name=ic_04]]></item>
+        <item><![CDATA[res://drawable?name=ic_05]]></item>
+        <item><![CDATA[res://drawable?name=ic_06]]></item>
+        <item><![CDATA[res://drawable?name=ic_07]]></item>
+        <item><![CDATA[res://drawable?name=ic_08]]></item>
     </string-array>
 </resources>

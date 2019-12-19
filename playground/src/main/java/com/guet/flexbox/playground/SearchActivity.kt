@@ -11,6 +11,7 @@ import android.os.Bundle
 import android.text.Editable
 import android.text.TextUtils
 import android.text.TextWatcher
+import android.view.Gravity
 import android.view.View
 import android.view.ViewGroup
 import android.view.Window
@@ -93,16 +94,22 @@ class SearchActivity : AppCompatActivity(), EventListener {
                         )
                         val text = content.findViewById<TextView>(R.id.text)
                         window.contentView = content
-                        window.width = UIUtils.dp2px(this@SearchActivity, 300f)
-                        window.height = ViewGroup.LayoutParams.MATCH_PARENT
+                        window.width = ViewGroup.LayoutParams.WRAP_CONTENT
+                        window.height = ViewGroup.LayoutParams.WRAP_CONTENT
                         text.text = item
                         content.setOnClickListener {
                             popupWindow?.dismiss()
                             popupWindow = null
                             handleEvent(item.toString(), emptyArray())
                         }
-                        window.showAsDropDown(v, 0, v.height)
-                        popupWindow = window
+                        v.post {
+                            window.showAsDropDown(v,
+                                    0,
+                                    -v.height / 4,
+                                    Gravity.TOP
+                            )
+                            popupWindow = window
+                        }
                     }
                 }
             }
@@ -143,6 +150,7 @@ class SearchActivity : AppCompatActivity(), EventListener {
                             null
                     ) ?: emptyMap<String, Any>()
             )
+            input.close()
             val content = DataBindingUtils.bind(this, contentRaw, data)
             runOnUiThread {
                 val c = list.componentContext

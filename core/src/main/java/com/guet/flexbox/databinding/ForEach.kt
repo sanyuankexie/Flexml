@@ -20,20 +20,21 @@ internal object ForEach : Declaration() {
 
     override fun transform(
             c: Context,
+            type: String,
             attrs: Map<String, Any>,
             data: PropsELContext,
             children: List<LayoutNode>,
-            selfVisibility: Boolean
+            upperVisibility: Boolean
     ): List<RenderNode> {
         val name = attrs.getValue("var") as String
         @Suppress("UNCHECKED_CAST")
         val items = attrs.getValue("items") as List<Any>
         return items.map {
             data.scope(mapOf(name to items)) {
-                children.mapNotNull {
-                    DataBindingUtils.bindNode(c, it, data, selfVisibility)
+                children.map {
+                    DataBindingUtils.bindNode(c, it, data, upperVisibility)
                 }
-            }
+            }.flatten()
         }.flatten()
     }
 }

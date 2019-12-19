@@ -16,7 +16,7 @@ internal object Common : Declaration() {
                 "invisible" to Visibility.INVISIBLE,
                 "gone" to Visibility.GONE
         ))
-        value("borderWidth")
+        value("width")
         value("height")
         value("flexGrow")
         value("flexShrink")
@@ -58,18 +58,24 @@ internal object Common : Declaration() {
 
     override fun transform(
             c: Context,
+            type: String,
             attrs: Map<String, Any>,
             data: PropsELContext,
             children: List<LayoutNode>,
-            selfVisibility: Boolean
+            upperVisibility: Boolean
     ): List<RenderNode> {
-        val list = ArrayList<RenderNode>(children.size)
-        for (item in children) {
-            val b = DataBindingUtils.bindNode(c, item, data, selfVisibility)
-            if (b != null) {
-                list.add(b)
-            }
+        val selfVisibility = attrs["visibility"] ?: Visibility.VISIBLE
+        if (selfVisibility == Visibility.GONE) {
+            return emptyList()
         }
-        return list
+        val visibility = selfVisibility == Visibility.VISIBLE && upperVisibility
+        val childrenRenderNode = if (children.isEmpty()) {
+            emptyList()
+        } else {
+            children.map {
+                DataBindingUtils.bindNode(c, it, data, visibility)
+            }.flatten()
+        }
+        return listOf(RenderNode(type, attrs, visibility, childrenRenderNode))
     }
 }

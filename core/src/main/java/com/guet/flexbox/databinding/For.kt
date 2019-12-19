@@ -14,20 +14,21 @@ internal object For : Declaration() {
 
     override fun transform(
             c: Context,
+            type: String,
             attrs: Map<String, Any>,
             data: PropsELContext,
             children: List<LayoutNode>,
-            selfVisibility: Boolean
+            upperVisibility: Boolean
     ): List<RenderNode> {
         val name = attrs.getValue("var") as String
         val from = (attrs.getValue("from") as Double).toInt()
         val to = (attrs.getValue("to") as Double).toInt()
         return (from..to).map { index ->
             data.scope(mapOf(name to index)) {
-                children.mapNotNull {
-                    DataBindingUtils.bindNode(c, it, data, selfVisibility)
+                children.map {
+                    DataBindingUtils.bindNode(c, it, data, upperVisibility)
                 }
-            }
+            }.flatten()
         }.flatten()
     }
 }

@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="wrap_content">
     <LinearLayout
         android:orientation="vertical"
         android:background="@color/colorPrimary"
@@ -57,26 +57,17 @@
     </LinearLayout>
     <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
-        <LinearLayout
-            android:orientation="vertical"
+        android:layout_height="wrap_content">
+        <View
+            android:background="@drawable/ic_background_transition"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-            <View
-                android:background="@color/colorPrimary"
-                android:layout_width="match_parent"
-                android:layout_height="20dp"/>
-            <View
-                android:background="@drawable/ic_background_transition"
-                android:layout_width="match_parent"
-                android:layout_height="60dp"/>
-        </LinearLayout>
+            android:layout_height="100dp"/>
         <com.facebook.litho.LithoView
             android:id="@+id/function"
-            android:layout_marginTop="5dp"
+            android:layout_marginTop="10dp"
             android:layout_marginBottom="5dp"
             android:layout_width="match_parent"
-            android:layout_height="150dp">
+            android:layout_height="wrap_content">
         </com.facebook.litho.LithoView>
     </FrameLayout>
 </LinearLayout>

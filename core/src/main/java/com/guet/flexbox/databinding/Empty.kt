@@ -5,10 +5,9 @@ import com.guet.flexbox.data.LayoutNode
 import com.guet.flexbox.data.RenderNode
 import com.guet.flexbox.el.PropsELContext
 
-internal object If : Declaration() {
-    override val attributeSet: AttributeSet by create {
-        bool("test")
-    }
+internal object Empty : Declaration(Common) {
+    override val attributeSet: AttributeSet
+        get() = emptyMap()
 
     override fun transform(
             c: Context,
@@ -18,11 +17,6 @@ internal object If : Declaration() {
             children: List<LayoutNode>,
             upperVisibility: Boolean
     ): List<RenderNode> {
-        if (attrs.getValue("test") as Boolean) {
-            return children.map {
-                DataBindingUtils.bindNode(c, it, data, upperVisibility)
-            }.flatten()
-        }
-        return emptyList()
+        return super.transform(c, type, attrs, data, children, false)
     }
 }

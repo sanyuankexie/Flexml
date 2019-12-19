@@ -4,15 +4,23 @@ import android.content.Context
 import androidx.annotation.WorkerThread
 import com.guet.flexbox.data.LayoutNode
 import com.guet.flexbox.data.RenderNode
-import com.guet.flexbox.data.Visibility
 import com.guet.flexbox.el.PropsELContext
 
 object DataBindingUtils {
 
     @WorkerThread
+    @JvmOverloads
     @JvmStatic
-    fun bind(c: Context, layoutNode: LayoutNode, data: Any?): RenderNode {
-        return bindNode(c, layoutNode, PropsELContext(data), true)!!
+    fun bind(
+            c: Context,
+            layoutNode: LayoutNode,
+            data: Any?,
+            extra: (Map<String, Any>) = emptyMap()
+    ): RenderNode {
+        val props = PropsELContext(data)
+        return props.scope(extra) {
+            bindNode(c, layoutNode, props, true).single()
+        }
     }
 
     internal fun bindNode(
@@ -20,68 +28,31 @@ object DataBindingUtils {
             layoutNode: LayoutNode,
             data: PropsELContext,
             upperVisibility: Boolean
-    ): RenderNode? {
+    ): List<RenderNode> {
         val type = layoutNode.type
-        var visibility = true
-        val declaration = declarations[type]
-        if (declaration != null) {
-            val values = if (layoutNode.attrs != null) {
-                val map = HashMap<String, Any>(layoutNode.attrs.size)
+        val declaration = declarations[type] ?: Common
+        val values = layoutNode.attrs?.let {
+            HashMap<String, Any>(it.size).apply {
                 for ((key, raw) in layoutNode.attrs) {
                     val result = declaration[key]?.cast(c, data, raw)
                     if (result != null) {
-                        if (key == "visibility") {
-                            when (result) {
-                                Visibility.INVISIBLE -> {
-                                    visibility = false
-                                }
-                                Visibility.GONE -> {
-                                    return null
-                                }
-                            }
-                        } else {
-                            map[key] = result
-                        }
+                        this[key] = result
                     }
                 }
-                map
-            } else {
-                emptyMap<String, Any>()
             }
-            val selfVisibility = visibility && upperVisibility
-            val children = checkList(layoutNode.children) {
-                declaration.transform(c, values, data, it, selfVisibility)
-            }
-            return RenderNode(
-                    type,
-                    values,
-                    selfVisibility,
-                    children
-            )
-        } else {
-            return RenderNode(
-                    type,
-                    emptyMap(),
-                    true,
-                    checkList(layoutNode.children) {
-                        Common.transform(c, emptyMap(), data, it, true)
-                    }
-            )
-        }
-    }
-
-    private inline fun checkList(
-            list: List<LayoutNode>?,
-            action: (List<LayoutNode>) -> List<RenderNode>
-    ): List<RenderNode> {
-        return if (list.isNullOrEmpty()) {
-            emptyList()
-        } else {
-            action(list)
-        }
+        } ?: emptyMap<String, Any>()
+        return declaration.transform(
+                c,
+                type,
+                values,
+                data,
+                layoutNode.children ?: emptyList(),
+                upperVisibility
+        )
     }
 
     private val declarations: Map<String, Declaration> = mapOf(
+            "Empty" to Empty,
             "Flex" to Flex,
             "Image" to Image,
             "Scroller" to Scroller,

@@ -2,7 +2,6 @@ package com.guet.flexbox.playground
 
 import android.app.Activity
 import android.content.Intent
-import android.os.AsyncTask
 import android.os.Bundle
 import android.view.View
 import android.widget.LinearLayout
@@ -35,6 +34,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var banner: MZBannerView<RenderNode>
     private lateinit var feed: RecyclerView
     private lateinit var function: LithoView
+    private val renderInfo by MainRenderInfo
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -85,17 +85,44 @@ class MainActivity : AppCompatActivity() {
             onRefreshListener = object : PullToRefreshLayout.OnRefreshListener() {
 
                 override fun onLoadMore(v: PullToRefreshLayout) {
-                    v.finish()
+                    v.finish(Runnable {
+                        Toasty.warning(this@MainActivity, "无更多").show()
+                    })
                 }
 
                 override fun onRefresh(v: PullToRefreshLayout) {
-                    loadAssetsDisplay()
-                    v.finish()
-                    Toasty.success(
-                            this@MainActivity,
-                            "资源加载成功",
-                            Toast.LENGTH_SHORT
-                    ).show()
+                    val bannerData = renderInfo.banner.let {
+                        return@let when (it.size) {
+                            1 -> {
+                                listOf(it[0], it[0], it[0])
+                            }
+                            2 -> {
+                                listOf(it[0], it[1], it[0])
+                            }
+                            else -> {
+                                it
+                            }
+                        }
+                    }
+                    pullToRefresh.finish(Runnable {
+                        Toasty.success(
+                                this@MainActivity,
+                                "资源加载成功",
+                                Toast.LENGTH_SHORT
+                        ).show()
+                        banner.setPages(bannerData) {
+                            BannerHolder(this@MainActivity::handleEvent)
+                        }
+                        feedAdapter.setNewData(renderInfo.feed)
+                        val c = function.componentContext
+                        function.setComponentAsync(Row.create(c)
+                                .justifyContent(YogaJustify.CENTER)
+                                .alignItems(YogaAlign.CENTER)
+                                .flexGrow(1f)
+                                .child(DynamicBox.create(c)
+                                        .content(renderInfo.function)
+                                ).build())
+                    })
                 }
             }
         }
@@ -112,39 +139,6 @@ class MainActivity : AppCompatActivity() {
         super.onResume()
         if (loaded.compareAndSet(false, true)) {
             pullToRefresh.postDelayed({ pullToRefresh.refresh() }, 500L)
-        }
-    }
-
-    private fun loadAssetsDisplay() {
-        AsyncTask.THREAD_POOL_EXECUTOR.execute {
-            val assetsDisplay = AssetDisplay.loadDefault(this)
-            val bannerData = assetsDisplay.banner.let {
-                return@let when (it.size) {
-                    1 -> {
-                        listOf(it[0], it[0], it[0])
-                    }
-                    2 -> {
-                        listOf(it[0], it[1], it[0])
-                    }
-                    else -> {
-                        it
-                    }
-                }
-            }
-            runOnUiThread {
-                banner.setPages(bannerData) {
-                    BannerHolder(this::handleEvent)
-                }
-                feedAdapter.setNewData(assetsDisplay.feed)
-                val c = function.componentContext
-                function.setComponentAsync(Row.create(c)
-                        .alignItems(YogaAlign.CENTER)
-                        .flexGrow(1f)
-                        .justifyContent(YogaJustify.CENTER)
-                        .child(DynamicBox.create(c)
-                                .content(assetsDisplay.function)
-                        ).build())
-            }
         }
     }
 

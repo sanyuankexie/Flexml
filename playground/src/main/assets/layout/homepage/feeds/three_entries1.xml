@@ -15,7 +15,7 @@
         <Text
             textStyle="bold"
             textSize="16"
-            text="碧蓝航线">
+            text="${'三条目:第'+index+'项'}">
         </Text>
         <Text
             textColor="WHITE"

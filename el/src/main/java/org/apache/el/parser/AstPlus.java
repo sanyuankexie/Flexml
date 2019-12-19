@@ -49,8 +49,7 @@ public final class AstPlus extends ArithmeticNode {
         Object obj0 = this.children[0].getValue(ctx);
         Object obj1 = this.children[1].getValue(ctx);
         if (obj0 instanceof String || obj1 instanceof String) {
-            return (obj0 == null ? "null" : ELSupport.coerceToString(ctx, obj0))
-                    + (obj1 != null ? "null" : ELSupport.coerceToString(ctx, obj1));
+            return ELSupport.coerceToString(ctx, obj0) + ELSupport.coerceToString(ctx, obj1);
         }
         return ELArithmetic.add(obj0, obj1);
     }

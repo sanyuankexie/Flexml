@@ -107,7 +107,7 @@ class PullToRefreshLayout @JvmOverloads constructor(
         value.recycle()
     }
 
-    fun finish() {
+    fun finish(callback: Runnable? = null) {
         if (inRefresh) {
             createTranslationY(
                     header,
@@ -118,6 +118,7 @@ class PullToRefreshLayout @JvmOverloads constructor(
             ) {
                 inRefresh = false
                 headerAdapter?.onStateChanged(header, PullState.HIDE)
+                post { callback?.run() }
             }
         }
         if (inLoadMore) {
@@ -130,6 +131,7 @@ class PullToRefreshLayout @JvmOverloads constructor(
             ) {
                 inLoadMore = false
                 footerAdapter?.onStateChanged(footer, PullState.HIDE)
+                post { callback?.run() }
             }
         }
     }

@@ -1,17 +1,33 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Flex
-    background="RED"
-    borderRadius="12"
-    width="360"
-    height="360"
+    background="WHITE"
+    borderRadius="15"
+    width="340"
     flexDirection="column"
-    flexGrow="1">
-    <Flex
-        background="RED"
-        borderRadius="12"
-        width="360"
-        height="360"
-        flexDirection="column"
-        flexGrow="1">
-    </Flex>
+    justifyContent="center"
+    alignItems="center">
+    <for var="i" from="0" to="1">
+        <Flex
+            width="320"
+            flexDirection="row"
+            justifyContent="spaceAround">
+            <for var="j" from="0" to="3">
+                <Flex
+                    alignItems="center"
+                    marginTop="10"
+                    marginBottom="10"
+                    flexDirection="column">
+                    <Image
+                        url="${icons[i*2+j]}"
+                        height="40"
+                        width="40">
+                    </Image>
+                    <Text
+                        marginTop="5"
+                        text="${'测试标题'+(i*2+j+1)}">
+                    </Text>
+                </Flex>
+            </for>
+        </Flex>
+    </for>
 </Flex>
