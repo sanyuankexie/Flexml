@@ -10,25 +10,25 @@ import java.lang.reflect.Method
 import java.lang.reflect.Modifier
 import java.util.*
 
-class PropsELContext(data: Any?) : ELContext() {
+internal class PropsELContext(
+        data: Any?,
+        extension: Map<String, Any>? = null
+) : ELContext() {
 
     private val variableMapper = StandardVariableMapper()
     private val functionMapper = StandardFunctionMapper()
     private val standardResolver = CompositeELResolver()
 
     init {
-        when {
-            data is Map<*, *> && data.keys.all { it is String } -> {
-                standardResolver.add(PropsELResolver(data, map))
-            }
-            data is JSONArray -> {
-                standardResolver.add(PropsELResolver(data, jsonObject))
-            }
-            data != null -> {
-                standardResolver.add(PropsELResolver(data, bean))
-            }
+        if (!extension.isNullOrEmpty()) {
+            standardResolver.add(BeanNameELResolver(ExtensionResolver(extension)))
         }
-        expressionFactory.streamELResolver?.let { standardResolver.add(it) }
+        createPropELResolver(data)?.let {
+            standardResolver.add(it)
+        }
+        expressionFactory.streamELResolver?.let {
+            standardResolver.add(it)
+        }
         standardResolver.add(staticField)
         standardResolver.add(map)
         standardResolver.add(resources)
@@ -37,6 +37,24 @@ class PropsELContext(data: Any?) : ELContext() {
         standardResolver.add(bean)
         standardResolver.add(jsonObject)
         standardResolver.add(jsonArray)
+    }
+
+
+    private fun createPropELResolver(data: Any?): ELResolver? {
+        return when {
+            data is Map<*, *> && data.keys.all { it is String } -> {
+                PropsELResolver(data, map)
+            }
+            data is JSONArray -> {
+                PropsELResolver(data, jsonObject)
+            }
+            data != null -> {
+                PropsELResolver(data, bean)
+            }
+            else -> {
+                return null
+            }
+        }
     }
 
     override fun getELResolver(): ELResolver = standardResolver
@@ -205,7 +223,7 @@ class PropsELContext(data: Any?) : ELContext() {
         private val staticField = StaticFieldELResolver()
         private val resources = ResourceBundleELResolver()
 
-        private val expressionFactory = ExpressionFactory.newInstance()
+        private val expressionFactory = ELManager.getExpressionFactory()
 
         @Suppress("UNCHECKED_CAST")
         internal val colorMap = Collections.unmodifiableMap((Color::class.java

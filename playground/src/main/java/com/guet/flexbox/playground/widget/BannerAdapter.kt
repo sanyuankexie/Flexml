@@ -5,21 +5,14 @@ import android.view.View
 import com.facebook.litho.LithoView
 import com.facebook.litho.Row
 import com.guet.flexbox.DynamicBox
-import com.guet.flexbox.EventListener
 import com.guet.flexbox.data.RenderNode
 import com.zhouwei.mzbanner.holder.MZHolderCreator
 import com.zhouwei.mzbanner.holder.MZViewHolder
 
-class BannerAdapter(private val onClickListener: ((String) -> Unit))
-    : MZHolderCreator<BannerAdapter.BannerHolder>,
-        EventListener {
+class BannerAdapter : MZHolderCreator<BannerAdapter.BannerHolder> {
 
     override fun createViewHolder(): BannerHolder {
         return BannerHolder()
-    }
-
-    override fun handleEvent(key: String, value: Array<out Any>) {
-        onClickListener.invoke(key)
     }
 
     inner class BannerHolder : MZViewHolder<RenderNode> {
@@ -41,8 +34,6 @@ class BannerAdapter(private val onClickListener: ((String) -> Unit))
             lithoView = LithoView(c)
             return lithoView
         }
-
-
     }
 }
 

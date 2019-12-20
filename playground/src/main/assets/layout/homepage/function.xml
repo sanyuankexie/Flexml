@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Flex
+    clickUrl="${url}"
     background="WHITE"
     borderRadius="15"
     width="340"

@@ -1,34 +1,19 @@
 package com.guet.flexbox.el
 
-class PropsELResolver(
+internal class PropsELResolver(
         private val props: Any,
         private val adapt: ELResolver
 ) : ELResolver() {
 
     override fun getValue(
-            context: ELContext?,
+            context: ELContext,
             base: Any?,
             property: Any?
     ): Any? {
-        return if (base == null) {
-            adapt.getValue(context, props, property)
-        } else {
-            null
+        if (base != null || property !is String) {
+            return null
         }
-    }
-
-    override fun invoke(
-            context: ELContext?,
-            base: Any?,
-            method: Any?,
-            paramTypes: Array<out Class<*>>?,
-            params: Array<out Any>?
-    ): Any? {
-        return if (base == null) {
-            adapt.invoke(context, props, method, paramTypes, params)
-        } else {
-            null
-        }
+        return adapt.getValue(context, props, property)
     }
 
     override fun getType(
@@ -36,11 +21,10 @@ class PropsELResolver(
             base: Any?,
             property: Any?
     ): Class<*>? {
-        return if (base == null) {
-            adapt.getType(context, props, property)
-        } else {
+        if (base != null || property !is String) {
             return null
         }
+        return adapt.getType(context, props, property)
     }
 
     override fun setValue(
@@ -49,12 +33,13 @@ class PropsELResolver(
             property: Any?,
             value: Any?
     ) {
-        if (base == null) {
-            adapt.setValue(context, props, property, value)
+        if (base != null || property !is String) {
+            return
         }
+        adapt.setValue(context, props, property, value)
     }
 
-    override fun isReadOnly(context: ELContext?, base: Any?, property: Any?): Boolean = adapt.isReadOnly(context, base, property)
+    override fun isReadOnly(context: ELContext?, base: Any?, property: Any?): Boolean = true
 
     override fun getCommonPropertyType(context: ELContext?, base: Any?): Class<*> = adapt.getCommonPropertyType(context, base)
 }

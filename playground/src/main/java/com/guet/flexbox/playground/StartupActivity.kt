@@ -17,7 +17,6 @@ class StartupActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         DoraemonKit.install(application)
         SoLoader.init(this, false)
-        MainRenderInfo.init(this.application)
         ActivityCompat.requestPermissions(
                 this,
                 definedPermissions,

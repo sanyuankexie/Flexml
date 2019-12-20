@@ -12,7 +12,6 @@ import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
-import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.WorkerThread;
 import androidx.appcompat.app.ActionBar;
@@ -30,10 +29,12 @@ import com.facebook.yoga.YogaAlign;
 import com.facebook.yoga.YogaEdge;
 import com.guet.flexbox.DynamicBox;
 import com.guet.flexbox.EventListener;
-import com.guet.flexbox.data.RenderNode;
 import com.guet.flexbox.data.LayoutNode;
+import com.guet.flexbox.data.RenderNode;
 import com.guet.flexbox.databinding.DataBindingUtils;
 import com.guet.flexbox.playground.widget.QuickHandler;
+
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
 import java.util.Map;
@@ -199,8 +200,8 @@ public class OverviewActivity
 
     @Override
     public void handleEvent(
-            @NonNull String type,
-            @NonNull Object[] value
+            @NotNull String type,
+            @NotNull Object[] value
     ) {
         mAdapter.add("event type=" + type + " : event values=" + Arrays.toString(value));
     }

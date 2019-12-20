@@ -15,12 +15,9 @@ object DataBindingUtils {
             c: Context,
             layoutNode: LayoutNode,
             data: Any?,
-            extra: (Map<String, Any>) = emptyMap()
+            extension: (Map<String, Any>)? = null
     ): RenderNode {
-        val props = PropsELContext(data)
-        return props.scope(extra) {
-            bindNode(c, layoutNode, props, true).single()
-        }
+        return bindNode(c, layoutNode, PropsELContext(data, extension), true).single()
     }
 
     internal fun bindNode(

@@ -2,6 +2,7 @@ package com.guet.flexbox.playground
 
 import android.app.Activity
 import android.content.Intent
+import android.os.AsyncTask
 import android.os.Bundle
 import android.view.View
 import android.widget.LinearLayout
@@ -14,6 +15,8 @@ import com.facebook.litho.Row
 import com.facebook.yoga.YogaAlign
 import com.facebook.yoga.YogaJustify
 import com.guet.flexbox.DynamicBox
+import com.guet.flexbox.EventListener
+import com.guet.flexbox.PageContext
 import com.guet.flexbox.data.RenderNode
 import com.guet.flexbox.playground.widget.BannerAdapter
 import com.guet.flexbox.playground.widget.FlexBoxAdapter
@@ -25,21 +28,23 @@ import com.zhouwei.mzbanner.MZBannerView
 import es.dmoral.toasty.Toasty
 import java.util.concurrent.atomic.AtomicBoolean
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : AppCompatActivity(), EventListener {
 
-    private val bannerAdapter = BannerAdapter(this::handleEvent)
-    private val feedAdapter = FlexBoxAdapter(this::handleEvent)
+    private val pageContext = PageContext(this)
+    private val bannerAdapter = BannerAdapter()
+    private val feedAdapter = FlexBoxAdapter()
     private val loaded = AtomicBoolean(false)
     private lateinit var pullToRefresh: PullToRefreshLayout
     private lateinit var floatToolbar: LinearLayout
     private lateinit var banner: MZBannerView<RenderNode>
     private lateinit var feed: RecyclerView
     private lateinit var function: LithoView
-    private val renderInfo by MainRenderInfo
+    private lateinit var renderInfo: MainRenderInfo
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+        MainRenderInfo.init(this.application, pageContext)
         pullToRefresh = findViewById(R.id.pull_to_refresh)
         floatToolbar = findViewById(R.id.toolbar)
         feed = findViewById(R.id.feed)
@@ -89,37 +94,42 @@ class MainActivity : AppCompatActivity() {
                 }
 
                 override fun onRefresh(v: PullToRefreshLayout) {
-                    val bannerData = renderInfo.banner.let {
-                        return@let when (it.size) {
-                            1 -> {
-                                listOf(it[0], it[0], it[0])
-                            }
-                            2 -> {
-                                listOf(it[0], it[1], it[0])
-                            }
-                            else -> {
-                                it
+                    AsyncTask.THREAD_POOL_EXECUTOR.execute {
+                        renderInfo = MainRenderInfo.wait()
+                        val bannerInfo = renderInfo.banner.let {
+                            return@let when (it.size) {
+                                1 -> {
+                                    listOf(it[0], it[0], it[0])
+                                }
+                                2 -> {
+                                    listOf(it[0], it[1], it[0])
+                                }
+                                else -> {
+                                    it
+                                }
                             }
                         }
+                        runOnUiThread {
+                            pullToRefresh.finish(Runnable {
+                                Toasty.success(
+                                        this@MainActivity,
+                                        "资源加载成功",
+                                        Toast.LENGTH_SHORT
+                                ).show()
+                                banner.setPages(bannerInfo, bannerAdapter)
+                                feedAdapter.setNewData(renderInfo.feed)
+                                val c = function.componentContext
+                                function.unmountAllItems()
+                                function.setComponentAsync(Row.create(c)
+                                        .justifyContent(YogaJustify.CENTER)
+                                        .alignItems(YogaAlign.CENTER)
+                                        .flexGrow(1f)
+                                        .child(DynamicBox.create(c)
+                                                .content(renderInfo.function)
+                                        ).build())
+                            })
+                        }
                     }
-                    pullToRefresh.finish(Runnable {
-                        Toasty.success(
-                                this@MainActivity,
-                                "资源加载成功",
-                                Toast.LENGTH_SHORT
-                        ).show()
-                        banner.setPages(bannerData, bannerAdapter)
-                        feedAdapter.setNewData(renderInfo.feed)
-                        val c = function.componentContext
-                        function.unmountAllItems()
-                        function.setComponentAsync(Row.create(c)
-                                .justifyContent(YogaJustify.CENTER)
-                                .alignItems(YogaAlign.CENTER)
-                                .flexGrow(1f)
-                                .child(DynamicBox.create(c)
-                                        .content(renderInfo.function)
-                                ).build())
-                    })
                 }
             }
         }
@@ -139,7 +149,7 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun handleEvent(key: String) {
+    override fun handleEvent(key: String, value: Array<out Any>) {
         startActivity(Intent(this, CodeActivity::class.java)
                 .apply {
                     putExtra("url", key)

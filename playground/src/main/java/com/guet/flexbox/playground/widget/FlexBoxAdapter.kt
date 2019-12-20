@@ -7,12 +7,11 @@ import com.facebook.litho.Row
 import com.facebook.yoga.YogaAlign
 import com.facebook.yoga.YogaJustify
 import com.guet.flexbox.DynamicBox
-import com.guet.flexbox.EventListener
 import com.guet.flexbox.data.RenderNode
 import com.guet.flexbox.playground.R
 
 
-class FlexBoxAdapter(private val onClickListener: ((String) -> Unit)) : BaseQuickAdapter<RenderNode, BaseViewHolder>(R.layout.feed_item), EventListener {
+class FlexBoxAdapter : BaseQuickAdapter<RenderNode, BaseViewHolder>(R.layout.feed_item) {
 
     override fun onViewRecycled(holder: BaseViewHolder) {
         val lithoView = holder.getView<LithoView>(R.id.litho)
@@ -30,9 +29,4 @@ class FlexBoxAdapter(private val onClickListener: ((String) -> Unit)) : BaseQuic
                         .content(item)
                 ).build())
     }
-
-    override fun handleEvent(key: String, value: Array<out Any>) {
-        onClickListener.invoke(key)
-    }
-
 }

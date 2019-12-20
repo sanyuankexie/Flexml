@@ -83,7 +83,9 @@ class SearchActivity : AppCompatActivity(), EventListener {
                     val data = clipboard.primaryClip
                     if (data != null && data.itemCount > 0) {
                         val item = data.getItemAt(0).text
-                        if (TextUtils.equals(item, (v as TextView).text)) {
+                        val current = (v as TextView).text
+                        if (TextUtils.equals(item, current) ||
+                                !(item.startsWith("http://") || item.startsWith("https://"))) {
                             return@setOnFocusChangeListener
                         }
                         val window = PopupWindow()
@@ -176,7 +178,7 @@ class SearchActivity : AppCompatActivity(), EventListener {
         sharedPreferences.edit()
                 .putStringSet("list", set)
                 .apply()
-        startActivity(Intent(this, CodeActivity::class.java)
+        startActivity(Intent(this, OverviewActivity::class.java)
                 .apply {
                     putExtra("url", key)
                 }
