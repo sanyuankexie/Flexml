@@ -1,7 +1,5 @@
 package com.guet.flexbox.playground
 
-import android.animation.AnimatorSet
-import android.animation.ValueAnimator
 import android.content.ClipboardManager
 import android.content.Context
 import android.content.Intent
@@ -14,19 +12,14 @@ import android.text.TextWatcher
 import android.view.Gravity
 import android.view.View
 import android.view.ViewGroup
-import android.view.Window
-import android.view.animation.DecelerateInterpolator
 import android.view.inputmethod.EditorInfo
 import android.widget.EditText
 import android.widget.FrameLayout
 import android.widget.PopupWindow
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
-import com.didichuxing.doraemonkit.util.UIUtils
 import com.facebook.litho.LithoView
 import com.facebook.litho.Row
-import com.facebook.yoga.YogaAlign
-import com.facebook.yoga.YogaJustify
 import com.google.gson.Gson
 import com.guet.flexbox.DynamicBox
 import com.guet.flexbox.EventHandler
@@ -45,33 +38,9 @@ class SearchActivity : AppCompatActivity(), EventHandler {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        window.apply {
-            requestFeature(Window.FEATURE_CONTENT_TRANSITIONS)
-        }
         setContentView(R.layout.activity_search)
         sharedPreferences = getSharedPreferences("history", Context.MODE_PRIVATE)
         list = findViewById(R.id.list)
-        AnimatorSet().apply {
-            duration = 250L
-            interpolator = DecelerateInterpolator()
-            playTogether(ValueAnimator.ofFloat(
-                    UIUtils.dp2px(
-                            this@SearchActivity,
-                            -100f
-                    ).toFloat(), 0f)
-                    .apply {
-                        addUpdateListener {
-                            val value = it.animatedValue as Float
-                            list.translationX = value
-                        }
-                    },
-                    ValueAnimator.ofFloat(0f, 1f).apply {
-                        addUpdateListener {
-                            val value = it.animatedValue as Float
-                            list.alpha = value
-                        }
-                    })
-        }.start()
         editText = findViewById(R.id.search)
         editText.apply {
             setOnFocusChangeListener { v, hasFocus ->
@@ -145,20 +114,25 @@ class SearchActivity : AppCompatActivity(), EventHandler {
             val input = resources.assets.open("layout/search/history_list.xml")
             val s = Compiler.compile(input)
             val contentRaw = gson.fromJson(s, DynamicNode::class.java)
+            val rawData = sharedPreferences.getStringSet(
+                    "history_list",
+                    null
+            ) ?: emptySet<String>()
+            val listData = if (rawData.size > 10) {
+                rawData.toList().subList(0, 10)
+            } else {
+                rawData.toList()
+            }
             val data: Map<String, Any> = Collections.singletonMap(
                     "list",
-                    sharedPreferences.getStringSet(
-                            "history_list",
-                            null
-                    ) ?: emptyMap<String, Any>()
+                    listData
             )
             input.close()
             val content = DataBindingUtils.bind(this, contentRaw, data)
             runOnUiThread {
                 val c = list.componentContext
                 list.setComponentAsync(Row.create(c)
-                        .alignItems(YogaAlign.CENTER)
-                        .justifyContent(YogaJustify.CENTER)
+                        .flexGrow(1f)
                         .child(DynamicBox.create(c)
                                 .content(content)
                         ).build())

@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.coordinatorlayout.widget.CoordinatorLayout
+    android:id="@+id/host"
     android:background="@color/whitesmoke"
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -8,69 +9,62 @@
     android:layout_height="match_parent">
     <com.google.android.material.appbar.AppBarLayout
         app:elevation="0dp"
-        android:background="@color/whitesmoke"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
-        <com.google.android.material.appbar.CollapsingToolbarLayout
-            app:contentScrim="@color/colorPrimary"
-            android:background="@color/whitesmoke"
+        <LinearLayout
             app:layout_scrollFlags="scroll|exitUntilCollapsed"
+            android:orientation="vertical"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
-            <LinearLayout
-                app:layout_collapseMode="pin"
-                android:orientation="vertical"
+            <TextView
+                android:text="布局源码"
+                android:gravity="center_vertical"
+                android:textSize="20dp"
+                android:paddingLeft="10dp"
+                android:paddingRight="10dp"
+                android:textColor="@android:color/white"
+                android:background="@color/colorPrimary"
+                android:layout_width="match_parent"
+                android:layout_height="30dp"/>
+            <FrameLayout
+                android:paddingBottom="10dp"
+                android:background="@color/colorPrimary"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
-                <FrameLayout
-                    android:background="@color/colorPrimary"
+                <androidx.cardview.widget.CardView
+                    android:transitionName="litho"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
-                    <androidx.cardview.widget.CardView
-                        android:transitionName="litho"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginRight="10dp"
+                    android:layout_marginTop="10dp"
+                    android:minHeight="150dp"
+                    app:cardCornerRadius="15dp"
+                    app:cardElevation="5dp">
+                    <com.facebook.litho.LithoView
+                        android:id="@+id/dynamic"
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginLeft="10dp"
-                        android:layout_marginRight="10dp"
-                        android:layout_marginTop="10dp"
-                        android:minHeight="150dp"
-                        app:cardCornerRadius="15dp"
-                        app:cardElevation="5dp">
-                        <com.facebook.litho.LithoView
-                            android:id="@+id/dynamic"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content" />
-                    </androidx.cardview.widget.CardView>
-                </FrameLayout>
-                <View
-                    android:background="@color/colorPrimary"
-                    android:layout_width="match_parent"
-                    android:layout_height="10dp"/>
-                <FrameLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
-                    <androidx.cardview.widget.CardView
-                        app:cardBackgroundColor="@color/colorPrimary"
-                        app:cardElevation="0dp"
-                        app:cardCornerRadius="15dp"
-                        android:layout_width="match_parent"
-                        android:layout_height="?attr/actionBarSize">
-                    </androidx.cardview.widget.CardView>
-                    <View
-                        android:layout_gravity="top"
-                        android:background="@color/colorPrimary"
-                        android:layout_width="match_parent"
-                        android:layout_height="25dp"/>
-                </FrameLayout>
-            </LinearLayout>
-            <androidx.appcompat.widget.Toolbar
-                android:id="@+id/toolbar"
+                        android:layout_height="wrap_content" />
+                </androidx.cardview.widget.CardView>
+            </FrameLayout>
+        </LinearLayout>
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize">
+            <TextView
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
+                android:layout_gravity="center_vertical|left"
+                android:id="@+id/title"
+                android:singleLine="true"
+                android:textSize="20dp"
+                android:textColor="@android:color/white"
                 android:layout_width="match_parent"
-                android:layout_height="?attr/actionBarSize">
-            </androidx.appcompat.widget.Toolbar>
-        </com.google.android.material.appbar.CollapsingToolbarLayout>
+                android:layout_height="wrap_content" />
+        </FrameLayout>
     </com.google.android.material.appbar.AppBarLayout>
     <androidx.core.widget.NestedScrollView
+        android:id="@+id/scroll"
         app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior"
         android:overScrollMode="never"
         android:layout_width="match_parent"

@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Flex
+    width="360"
+    height="360"
     background="RED"
     borderRadius="12"
-    flexDirection="column" />
+    flexDirection="column">
+</Flex>

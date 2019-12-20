@@ -2,7 +2,9 @@ package com.guet.flexbox.playground
 
 import android.os.AsyncTask
 import android.os.Bundle
+import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
+import androidx.coordinatorlayout.widget.CoordinatorLayout
 import com.facebook.litho.LithoView
 import com.facebook.litho.Row
 import com.facebook.yoga.YogaAlign
@@ -16,14 +18,20 @@ import thereisnospon.codeview.CodeView
 import thereisnospon.codeview.CodeViewTheme
 import java.util.*
 
+
 class CodeActivity : AppCompatActivity() {
 
     private lateinit var codeView: CodeView
     private lateinit var lithoView: LithoView
+    private lateinit var host: CoordinatorLayout
+    private lateinit var title: TextView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_code)
+        host = findViewById(R.id.host)
+        title = findViewById(R.id.title)
+        title.text = this.intent.getStringExtra("url")
         codeView = findViewById(R.id.code)
         codeView.setTheme(CodeViewTheme.ANDROIDSTUDIO).fillColor()
         lithoView = findViewById(R.id.dynamic)
