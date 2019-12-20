@@ -10,11 +10,10 @@ import com.facebook.yoga.YogaJustify
 import com.google.gson.Gson
 import com.guet.flexbox.DynamicBox
 import com.guet.flexbox.compiler.Compiler
-import com.guet.flexbox.data.LayoutNode
+import com.guet.flexbox.content.DynamicNode
 import com.guet.flexbox.databinding.DataBindingUtils
-import io.github.kbiakov.codeview.CodeView
-import io.github.kbiakov.codeview.adapters.Options
-import io.github.kbiakov.codeview.highlight.ColorTheme
+import thereisnospon.codeview.CodeView
+import thereisnospon.codeview.CodeViewTheme
 import java.util.*
 
 class CodeActivity : AppCompatActivity() {
@@ -26,11 +25,7 @@ class CodeActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_code)
         codeView = findViewById(R.id.code)
-        codeView.apply {
-            setOptions(Options.Default.get(this@CodeActivity)
-                    .withLanguage("xml")
-                    .withTheme(ColorTheme.DEFAULT))
-        }
+        codeView.setTheme(CodeViewTheme.ANDROIDSTUDIO).fillColor()
         lithoView = findViewById(R.id.dynamic)
         loadData()
     }
@@ -41,9 +36,17 @@ class CodeActivity : AppCompatActivity() {
             val gson = Gson()
             val input = resources.assets.open(url)
             val code = input.reader().readText()
-            val data = Collections.singletonMap("url", url)
-            val s = Compiler.compile(input)
-            val contentRaw = gson.fromJson(s, LayoutNode::class.java)
+            input.close()
+            val data = if (url == resources.getString(R.string.function_path)) {
+                mapOf(
+                        "icons" to resources.getStringArray(R.array.function_icons),
+                        "url" to url
+                )
+            } else {
+                Collections.singletonMap("url", url)
+            }
+            val s = Compiler.compile(code)
+            val contentRaw = gson.fromJson(s, DynamicNode::class.java)
             val content = DataBindingUtils.bind(this, contentRaw, data)
             runOnUiThread {
                 val c = lithoView.componentContext
@@ -54,7 +57,7 @@ class CodeActivity : AppCompatActivity() {
                         .child(DynamicBox.create(c)
                                 .content(content)
                         ).build())
-                codeView.setCode(code)
+                codeView.showCode(code)
             }
         }
     }

@@ -28,9 +28,9 @@ import com.facebook.litho.widget.VerticalScroll;
 import com.facebook.yoga.YogaAlign;
 import com.facebook.yoga.YogaEdge;
 import com.guet.flexbox.DynamicBox;
-import com.guet.flexbox.EventListener;
-import com.guet.flexbox.data.LayoutNode;
-import com.guet.flexbox.data.RenderNode;
+import com.guet.flexbox.EventHandler;
+import com.guet.flexbox.content.DynamicNode;
+import com.guet.flexbox.content.RenderContent;
 import com.guet.flexbox.databinding.DataBindingUtils;
 import com.guet.flexbox.playground.widget.QuickHandler;
 
@@ -50,7 +50,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 public class OverviewActivity
         extends AppCompatActivity
         implements View.OnClickListener,
-        EventListener,
+        EventHandler,
         Runnable,
         NestedScrollView.OnScrollChangeListener,
         SwipeRefreshLayout.OnRefreshListener {
@@ -65,16 +65,16 @@ public class OverviewActivity
     private QuickHandler mNetwork = new QuickHandler("network");
     private MockService mMockService;
     private ArrayAdapter<String> mAdapter;
-    private RenderNode mLayout;
+    private RenderContent mLayout;
     private Runnable mReload = new Runnable() {
         @WorkerThread
         @Override
         public void run() {
             try {
                 Response<Map<String, Object>> dataResponse = mMockService.data().execute();
-                Response<LayoutNode> layout = mMockService.layout().execute();
+                Response<DynamicNode> layout = mMockService.layout().execute();
                 Map<String, Object> dataBody = dataResponse.body();
-                LayoutNode layoutBody = layout.body();
+                DynamicNode layoutBody = layout.body();
                 mLayout = DataBindingUtils.bind(
                         getApplicationContext(),
                         Objects.requireNonNull(layoutBody),

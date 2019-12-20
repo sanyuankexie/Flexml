@@ -9,7 +9,7 @@ import com.facebook.litho.Component
 import com.facebook.litho.ComponentContext
 import com.facebook.litho.drawable.ComparableColorDrawable
 import com.facebook.yoga.YogaEdge
-import com.guet.flexbox.data.RenderNode
+import com.guet.flexbox.content.RenderNode
 import com.guet.flexbox.widget.AsyncLazyDrawable
 import com.guet.flexbox.widget.CornerOutlineProvider
 import com.guet.flexbox.widget.NoOpDrawable

@@ -29,14 +29,14 @@ import com.facebook.yoga.YogaAlign
 import com.facebook.yoga.YogaJustify
 import com.google.gson.Gson
 import com.guet.flexbox.DynamicBox
-import com.guet.flexbox.EventListener
+import com.guet.flexbox.EventHandler
 import com.guet.flexbox.compiler.Compiler
-import com.guet.flexbox.data.LayoutNode
+import com.guet.flexbox.content.DynamicNode
 import com.guet.flexbox.databinding.DataBindingUtils
 import java.util.*
 import kotlin.collections.HashSet
 
-class SearchActivity : AppCompatActivity(), EventListener {
+class SearchActivity : AppCompatActivity(), EventHandler {
 
     private lateinit var sharedPreferences: SharedPreferences
     private lateinit var list: LithoView
@@ -144,7 +144,7 @@ class SearchActivity : AppCompatActivity(), EventListener {
             val gson = Gson()
             val input = resources.assets.open("layout/search/history_list.xml")
             val s = Compiler.compile(input)
-            val contentRaw = gson.fromJson(s, LayoutNode::class.java)
+            val contentRaw = gson.fromJson(s, DynamicNode::class.java)
             val data: Map<String, Any> = Collections.singletonMap(
                     "list",
                     sharedPreferences.getStringSet(

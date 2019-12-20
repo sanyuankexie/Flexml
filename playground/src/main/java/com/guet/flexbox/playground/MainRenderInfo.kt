@@ -3,21 +3,20 @@ package com.guet.flexbox.playground
 import android.content.Context
 import android.os.AsyncTask
 import com.google.gson.Gson
-import com.guet.flexbox.PageContext
 import com.guet.flexbox.compiler.Compiler
-import com.guet.flexbox.data.LayoutNode
-import com.guet.flexbox.data.RenderNode
+import com.guet.flexbox.content.DynamicNode
+import com.guet.flexbox.content.RenderContent
 import com.guet.flexbox.databinding.DataBindingUtils
 import java.util.*
 
 class MainRenderInfo(
-        val banner: List<RenderNode>,
-        val function: RenderNode,
-        val feed: List<RenderNode>
+        val banner: List<RenderContent>,
+        val function: RenderContent,
+        val feed: List<RenderContent>
 ) {
     companion object {
 
-        internal fun init(c: Context, pc: PageContext) {
+        internal fun initAsync(c: Context) {
             AsyncTask.THREAD_POOL_EXECUTOR.execute {
                 synchronized(this) {
                     val res = c.resources
@@ -29,10 +28,9 @@ class MainRenderInfo(
                                 c,
                                 gson.fromJson(
                                         Compiler.compile(input),
-                                        LayoutNode::class.java
+                                        DynamicNode::class.java
                                 ),
-                                Collections.singletonMap("url", it),
-                                mapOf("pageContext" to pc))
+                                Collections.singletonMap("url", it))
                         input.close()
                         lockedInfo
                     }
@@ -40,15 +38,14 @@ class MainRenderInfo(
                         val input = assets.open(it)
                         val json = gson.fromJson(
                                 Compiler.compile(input),
-                                LayoutNode::class.java
+                                DynamicNode::class.java
                         )
                         input.close()
                         val node = (1..50).map { index ->
                             DataBindingUtils.bind(
                                     c,
                                     json,
-                                    mapOf("url" to it, "index" to index),
-                                    mapOf("pageContext" to pc)
+                                    mapOf("url" to it, "index" to index)
                             )
                         }
                         node
@@ -57,12 +54,11 @@ class MainRenderInfo(
                     val input = assets.open(functionPath)
                     val function = DataBindingUtils.bind(
                             c,
-                            gson.fromJson(Compiler.compile(input), LayoutNode::class.java),
+                            gson.fromJson(Compiler.compile(input), DynamicNode::class.java),
                             mapOf(
                                     "url" to functionPath,
                                     "icons" to res.getStringArray(R.array.function_icons)
-                            ),
-                            mapOf("pageContext" to pc))
+                            ))
                     input.close()
                     cache = MainRenderInfo(banner, function, feed)
                 }
@@ -71,8 +67,10 @@ class MainRenderInfo(
 
         private lateinit var cache: MainRenderInfo
 
-        fun wait(): MainRenderInfo {
-            return synchronized(this) { cache }
+        fun wait(): Lazy<MainRenderInfo> {
+            return synchronized(this) {
+                lazyOf(cache)
+            }
         }
     }
 }

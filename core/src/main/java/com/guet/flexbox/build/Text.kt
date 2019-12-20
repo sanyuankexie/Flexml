@@ -8,7 +8,7 @@ import android.text.TextUtils.TruncateAt
 import com.facebook.litho.ComponentContext
 import com.facebook.litho.widget.Text
 import com.facebook.litho.widget.VerticalGravity
-import com.guet.flexbox.data.RenderNode
+import com.guet.flexbox.content.RenderNode
 
 internal object Text : Widget<Text.Builder>(Common) {
 

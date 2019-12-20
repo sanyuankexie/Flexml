@@ -2,8 +2,10 @@ package com.guet.flexbox.databinding
 
 import android.content.Context
 import androidx.annotation.WorkerThread
-import com.guet.flexbox.data.LayoutNode
-import com.guet.flexbox.data.RenderNode
+import com.guet.flexbox.content.DynamicNode
+import com.guet.flexbox.content.PageContext
+import com.guet.flexbox.content.RenderContent
+import com.guet.flexbox.content.RenderNode
 import com.guet.flexbox.el.PropsELContext
 
 object DataBindingUtils {
@@ -13,24 +15,30 @@ object DataBindingUtils {
     @JvmStatic
     fun bind(
             c: Context,
-            layoutNode: LayoutNode,
+            dynamicNode: DynamicNode,
             data: Any?,
             extension: (Map<String, Any>)? = null
-    ): RenderNode {
-        return bindNode(c, layoutNode, PropsELContext(data, extension), true).single()
+    ): RenderContent {
+        val pageContext = PageContext()
+        val renderNode = bindNode(
+                c,
+                dynamicNode,
+                PropsELContext(data, pageContext, extension)
+        ).single()
+        return RenderContent(pageContext, renderNode)
     }
 
     internal fun bindNode(
             c: Context,
-            layoutNode: LayoutNode,
+            dynamicNode: DynamicNode,
             data: PropsELContext,
-            upperVisibility: Boolean
+            upperVisibility: Boolean = true
     ): List<RenderNode> {
-        val type = layoutNode.type
+        val type = dynamicNode.type
         val declaration = declarations[type] ?: Common
-        val values = layoutNode.attrs?.let {
+        val values = dynamicNode.attrs?.let {
             HashMap<String, Any>(it.size).apply {
-                for ((key, raw) in layoutNode.attrs) {
+                for ((key, raw) in dynamicNode.attrs) {
                     val result = declaration[key]?.cast(c, data, raw)
                     if (result != null) {
                         this[key] = result
@@ -43,7 +51,7 @@ object DataBindingUtils {
                 type,
                 values,
                 data,
-                layoutNode.children ?: emptyList(),
+                dynamicNode.children ?: emptyList(),
                 upperVisibility
         )
     }

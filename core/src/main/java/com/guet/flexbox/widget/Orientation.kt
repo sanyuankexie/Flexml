@@ -1,4 +1,4 @@
-package com.guet.flexbox.data
+package com.guet.flexbox.widget
 
 internal enum class Orientation {
     VERTICAL,

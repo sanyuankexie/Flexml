@@ -24,22 +24,19 @@
             </intent-filter>
         </activity>
         <activity
-            android:theme="@style/Theme.AppCompat.Light.NoActionBar"
             android:configChanges="orientation|screenSize"
             android:name=".CodeActivity"/>
         <activity
-            android:theme="@style/Theme.AppCompat.Light.NoActionBar"
             android:configChanges="orientation|screenSize"
             android:name=".SearchActivity" />
         <activity
-            android:theme="@style/Theme.AppCompat.Light.NoActionBar"
+            android:theme="@style/AppTheme"
             android:configChanges="orientation|screenSize"
             android:name=".MainActivity" />
         <activity
             android:configChanges="orientation|screenSize"
             android:name=".OverviewActivity" />
         <activity
-            android:theme="@style/Theme.AppCompat.Light.NoActionBar"
             android:configChanges="orientation|screenSize"
             android:name=".test.TestActivity"
             android:exported="true" />

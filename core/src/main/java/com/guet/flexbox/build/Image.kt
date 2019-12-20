@@ -2,7 +2,7 @@ package com.guet.flexbox.build
 
 import android.widget.ImageView.ScaleType
 import com.facebook.litho.ComponentContext
-import com.guet.flexbox.data.RenderNode
+import com.guet.flexbox.content.RenderNode
 import com.guet.flexbox.widget.AsyncImage
 
 internal object Image : Widget<AsyncImage.Builder>(Common) {

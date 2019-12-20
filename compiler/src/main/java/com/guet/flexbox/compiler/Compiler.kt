@@ -5,10 +5,15 @@ import com.google.gson.JsonObject
 import org.dom4j.Element
 import org.dom4j.io.SAXReader
 import java.io.InputStream
+import java.io.StringReader
 
 object Compiler {
 
     private val sax = SAXReader()
+
+    fun compile(layout: String): String {
+        return toJson(sax.read(StringReader(layout)).rootElement).toString()
+    }
 
     fun compile(layout: InputStream): String {
         return toJson(sax.read(layout).rootElement).toString()

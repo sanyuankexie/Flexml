@@ -2,7 +2,6 @@ package com.guet.flexbox.playground
 
 import android.app.Activity
 import android.content.Intent
-import android.os.AsyncTask
 import android.os.Bundle
 import android.view.View
 import android.widget.LinearLayout
@@ -15,9 +14,8 @@ import com.facebook.litho.Row
 import com.facebook.yoga.YogaAlign
 import com.facebook.yoga.YogaJustify
 import com.guet.flexbox.DynamicBox
-import com.guet.flexbox.EventListener
-import com.guet.flexbox.PageContext
-import com.guet.flexbox.data.RenderNode
+import com.guet.flexbox.EventHandler
+import com.guet.flexbox.content.RenderContent
 import com.guet.flexbox.playground.widget.BannerAdapter
 import com.guet.flexbox.playground.widget.FlexBoxAdapter
 import com.guet.flexbox.playground.widget.PullToRefreshLayout
@@ -28,23 +26,23 @@ import com.zhouwei.mzbanner.MZBannerView
 import es.dmoral.toasty.Toasty
 import java.util.concurrent.atomic.AtomicBoolean
 
-class MainActivity : AppCompatActivity(), EventListener {
+class MainActivity : AppCompatActivity() {
 
-    private val pageContext = PageContext(this)
     private val bannerAdapter = BannerAdapter()
-    private val feedAdapter = FlexBoxAdapter()
+    private val feedAdapter = FlexBoxAdapter(this::handleEvent)
+
     private val loaded = AtomicBoolean(false)
     private lateinit var pullToRefresh: PullToRefreshLayout
     private lateinit var floatToolbar: LinearLayout
-    private lateinit var banner: MZBannerView<RenderNode>
+    private lateinit var banner: MZBannerView<RenderContent>
     private lateinit var feed: RecyclerView
     private lateinit var function: LithoView
-    private lateinit var renderInfo: MainRenderInfo
+    private val renderInfo: MainRenderInfo by MainRenderInfo.wait()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        MainRenderInfo.init(this.application, pageContext)
+        MainRenderInfo.initAsync(this.application)
         pullToRefresh = findViewById(R.id.pull_to_refresh)
         floatToolbar = findViewById(R.id.toolbar)
         feed = findViewById(R.id.feed)
@@ -94,42 +92,42 @@ class MainActivity : AppCompatActivity(), EventListener {
                 }
 
                 override fun onRefresh(v: PullToRefreshLayout) {
-                    AsyncTask.THREAD_POOL_EXECUTOR.execute {
-                        renderInfo = MainRenderInfo.wait()
-                        val bannerInfo = renderInfo.banner.let {
-                            return@let when (it.size) {
-                                1 -> {
-                                    listOf(it[0], it[0], it[0])
-                                }
-                                2 -> {
-                                    listOf(it[0], it[1], it[0])
-                                }
-                                else -> {
-                                    it
-                                }
+                    val bannerInfo = renderInfo.banner.let {
+                        return@let when (it.size) {
+                            1 -> {
+                                listOf(it[0], it[0], it[0])
+                            }
+                            2 -> {
+                                listOf(it[0], it[1], it[0])
+                            }
+                            else -> {
+                                it
                             }
                         }
-                        runOnUiThread {
-                            pullToRefresh.finish(Runnable {
-                                Toasty.success(
-                                        this@MainActivity,
-                                        "资源加载成功",
-                                        Toast.LENGTH_SHORT
-                                ).show()
-                                banner.setPages(bannerInfo, bannerAdapter)
-                                feedAdapter.setNewData(renderInfo.feed)
-                                val c = function.componentContext
-                                function.unmountAllItems()
-                                function.setComponentAsync(Row.create(c)
-                                        .justifyContent(YogaJustify.CENTER)
-                                        .alignItems(YogaAlign.CENTER)
-                                        .flexGrow(1f)
-                                        .child(DynamicBox.create(c)
-                                                .content(renderInfo.function)
-                                        ).build())
-                            })
-                        }
                     }
+                    pullToRefresh.finish(Runnable {
+                        Toasty.success(
+                                this@MainActivity,
+                                "资源加载成功",
+                                Toast.LENGTH_SHORT
+                        ).show()
+                        banner.setPages(bannerInfo, bannerAdapter)
+                        feedAdapter.setNewData(renderInfo.feed)
+                        val c = function.componentContext
+                        function.unmountAllItems()
+                        renderInfo.function.setEventListener(object : EventHandler {
+                            override fun handleEvent(key: String, value: Array<out Any>) {
+                                handleEvent(function, key)
+                            }
+                        })
+                        function.setComponentAsync(Row.create(c)
+                                .justifyContent(YogaJustify.CENTER)
+                                .alignItems(YogaAlign.CENTER)
+                                .flexGrow(1f)
+                                .child(DynamicBox.create(c)
+                                        .content(renderInfo.function)
+                                ).build())
+                    })
                 }
             }
         }
@@ -149,14 +147,6 @@ class MainActivity : AppCompatActivity(), EventListener {
         }
     }
 
-    override fun handleEvent(key: String, value: Array<out Any>) {
-        startActivity(Intent(this, CodeActivity::class.java)
-                .apply {
-                    putExtra("url", key)
-                }
-        )
-    }
-
     private fun startQRCodeActivity() {
         val intent = Intent(this, CaptureActivity::class.java)
         //ZxingConfig是配置类
@@ -171,6 +161,18 @@ class MainActivity : AppCompatActivity(), EventListener {
         }
         intent.putExtra(Constant.INTENT_ZXING_CONFIG, config)
         startActivityForResult(intent, REQUEST_CODE)
+    }
+
+    private fun handleEvent(v: View, url: String) {
+        startActivity(
+                Intent(this, CodeActivity::class.java).apply {
+                    putExtra("url", url)
+                },
+                ActivityOptionsCompat.makeSceneTransitionAnimation(
+                        this,
+                        v,
+                        "litho"
+                ).toBundle())
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {

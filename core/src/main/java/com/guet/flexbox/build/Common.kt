@@ -5,7 +5,7 @@ import com.facebook.litho.ComponentContext
 import com.facebook.yoga.YogaAlign
 import com.facebook.yoga.YogaEdge
 import com.guet.flexbox.DynamicBox
-import com.guet.flexbox.data.RenderNode
+import com.guet.flexbox.content.RenderNode
 import com.guet.flexbox.el.LambdaExpression
 
 internal object Common : Widget<Component.Builder<*>>() {

@@ -4,8 +4,8 @@ import com.facebook.litho.Component
 import com.facebook.litho.ComponentContext
 import com.facebook.litho.widget.HorizontalScroll
 import com.facebook.litho.widget.VerticalScroll
-import com.guet.flexbox.data.RenderNode
-import com.guet.flexbox.data.Orientation
+import com.guet.flexbox.content.RenderNode
+import com.guet.flexbox.widget.Orientation
 
 internal object Scroller : Widget<Component.Builder<*>>(Common) {
 

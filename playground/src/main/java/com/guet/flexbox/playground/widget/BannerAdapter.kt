@@ -5,21 +5,21 @@ import android.view.View
 import com.facebook.litho.LithoView
 import com.facebook.litho.Row
 import com.guet.flexbox.DynamicBox
-import com.guet.flexbox.data.RenderNode
+import com.guet.flexbox.content.RenderContent
 import com.zhouwei.mzbanner.holder.MZHolderCreator
 import com.zhouwei.mzbanner.holder.MZViewHolder
 
-class BannerAdapter : MZHolderCreator<BannerAdapter.BannerHolder> {
+class BannerAdapter: MZHolderCreator<BannerAdapter.BannerHolder> {
 
     override fun createViewHolder(): BannerHolder {
         return BannerHolder()
     }
 
-    inner class BannerHolder : MZViewHolder<RenderNode> {
+    inner class BannerHolder : MZViewHolder<RenderContent> {
 
         private lateinit var lithoView: LithoView
 
-        override fun onBind(p0: Context?, p1: Int, item: RenderNode) {
+        override fun onBind(p0: Context?, p1: Int, item: RenderContent) {
             val c = lithoView.componentContext
             lithoView.unmountAllItems()
             lithoView.setComponentAsync(Row.create(c)

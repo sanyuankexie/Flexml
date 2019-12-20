@@ -1,6 +1,6 @@
 package com.guet.flexbox.el
 
-internal class ExtensionResolver(
+internal class FromMapResolver(
             private val beans: Map<String, Any?>
 ) : BeanNameResolver() {
     override fun isNameResolved(beanName: String): Boolean {

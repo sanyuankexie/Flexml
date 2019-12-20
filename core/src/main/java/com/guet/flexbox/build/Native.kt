@@ -7,7 +7,7 @@ import com.facebook.litho.ComponentContext
 import com.facebook.litho.ViewCompatComponent
 import com.facebook.litho.viewcompat.ViewBinder
 import com.facebook.litho.viewcompat.ViewCreator
-import com.guet.flexbox.data.RenderNode
+import com.guet.flexbox.content.RenderNode
 import java.lang.reflect.Constructor
 
 internal object Native : Widget<ViewCompatComponent.Builder<View>>(Common) {

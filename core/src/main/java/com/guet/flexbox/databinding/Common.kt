@@ -2,9 +2,9 @@ package com.guet.flexbox.databinding
 
 import android.content.Context
 import com.facebook.yoga.YogaAlign
-import com.guet.flexbox.data.LayoutNode
-import com.guet.flexbox.data.RenderNode
-import com.guet.flexbox.data.Visibility
+import com.guet.flexbox.content.DynamicNode
+import com.guet.flexbox.content.RenderNode
+import com.guet.flexbox.widget.Visibility
 import com.guet.flexbox.el.LambdaExpression
 import com.guet.flexbox.el.PropsELContext
 
@@ -61,7 +61,7 @@ internal object Common : Declaration() {
             type: String,
             attrs: Map<String, Any>,
             data: PropsELContext,
-            children: List<LayoutNode>,
+            children: List<DynamicNode>,
             upperVisibility: Boolean
     ): List<RenderNode> {
         val selfVisibility = attrs["visibility"] ?: Visibility.VISIBLE

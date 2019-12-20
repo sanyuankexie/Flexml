@@ -1,5 +1,5 @@
 package com.guet.flexbox
 
-interface EventListener {
+interface EventHandler {
     fun handleEvent(key: String, value: Array<out Any>)
 }

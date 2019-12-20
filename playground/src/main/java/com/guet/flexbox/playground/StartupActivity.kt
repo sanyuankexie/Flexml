@@ -15,6 +15,7 @@ class StartupActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        MainRenderInfo.initAsync(this.application)
         DoraemonKit.install(application)
         SoLoader.init(this, false)
         ActivityCompat.requestPermissions(

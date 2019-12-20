@@ -1,8 +1,8 @@
 package com.guet.flexbox.databinding
 
 import android.content.Context
-import com.guet.flexbox.data.LayoutNode
-import com.guet.flexbox.data.RenderNode
+import com.guet.flexbox.content.DynamicNode
+import com.guet.flexbox.content.RenderNode
 import com.guet.flexbox.el.PropsELContext
 
 internal object For : Declaration() {
@@ -17,7 +17,7 @@ internal object For : Declaration() {
             type: String,
             attrs: Map<String, Any>,
             data: PropsELContext,
-            children: List<LayoutNode>,
+            children: List<DynamicNode>,
             upperVisibility: Boolean
     ): List<RenderNode> {
         val name = attrs.getValue("var") as String

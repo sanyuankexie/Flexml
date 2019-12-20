@@ -1,6 +1,6 @@
 package com.guet.flexbox.databinding
 
-import com.guet.flexbox.data.Orientation
+import com.guet.flexbox.widget.Orientation
 
 internal object Scroller : Declaration(Common) {
     override val attributeSet: AttributeSet by create {

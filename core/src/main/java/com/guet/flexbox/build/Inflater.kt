@@ -2,11 +2,16 @@ package com.guet.flexbox.build
 
 import com.facebook.litho.Component
 import com.facebook.litho.ComponentContext
-import com.guet.flexbox.data.RenderNode
+import com.guet.flexbox.content.RenderContent
+import com.guet.flexbox.content.RenderNode
 
 object Inflater {
 
-    fun inflate(c: ComponentContext, renderNode: RenderNode): Component? {
+    fun inflate(c: ComponentContext, content: RenderContent): Component? {
+        return inflate(c,content.root)
+    }
+
+    private fun inflate(c: ComponentContext, renderNode: RenderNode): Component? {
         return widgets[renderNode.type]?.create(
                 c,
                 renderNode,

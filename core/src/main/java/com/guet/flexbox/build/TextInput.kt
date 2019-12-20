@@ -4,7 +4,7 @@ import android.graphics.Typeface
 import android.text.TextUtils.TruncateAt
 import com.facebook.litho.ComponentContext
 import com.facebook.litho.widget.TextInput
-import com.guet.flexbox.data.RenderNode
+import com.guet.flexbox.content.RenderNode
 
 internal object TextInput : Widget<TextInput.Builder>(Common) {
     override val attributeSet: AttributeSet<TextInput.Builder> by create {

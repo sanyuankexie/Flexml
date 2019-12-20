@@ -8,7 +8,7 @@ import com.facebook.yoga.YogaAlign
 import com.facebook.yoga.YogaFlexDirection
 import com.facebook.yoga.YogaJustify
 import com.facebook.yoga.YogaWrap
-import com.guet.flexbox.data.RenderNode
+import com.guet.flexbox.content.RenderNode
 
 internal object Flex : Widget<Component.ContainerBuilder<*>>(Common) {
 
