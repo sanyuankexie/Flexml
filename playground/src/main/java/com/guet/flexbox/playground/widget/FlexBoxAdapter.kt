@@ -14,12 +14,14 @@ import com.guet.flexbox.playground.R
 
 class FlexBoxAdapter(private val onClickListener: ((String) -> Unit)) : BaseQuickAdapter<RenderNode, BaseViewHolder>(R.layout.feed_item), EventListener {
 
+    override fun onViewRecycled(holder: BaseViewHolder) {
+        val lithoView = holder.getView<LithoView>(R.id.litho)
+        lithoView?.unmountAllItems()
+    }
 
     override fun convert(helper: BaseViewHolder, item: RenderNode) {
         val lithoView = helper.getView<LithoView>(R.id.litho)
         val c = lithoView.componentContext
-        //经过N次尝试，终于找到这个方法
-        lithoView.unmountAllItems()
         lithoView.setComponentAsync(Row.create(c)
                 .alignItems(YogaAlign.CENTER)
                 .flexGrow(1f)
