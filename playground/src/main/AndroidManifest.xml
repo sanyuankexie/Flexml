@@ -30,7 +30,6 @@
             android:configChanges="orientation|screenSize"
             android:name=".SearchActivity" />
         <activity
-            android:theme="@style/AppTheme"
             android:configChanges="orientation|screenSize"
             android:name=".MainActivity" />
         <activity

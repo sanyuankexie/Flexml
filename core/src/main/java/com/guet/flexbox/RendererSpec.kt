@@ -17,7 +17,7 @@ import com.guet.flexbox.el.LambdaExpression
 @LayoutSpec
 internal object RendererSpec {
 
-    private val TAG = "PageHostView"
+    private const val TAG = "PageHostView"
 
     private fun inflate(c: ComponentContext, renderNode: RenderNode): Component? {
         return widgets[renderNode.type]?.create(

@@ -214,6 +214,13 @@ public class OverviewActivity
     }
 
     @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        mMainThread.removeCallbacksAndMessages(null);
+        mNetwork.getLooper().quit();
+    }
+
+    @Override
     public void onRefresh() {
         mNetwork.removeCallbacks(mReload);
         mNetwork.post(mReload);
