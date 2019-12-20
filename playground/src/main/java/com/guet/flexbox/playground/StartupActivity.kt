@@ -42,6 +42,7 @@ class StartupActivity : AppCompatActivity() {
             }
         }
         startActivity(Intent(this, MainActivity::class.java))
+        finish()
     }
 
     private val definedPermissions: Array<String>

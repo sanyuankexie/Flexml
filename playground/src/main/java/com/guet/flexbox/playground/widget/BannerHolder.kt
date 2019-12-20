@@ -16,6 +16,7 @@ class BannerHolder(private val onClickListener: ((String) -> Unit))
 
     override fun onBind(p0: Context?, p1: Int, item: RenderNode) {
         val c = lithoView.componentContext
+        lithoView.release()
         lithoView.setComponentAsync(Row.create(c)
                 .flexGrow(1f)
                 .child(DynamicBox.create(c)
