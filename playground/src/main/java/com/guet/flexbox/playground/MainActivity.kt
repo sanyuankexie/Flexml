@@ -15,7 +15,7 @@ import com.facebook.yoga.YogaAlign
 import com.facebook.yoga.YogaJustify
 import com.guet.flexbox.DynamicBox
 import com.guet.flexbox.data.RenderNode
-import com.guet.flexbox.playground.widget.BannerHolder
+import com.guet.flexbox.playground.widget.BannerAdapter
 import com.guet.flexbox.playground.widget.FlexBoxAdapter
 import com.guet.flexbox.playground.widget.PullToRefreshLayout
 import com.yzq.zxinglibrary.android.CaptureActivity
@@ -27,7 +27,8 @@ import java.util.concurrent.atomic.AtomicBoolean
 
 class MainActivity : AppCompatActivity() {
 
-    private val feedAdapter = FlexBoxAdapter()
+    private val bannerAdapter = BannerAdapter(this::handleEvent)
+    private val feedAdapter = FlexBoxAdapter(this::handleEvent)
     private val loaded = AtomicBoolean(false)
     private lateinit var pullToRefresh: PullToRefreshLayout
     private lateinit var floatToolbar: LinearLayout
@@ -64,10 +65,7 @@ class MainActivity : AppCompatActivity() {
         fSearch.setOnClickListener(handleToSearch)
         search.setOnClickListener(handleToSearch)
         function = headerView.findViewById(R.id.function)
-        feedAdapter.apply {
-            onClickListener = this@MainActivity::handleEvent
-            addHeaderView(headerView)
-        }
+        feedAdapter.addHeaderView(headerView)
         feed.apply {
             adapter = feedAdapter
             addOnScrollListener(object : RecyclerView.OnScrollListener() {
@@ -110,12 +108,10 @@ class MainActivity : AppCompatActivity() {
                                 "资源加载成功",
                                 Toast.LENGTH_SHORT
                         ).show()
-                        banner.setPages(bannerData) {
-                            BannerHolder(this@MainActivity::handleEvent)
-                        }
+                        banner.setPages(bannerData, bannerAdapter)
                         feedAdapter.setNewData(renderInfo.feed)
                         val c = function.componentContext
-                        function.release()
+                        function.unmountAllItems()
                         function.setComponentAsync(Row.create(c)
                                 .justifyContent(YogaJustify.CENTER)
                                 .alignItems(YogaAlign.CENTER)
