@@ -5,7 +5,7 @@ import android.graphics.Color
 import android.net.Uri
 import androidx.annotation.ColorInt
 import com.guet.flexbox.BuildConfig
-import com.guet.flexbox.content.PageContext
+import com.guet.flexbox.PageContext
 import org.json.JSONArray
 import java.lang.reflect.Method
 import java.lang.reflect.Modifier
@@ -13,8 +13,7 @@ import java.util.*
 
 internal class PropsELContext(
         data: Any?,
-        pageContext: PageContext,
-        extension: Map<String, Any>? = null
+        pageContext: PageContext
 ) : ELContext() {
 
     private val variableMapper = StandardVariableMapper()
@@ -25,9 +24,6 @@ internal class PropsELContext(
         standardResolver.add(BeanNameELResolver(FromMapResolver(
                 Collections.singletonMap("pageContext", pageContext))
         ))
-        if (!extension.isNullOrEmpty()) {
-            standardResolver.add(BeanNameELResolver(FromMapResolver(extension)))
-        }
         createPropELResolver(data)?.let {
             standardResolver.add(it)
         }

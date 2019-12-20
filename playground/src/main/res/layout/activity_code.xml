@@ -41,7 +41,7 @@
                     android:minHeight="150dp"
                     app:cardCornerRadius="15dp"
                     app:cardElevation="5dp">
-                    <com.facebook.litho.LithoView
+                    <com.guet.flexbox.PageHostView
                         android:id="@+id/dynamic"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content" />

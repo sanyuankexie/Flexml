@@ -3,11 +3,9 @@ package com.guet.flexbox.playground;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.graphics.Color;
-import android.graphics.Typeface;
 import android.graphics.drawable.GradientDrawable;
 import android.os.Bundle;
 import android.os.Handler;
-import android.text.Layout;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
@@ -20,15 +18,9 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.core.widget.NestedScrollView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
-import com.facebook.litho.Column;
 import com.facebook.litho.ComponentContext;
 import com.facebook.litho.LithoView;
-import com.facebook.litho.widget.Text;
-import com.facebook.litho.widget.VerticalScroll;
-import com.facebook.yoga.YogaAlign;
-import com.facebook.yoga.YogaEdge;
-import com.guet.flexbox.DynamicBox;
-import com.guet.flexbox.EventHandler;
+import com.guet.flexbox.PageHostView;
 import com.guet.flexbox.content.DynamicNode;
 import com.guet.flexbox.content.RenderContent;
 import com.guet.flexbox.databinding.DataBindingUtils;
@@ -36,7 +28,6 @@ import com.guet.flexbox.playground.widget.QuickHandler;
 
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Arrays;
 import java.util.Map;
 import java.util.Objects;
 
@@ -50,7 +41,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 public class OverviewActivity
         extends AppCompatActivity
         implements View.OnClickListener,
-        EventHandler,
+        PageHostView.EventListener,
         Runnable,
         NestedScrollView.OnScrollChangeListener,
         SwipeRefreshLayout.OnRefreshListener {
@@ -102,27 +93,27 @@ public class OverviewActivity
         if (mLayout != null) {
             mLithoView.release();
             ComponentContext c = mLithoView.getComponentContext();
-            mLithoView.setComponentAsync(
-                    VerticalScroll.create(c)
-                            .onScrollChangeListener(this)
-                            .childComponent(Column.create(c)
-                                    .widthPx(toPx(360))
-                                    .alignItems(YogaAlign.CENTER)
-                                    .child(DynamicBox.create(c)
-                                            .content(mLayout)
-                                            .marginPx(YogaEdge.TOP, dp2px(20)))
-                                    .child(Text.create(c)
-                                            .widthPx(toPx(360))
-                                            .heightPx(toPx(40))
-                                            .backgroundColor(getResources()
-                                                    .getColor(R.color.colorPrimary))
-                                            .textAlignment(Layout.Alignment.ALIGN_CENTER)
-                                            .text("这里是布局的下边界")
-                                            .textColor(Color.WHITE)
-                                            .textSizePx(toPx(25))
-                                            .typeface(Typeface.defaultFromStyle(Typeface.BOLD)))
-                            ).build()
-            );
+//            mLithoView.setComponentAsync(
+//                    VerticalScroll.create(c)
+//                            .onScrollChangeListener(this)
+//                            .childComponent(Column.create(c)
+//                                    .widthPx(toPx(360))
+//                                    .alignItems(YogaAlign.CENTER)
+//                                    .child(DynamicBox.create(c)
+//                                            .content(mLayout)
+//                                            .marginPx(YogaEdge.TOP, dp2px(20)))
+//                                    .child(Text.create(c)
+//                                            .widthPx(toPx(360))
+//                                            .heightPx(toPx(40))
+//                                            .backgroundColor(getResources()
+//                                                    .getColor(R.color.colorPrimary))
+//                                            .textAlignment(Layout.Alignment.ALIGN_CENTER)
+//                                            .text("这里是布局的下边界")
+//                                            .textColor(Color.WHITE)
+//                                            .textSizePx(toPx(25))
+//                                            .typeface(Typeface.defaultFromStyle(Typeface.BOLD)))
+//                            ).build()
+//            );
         }
     }
 
@@ -199,11 +190,12 @@ public class OverviewActivity
 
 
     @Override
-    public void handleEvent(
+    public void onEvent(
+            @NotNull PageHostView v,
             @NotNull String type,
-            @NotNull Object[] value
+            @NotNull Object value
     ) {
-        mAdapter.add("event type=" + type + " : event values=" + Arrays.toString(value));
+        mAdapter.add("event type=" + type + " : event values=" + value);
     }
 
     @Override

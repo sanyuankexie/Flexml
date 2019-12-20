@@ -9,12 +9,7 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityOptionsCompat
 import androidx.recyclerview.widget.RecyclerView
-import com.facebook.litho.LithoView
-import com.facebook.litho.Row
-import com.facebook.yoga.YogaAlign
-import com.facebook.yoga.YogaJustify
-import com.guet.flexbox.DynamicBox
-import com.guet.flexbox.EventHandler
+import com.guet.flexbox.PageHostView
 import com.guet.flexbox.content.RenderContent
 import com.guet.flexbox.playground.widget.BannerAdapter
 import com.guet.flexbox.playground.widget.FlexBoxAdapter
@@ -26,7 +21,7 @@ import com.zhouwei.mzbanner.MZBannerView
 import es.dmoral.toasty.Toasty
 import java.util.concurrent.atomic.AtomicBoolean
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : AppCompatActivity(), PageHostView.EventListener {
 
     private val bannerAdapter = BannerAdapter()
     private val feedAdapter = FlexBoxAdapter(this::handleEvent)
@@ -36,7 +31,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var floatToolbar: LinearLayout
     private lateinit var banner: MZBannerView<RenderContent>
     private lateinit var feed: RecyclerView
-    private lateinit var function: LithoView
+    private lateinit var function: PageHostView
     private val renderInfo: MainRenderInfo by MainRenderInfo.wait()
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -68,6 +63,7 @@ class MainActivity : AppCompatActivity() {
         fSearch.setOnClickListener(handleToSearch)
         search.setOnClickListener(handleToSearch)
         function = headerView.findViewById(R.id.function)
+        function.eventListener = this
         feedAdapter.addHeaderView(headerView)
         feed.apply {
             adapter = feedAdapter
@@ -113,20 +109,8 @@ class MainActivity : AppCompatActivity() {
                         ).show()
                         banner.setPages(bannerInfo, bannerAdapter)
                         feedAdapter.setNewData(renderInfo.feed)
-                        val c = function.componentContext
                         function.unmountAllItems()
-                        renderInfo.function.setEventListener(object : EventHandler {
-                            override fun handleEvent(key: String, value: Array<out Any>) {
-                                handleEvent(function, key)
-                            }
-                        })
-                        function.setComponentAsync(Row.create(c)
-                                .justifyContent(YogaJustify.CENTER)
-                                .alignItems(YogaAlign.CENTER)
-                                .flexGrow(1f)
-                                .child(DynamicBox.create(c)
-                                        .content(renderInfo.function)
-                                ).build())
+                        function.setContentAsync(renderInfo.function)
                     })
                 }
             }
@@ -161,6 +145,10 @@ class MainActivity : AppCompatActivity() {
         }
         intent.putExtra(Constant.INTENT_ZXING_CONFIG, config)
         startActivityForResult(intent, REQUEST_CODE)
+    }
+
+    override fun onEvent(v: PageHostView, key: String, value: Any) {
+        handleEvent(v, key)
     }
 
     private fun handleEvent(v: View, url: String) {

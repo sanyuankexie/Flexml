@@ -18,21 +18,18 @@ import android.widget.FrameLayout
 import android.widget.PopupWindow
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
-import com.facebook.litho.LithoView
-import com.facebook.litho.Row
 import com.google.gson.Gson
-import com.guet.flexbox.DynamicBox
-import com.guet.flexbox.EventHandler
+import com.guet.flexbox.PageHostView
 import com.guet.flexbox.compiler.Compiler
 import com.guet.flexbox.content.DynamicNode
 import com.guet.flexbox.databinding.DataBindingUtils
 import java.util.*
 import kotlin.collections.HashSet
 
-class SearchActivity : AppCompatActivity(), EventHandler {
+class SearchActivity : AppCompatActivity(), PageHostView.EventListener {
 
     private lateinit var sharedPreferences: SharedPreferences
-    private lateinit var list: LithoView
+    private lateinit var list: PageHostView
     private lateinit var editText: EditText
     private var popupWindow: PopupWindow? = null
 
@@ -41,6 +38,7 @@ class SearchActivity : AppCompatActivity(), EventHandler {
         setContentView(R.layout.activity_search)
         sharedPreferences = getSharedPreferences("history", Context.MODE_PRIVATE)
         list = findViewById(R.id.list)
+        list.eventListener = this
         editText = findViewById(R.id.search)
         editText.apply {
             setOnFocusChangeListener { v, hasFocus ->
@@ -71,7 +69,7 @@ class SearchActivity : AppCompatActivity(), EventHandler {
                         content.setOnClickListener {
                             popupWindow?.dismiss()
                             popupWindow = null
-                            handleEvent(item.toString(), emptyArray())
+                            handleEvent(item.toString())
                         }
                         v.post {
                             window.showAsDropDown(v,
@@ -97,7 +95,7 @@ class SearchActivity : AppCompatActivity(), EventHandler {
             setOnEditorActionListener { v, actionId, _ ->
                 if (actionId == EditorInfo.IME_ACTION_SEND) {
                     val text = v as TextView
-                    handleEvent(text.text.toString(), emptyArray())
+                    handleEvent(text.text.toString())
                     return@setOnEditorActionListener true
                 }
                 return@setOnEditorActionListener false
@@ -130,17 +128,12 @@ class SearchActivity : AppCompatActivity(), EventHandler {
             input.close()
             val content = DataBindingUtils.bind(this, contentRaw, data)
             runOnUiThread {
-                val c = list.componentContext
-                list.setComponentAsync(Row.create(c)
-                        .flexGrow(1f)
-                        .child(DynamicBox.create(c)
-                                .content(content)
-                        ).build())
+                list.setContentAsync(content)
             }
         }
     }
 
-    override fun handleEvent(key: String, value: Array<out Any>) {
+    private fun handleEvent(key: String) {
         if (key.isEmpty()) {
             return
         }
@@ -158,5 +151,9 @@ class SearchActivity : AppCompatActivity(), EventHandler {
                 }
         )
         finish()
+    }
+
+    override fun onEvent(v: PageHostView, key: String, value: Any) {
+        handleEvent(key)
     }
 }

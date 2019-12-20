@@ -1,12 +1,8 @@
 package com.guet.flexbox.content
 
-import com.guet.flexbox.EventHandler
+import com.guet.flexbox.EventBridge
 
 class RenderContent internal constructor(
-        private val context: PageContext,
-        internal val root: RenderNode
-) {
-    fun setEventListener(value: EventHandler) {
-        context.handler = value
-    }
-}
+        internal val bridge: EventBridge,
+        internal val content: RenderNode
+)
