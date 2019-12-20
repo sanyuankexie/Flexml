@@ -1,9 +1,6 @@
 package com.guet.flexbox.widget
 
-import android.graphics.Color
-import android.graphics.drawable.ColorDrawable
 import android.graphics.drawable.Drawable
-import android.graphics.drawable.TransitionDrawable
 import com.bumptech.glide.request.Request
 import com.bumptech.glide.request.target.SizeReadyCallback
 import com.bumptech.glide.request.target.Target
@@ -55,17 +52,5 @@ internal class DelegateTarget : Target<Drawable> {
 
     override fun getRequest(): Request? {
         return request
-    }
-
-    internal companion object {
-
-        internal fun transition(current: Drawable?, next: Drawable): Drawable {
-            val transitionDrawable = TransitionDrawable(arrayOf(
-                    current ?: ColorDrawable(Color.TRANSPARENT), next
-            ))
-            transitionDrawable.isCrossFadeEnabled = true
-            transitionDrawable.startTransition(200)
-            return transitionDrawable
-        }
     }
 }

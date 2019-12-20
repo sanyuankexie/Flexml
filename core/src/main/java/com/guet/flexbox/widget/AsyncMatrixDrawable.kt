@@ -4,8 +4,10 @@ import android.annotation.TargetApi
 import android.content.Context
 import android.graphics.Canvas
 import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import android.graphics.drawable.Drawable
 import android.graphics.drawable.GradientDrawable
+import android.graphics.drawable.TransitionDrawable
 import android.net.Uri
 import android.os.Build.VERSION_CODES.LOLLIPOP
 import android.text.TextUtils
@@ -137,12 +139,21 @@ internal class AsyncMatrixDrawable(
             drawableHeight = resource.intrinsicHeight
         }
         wrappedDrawable.mount(
-                DelegateTarget.transition(wrappedDrawable.mountedDrawable, resource),
+                resource,
                 matrix,
                 drawableWidth,
                 drawableHeight
         )
     }
+}
+
+internal fun transition(current: Drawable?, next: Drawable): Drawable {
+    val transitionDrawable = TransitionDrawable(arrayOf(
+            current ?: ColorDrawable(Color.TRANSPARENT), next
+    ))
+    transitionDrawable.isCrossFadeEnabled = true
+    transitionDrawable.startTransition(200)
+    return transitionDrawable
 }
 
 private val orientations: Map<String, GradientDrawable.Orientation> = mapOf(

@@ -46,7 +46,7 @@ internal class AsyncLazyDrawable(
 
     override fun onResourceReady(resource: Drawable, transition: Transition<in Drawable>?) {
         resource.bounds = bounds
-        wrappedDrawable = DelegateTarget.transition(null, resource)
+        wrappedDrawable = resource
         invalidateSelf()
     }
 
