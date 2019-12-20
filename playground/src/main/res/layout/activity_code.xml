@@ -51,12 +51,15 @@
         <FrameLayout
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize">
-            <TextView
+            <com.guet.flexbox.playground.widget.MarqueeText
+                android:focusable="true"
                 android:layout_marginLeft="10dp"
                 android:layout_marginRight="10dp"
                 android:layout_gravity="center_vertical|left"
                 android:id="@+id/title"
                 android:singleLine="true"
+                android:ellipsize="marquee"
+                android:marqueeRepeatLimit="marquee_forever"
                 android:textSize="20dp"
                 android:textColor="@android:color/white"
                 android:layout_width="match_parent"
