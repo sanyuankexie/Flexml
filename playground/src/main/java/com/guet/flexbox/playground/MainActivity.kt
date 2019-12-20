@@ -115,9 +115,6 @@ class MainActivity : AppCompatActivity() {
                         }
                         feedAdapter.setNewData(renderInfo.feed)
                         val c = function.componentContext
-                        function.setOnDirtyMountListener {
-                            it.postInvalidateOnAnimation()
-                        }
                         function.release()
                         function.setComponentAsync(Row.create(c)
                                 .justifyContent(YogaJustify.CENTER)
