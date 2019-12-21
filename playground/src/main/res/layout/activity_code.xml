@@ -1,87 +1,102 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.coordinatorlayout.widget.CoordinatorLayout
-    android:id="@+id/host"
-    android:background="@color/whitesmoke"
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/host"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="@color/whitesmoke">
     <com.google.android.material.appbar.AppBarLayout
-        app:elevation="0dp"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-        <LinearLayout
+        android:layout_height="wrap_content"
+        android:background="@color/colorPrimary"
+        android:orientation="vertical"
+        app:elevation="0dp">
+        <com.google.android.material.appbar.CollapsingToolbarLayout
+            android:minHeight="?attr/actionBarSize"
+            app:contentScrim="@color/colorPrimary"
             app:layout_scrollFlags="scroll|exitUntilCollapsed"
-            android:orientation="vertical"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
-            <TextView
-                android:text="布局源码"
-                android:gravity="center_vertical"
-                android:textSize="20dp"
-                android:paddingLeft="10dp"
-                android:paddingRight="10dp"
-                android:textColor="@android:color/white"
-                android:background="@color/colorPrimary"
+            <androidx.cardview.widget.CardView
                 android:layout_width="match_parent"
-                android:layout_height="30dp"/>
-            <FrameLayout
-                android:paddingBottom="10dp"
-                android:background="@color/colorPrimary"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-                <androidx.cardview.widget.CardView
-                    android:transitionName="litho"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="10dp"
-                    android:layout_marginRight="10dp"
-                    android:layout_marginTop="10dp"
-                    android:minHeight="150dp"
-                    app:cardCornerRadius="15dp"
-                    app:cardElevation="5dp">
-                    <com.guet.flexbox.PageHostView
-                        android:id="@+id/dynamic"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content" />
-                </androidx.cardview.widget.CardView>
-            </FrameLayout>
-        </LinearLayout>
-        <FrameLayout
-            android:layout_width="match_parent"
-            android:layout_height="?attr/actionBarSize">
-            <com.guet.flexbox.playground.widget.MarqueeText
-                android:focusable="true"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="?attr/actionBarSize"
                 android:layout_marginLeft="10dp"
                 android:layout_marginRight="10dp"
-                android:layout_gravity="center_vertical|left"
-                android:id="@+id/title"
-                android:singleLine="true"
-                android:ellipsize="marquee"
-                android:marqueeRepeatLimit="marquee_forever"
-                android:textSize="20dp"
-                android:textColor="@android:color/white"
+                android:layout_marginBottom="30dp"
+                android:minHeight="150dp"
+                android:transitionName="litho"
+                app:cardCornerRadius="15dp"
+                app:cardElevation="5dp">
+                <com.guet.flexbox.PageHostView
+                    android:id="@+id/dynamic"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+                </com.guet.flexbox.PageHostView>
+            </androidx.cardview.widget.CardView>
+        </com.google.android.material.appbar.CollapsingToolbarLayout>
+        <FrameLayout
+            app:layout_scrollFlags="noScroll"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <androidx.cardview.widget.CardView
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
+                android:layout_height="match_parent"
+                app:cardBackgroundColor="@color/whitesmoke"
+                app:cardCornerRadius="15dp"
+                app:cardElevation="0dp">
+            </androidx.cardview.widget.CardView>
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="15dp"
+                android:layout_gravity="bottom"
+                android:background="@color/whitesmoke">
+            </View>
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:layout_marginLeft="15dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginRight="15dp"
+                android:layout_marginBottom="10dp"
+                android:gravity="center_vertical|left"
+                android:text="布局源码"
+                android:textColor="@android:color/black"
+                android:textSize="25dp" />
         </FrameLayout>
     </com.google.android.material.appbar.AppBarLayout>
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize">
+        <com.guet.flexbox.playground.widget.MarqueeText
+            android:id="@+id/title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:gravity="center_vertical"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:ellipsize="marquee"
+            android:focusable="true"
+            android:marqueeRepeatLimit="marquee_forever"
+            android:singleLine="true"
+            android:textColor="@android:color/white"
+            android:textSize="20dp" />
+    </FrameLayout>
     <androidx.core.widget.NestedScrollView
         android:id="@+id/scroll"
-        app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior"
-        android:overScrollMode="never"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:layout_marginBottom="5dp"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
-        <androidx.cardview.widget.CardView
+        android:layout_height="match_parent"
+        android:overScrollMode="never"
+        app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior">
+        <thereisnospon.codeview.CodeView
+            android:id="@+id/code"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_margin="10dp"
-            app:cardCornerRadius="15dp"
-            app:cardElevation="0dp">
-            <thereisnospon.codeview.CodeView
-                android:id="@+id/code"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent" />
-        </androidx.cardview.widget.CardView>
+            android:layout_height="match_parent" />
     </androidx.core.widget.NestedScrollView>
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

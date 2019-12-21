@@ -2,7 +2,6 @@
 <Flex
     width="360"
     height="360"
-    background="RED"
-    borderRadius="12"
     flexDirection="column">
+
 </Flex>

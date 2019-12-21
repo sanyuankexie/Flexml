@@ -141,9 +141,14 @@ class SearchActivity : AppCompatActivity(), PageHostView.EventHandler {
                 "history_list",
                 null
         ) ?: emptySet())
-        set.add(key)
+        val listData = if (set.size >= 10) {
+            set.toMutableList().subList(0, 9)
+        } else {
+            set.toMutableList()
+        }
+        listData.add(key)
         sharedPreferences.edit()
-                .putStringSet("list", set)
+                .putStringSet("list", listData.toSortedSet())
                 .apply()
         startActivity(Intent(this, OverviewActivity::class.java)
                 .apply {

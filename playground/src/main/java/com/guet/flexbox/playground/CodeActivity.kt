@@ -1,10 +1,15 @@
 package com.guet.flexbox.playground
 
+import android.graphics.Outline
 import android.os.AsyncTask
 import android.os.Bundle
+import android.view.View
+import android.view.ViewOutlineProvider
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.coordinatorlayout.widget.CoordinatorLayout
+import androidx.core.widget.NestedScrollView
+import com.didichuxing.doraemonkit.util.UIUtils
 import com.google.gson.Gson
 import com.guet.flexbox.PageHostView
 import com.guet.flexbox.compiler.Compiler
@@ -16,6 +21,7 @@ import java.util.*
 
 class CodeActivity : AppCompatActivity() {
 
+    private lateinit var scroll: NestedScrollView
     private lateinit var codeView: CodeView
     private lateinit var lithoView: PageHostView
     private lateinit var host: CoordinatorLayout
@@ -24,12 +30,20 @@ class CodeActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_code)
+        scroll = findViewById(R.id.scroll)
         host = findViewById(R.id.host)
         title = findViewById(R.id.title)
         title.text = this.intent.getStringExtra("url")
         codeView = findViewById(R.id.code)
         codeView.setTheme(CodeViewTheme.ANDROIDSTUDIO).fillColor()
         lithoView = findViewById(R.id.dynamic)
+        scroll.outlineProvider = object : ViewOutlineProvider() {
+            override fun getOutline(view: View, outline: Outline) {
+                outline.setRoundRect(0, 0, view.width, view.height,
+                        UIUtils.dp2px(this@CodeActivity, 15f).toFloat())
+            }
+        }
+        scroll.clipToOutline = true
         loadData()
     }
 
