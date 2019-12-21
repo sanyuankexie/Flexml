@@ -128,7 +128,7 @@ class SearchActivity : AppCompatActivity(), PageHostView.EventHandler {
             input.close()
             val content = DataBindingUtils.bind(this, contentRaw, data)
             runOnUiThread {
-                list.setContent(content)
+                list.setContentAsync(content)
             }
         }
     }

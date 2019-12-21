@@ -110,7 +110,7 @@ class MainActivity : AppCompatActivity(), PageHostView.EventHandler {
                         banner.setPages(bannerInfo, bannerAdapter)
                         feedAdapter.setNewData(renderInfo.feed)
                         function.unmountAllItems()
-                        function.setContent(renderInfo.function)
+                        function.setContentAsync(renderInfo.function)
                     })
                 }
             }

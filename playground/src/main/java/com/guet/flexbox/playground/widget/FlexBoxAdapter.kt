@@ -24,6 +24,6 @@ class FlexBoxAdapter(
     override fun convert(helper: BaseViewHolder, item: RenderContent) {
         val lithoView = helper.getView<PageHostView>(R.id.litho)
         lithoView.eventHandler = this
-        lithoView.setContent(item)
+        lithoView.setContentAsync(item)
     }
 }

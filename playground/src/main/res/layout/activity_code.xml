@@ -31,7 +31,7 @@
                 <com.guet.flexbox.PageHostView
                     android:id="@+id/dynamic"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
+                    android:layout_height="300dp">
                 </com.guet.flexbox.PageHostView>
             </androidx.cardview.widget.CardView>
         </com.google.android.material.appbar.CollapsingToolbarLayout>

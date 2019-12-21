@@ -66,7 +66,8 @@ class CodeActivity : AppCompatActivity() {
             val contentRaw = gson.fromJson(s, DynamicNode::class.java)
             val content = DataBindingUtils.bind(this, contentRaw, data)
             runOnUiThread {
-                lithoView.setContent(content, false)
+                lithoView.unmountAllItems()
+                lithoView.setContentAsync(content)
                 codeView.showCode(code)
             }
         }

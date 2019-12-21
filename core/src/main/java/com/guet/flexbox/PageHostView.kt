@@ -1,14 +1,16 @@
 package com.guet.flexbox
 
 import android.content.Context
+import android.os.Handler
+import android.os.HandlerThread
 import android.util.AttributeSet
-import android.util.Log
 import android.view.View
-import com.facebook.litho.ComponentTree
-import com.facebook.litho.LithoView
-import com.facebook.litho.SizeSpec
-import com.facebook.litho.ThreadUtils
+import com.facebook.litho.*
+import com.guet.flexbox.content.DynamicNode
 import com.guet.flexbox.content.RenderContent
+import com.guet.flexbox.content.RenderNode
+import com.guet.flexbox.databinding.DataBindingUtils
+import com.guet.flexbox.el.ELContext
 import com.guet.flexbox.el.PropsELContext
 
 class PageHostView @JvmOverloads constructor(
@@ -18,9 +20,7 @@ class PageHostView @JvmOverloads constructor(
     init {
         componentTree = ComponentTree.create(componentContext)
                 .isReconciliationEnabled(false)
-                .measureListener { width, height ->
-                    Log.i("@@@", "width$width+$height+${layoutParams.width}+${layoutParams.height}")
-                }
+                .layoutThreadHandler(WorkThreadHandler)
                 .build()
     }
 
@@ -30,31 +30,57 @@ class PageHostView @JvmOverloads constructor(
         }
     }
 
+    override fun setLayoutParams(params: LayoutParams?) {
+        check(params?.width != LayoutParams.WRAP_CONTENT) { "width forbid wrap_content" }
+        super.setLayoutParams(params)
+    }
+
     var eventHandler: EventHandler? = null
 
-    @JvmOverloads
-    fun setContent(
-            c: RenderContent,
-            async: Boolean = true,
-            widthSpec: Int = SizeSpec.makeSizeSpec(measuredWidth, SizeSpec.EXACTLY),
-            heightSpec: Int = SizeSpec.makeSizeSpec(0, SizeSpec.UNSPECIFIED)) {
+    fun setContentAsync(node: DynamicNode, data: Any?) {
+        val c = componentContext
+        WorkThreadHandler.post {
+            val elContext = PropsELContext(data, pageContext)
+            val render = DataBindingUtils.bindNode(c.androidContext, node, elContext).single()
+            setContentAsync(render, elContext)
+        }
+    }
+
+    fun setContentAsync(c: RenderContent) {
         ThreadUtils.assertMainThread()
-        val root = PageHost.create(componentContext)
-                .content(c.content)
-                .elContext(PropsELContext(c.data, pageContext))
-                .build()
-        if (async) {
-            componentTree?.setRootAndSizeSpecAsync(
-                    root,
-                    widthSpec,
-                    heightSpec
-            )
-        } else {
-            componentTree?.setRootAndSizeSpec(
-                    root,
-                    widthSpec,
-                    heightSpec
-            )
+        setContentAsync(c.content, PropsELContext(c.data, pageContext))
+    }
+
+    private fun setContentAsync(n: RenderNode, data: ELContext) {
+        componentTree?.setRootAndSizeSpecAsync(PageHost.create(componentContext)
+                .content(n)
+                .elContext(data)
+                .build(),
+                SizeSpec.makeSizeSpec(measuredWidth, SizeSpec.EXACTLY),
+                when (layoutParams?.height) {
+                    LayoutParams.WRAP_CONTENT -> SizeSpec.makeSizeSpec(0, SizeSpec.UNSPECIFIED)
+                    else -> SizeSpec.makeSizeSpec(measuredHeight, SizeSpec.EXACTLY)
+                })
+    }
+
+    private companion object WorkThreadHandler: Handler({
+        val thread = HandlerThread("WorkThreadHandler")
+        thread.start()
+        thread.looper
+    }()), LithoHandler {
+
+        override fun post(runnable: Runnable?, tag: String?) {
+            post(runnable)
+        }
+
+        override fun postAtFront(runnable: Runnable?, tag: String?) {
+            postAtFrontOfQueue(runnable)
+        }
+
+        override fun isTracing(): Boolean = false
+
+        override fun remove(runnable: Runnable?) {
+            removeCallbacks(runnable)
         }
     }
 
