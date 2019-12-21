@@ -2,7 +2,6 @@ package com.guet.flexbox.databinding
 
 import android.content.Context
 import androidx.annotation.WorkerThread
-import com.guet.flexbox.EventBridge
 import com.guet.flexbox.PageContext
 import com.guet.flexbox.content.DynamicNode
 import com.guet.flexbox.content.RenderContent
@@ -18,13 +17,11 @@ object DataBindingUtils {
             dynamicNode: DynamicNode,
             data: Any?
     ): RenderContent {
-        val host = EventBridge()
-        val content = bindNode(
+        return RenderContent(data, bindNode(
                 c,
                 dynamicNode,
-                PropsELContext(data, PageContext(host))
-        ).single()
-        return RenderContent(host, content)
+                PropsELContext(data, PageContext.FakePageContext)
+        ).single())
     }
 
     internal fun bindNode(

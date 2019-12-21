@@ -26,7 +26,7 @@ import com.guet.flexbox.databinding.DataBindingUtils
 import java.util.*
 import kotlin.collections.HashSet
 
-class SearchActivity : AppCompatActivity(), PageHostView.EventListener {
+class SearchActivity : AppCompatActivity(), PageHostView.EventHandler {
 
     private lateinit var sharedPreferences: SharedPreferences
     private lateinit var list: PageHostView
@@ -38,7 +38,7 @@ class SearchActivity : AppCompatActivity(), PageHostView.EventListener {
         setContentView(R.layout.activity_search)
         sharedPreferences = getSharedPreferences("history", Context.MODE_PRIVATE)
         list = findViewById(R.id.list)
-        list.eventListener = this
+        list.eventHandler = this
         editText = findViewById(R.id.search)
         editText.apply {
             setOnFocusChangeListener { v, hasFocus ->
@@ -153,7 +153,7 @@ class SearchActivity : AppCompatActivity(), PageHostView.EventListener {
         finish()
     }
 
-    override fun onEvent(v: PageHostView, key: String, value: Any) {
+    override fun handleEvent(v: PageHostView, key: String, value: Any) {
         handleEvent(key)
     }
 }

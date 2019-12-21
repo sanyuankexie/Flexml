@@ -11,9 +11,9 @@ import com.guet.flexbox.playground.R
 
 class FlexBoxAdapter(
         private val onClickListener: (v: View, url: String) -> Unit
-) : BaseQuickAdapter<RenderContent, BaseViewHolder>(R.layout.feed_item), PageHostView.EventListener {
+) : BaseQuickAdapter<RenderContent, BaseViewHolder>(R.layout.feed_item), PageHostView.EventHandler {
 
-    override fun onEvent(v: PageHostView, key: String, value: Any) {
+    override fun handleEvent(v: PageHostView, key: String, value: Any) {
         onClickListener(v, key)
     }
 
@@ -24,7 +24,7 @@ class FlexBoxAdapter(
 
     override fun convert(helper: BaseViewHolder, item: RenderContent) {
         val lithoView = helper.getView<PageHostView>(R.id.litho)
-        lithoView.eventListener = this
+        lithoView.eventHandler = this
         lithoView.setContentAsync(item)
     }
 }

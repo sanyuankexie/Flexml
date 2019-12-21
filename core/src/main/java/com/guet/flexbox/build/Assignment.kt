@@ -5,8 +5,10 @@ import com.facebook.litho.Component
 
 internal typealias AttributeSet<C> = Map<String, Assignment<C, *>>
 
+private val metrics = Resources.getSystem().displayMetrics
+
 internal inline fun <reified T : Number> T.toPx(): Int {
-    return (this.toFloat() * Resources.getSystem().displayMetrics.widthPixels / 360f).toInt()
+    return (this.toFloat() * metrics.widthPixels / 360f).toInt()
 }
 
 internal inline fun <T : Component.Builder<*>> create(crossinline action: HashMap<String, Assignment<T, *>>.() -> Unit): Lazy<AttributeSet<T>> {

@@ -1,11 +1,11 @@
 package com.guet.flexbox
 
-internal class PageContext(
-        private val proxy: EventBridge
-) {
 
-    @JvmName("send")
-    fun send(key: String, vararg data: Any) {
-        proxy.handleEvent(key, data)
+internal abstract class PageContext {
+
+    abstract fun send(key: String, vararg data: Any)
+
+    companion object FakePageContext : PageContext() {
+        override fun send(key: String, vararg data: Any) = throw IllegalStateException()
     }
 }

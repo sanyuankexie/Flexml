@@ -41,7 +41,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 public class OverviewActivity
         extends AppCompatActivity
         implements View.OnClickListener,
-        PageHostView.EventListener,
+        PageHostView.EventHandler,
         Runnable,
         NestedScrollView.OnScrollChangeListener,
         SwipeRefreshLayout.OnRefreshListener {
@@ -190,7 +190,7 @@ public class OverviewActivity
 
 
     @Override
-    public void onEvent(
+    public void handleEvent(
             @NotNull PageHostView v,
             @NotNull String type,
             @NotNull Object value

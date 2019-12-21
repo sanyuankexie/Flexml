@@ -4,9 +4,10 @@ import com.facebook.litho.Component
 import com.facebook.litho.ComponentContext
 import com.facebook.yoga.YogaAlign
 import com.facebook.yoga.YogaEdge
-import com.guet.flexbox.Renderer
+import com.guet.flexbox.Host
 import com.guet.flexbox.content.RenderNode
 import com.guet.flexbox.el.LambdaExpression
+import java.util.*
 
 internal object Common : Widget<Component.Builder<*>>() {
 
@@ -19,6 +20,26 @@ internal object Common : Widget<Component.Builder<*>>() {
         this["height"] = object : Assignment<Component.Builder<*>, Double>() {
             override fun Component.Builder<*>.assign(display: Boolean, other: Map<String, Any>, value: Double) {
                 heightPx(value.toPx())
+            }
+        }
+        this["minWidth"] = object : Assignment<Component.Builder<*>, Double>() {
+            override fun Component.Builder<*>.assign(display: Boolean, other: Map<String, Any>, value: Double) {
+                minWidthPx(value.toPx())
+            }
+        }
+        this["maxWidth"] = object : Assignment<Component.Builder<*>, Double>() {
+            override fun Component.Builder<*>.assign(display: Boolean, other: Map<String, Any>, value: Double) {
+                maxWidthPx(value.toPx())
+            }
+        }
+        this["minHeight"] = object : Assignment<Component.Builder<*>, Double>() {
+            override fun Component.Builder<*>.assign(display: Boolean, other: Map<String, Any>, value: Double) {
+                minHeightPx(value.toPx())
+            }
+        }
+        this["maxWidth"] = object : Assignment<Component.Builder<*>, Double>() {
+            override fun Component.Builder<*>.assign(display: Boolean, other: Map<String, Any>, value: Double) {
+                maxHeightPx(value.toPx())
             }
         }
         this["flexGrow"] = object : Assignment<Component.Builder<*>, Double>() {
@@ -47,7 +68,7 @@ internal object Common : Widget<Component.Builder<*>>() {
             }
         }
         for (edge in arrayOf("Left", "Right", "Top", "Bottom")) {
-            val yogaEdge = YogaEdge.valueOf(edge.toUpperCase())
+            val yogaEdge = YogaEdge.valueOf(edge.toUpperCase(Locale.US))
             this["margin$edge"] = object : Assignment<Component.Builder<*>, Double>() {
                 override fun Component.Builder<*>.assign(display: Boolean, other: Map<String, Any>, value: Double) {
                     marginPx(yogaEdge, value.toPx())
@@ -62,18 +83,18 @@ internal object Common : Widget<Component.Builder<*>>() {
         this["clickUrl"] = object : Assignment<Component.Builder<*>, LambdaExpression>() {
             override fun Component.Builder<*>.assign(display: Boolean, other: Map<String, Any>, value: LambdaExpression) {
                 if (!other.containsKey("onClick")) {
-                    clickHandler(Renderer.onClick(getContext(), value))
+                    clickHandler(Host.onClick(getContext(), value))
                 }
             }
         }
         this["onClick"] = object : Assignment<Component.Builder<*>, LambdaExpression>() {
             override fun Component.Builder<*>.assign(display: Boolean, other: Map<String, Any>, value: LambdaExpression) {
-                clickHandler(Renderer.onClick(getContext(), value))
+                clickHandler(Host.onClick(getContext(), value))
             }
         }
         this["onView"] = object : Assignment<Component.Builder<*>, LambdaExpression>() {
             override fun Component.Builder<*>.assign(display: Boolean, other: Map<String, Any>, value: LambdaExpression) {
-                visibleHandler(Renderer.onView(getContext(), value))
+                visibleHandler(Host.onView(getContext(), value))
             }
         }
     }

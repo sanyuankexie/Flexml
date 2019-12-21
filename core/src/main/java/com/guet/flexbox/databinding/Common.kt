@@ -4,9 +4,9 @@ import android.content.Context
 import com.facebook.yoga.YogaAlign
 import com.guet.flexbox.content.DynamicNode
 import com.guet.flexbox.content.RenderNode
-import com.guet.flexbox.widget.Visibility
 import com.guet.flexbox.el.LambdaExpression
 import com.guet.flexbox.el.PropsELContext
+import com.guet.flexbox.widget.Visibility
 
 internal object Common : Declaration() {
 
@@ -20,6 +20,10 @@ internal object Common : Declaration() {
         value("height")
         value("flexGrow")
         value("flexShrink")
+        value("minWidth")
+        value("maxWidth")
+        value("minHeight")
+        value("maxHeight")
         enum("alignSelf", mapOf(
                 "auto" to YogaAlign.AUTO,
                 "flexStart" to YogaAlign.FLEX_START,
@@ -46,12 +50,12 @@ internal object Common : Declaration() {
         }
         this["onClick"] = object : AttributeInfo<LambdaExpression>() {
             override fun cast(c: Context, props: PropsELContext, raw: String): LambdaExpression? {
-                return props.tryGetLambda(raw)
+                return props.tryGetLambda(raw)?.apply { setELContext(null) }
             }
         }
         this["onView"] = object : AttributeInfo<LambdaExpression>() {
             override fun cast(c: Context, props: PropsELContext, raw: String): LambdaExpression? {
-                return props.tryGetLambda(raw)
+                return props.tryGetLambda(raw)?.apply { setELContext(null) }
             }
         }
     }

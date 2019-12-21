@@ -21,7 +21,7 @@ import com.zhouwei.mzbanner.MZBannerView
 import es.dmoral.toasty.Toasty
 import java.util.concurrent.atomic.AtomicBoolean
 
-class MainActivity : AppCompatActivity(), PageHostView.EventListener {
+class MainActivity : AppCompatActivity(), PageHostView.EventHandler {
 
     private val bannerAdapter = BannerAdapter()
     private val feedAdapter = FlexBoxAdapter(this::handleEvent)
@@ -63,7 +63,7 @@ class MainActivity : AppCompatActivity(), PageHostView.EventListener {
         fSearch.setOnClickListener(handleToSearch)
         search.setOnClickListener(handleToSearch)
         function = headerView.findViewById(R.id.function)
-        function.eventListener = this
+        function.eventHandler = this
         feedAdapter.addHeaderView(headerView)
         feed.apply {
             adapter = feedAdapter
@@ -147,7 +147,7 @@ class MainActivity : AppCompatActivity(), PageHostView.EventListener {
         startActivityForResult(intent, REQUEST_CODE)
     }
 
-    override fun onEvent(v: PageHostView, key: String, value: Any) {
+    override fun handleEvent(v: PageHostView, key: String, value: Any) {
         handleEvent(v, key)
     }
 

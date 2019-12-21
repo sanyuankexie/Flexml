@@ -11,11 +11,12 @@ import com.facebook.litho.annotations.*
 import com.facebook.litho.widget.TextChangedEvent
 import com.guet.flexbox.build.*
 import com.guet.flexbox.content.RenderNode
+import com.guet.flexbox.el.ELContext
 import com.guet.flexbox.el.LambdaExpression
 
 @RestrictTo(RestrictTo.Scope.LIBRARY)
 @LayoutSpec
-internal object RendererSpec {
+internal object HostSpec {
 
     private const val TAG = "PageHostView"
 
@@ -54,24 +55,27 @@ internal object RendererSpec {
     fun onTextChanged(
             c: ComponentContext,
             @FromEvent text: String,
+            @Prop elContext: ELContext,
             @Param lambda: LambdaExpression
     ) {
-        lambda.invoke(text)
+        lambda.invoke(elContext, text)
     }
 
     @OnEvent(VisibleEvent::class)
     fun onView(
             c: ComponentContext,
+            @Prop elContext: ELContext,
             @Param lambda: LambdaExpression
     ) {
-        lambda.invoke()
+        lambda.invoke(elContext)
     }
 
     @OnEvent(ClickEvent::class)
     fun onClick(
             c: ComponentContext,
+            @Prop elContext: ELContext,
             @Param lambda: LambdaExpression
     ) {
-        lambda.invoke()
+        lambda.invoke(elContext)
     }
 }
