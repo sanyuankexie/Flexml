@@ -1,6 +1,7 @@
 package com.guet.flexbox.databinding
 
 import android.content.Context
+import androidx.annotation.RestrictTo
 import androidx.annotation.WorkerThread
 import com.guet.flexbox.PageContext
 import com.guet.flexbox.content.DynamicNode
@@ -24,7 +25,8 @@ object DataBindingUtils {
         ).single())
     }
 
-    internal fun bindNode(
+    @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
+    fun bindNode(
             c: Context,
             dynamicNode: DynamicNode,
             data: PropsELContext,

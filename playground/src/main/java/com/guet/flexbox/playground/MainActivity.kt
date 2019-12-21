@@ -9,8 +9,9 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityOptionsCompat
 import androidx.recyclerview.widget.RecyclerView
-import com.guet.flexbox.PageHostView
 import com.guet.flexbox.content.RenderContent
+import com.guet.flexbox.widget.EventHandler
+import com.guet.flexbox.litho.PageHostView
 import com.guet.flexbox.playground.widget.BannerAdapter
 import com.guet.flexbox.playground.widget.FlexBoxAdapter
 import com.guet.flexbox.playground.widget.PullToRefreshLayout
@@ -21,7 +22,7 @@ import com.zhouwei.mzbanner.MZBannerView
 import es.dmoral.toasty.Toasty
 import java.util.concurrent.atomic.AtomicBoolean
 
-class MainActivity : AppCompatActivity(), PageHostView.EventHandler {
+class MainActivity : AppCompatActivity(), EventHandler {
 
     private val bannerAdapter = BannerAdapter()
     private val feedAdapter = FlexBoxAdapter(this::handleEvent)

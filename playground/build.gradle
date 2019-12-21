@@ -56,7 +56,7 @@ dependencies {
 
     implementation 'ch.ielse:switchbutton:1.0.1'
 
-    implementation project(':core')
+    implementation project(':litho')
     implementation project(':compiler')
 
     implementation 'androidx.constraintlayout:constraintlayout:1.1.3'

@@ -1,7 +1,7 @@
 package com.guet.flexbox
 
 
-internal abstract class PageContext {
+abstract class PageContext {
 
     abstract fun send(key: String, vararg data: Any)
 

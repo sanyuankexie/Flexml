@@ -28,11 +28,11 @@
                 android:transitionName="litho"
                 app:cardCornerRadius="15dp"
                 app:cardElevation="5dp">
-                <com.guet.flexbox.PageHostView
+                <com.guet.flexbox.litho.PageHostView
                     android:id="@+id/dynamic"
                     android:layout_width="match_parent"
                     android:layout_height="300dp">
-                </com.guet.flexbox.PageHostView>
+                </com.guet.flexbox.litho.PageHostView>
             </androidx.cardview.widget.CardView>
         </com.google.android.material.appbar.CollapsingToolbarLayout>
         <FrameLayout

@@ -1,7 +1,7 @@
 package com.guet.flexbox.content
 
 
-internal class RenderNode(
+class RenderNode(
         val type: String,
         val attrs: Map<String, Any>,
         val visibility: Boolean,

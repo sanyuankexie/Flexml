@@ -6,7 +6,7 @@ import com.guet.flexbox.content.DynamicNode
 import com.guet.flexbox.content.RenderNode
 import com.guet.flexbox.el.LambdaExpression
 import com.guet.flexbox.el.PropsELContext
-import com.guet.flexbox.widget.Visibility
+import com.guet.flexbox.Visibility
 
 internal object Common : Declaration() {
 

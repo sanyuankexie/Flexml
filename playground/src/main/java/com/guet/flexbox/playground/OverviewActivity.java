@@ -20,7 +20,7 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.facebook.litho.ComponentContext;
 import com.facebook.litho.LithoView;
-import com.guet.flexbox.PageHostView;
+import com.guet.flexbox.widget.EventHandler;
 import com.guet.flexbox.content.DynamicNode;
 import com.guet.flexbox.content.RenderContent;
 import com.guet.flexbox.databinding.DataBindingUtils;
@@ -41,7 +41,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 public class OverviewActivity
         extends AppCompatActivity
         implements View.OnClickListener,
-        PageHostView.EventHandler,
+        EventHandler,
         Runnable,
         NestedScrollView.OnScrollChangeListener,
         SwipeRefreshLayout.OnRefreshListener {

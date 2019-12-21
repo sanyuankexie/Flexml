@@ -11,7 +11,7 @@ import java.lang.reflect.Method
 import java.lang.reflect.Modifier
 import java.util.*
 
-internal class PropsELContext(
+class PropsELContext(
         data: Any?,
         pageContext: PageContext
 ) : ELContext() {
