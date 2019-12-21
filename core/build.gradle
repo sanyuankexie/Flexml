@@ -38,12 +38,9 @@ dependencies {
 
     implementation 'org.jetbrains.kotlin:kotlin-stdlib-jdk7:1.3.61'
 
-    api project(':el')
+    implementation 'com.facebook.yoga:yoga:1.16.0'
 
-    api 'com.facebook.litho:litho-core:0.33.0'
-    api 'com.facebook.litho:litho-widget:0.33.0'
-    api 'com.facebook.soloader:soloader:0.5.1'
-    implementation 'com.facebook.yoga:proguard-annotations:1.16.0'
+    api project(':el')
 
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'androidx.test:runner:1.2.0'
