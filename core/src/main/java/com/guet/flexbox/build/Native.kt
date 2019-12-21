@@ -18,10 +18,7 @@ internal object Native : Widget<ViewCompatComponent.Builder<View>>(Common) {
         get() = emptyMap()
 
     override fun onCreate(c: ComponentContext, renderNode: RenderNode): ViewCompatComponent.Builder<View> {
-        val type = Class.forName(renderNode.attrs.getValue("type") as String)
-        if (!View::class.java.isAssignableFrom(type)) {
-            throw IllegalStateException("$type is not as 'View' type")
-        }
+        val type = renderNode.attrs["type"] as Class<*>
         val creator = viewTypeCache.getOrPut(type) {
             ReflectViewCreator(type.getConstructor(Context::class.java))
         }

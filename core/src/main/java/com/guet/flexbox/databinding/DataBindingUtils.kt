@@ -56,6 +56,7 @@ object DataBindingUtils {
             "Empty" to Empty,
             "Flex" to Flex,
             "Image" to Image,
+            "Native" to Native,
             "Scroller" to Scroller,
             "TextInput" to AbstractText,
             "Text" to Text,

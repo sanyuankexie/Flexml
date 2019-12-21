@@ -28,7 +28,7 @@ internal abstract class Declaration(private val parent: Declaration? = null) {
             children: List<DynamicNode>,
             upperVisibility: Boolean
     ): List<RenderNode> {
-        return parent?.transform(c,type, attrs, data, children, upperVisibility)
+        return parent?.transform(c, type, attrs, data, children, upperVisibility)
                 ?: throw UnsupportedOperationException()
     }
 }
