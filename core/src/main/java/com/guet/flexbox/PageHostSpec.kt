@@ -16,9 +16,9 @@ import com.guet.flexbox.el.LambdaExpression
 
 @RestrictTo(RestrictTo.Scope.LIBRARY)
 @LayoutSpec
-internal object HostSpec {
+internal object PageHostSpec {
 
-    private const val TAG = "PageHostView"
+    private const val TAG = "PageHost"
 
     private fun inflate(c: ComponentContext, renderNode: RenderNode): Component? {
         return widgets[renderNode.type]?.create(

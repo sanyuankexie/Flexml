@@ -191,7 +191,7 @@ public class OverviewActivity
 
     @Override
     public void handleEvent(
-            @NotNull PageHostView v,
+            @NotNull View v,
             @NotNull String type,
             @NotNull Object value
     ) {

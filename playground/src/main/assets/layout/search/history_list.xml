@@ -2,6 +2,16 @@
 <Flex
     width="360"
     height="360"
+    alignItems="flexStart"
+    justifyContent="center"
     flexDirection="column">
-
+    <Flex
+        flexWrap="wrap"
+        alignItems="flexStart"
+        justifyContent="flexStart"
+        width="340">
+        <for var="i" from="0" to="${list.size()}">
+            
+        </for>
+    </Flex>
 </Flex>

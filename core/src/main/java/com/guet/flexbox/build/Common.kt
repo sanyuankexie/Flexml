@@ -4,7 +4,7 @@ import com.facebook.litho.Component
 import com.facebook.litho.ComponentContext
 import com.facebook.yoga.YogaAlign
 import com.facebook.yoga.YogaEdge
-import com.guet.flexbox.Host
+import com.guet.flexbox.PageHost
 import com.guet.flexbox.content.RenderNode
 import com.guet.flexbox.el.LambdaExpression
 import java.util.*
@@ -83,18 +83,18 @@ internal object Common : Widget<Component.Builder<*>>() {
         this["clickUrl"] = object : Assignment<Component.Builder<*>, LambdaExpression>() {
             override fun Component.Builder<*>.assign(display: Boolean, other: Map<String, Any>, value: LambdaExpression) {
                 if (!other.containsKey("onClick")) {
-                    clickHandler(Host.onClick(getContext(), value))
+                    clickHandler(PageHost.onClick(getContext(), value))
                 }
             }
         }
         this["onClick"] = object : Assignment<Component.Builder<*>, LambdaExpression>() {
             override fun Component.Builder<*>.assign(display: Boolean, other: Map<String, Any>, value: LambdaExpression) {
-                clickHandler(Host.onClick(getContext(), value))
+                clickHandler(PageHost.onClick(getContext(), value))
             }
         }
         this["onView"] = object : Assignment<Component.Builder<*>, LambdaExpression>() {
             override fun Component.Builder<*>.assign(display: Boolean, other: Map<String, Any>, value: LambdaExpression) {
-                visibleHandler(Host.onView(getContext(), value))
+                visibleHandler(PageHost.onView(getContext(), value))
             }
         }
     }

@@ -128,7 +128,7 @@ class SearchActivity : AppCompatActivity(), PageHostView.EventHandler {
             input.close()
             val content = DataBindingUtils.bind(this, contentRaw, data)
             runOnUiThread {
-                list.setContentAsync(content)
+                list.setContent(content)
             }
         }
     }
@@ -158,7 +158,7 @@ class SearchActivity : AppCompatActivity(), PageHostView.EventHandler {
         finish()
     }
 
-    override fun handleEvent(v: PageHostView, key: String, value: Any) {
+    override fun handleEvent(v: View, key: String, value: Any) {
         handleEvent(key)
     }
 }

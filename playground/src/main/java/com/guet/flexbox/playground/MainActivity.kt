@@ -110,7 +110,7 @@ class MainActivity : AppCompatActivity(), PageHostView.EventHandler {
                         banner.setPages(bannerInfo, bannerAdapter)
                         feedAdapter.setNewData(renderInfo.feed)
                         function.unmountAllItems()
-                        function.setContentAsync(renderInfo.function)
+                        function.setContent(renderInfo.function)
                     })
                 }
             }
@@ -147,7 +147,7 @@ class MainActivity : AppCompatActivity(), PageHostView.EventHandler {
         startActivityForResult(intent, REQUEST_CODE)
     }
 
-    override fun handleEvent(v: PageHostView, key: String, value: Any) {
+    override fun handleEvent(v: View, key: String, value: Any) {
         handleEvent(v, key)
     }
 
