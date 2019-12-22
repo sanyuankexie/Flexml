@@ -18,7 +18,7 @@ class AboutActivity : AppCompatActivity() {
                 .submit()
         val photo = Glide.with(this)
                 .asBitmap()
-                .load(R.drawable.ic_photo)
+                .load(R.drawable.ic_photo2)
                 .submit()
         val icon = Glide.with(this)
                 .asBitmap()
