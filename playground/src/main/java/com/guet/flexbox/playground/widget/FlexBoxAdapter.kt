@@ -3,10 +3,10 @@ package com.guet.flexbox.playground.widget
 import android.view.View
 import com.chad.library.adapter.base.BaseQuickAdapter
 import com.chad.library.adapter.base.BaseViewHolder
-import com.guet.flexbox.litho.PageHostView
 import com.guet.flexbox.content.RenderContent
-import com.guet.flexbox.widget.EventHandler
+import com.guet.flexbox.litho.PageHostView
 import com.guet.flexbox.playground.R
+import com.guet.flexbox.widget.EventHandler
 
 
 class FlexBoxAdapter(
@@ -25,6 +25,6 @@ class FlexBoxAdapter(
     override fun convert(helper: BaseViewHolder, item: RenderContent) {
         val lithoView = helper.getView<PageHostView>(R.id.litho)
         lithoView.eventHandler = this
-        lithoView.setContentAsync(item)
+        lithoView.setContentAsync(item,"Feed")
     }
 }

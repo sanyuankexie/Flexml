@@ -5,6 +5,7 @@ import android.content.DialogInterface
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Bundle
+import android.webkit.WebView
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
@@ -18,6 +19,7 @@ class StartupActivity : AppCompatActivity() {
         MainRenderInfo.initAsync(this.application)
         DoraemonKit.install(application)
         SoLoader.init(this, false)
+        WebView(this)
         ActivityCompat.requestPermissions(
                 this,
                 definedPermissions,

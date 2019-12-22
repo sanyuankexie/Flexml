@@ -18,22 +18,17 @@
             app:layout_scrollFlags="scroll|exitUntilCollapsed"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
-            <androidx.cardview.widget.CardView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+            <com.guet.flexbox.litho.PageHostView
+                android:id="@+id/dynamic"
                 android:layout_marginTop="?attr/actionBarSize"
+                android:elevation="5dp"
                 android:layout_marginLeft="10dp"
                 android:layout_marginRight="10dp"
                 android:layout_marginBottom="30dp"
                 android:transitionName="litho"
-                app:cardCornerRadius="15dp"
-                app:cardElevation="5dp">
-                <com.guet.flexbox.litho.PageHostView
-                    android:id="@+id/dynamic"
-                    android:layout_width="match_parent"
-                    android:layout_height="300dp">
-                </com.guet.flexbox.litho.PageHostView>
-            </androidx.cardview.widget.CardView>
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+            </com.guet.flexbox.litho.PageHostView>
         </com.google.android.material.appbar.CollapsingToolbarLayout>
         <FrameLayout
             app:layout_scrollFlags="noScroll"

@@ -9,10 +9,10 @@ import com.facebook.litho.ComponentContext
 import com.facebook.litho.VisibleEvent
 import com.facebook.litho.annotations.*
 import com.facebook.litho.widget.TextChangedEvent
-import com.guet.flexbox.litho.build.*
 import com.guet.flexbox.content.RenderNode
 import com.guet.flexbox.el.ELContext
 import com.guet.flexbox.el.LambdaExpression
+import com.guet.flexbox.litho.build.*
 
 @RestrictTo(RestrictTo.Scope.LIBRARY)
 @LayoutSpec
@@ -44,9 +44,10 @@ internal object PageHostSpec {
     @OnCreateLayout
     fun onCreateLayout(
             c: ComponentContext,
-            @Prop content: RenderNode
+            @Prop content: RenderNode,
+            @Prop(optional = true) tag: String?
     ): Component? {
-        Log.i(TAG, "onCreateLayout: " + Thread.currentThread().name)
+        Log.i(TAG, "onCreateLayout: thread=" + Thread.currentThread().name + " tag=" + tag)
         return inflate(c, content)
     }
 
