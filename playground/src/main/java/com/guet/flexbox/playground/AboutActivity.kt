@@ -5,7 +5,6 @@ import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import com.bumptech.glide.Glide
 import com.vansuita.materialabout.builder.AboutBuilder
-import com.vansuita.materialabout.views.AboutView
 
 
 class AboutActivity : AppCompatActivity() {
@@ -29,13 +28,14 @@ class AboutActivity : AppCompatActivity() {
             val v2 = photo.get()
             val v3 = icon.get()
             runOnUiThread {
-                val view: AboutView = AboutBuilder.with(this)
+                val view = AboutBuilder.with(this)
                         .setPhoto(v2)
                         .setCover(v1)
                         .setName("Luke")
                         .setSubTitle("Android Hacker")
                         .setBrief("😀为了更美好的明天")
                         .setAppIcon(v3)
+                        .addEmailLink("imlkluo@qq.com")
                         .setAppName(R.string.app_name)
                         .addGitHubLink("https://github.com/LukeXeon")
                         .addFiveStarsAction()
