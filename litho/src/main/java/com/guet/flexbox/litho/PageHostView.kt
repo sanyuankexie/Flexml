@@ -21,37 +21,15 @@ class PageHostView @JvmOverloads constructor(
 ) : LithoView(context, attrs) {
 
     init {
-        val lithoCompat = object : ComponentTree.MeasureListener, OnDirtyMountListener {
-
-            private val rect = Rect(0, 0, measuredWidth, measuredHeight)
-
-            override fun onSetRootAndSizeSpec(width: Int, height: Int) {
-                if (height > 0) {
-                    post {
-                        if (measuredHeight == 0) {
-                            layoutParams?.let {
-                                it.width = width
-                                forceRelayout()
-                            }
-                        }
-                    }
-                }
-            }
-
-            override fun onDirtyMount(view: LithoView) {
-                view.performIncrementalMount(
-                        rect.apply {
-                            set(0, 0, measuredWidth, measuredHeight)
-                        }, false
-                )
-            }
-        }
         componentTree = ComponentTree.create(componentContext)
                 .isReconciliationEnabled(false)
                 .layoutThreadHandler(WorkThreadHandler)
-                .measureListener(lithoCompat)
                 .build()
-        setOnDirtyMountListener(lithoCompat)
+        setOnDirtyMountListener { view ->
+            view.performIncrementalMount(
+                    Rect(0, 0, measuredWidth, measuredHeight), false
+            )
+        }
     }
 
 

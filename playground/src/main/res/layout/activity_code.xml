@@ -26,8 +26,6 @@
                 app:layout_collapseMode="parallax"
                 android:layout_marginTop="?attr/actionBarSize"
                 android:elevation="5dp"
-                android:layout_marginLeft="10dp"
-                android:layout_marginRight="10dp"
                 android:layout_marginBottom="30dp"
                 android:transitionName="litho"
                 android:layout_width="match_parent"
