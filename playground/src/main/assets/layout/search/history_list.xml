@@ -2,16 +2,40 @@
 <Flex
     width="360"
     height="360"
-    alignItems="flexStart"
-    justifyContent="center"
+    background="#FFFFFF"
     flexDirection="column">
+    <Text
+        marginTop="15"
+        textSize="15"
+        textStyle="bold"
+        text="历史记录"
+        marginLeft="10">
+    </Text>
     <Flex
-        flexWrap="wrap"
-        alignItems="flexStart"
-        justifyContent="flexStart"
-        width="340">
-        <for var="i" from="0" to="${list.size()}">
-            
-        </for>
+        marginTop="5"
+        width="360"
+        justifyContent="center">
+        <Flex
+            flexWrap="wrap"
+            alignItems="flexStart"
+            justifyContent="flexStart"
+            width="340">
+            <for var="i" from="0" to="${list.size()}">
+                <Flex
+                    margin="2"
+                    borderRadius="10"
+                    background="#80DCDCDC">
+                    <Text
+                        textColor="#808080"
+                        textSize="13"
+                        marginTop="2"
+                        marginBottom="2"
+                        marginLeft="5"
+                        marginRight="5"
+                        text="${list[i]}">
+                    </Text>
+                </Flex>
+            </for>
+        </Flex>
     </Flex>
 </Flex>

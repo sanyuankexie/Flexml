@@ -41,7 +41,6 @@
             android:layout_height="36dp" />
     </LinearLayout>
     <com.guet.flexbox.litho.PageHostView
-        android:layout_marginTop="20dp"
         android:id="@+id/list"
         android:layout_weight="1"
         android:layout_width="match_parent"
