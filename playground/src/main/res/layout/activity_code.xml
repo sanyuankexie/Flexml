@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.coordinatorlayout.widget.CoordinatorLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/host"
@@ -9,10 +10,12 @@
     <com.google.android.material.appbar.AppBarLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:id="@+id/appbar"
         android:background="@color/colorPrimary"
         android:orientation="vertical"
         app:elevation="0dp">
         <com.google.android.material.appbar.CollapsingToolbarLayout
+            android:id="@+id/lithoHost"
             android:minHeight="?attr/actionBarSize"
             app:contentScrim="@color/colorPrimary"
             app:layout_scrollFlags="scroll|exitUntilCollapsed"
@@ -20,6 +23,7 @@
             android:layout_height="wrap_content">
             <com.guet.flexbox.litho.PageHostView
                 android:id="@+id/dynamic"
+                app:layout_collapseMode="parallax"
                 android:layout_marginTop="?attr/actionBarSize"
                 android:elevation="5dp"
                 android:layout_marginLeft="10dp"

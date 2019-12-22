@@ -10,6 +10,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.widget.NestedScrollView
 import com.didichuxing.doraemonkit.util.UIUtils
+import com.google.android.material.appbar.AppBarLayout
 import com.google.gson.Gson
 import com.guet.flexbox.compiler.Compiler
 import com.guet.flexbox.content.DynamicNode
@@ -18,25 +19,32 @@ import com.guet.flexbox.litho.PageHostView
 import thereisnospon.codeview.CodeView
 import thereisnospon.codeview.CodeViewTheme
 import java.util.*
+import kotlin.math.abs
 
 class CodeActivity : AppCompatActivity() {
 
     private lateinit var scroll: NestedScrollView
     private lateinit var codeView: CodeView
     private lateinit var lithoView: PageHostView
+    private lateinit var appbar: AppBarLayout
     private lateinit var host: CoordinatorLayout
     private lateinit var title: TextView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_code)
+        appbar = findViewById(R.id.appbar)
         scroll = findViewById(R.id.scroll)
         host = findViewById(R.id.host)
         title = findViewById(R.id.title)
+        lithoView = findViewById(R.id.dynamic)
+        val lithoHost = findViewById<View>(R.id.lithoHost)
+        appbar.addOnOffsetChangedListener(AppBarLayout.OnOffsetChangedListener { _: AppBarLayout, verticalOffset: Int ->
+            lithoHost.alpha = 1f - (abs(verticalOffset.toFloat()) / lithoHost.height.toFloat())
+        })
         title.text = this.intent.getStringExtra("url")
         codeView = findViewById(R.id.code)
         codeView.setTheme(CodeViewTheme.ANDROIDSTUDIO).fillColor()
-        lithoView = findViewById(R.id.dynamic)
         scroll.outlineProvider = object : ViewOutlineProvider() {
             override fun getOutline(view: View, outline: Outline) {
                 outline.setRoundRect(0, 0, view.width, view.height,

@@ -19,12 +19,16 @@ class StartupActivity : AppCompatActivity() {
         MainRenderInfo.initAsync(this.application)
         DoraemonKit.install(application)
         SoLoader.init(this, false)
-        WebView(this)
+        initWebView()
         ActivityCompat.requestPermissions(
                 this,
                 definedPermissions,
                 REQUEST_CODE
         )
+    }
+
+    fun initWebView() {
+        WebView(this).destroy()
     }
 
     override fun onRequestPermissionsResult(
