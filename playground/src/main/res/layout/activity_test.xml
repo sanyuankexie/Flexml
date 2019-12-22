@@ -6,31 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="com.guet.flexbox.playground.test.TestActivity">
-    <androidx.coordinatorlayout.widget.CoordinatorLayout
+    <com.guet.flexbox.playground.test.TestView
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
-        <com.google.android.material.appbar.AppBarLayout
-            android:background="@color/colorPrimary"
-            android:layout_width="match_parent"
-            android:layout_height="?attr/actionBarSize">
-        </com.google.android.material.appbar.AppBarLayout>
-        <ScrollView
-            app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
-            <LinearLayout
-                android:orientation="vertical"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-                <View
-                    android:background="@color/colorPrimary"
-                    android:layout_width="match_parent"
-                    android:layout_height="100dp">
-                </View>
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="1000dp"/>
-            </LinearLayout>
-        </ScrollView>
-    </androidx.coordinatorlayout.widget.CoordinatorLayout>
+        android:layout_height="match_parent" />
 </com.guet.flexbox.playground.widget.PullToRefreshLayout>

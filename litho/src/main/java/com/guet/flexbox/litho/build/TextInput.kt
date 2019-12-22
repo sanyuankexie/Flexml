@@ -5,12 +5,11 @@ import android.text.TextUtils.TruncateAt
 import com.facebook.litho.ComponentContext
 import com.facebook.litho.widget.TextInput
 import com.guet.flexbox.content.RenderNode
-import com.guet.flexbox.litho.build.Assignment
-import com.guet.flexbox.litho.build.AttributeSet
-import com.guet.flexbox.litho.build.toPx
+import com.guet.flexbox.el.LambdaExpression
+import com.guet.flexbox.litho.PageHost
 
 internal object TextInput : Widget<TextInput.Builder>(Common) {
-    override val attributeSet: AttributeSet<TextInput.Builder> by com.guet.flexbox.litho.build.create {
+    override val attributeSet: AttributeSet<TextInput.Builder> by create {
         this["maxLines"] = object : Assignment<TextInput.Builder, Double>() {
             override fun TextInput.Builder.assign(display: Boolean, other: Map<String, Any>, value: Double) {
                 maxLines(value.toInt())
@@ -34,6 +33,11 @@ internal object TextInput : Widget<TextInput.Builder>(Common) {
         this["ellipsize"] = object : Assignment<TextInput.Builder, TruncateAt>() {
             override fun TextInput.Builder.assign(display: Boolean, other: Map<String, Any>, value: TruncateAt) {
                 ellipsize(value)
+            }
+        }
+        this["onTextChanged"] = object : Assignment<TextInput.Builder, LambdaExpression>() {
+            override fun TextInput.Builder.assign(display: Boolean, other: Map<String, Any>, value: LambdaExpression) {
+                textChangedEventHandler(PageHost.onTextChanged(context, value))
             }
         }
     }

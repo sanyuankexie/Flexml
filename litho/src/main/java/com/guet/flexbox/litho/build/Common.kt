@@ -11,7 +11,7 @@ import java.util.*
 
 internal object Common : Widget<Component.Builder<*>>() {
 
-    override val attributeSet: AttributeSet<Component.Builder<*>> by com.guet.flexbox.litho.build.create {
+    override val attributeSet: AttributeSet<Component.Builder<*>> by create {
         this["width"] = object : Assignment<Component.Builder<*>, Double>() {
             override fun Component.Builder<*>.assign(display: Boolean, other: Map<String, Any>, value: Double) {
                 widthPx(value.toPx())

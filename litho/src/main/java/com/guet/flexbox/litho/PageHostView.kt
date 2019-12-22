@@ -70,17 +70,17 @@ class PageHostView @JvmOverloads constructor(
         thread.looper
     }()), LithoHandler {
 
-        override fun post(runnable: Runnable?, tag: String?) {
+        override fun post(runnable: Runnable, tag: String?) {
             post(runnable)
         }
 
-        override fun postAtFront(runnable: Runnable?, tag: String?) {
+        override fun postAtFront(runnable: Runnable, tag: String?) {
             postAtFrontOfQueue(runnable)
         }
 
         override fun isTracing(): Boolean = false
 
-        override fun remove(runnable: Runnable?) {
+        override fun remove(runnable: Runnable) {
             removeCallbacks(runnable)
         }
     }

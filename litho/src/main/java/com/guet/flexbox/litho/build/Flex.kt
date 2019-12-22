@@ -12,7 +12,7 @@ import com.guet.flexbox.content.RenderNode
 
 internal object Flex : Widget<Component.ContainerBuilder<*>>(Common) {
 
-    override val attributeSet: AttributeSet<Component.ContainerBuilder<*>> by com.guet.flexbox.litho.build.create {
+    override val attributeSet: AttributeSet<Component.ContainerBuilder<*>> by create {
         this["flexWrap"] = object : Assignment<Component.ContainerBuilder<*>, YogaWrap>() {
             override fun Component.ContainerBuilder<*>.assign(display: Boolean, other: Map<String, Any>, value: YogaWrap) {
                 wrap(value)

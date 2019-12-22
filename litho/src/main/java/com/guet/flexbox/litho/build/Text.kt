@@ -7,22 +7,27 @@ import android.text.Layout.Alignment
 import android.text.TextUtils.TruncateAt
 import com.facebook.litho.ComponentContext
 import com.facebook.litho.widget.Text
-import com.facebook.litho.widget.VerticalGravity
+import com.guet.flexbox.HorizontalGravity
+import com.guet.flexbox.VerticalGravity
 import com.guet.flexbox.content.RenderNode
 
 internal object Text : Widget<Text.Builder>(Common) {
 
     private val invisibleColor = ColorStateList.valueOf(Color.TRANSPARENT)
 
-    override val attributeSet: AttributeSet<Text.Builder> by com.guet.flexbox.litho.build.create {
+    override val attributeSet: AttributeSet<Text.Builder> by create {
         this["verticalGravity"] = object : Assignment<Text.Builder, VerticalGravity>() {
             override fun Text.Builder.assign(display: Boolean, other: Map<String, Any>, value: VerticalGravity) {
-                verticalGravity(value)
+                verticalGravity(com.facebook.litho.widget.VerticalGravity.valueOf(value.name))
             }
         }
-        this["horizontalGravity"] = object : Assignment<Text.Builder, Alignment>() {
-            override fun Text.Builder.assign(display: Boolean, other: Map<String, Any>, value: Alignment) {
-                textAlignment(value)
+        this["horizontalGravity"] = object : Assignment<Text.Builder, HorizontalGravity>() {
+            override fun Text.Builder.assign(display: Boolean, other: Map<String, Any>, value: HorizontalGravity) {
+                textAlignment(when (value) {
+                    HorizontalGravity.CENTER -> Alignment.ALIGN_CENTER
+                    HorizontalGravity.RIGHT -> Alignment.valueOf("ALIGN_RIGHT")
+                    else -> Alignment.valueOf("ALIGN_LEFT")
+                })
             }
         }
         this["text"] = object : Assignment<Text.Builder, String>() {

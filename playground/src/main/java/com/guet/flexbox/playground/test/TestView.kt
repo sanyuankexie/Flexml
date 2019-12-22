@@ -30,7 +30,12 @@ class TestView @JvmOverloads constructor(
             println(enumValues<PorterDuff.Mode>()[index].name)
             xfermode = PorterDuffXfermode(enumValues<PorterDuff.Mode>()[index])
             invalidate()
+            requestLayout()
         }
+    }
+
+    override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
+        super.onMeasure(widthMeasureSpec, heightMeasureSpec)
     }
 
     override fun onDraw(canvas: Canvas) {

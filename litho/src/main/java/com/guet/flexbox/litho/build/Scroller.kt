@@ -4,14 +4,12 @@ import com.facebook.litho.Component
 import com.facebook.litho.ComponentContext
 import com.facebook.litho.widget.HorizontalScroll
 import com.facebook.litho.widget.VerticalScroll
-import com.guet.flexbox.content.RenderNode
 import com.guet.flexbox.Orientation
-import com.guet.flexbox.litho.build.Assignment
-import com.guet.flexbox.litho.build.AttributeSet
+import com.guet.flexbox.content.RenderNode
 
 internal object Scroller : Widget<Component.Builder<*>>(Common) {
 
-    override val attributeSet: AttributeSet<Component.Builder<*>> by com.guet.flexbox.litho.build.create {
+    override val attributeSet: AttributeSet<Component.Builder<*>> by create {
         this["scrollBarEnable"] = object : Assignment<Component.Builder<*>, Boolean>() {
             override fun Component.Builder<*>.assign(display: Boolean, other: Map<String, Any>, value: Boolean) {
                 if (this is HorizontalScroll.Builder) {
