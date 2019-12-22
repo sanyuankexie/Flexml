@@ -1,7 +1,6 @@
 package com.guet.flexbox.playground;
 
 import android.content.Intent;
-import android.content.res.Resources;
 import android.graphics.Color;
 import android.graphics.drawable.GradientDrawable;
 import android.os.Bundle;
@@ -18,13 +17,13 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.core.widget.NestedScrollView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
-import com.facebook.litho.ComponentContext;
-import com.facebook.litho.LithoView;
-import com.guet.flexbox.widget.EventHandler;
+import com.facebook.litho.config.ComponentsConfiguration;
 import com.guet.flexbox.content.DynamicNode;
 import com.guet.flexbox.content.RenderContent;
 import com.guet.flexbox.databinding.DataBindingUtils;
+import com.guet.flexbox.litho.PageHostView;
 import com.guet.flexbox.playground.widget.QuickHandler;
+import com.guet.flexbox.widget.EventHandler;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -47,9 +46,10 @@ public class OverviewActivity
         SwipeRefreshLayout.OnRefreshListener {
 
     private SwipeRefreshLayout mSwipeRefreshLayout;
-    private LithoView mLithoView;
+    private PageHostView mLithoView;
     private SwitchView mIsLiveReload;
     private SwitchView mIsOpenConsole;
+    private SwitchView mIsOpenBianjie;
     private ListView mConsole;
 
     private Handler mMainThread = new Handler();
@@ -91,38 +91,8 @@ public class OverviewActivity
 
     private void apply() {
         if (mLayout != null) {
-            mLithoView.release();
-            ComponentContext c = mLithoView.getComponentContext();
-//            mLithoView.setComponentAsync(
-//                    VerticalScroll.create(c)
-//                            .onScrollChangeListener(this)
-//                            .childComponent(Column.create(c)
-//                                    .widthPx(toPx(360))
-//                                    .alignItems(YogaAlign.CENTER)
-//                                    .child(DynamicBox.create(c)
-//                                            .content(mLayout)
-//                                            .marginPx(YogaEdge.TOP, dp2px(20)))
-//                                    .child(Text.create(c)
-//                                            .widthPx(toPx(360))
-//                                            .heightPx(toPx(40))
-//                                            .backgroundColor(getResources()
-//                                                    .getColor(R.color.colorPrimary))
-//                                            .textAlignment(Layout.Alignment.ALIGN_CENTER)
-//                                            .text("这里是布局的下边界")
-//                                            .textColor(Color.WHITE)
-//                                            .textSizePx(toPx(25))
-//                                            .typeface(Typeface.defaultFromStyle(Typeface.BOLD)))
-//                            ).build()
-//            );
+            mLithoView.setContentAsync(mLayout);
         }
-    }
-
-    private static int toPx(float value) {
-        return (int) (Resources.getSystem().getDisplayMetrics().widthPixels / 360f * value);
-    }
-
-    public static int dp2px(float dpValue) {
-        return (int) (0.5f + dpValue * Resources.getSystem().getDisplayMetrics().density);
     }
 
     @Override
@@ -148,6 +118,7 @@ public class OverviewActivity
         mSwipeRefreshLayout = findViewById(R.id.pull);
         mIsLiveReload = findViewById(R.id.is_live_reload);
         mIsOpenConsole = findViewById(R.id.is_open_console);
+        mIsOpenBianjie = findViewById(R.id.is_open_bianjie);
         mConsole = findViewById(R.id.console);
         findViewById(R.id.transition).setBackground(new GradientDrawable(
                 GradientDrawable.Orientation.TOP_BOTTOM,
@@ -155,6 +126,7 @@ public class OverviewActivity
                         getResources().getColor(R.color.background),
                         Color.TRANSPARENT
                 }));
+        mIsOpenBianjie.setOnClickListener(this);
         mSwipeRefreshLayout.setOnRefreshListener(this);
         mIsOpenConsole.setOnClickListener(this);
         mAdapter = new ArrayAdapter<>(this, R.layout.console_item, R.id.text);
@@ -185,6 +157,9 @@ public class OverviewActivity
     public void onClick(View v) {
         if (v.getId() == R.id.is_open_console) {
             mConsole.setVisibility(mIsOpenConsole.isOpened() ? View.VISIBLE : View.GONE);
+        } else if (v.getId() == R.id.is_open_bianjie) {
+            ComponentsConfiguration.debugHighlightInteractiveBounds = mIsOpenBianjie.isOpened();
+            ComponentsConfiguration.debugHighlightMountBounds = mIsOpenBianjie.isOpened();
         }
     }
 

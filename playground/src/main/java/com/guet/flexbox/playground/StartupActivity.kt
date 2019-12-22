@@ -27,7 +27,7 @@ class StartupActivity : AppCompatActivity() {
         )
     }
 
-    fun initWebView() {
+    private fun initWebView() {
         WebView(this).destroy()
     }
 
