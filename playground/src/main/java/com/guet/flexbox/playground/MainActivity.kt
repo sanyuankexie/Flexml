@@ -10,11 +10,11 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityOptionsCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.guet.flexbox.content.RenderContent
-import com.guet.flexbox.widget.EventHandler
 import com.guet.flexbox.litho.PageHostView
 import com.guet.flexbox.playground.widget.BannerAdapter
 import com.guet.flexbox.playground.widget.FlexBoxAdapter
 import com.guet.flexbox.playground.widget.PullToRefreshLayout
+import com.guet.flexbox.widget.EventHandler
 import com.yzq.zxinglibrary.android.CaptureActivity
 import com.yzq.zxinglibrary.bean.ZxingConfig
 import com.yzq.zxinglibrary.common.Constant
@@ -117,7 +117,7 @@ class MainActivity : AppCompatActivity(), EventHandler {
             }
         }
         val handleToJump = View.OnClickListener {
-
+            startActivity(Intent(this, AboutActivity::class.java))
         }
         val fJump = findViewById<View>(R.id.jump)
         val jump = headerView.findViewById<View>(R.id.jump)
