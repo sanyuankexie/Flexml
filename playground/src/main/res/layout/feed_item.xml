@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.guet.flexbox.litho.PageHostView
+<com.guet.flexbox.PageHostView
     android:id="@+id/litho"
     android:transitionName="litho"
     android:background="@android:color/transparent"
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
-</com.guet.flexbox.litho.PageHostView>
+</com.guet.flexbox.PageHostView>

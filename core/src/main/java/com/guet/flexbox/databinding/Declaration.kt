@@ -1,11 +1,14 @@
 package com.guet.flexbox.databinding
 
-import android.content.Context
-import com.guet.flexbox.content.DynamicNode
-import com.guet.flexbox.content.RenderNode
+import com.facebook.litho.Component
+import com.facebook.litho.ComponentContext
+import com.guet.flexbox.ContentNode
+import com.guet.flexbox.build.ComponentAdapt
 import com.guet.flexbox.el.PropsELContext
 
-internal abstract class Declaration(private val parent: Declaration? = null) {
+internal abstract class Declaration(
+        private val parent: Declaration? = null
+) {
 
     protected abstract val attributeSet: AttributeSet
 
@@ -21,14 +24,15 @@ internal abstract class Declaration(private val parent: Declaration? = null) {
     }
 
     internal open fun transform(
-            c: Context,
+            c: ComponentContext,
+            adapt: ComponentAdapt<*>?,
             type: String,
             attrs: Map<String, Any>,
             data: PropsELContext,
-            children: List<DynamicNode>,
+            children: List<ContentNode>,
             upperVisibility: Boolean
-    ): List<RenderNode> {
-        return parent?.transform(c, type, attrs, data, children, upperVisibility)
+    ): List<Component> {
+        return parent?.transform(c, adapt, type, attrs, data, children, upperVisibility)
                 ?: throw UnsupportedOperationException()
     }
 }

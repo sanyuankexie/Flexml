@@ -9,5 +9,6 @@ internal object Scroller : Declaration(Common) {
                 "vertical" to Orientation.VERTICAL,
                 "horizontal" to Orientation.HORIZONTAL
         ))
+        bool("fillViewport")
     }
 }

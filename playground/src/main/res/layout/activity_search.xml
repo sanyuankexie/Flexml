@@ -40,10 +40,10 @@
             android:layout_width="wrap_content"
             android:layout_height="36dp" />
     </LinearLayout>
-    <com.guet.flexbox.litho.PageHostView
+    <com.guet.flexbox.PageHostView
         android:id="@+id/list"
         android:layout_weight="1"
         android:layout_width="match_parent"
         android:layout_height="0dp">
-    </com.guet.flexbox.litho.PageHostView>
+    </com.guet.flexbox.PageHostView>
 </LinearLayout>

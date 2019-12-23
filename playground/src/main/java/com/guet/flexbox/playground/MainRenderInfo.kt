@@ -3,16 +3,16 @@ package com.guet.flexbox.playground
 import android.content.Context
 import android.os.AsyncTask
 import com.google.gson.Gson
+import com.guet.flexbox.ContentNode
+import com.guet.flexbox.PageUtils
+import com.guet.flexbox.PreloadPage
 import com.guet.flexbox.compiler.Compiler
-import com.guet.flexbox.content.DynamicNode
-import com.guet.flexbox.content.RenderContent
-import com.guet.flexbox.databinding.DataBindingUtils
 import java.util.*
 
 class MainRenderInfo(
-        val banner: List<RenderContent>,
-        val function: RenderContent,
-        val feed: List<RenderContent>
+        val banner: List<PreloadPage>,
+        val function: PreloadPage,
+        val feed: List<PreloadPage>
 ) {
     companion object {
 
@@ -24,11 +24,11 @@ class MainRenderInfo(
                     val assets = res.assets
                     val banner = res.getStringArray(R.array.banner_paths).map {
                         val input = assets.open(it)
-                        val lockedInfo = DataBindingUtils.bind(
+                        val lockedInfo = PageUtils.preload(
                                 c,
                                 gson.fromJson(
                                         Compiler.compile(input),
-                                        DynamicNode::class.java
+                                        ContentNode::class.java
                                 ),
                                 Collections.singletonMap("url", it))
                         input.close()
@@ -38,11 +38,11 @@ class MainRenderInfo(
                         val input = assets.open(it)
                         val json = gson.fromJson(
                                 Compiler.compile(input),
-                                DynamicNode::class.java
+                                ContentNode::class.java
                         )
                         input.close()
                         val node = (1..50).map { index ->
-                            DataBindingUtils.bind(
+                            PageUtils.preload(
                                     c,
                                     json,
                                     mapOf("url" to it, "index" to index)
@@ -52,9 +52,9 @@ class MainRenderInfo(
                     }.flatten()
                     val functionPath = res.getString(R.string.function_path)
                     val input = assets.open(functionPath)
-                    val function = DataBindingUtils.bind(
+                    val function = PageUtils.preload(
                             c,
-                            gson.fromJson(Compiler.compile(input), DynamicNode::class.java),
+                            gson.fromJson(Compiler.compile(input), ContentNode::class.java),
                             mapOf(
                                     "url" to functionPath,
                                     "icons" to res.getStringArray(R.array.function_icons)

@@ -19,15 +19,14 @@ import android.widget.PopupWindow
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import com.google.gson.Gson
+import com.guet.flexbox.ContentNode
+import com.guet.flexbox.PageHostView
+import com.guet.flexbox.PageUtils
 import com.guet.flexbox.compiler.Compiler
-import com.guet.flexbox.content.DynamicNode
-import com.guet.flexbox.databinding.DataBindingUtils
-import com.guet.flexbox.litho.PageHostView
-import com.guet.flexbox.widget.EventHandler
 import java.util.*
 import kotlin.collections.HashSet
 
-class SearchActivity : AppCompatActivity(), EventHandler {
+class SearchActivity : AppCompatActivity(), PageHostView.EventHandler {
 
     private lateinit var sharedPreferences: SharedPreferences
     private lateinit var list: PageHostView
@@ -39,7 +38,7 @@ class SearchActivity : AppCompatActivity(), EventHandler {
         setContentView(R.layout.activity_search)
         sharedPreferences = getSharedPreferences("history", Context.MODE_PRIVATE)
         list = findViewById(R.id.list)
-        list.eventHandler = this
+        list.setEventHandler(this)
         editText = findViewById(R.id.search)
         editText.apply {
             setOnFocusChangeListener { v, hasFocus ->
@@ -112,7 +111,7 @@ class SearchActivity : AppCompatActivity(), EventHandler {
             val gson = Gson()
             val input = resources.assets.open("layout/search/history_list.xml")
             val s = Compiler.compile(input)
-            val contentRaw = gson.fromJson(s, DynamicNode::class.java)
+            val contentRaw = gson.fromJson(s, ContentNode::class.java)
             val rawData = sharedPreferences.getStringSet(
                     "history_list",
                     null
@@ -127,7 +126,7 @@ class SearchActivity : AppCompatActivity(), EventHandler {
                     listData
             )
             input.close()
-            val content = DataBindingUtils.bind(this, contentRaw, data)
+            val content = PageUtils.preload(this, contentRaw, data)
             runOnUiThread {
                 list.setContentAsync(content)
             }
@@ -159,7 +158,7 @@ class SearchActivity : AppCompatActivity(), EventHandler {
         finish()
     }
 
-    override fun handleEvent(v: View, key: String, value: Any) {
+    override fun handleEvent(v: View, key: String, value: Array<out Any>) {
         handleEvent(key)
     }
 }

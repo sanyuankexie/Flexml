@@ -2,10 +2,11 @@ package com.guet.flexbox.databinding
 
 import android.content.Context
 import android.graphics.Typeface
+import android.text.Layout
 import android.text.TextUtils
-import com.guet.flexbox.HorizontalGravity
-import com.guet.flexbox.VerticalGravity
+import com.facebook.litho.widget.VerticalGravity
 import com.guet.flexbox.el.PropsELContext
+
 
 internal object AbstractText : Declaration(Common) {
     override val attributeSet: AttributeSet by create {
@@ -14,10 +15,11 @@ internal object AbstractText : Declaration(Common) {
                 "bottom" to VerticalGravity.BOTTOM,
                 "center" to VerticalGravity.CENTER
         ))
+        @Suppress("NewApi")
         enum("horizontalGravity", mapOf(
-                "left" to HorizontalGravity.LEFT,
-                "right" to HorizontalGravity.RIGHT,
-                "center" to HorizontalGravity.CENTER
+                "left" to Layout.Alignment.ALIGN_LEFT,
+                "right" to Layout.Alignment.ALIGN_LEFT,
+                "center" to Layout.Alignment.ALIGN_CENTER
         ))
         enum("ellipsize", mapOf(
                 "start" to TextUtils.TruncateAt.START,

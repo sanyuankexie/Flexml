@@ -8,13 +8,13 @@ import android.widget.LinearLayout
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityOptionsCompat
+import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.guet.flexbox.content.RenderContent
-import com.guet.flexbox.litho.PageHostView
+import com.guet.flexbox.PageHostView
+import com.guet.flexbox.PreloadPage
 import com.guet.flexbox.playground.widget.BannerAdapter
 import com.guet.flexbox.playground.widget.FlexBoxAdapter
 import com.guet.flexbox.playground.widget.PullToRefreshLayout
-import com.guet.flexbox.widget.EventHandler
 import com.yzq.zxinglibrary.android.CaptureActivity
 import com.yzq.zxinglibrary.bean.ZxingConfig
 import com.yzq.zxinglibrary.common.Constant
@@ -22,7 +22,7 @@ import com.zhouwei.mzbanner.MZBannerView
 import es.dmoral.toasty.Toasty
 import java.util.concurrent.atomic.AtomicBoolean
 
-class MainActivity : AppCompatActivity(), EventHandler {
+class MainActivity : AppCompatActivity(), PageHostView.EventHandler {
 
     private val bannerAdapter = BannerAdapter()
     private val feedAdapter = FlexBoxAdapter(this::handleEvent)
@@ -30,7 +30,7 @@ class MainActivity : AppCompatActivity(), EventHandler {
     private val loaded = AtomicBoolean(false)
     private lateinit var pullToRefresh: PullToRefreshLayout
     private lateinit var floatToolbar: LinearLayout
-    private lateinit var banner: MZBannerView<RenderContent>
+    private lateinit var banner: MZBannerView<PreloadPage>
     private lateinit var feed: RecyclerView
     private lateinit var function: PageHostView
     private val renderInfo: MainRenderInfo by MainRenderInfo.wait()
@@ -42,6 +42,10 @@ class MainActivity : AppCompatActivity(), EventHandler {
         pullToRefresh = findViewById(R.id.pull_to_refresh)
         floatToolbar = findViewById(R.id.toolbar)
         feed = findViewById(R.id.feed)
+        val lm = feed.layoutManager as LinearLayoutManager
+        lm.isItemPrefetchEnabled = true
+        lm.initialPrefetchItemCount = 5
+        feed.setItemViewCacheSize(5)
         val headerView = layoutInflater.inflate(R.layout.feed_header, feed, false)
         val fQrCode = findViewById<View>(R.id.qr_code)
         val qrCode = headerView.findViewById<View>(R.id.qr_code)
@@ -64,7 +68,7 @@ class MainActivity : AppCompatActivity(), EventHandler {
         fSearch.setOnClickListener(handleToSearch)
         search.setOnClickListener(handleToSearch)
         function = headerView.findViewById(R.id.function)
-        function.eventHandler = this
+        function.setEventHandler(this)
         feedAdapter.addHeaderView(headerView)
         feed.apply {
             adapter = feedAdapter
@@ -148,7 +152,7 @@ class MainActivity : AppCompatActivity(), EventHandler {
         startActivityForResult(intent, REQUEST_CODE)
     }
 
-    override fun handleEvent(v: View, key: String, value: Any) {
+    override fun handleEvent(v: View, key: String, value: Array<out Any>) {
         handleEvent(v, key)
     }
 

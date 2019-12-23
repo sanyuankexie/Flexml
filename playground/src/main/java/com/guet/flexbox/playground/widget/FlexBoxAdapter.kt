@@ -3,18 +3,17 @@ package com.guet.flexbox.playground.widget
 import android.view.View
 import com.chad.library.adapter.base.BaseQuickAdapter
 import com.chad.library.adapter.base.BaseViewHolder
-import com.guet.flexbox.content.RenderContent
-import com.guet.flexbox.litho.PageHostView
+import com.guet.flexbox.PageHostView
+import com.guet.flexbox.PreloadPage
 import com.guet.flexbox.playground.R
-import com.guet.flexbox.widget.EventHandler
 
 
 class FlexBoxAdapter(
-        private val onClickListener: (v: View, url: String) -> Unit
-) : BaseQuickAdapter<RenderContent, BaseViewHolder>(R.layout.feed_item), EventHandler {
+        private val onClick: (v: View, url: String) -> Unit
+) : BaseQuickAdapter<PreloadPage, BaseViewHolder>(R.layout.feed_item), PageHostView.EventHandler {
 
-    override fun handleEvent(v: View, key: String, value: Any) {
-        onClickListener(v, key)
+    override fun handleEvent(v: View, key: String, value: Array<out Any>) {
+        onClick(v, key)
     }
 
     override fun onViewRecycled(holder: BaseViewHolder) {
@@ -22,9 +21,9 @@ class FlexBoxAdapter(
         lithoView?.unmountAllItems()
     }
 
-    override fun convert(helper: BaseViewHolder, item: RenderContent) {
+    override fun convert(helper: BaseViewHolder, item: PreloadPage) {
         val lithoView = helper.getView<PageHostView>(R.id.litho)
-        lithoView.eventHandler = this
-        lithoView.setContentAsync(item,"Feed")
+        lithoView.setEventHandler(this)
+        lithoView.setContentAsync(item)
     }
 }

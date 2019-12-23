@@ -1,8 +1,11 @@
 package com.guet.flexbox.databinding
 
 import android.content.Context
-import com.guet.flexbox.content.DynamicNode
-import com.guet.flexbox.content.RenderNode
+import com.facebook.litho.Component
+import com.facebook.litho.ComponentContext
+import com.guet.flexbox.ContentNode
+import com.guet.flexbox.PageUtils
+import com.guet.flexbox.build.ComponentAdapt
 import com.guet.flexbox.el.PropsELContext
 
 internal object ForEach : Declaration() {
@@ -19,20 +22,21 @@ internal object ForEach : Declaration() {
     }
 
     override fun transform(
-            c: Context,
+            c: ComponentContext,
+            adapt: ComponentAdapt<*>?,
             type: String,
             attrs: Map<String, Any>,
             data: PropsELContext,
-            children: List<DynamicNode>,
+            children: List<ContentNode>,
             upperVisibility: Boolean
-    ): List<RenderNode> {
+    ): List<Component> {
         val name = attrs.getValue("var") as String
         @Suppress("UNCHECKED_CAST")
         val items = attrs.getValue("items") as List<Any>
         return items.map {
             data.scope(mapOf(name to items)) {
                 children.map {
-                    DataBindingUtils.bindNode(c, it, data, upperVisibility)
+                    PageUtils.bindNode(c, it, data, upperVisibility)
                 }
             }.flatten()
         }.flatten()

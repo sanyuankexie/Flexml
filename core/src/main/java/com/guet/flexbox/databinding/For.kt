@@ -1,8 +1,10 @@
 package com.guet.flexbox.databinding
 
-import android.content.Context
-import com.guet.flexbox.content.DynamicNode
-import com.guet.flexbox.content.RenderNode
+import com.facebook.litho.Component
+import com.facebook.litho.ComponentContext
+import com.guet.flexbox.ContentNode
+import com.guet.flexbox.PageUtils
+import com.guet.flexbox.build.ComponentAdapt
 import com.guet.flexbox.el.PropsELContext
 
 internal object For : Declaration() {
@@ -13,20 +15,21 @@ internal object For : Declaration() {
     }
 
     override fun transform(
-            c: Context,
+            c: ComponentContext,
+            adapt: ComponentAdapt<*>?,
             type: String,
             attrs: Map<String, Any>,
             data: PropsELContext,
-            children: List<DynamicNode>,
+            children: List<ContentNode>,
             upperVisibility: Boolean
-    ): List<RenderNode> {
+    ): List<Component> {
         val name = attrs.getValue("var") as String
         val from = (attrs.getValue("from") as Double).toInt()
         val to = (attrs.getValue("to") as Double).toInt()
         return (from..to).map { index ->
             data.scope(mapOf(name to index)) {
                 children.map {
-                    DataBindingUtils.bindNode(c, it, data, upperVisibility)
+                    PageUtils.bindNode(c, it, data, upperVisibility)
                 }
             }.flatten()
         }.flatten()

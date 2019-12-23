@@ -12,7 +12,6 @@
             <option value="$PROJECT_DIR$/compiler" />
             <option value="$PROJECT_DIR$/core" />
             <option value="$PROJECT_DIR$/el" />
-            <option value="$PROJECT_DIR$/litho" />
             <option value="$PROJECT_DIR$/mock" />
             <option value="$PROJECT_DIR$/playground" />
           </set>

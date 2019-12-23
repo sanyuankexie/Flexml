@@ -115,11 +115,11 @@
             android:layout_weight="1"
             android:layout_width="match_parent"
             android:layout_height="0dp">
-            <com.guet.flexbox.litho.PageHostView
+            <com.guet.flexbox.PageHostView
                 android:id="@+id/host"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent">
-            </com.guet.flexbox.litho.PageHostView>
+            </com.guet.flexbox.PageHostView>
             <View
                 android:id="@+id/transition"
                 android:layout_width="match_parent"

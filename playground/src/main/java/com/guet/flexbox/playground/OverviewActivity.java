@@ -18,15 +18,15 @@ import androidx.core.widget.NestedScrollView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.facebook.litho.config.ComponentsConfiguration;
-import com.guet.flexbox.content.DynamicNode;
-import com.guet.flexbox.content.RenderContent;
-import com.guet.flexbox.databinding.DataBindingUtils;
-import com.guet.flexbox.litho.PageHostView;
+import com.guet.flexbox.ContentNode;
+import com.guet.flexbox.PageHostView;
+import com.guet.flexbox.PageUtils;
+import com.guet.flexbox.PreloadPage;
 import com.guet.flexbox.playground.widget.QuickHandler;
-import com.guet.flexbox.widget.EventHandler;
 
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Arrays;
 import java.util.Map;
 import java.util.Objects;
 
@@ -40,7 +40,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 public class OverviewActivity
         extends AppCompatActivity
         implements View.OnClickListener,
-        EventHandler,
+        PageHostView.EventHandler,
         Runnable,
         NestedScrollView.OnScrollChangeListener,
         SwipeRefreshLayout.OnRefreshListener {
@@ -56,17 +56,17 @@ public class OverviewActivity
     private QuickHandler mNetwork = new QuickHandler("network");
     private MockService mMockService;
     private ArrayAdapter<String> mAdapter;
-    private RenderContent mLayout;
+    private PreloadPage mLayout;
     private Runnable mReload = new Runnable() {
         @WorkerThread
         @Override
         public void run() {
             try {
                 Response<Map<String, Object>> dataResponse = mMockService.data().execute();
-                Response<DynamicNode> layout = mMockService.layout().execute();
+                Response<ContentNode> layout = mMockService.layout().execute();
                 Map<String, Object> dataBody = dataResponse.body();
-                DynamicNode layoutBody = layout.body();
-                mLayout = DataBindingUtils.bind(
+                ContentNode layoutBody = layout.body();
+                mLayout = PageUtils.preload(
                         getApplicationContext(),
                         Objects.requireNonNull(layoutBody),
                         dataBody
@@ -165,12 +165,8 @@ public class OverviewActivity
 
 
     @Override
-    public void handleEvent(
-            @NotNull View v,
-            @NotNull String type,
-            @NotNull Object value
-    ) {
-        mAdapter.add("event type=" + type + " : event values=" + value);
+    public void handleEvent(@NotNull View v, @NotNull String key, @NotNull Object[] value) {
+        mAdapter.add("event type=" + key + " : event values=" + Arrays.toString(value));
     }
 
     @Override
