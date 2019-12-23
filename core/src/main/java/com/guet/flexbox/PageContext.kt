@@ -22,5 +22,4 @@ internal class PageEventBridgeAdapter : PageContext {
     }
 }
 
-
 internal class FakePageContext(private val target: PageContext) : PageContext by target

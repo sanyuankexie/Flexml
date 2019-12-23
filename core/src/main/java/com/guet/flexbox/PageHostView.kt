@@ -79,7 +79,7 @@ class PageHostView @JvmOverloads constructor(
         WorkThreadHandler.post {
             val elContext = PropsELContext(data, pageContext)
             val component = PageUtils.bindNode(c, node, elContext).single()
-            componentTree?.setRootAndSizeSpecAsync(component,
+            componentTree?.setRootAndSizeSpec(component,
                     SizeSpec.makeSizeSpec(mW, SizeSpec.EXACTLY),
                     when (height) {
                         LayoutParams.WRAP_CONTENT -> SizeSpec.makeSizeSpec(0, SizeSpec.UNSPECIFIED)

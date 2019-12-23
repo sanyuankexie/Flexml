@@ -9,7 +9,6 @@ import android.widget.LinearLayout
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityOptionsCompat
-import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.guet.flexbox.PageHostView
 import com.guet.flexbox.PageUtils
@@ -23,12 +22,12 @@ import com.yzq.zxinglibrary.common.Constant
 import com.zhouwei.mzbanner.MZBannerView
 import es.dmoral.toasty.Toasty
 import java.util.concurrent.atomic.AtomicBoolean
+import kotlin.random.Random
 
 class MainActivity : AppCompatActivity(), PageHostView.EventHandler {
 
     private val bannerAdapter = BannerAdapter()
     private val feedAdapter = FlexBoxAdapter(this::handleEvent)
-
     private val loaded = AtomicBoolean(false)
     private lateinit var pullToRefresh: PullToRefreshLayout
     private lateinit var floatToolbar: LinearLayout
@@ -39,15 +38,12 @@ class MainActivity : AppCompatActivity(), PageHostView.EventHandler {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
         setContentView(R.layout.activity_main)
         MainRenderInfo.initAsync(this.application)
         pullToRefresh = findViewById(R.id.pull_to_refresh)
         floatToolbar = findViewById(R.id.toolbar)
         feed = findViewById(R.id.feed)
-        val lm = feed.layoutManager as LinearLayoutManager
-        lm.isItemPrefetchEnabled = true
-        lm.initialPrefetchItemCount = 5
-        feed.setItemViewCacheSize(5)
         val headerView = layoutInflater.inflate(R.layout.feed_header, feed, false)
         val fQrCode = findViewById<View>(R.id.qr_code)
         val qrCode = headerView.findViewById<View>(R.id.qr_code)
@@ -71,7 +67,9 @@ class MainActivity : AppCompatActivity(), PageHostView.EventHandler {
         search.setOnClickListener(handleToSearch)
         function = headerView.findViewById(R.id.function)
         function.setEventHandler(this)
+        load()
         feedAdapter.addHeaderView(headerView)
+        feedAdapter.setNewData(renderInfo.feed)
         feed.apply {
             adapter = feedAdapter
             addOnScrollListener(object : RecyclerView.OnScrollListener() {
@@ -96,11 +94,14 @@ class MainActivity : AppCompatActivity(), PageHostView.EventHandler {
                         return
                     }
                     AsyncTask.THREAD_POOL_EXECUTOR.execute {
-                        val pages = (count..count + 10).map {
-                            PageUtils.preload(application, renderInfo.feed.first().content, mapOf(
-                                    "url" to resources.getStringArray(R.array.feed_paths).first(),
-                                    "index" to it
-                            ))
+                        val pages = (count..count + 9).map {
+                            val next = Random.Default.nextInt(0, 49)
+                            @Suppress("UNCHECKED_CAST")
+                            PageUtils.preload(application, renderInfo.feed[next].content,
+                                    HashMap<String, Any>(renderInfo.feed[next].data as Map<String, Any>)
+                                            .apply {
+                                                this["index"] = it
+                                            })
                         }
                         runOnUiThread {
                             v.finish(Runnable {
@@ -111,29 +112,12 @@ class MainActivity : AppCompatActivity(), PageHostView.EventHandler {
                 }
 
                 override fun onRefresh(v: PullToRefreshLayout) {
-                    val bannerInfo = renderInfo.banner.let {
-                        return@let when (it.size) {
-                            1 -> {
-                                listOf(it[0], it[0], it[0])
-                            }
-                            2 -> {
-                                listOf(it[0], it[1], it[0])
-                            }
-                            else -> {
-                                it
-                            }
-                        }
-                    }
                     pullToRefresh.finish(Runnable {
                         Toasty.success(
                                 this@MainActivity,
-                                "资源加载成功",
+                                "刷新成功",
                                 Toast.LENGTH_SHORT
                         ).show()
-                        banner.setPages(bannerInfo, bannerAdapter)
-                        feedAdapter.setNewData(renderInfo.feed)
-                        function.unmountAllItems()
-                        function.setContentAsync(renderInfo.function)
                     })
                 }
             }
@@ -145,6 +129,27 @@ class MainActivity : AppCompatActivity(), PageHostView.EventHandler {
         val jump = headerView.findViewById<View>(R.id.jump)
         fJump.setOnClickListener(handleToJump)
         jump.setOnClickListener(handleToJump)
+
+    }
+
+    private fun load(){
+        val bannerInfo = renderInfo.banner.let {
+            return@let when (it.size) {
+                1 -> {
+                    listOf(it[0], it[0], it[0])
+                }
+                2 -> {
+                    listOf(it[0], it[1], it[0])
+                }
+                else -> {
+                    it
+                }
+            }
+        }
+        banner.setPages(bannerInfo, bannerAdapter)
+        feedAdapter.setNewData(renderInfo.feed)
+        function.unmountAllItems()
+        function.setContentAsync(renderInfo.function)
     }
 
     override fun onResume() {

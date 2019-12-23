@@ -2,7 +2,6 @@ package com.guet.flexbox.widget
 
 import android.annotation.TargetApi
 import android.content.Context
-import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.graphics.drawable.Drawable
@@ -95,10 +94,6 @@ internal class AsyncMatrixDrawable(
             transition: Transition<in Drawable>?
     ) {
         notifyChanged(scaleType, resource)
-    }
-
-    override fun draw(canvas: Canvas) {
-        super.draw(canvas)
     }
 
     fun unmount() {
