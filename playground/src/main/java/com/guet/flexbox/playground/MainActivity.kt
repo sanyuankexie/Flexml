@@ -2,6 +2,7 @@ package com.guet.flexbox.playground
 
 import android.app.Activity
 import android.content.Intent
+import android.os.AsyncTask
 import android.os.Bundle
 import android.view.View
 import android.widget.LinearLayout
@@ -11,6 +12,7 @@ import androidx.core.app.ActivityOptionsCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.guet.flexbox.PageHostView
+import com.guet.flexbox.PageUtils
 import com.guet.flexbox.PreloadPage
 import com.guet.flexbox.playground.widget.BannerAdapter
 import com.guet.flexbox.playground.widget.FlexBoxAdapter
@@ -87,9 +89,25 @@ class MainActivity : AppCompatActivity(), PageHostView.EventHandler {
             onRefreshListener = object : PullToRefreshLayout.OnRefreshListener() {
 
                 override fun onLoadMore(v: PullToRefreshLayout) {
-                    v.finish(Runnable {
-                        Toasty.warning(this@MainActivity, "无更多").show()
-                    })
+                    val count = feedAdapter.itemCount
+                    if (count >= 100) {
+                        Toasty.warning(this@MainActivity, "再拉也没有了").show()
+                        v.finish()
+                        return
+                    }
+                    AsyncTask.THREAD_POOL_EXECUTOR.execute {
+                        val pages = (count..count + 10).map {
+                            PageUtils.preload(application, renderInfo.feed.first().content, mapOf(
+                                    "url" to resources.getStringArray(R.array.feed_paths).first(),
+                                    "index" to it
+                            ))
+                        }
+                        runOnUiThread {
+                            v.finish(Runnable {
+                                feedAdapter.addData(pages)
+                            })
+                        }
+                    }
                 }
 
                 override fun onRefresh(v: PullToRefreshLayout) {
