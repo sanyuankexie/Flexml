@@ -1,7 +1,7 @@
 package com.guet.flexbox
 
-class ContentNode(
+class TemplateNode(
         val type: String,
         val attrs: Map<String, String>?,
-        val children: List<ContentNode>?
+        val children: List<TemplateNode>?
 )

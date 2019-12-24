@@ -1,15 +1,17 @@
 package com.guet.flexbox.databinding
 
+import android.content.Context
 import android.graphics.Color
+import com.guet.flexbox.el.PropsELContext
 
 internal inline val CharSequence.isExpr: Boolean
     get() = length > 3 && startsWith("\${") && endsWith('}')
 
 internal typealias AttributeSet = Map<String, AttributeInfo<*>>
 
-internal inline fun create(crossinline a: HashMap<String, AttributeInfo<*>>.() -> Unit): Lazy<AttributeSet> {
+internal inline fun create(crossinline action: HashMap<String, AttributeInfo<*>>.() -> Unit): Lazy<AttributeSet> {
     return lazy {
-        HashMap<String, AttributeInfo<*>>().apply(a)
+        HashMap<String, AttributeInfo<*>>().apply(action)
     }
 }
 
@@ -51,4 +53,16 @@ internal inline fun <reified V : Enum<V>> HashMap<String, AttributeInfo<*>>.enum
         fallback: V = enumValues<V>().first()
 ) {
     this[name] = EnumAttribute(scope, fallback)
+}
+
+internal inline fun <reified T : Any> HashMap<String, AttributeInfo<*>>.typed(name: String) {
+    this[name] = object : AttributeInfo<T>() {
+        override fun cast(c: Context, props: PropsELContext, raw: String): T? {
+            return props.tryGetValue<T>(if (!raw.isExpr) {
+                "\${$raw}"
+            } else {
+                raw
+            })
+        }
+    }
 }

@@ -9,7 +9,7 @@ internal object Native : Declaration(Common) {
         this["type"] = object : AttributeInfo<Class<*>>() {
             override fun cast(c: Context, props: PropsELContext, raw: String): Class<*>? {
                 val text = props.scope(scope) {
-                    props.tryGetValue<String>(raw, null)
+                    props.tryGetValue<String>(raw)
                 } ?: return null
                 val type = Class.forName(text)
                 check(View::class.java.isAssignableFrom(type)) { "$type is not as 'View' type" }

@@ -7,7 +7,7 @@ interface PageContext {
     fun send(key: String, vararg data: Any)
 }
 
-internal class PageEventBridgeAdapter : PageContext {
+internal class ExposedPageContext : PageContext {
 
     private var _target: WeakReference<PageContext>? = null
 

@@ -27,12 +27,12 @@ class PageHostView @JvmOverloads constructor(
 
     private var data: Any? = null
 
-    private var content: ContentNode? = null
+    private var template: TemplateNode? = null
 
     init {
         componentTree = ComponentTree.create(componentContext)
                 .isReconciliationEnabled(false)
-                .layoutThreadHandler(WorkThreadHandler)
+                .layoutThreadHandler(WorkerThreadHandler)
                 .build()
         super.setOnDirtyMountListener { view ->
             this.performIncrementalMount(
@@ -58,8 +58,8 @@ class PageHostView @JvmOverloads constructor(
     @MainThread
     fun setContentAsync(preloadPage: PreloadPage) {
         ThreadUtils.assertMainThread()
-        preloadPage.dispatcher.target = pageContext
-        content = preloadPage.content
+        preloadPage.exposed.target = pageContext
+        template = preloadPage.template
         data = preloadPage.data
         componentTree?.setRootAndSizeSpecAsync(preloadPage.component,
                 SizeSpec.makeSizeSpec(measuredWidth, SizeSpec.EXACTLY),
@@ -70,16 +70,17 @@ class PageHostView @JvmOverloads constructor(
     }
 
     @MainThread
-    fun setContentAsync(node: ContentNode, data: Any?) {
+    fun setContentAsync(node: TemplateNode, data: Any?) {
         ThreadUtils.assertMainThread()
+        val tree = componentTree ?: return
         val c = componentContext
         val height = layoutParams?.width ?: 0
         val mH = measuredHeight
         val mW = measuredWidth
-        WorkThreadHandler.post {
+        WorkerThreadHandler.post {
             val elContext = PropsELContext(data, pageContext)
             val component = PageUtils.bindNode(c, node, elContext).single()
-            componentTree?.setRootAndSizeSpec(component,
+            tree.setRootAndSizeSpec(component,
                     SizeSpec.makeSizeSpec(mW, SizeSpec.EXACTLY),
                     when (height) {
                         LayoutParams.WRAP_CONTENT -> SizeSpec.makeSizeSpec(0, SizeSpec.UNSPECIFIED)
@@ -92,8 +93,8 @@ class PageHostView @JvmOverloads constructor(
         fun handleEvent(v: View, key: String, value: Array<out Any>)
     }
 
-    private companion object WorkThreadHandler : Handler({
-        val thread = HandlerThread("WorkThreadHandler")
+    private companion object WorkerThreadHandler : Handler({
+        val thread = HandlerThread("WorkerThread")
         thread.start()
         thread.looper
     }()), LithoHandler {

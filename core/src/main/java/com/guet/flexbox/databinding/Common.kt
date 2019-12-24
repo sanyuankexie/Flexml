@@ -4,8 +4,8 @@ import android.content.Context
 import com.facebook.litho.Component
 import com.facebook.litho.ComponentContext
 import com.facebook.yoga.YogaAlign
-import com.guet.flexbox.ContentNode
 import com.guet.flexbox.PageUtils
+import com.guet.flexbox.TemplateNode
 import com.guet.flexbox.Visibility
 import com.guet.flexbox.build.ComponentAdapt
 import com.guet.flexbox.el.LambdaExpression
@@ -47,20 +47,11 @@ internal object Common : Declaration() {
         }
         this["clickUrl"] = object : AttributeInfo<LambdaExpression>() {
             override fun cast(c: Context, props: PropsELContext, raw: String): LambdaExpression? {
-                val url = props.tryGetValue<String>(raw, null)
-                return url?.let { props.tryGetLambda("()->pageContext.send('${it}')") }
+                return props.tryGetValue("\${()->pageContext.send('${props.tryGetValue<String>(raw)}')}")
             }
         }
-        this["onClick"] = object : AttributeInfo<LambdaExpression>() {
-            override fun cast(c: Context, props: PropsELContext, raw: String): LambdaExpression? {
-                return props.tryGetLambda(raw)
-            }
-        }
-        this["onView"] = object : AttributeInfo<LambdaExpression>() {
-            override fun cast(c: Context, props: PropsELContext, raw: String): LambdaExpression? {
-                return props.tryGetLambda(raw)
-            }
-        }
+        typed<LambdaExpression>("onClick")
+        typed<LambdaExpression>("onView")
     }
 
     override fun transform(
@@ -69,7 +60,7 @@ internal object Common : Declaration() {
             type: String,
             attrs: Map<String, Any>,
             data: PropsELContext,
-            children: List<ContentNode>,
+            children: List<TemplateNode>,
             upperVisibility: Boolean
     ): List<Component> {
         val selfVisibility = attrs["visibility"] ?: Visibility.VISIBLE

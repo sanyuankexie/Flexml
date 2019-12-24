@@ -97,7 +97,7 @@ class PropsELContext(
         }
     }
 
-    internal inline fun <reified T> tryGetValue(expr: String?, fallback: T?): T? {
+    internal inline fun <reified T> tryGetValue(expr: String?, fallback: T? = null): T? {
         if (expr == null) {
             return fallback
         }
@@ -134,18 +134,6 @@ class PropsELContext(
             }
             else -> scope[expr] ?: fallback
         }
-    }
-
-    internal fun tryGetLambda(expr: String?): LambdaExpression? {
-        if (expr == null) {
-            return null
-        }
-        @Suppress("RemoveExplicitTypeArguments")
-        return tryGetValue<LambdaExpression?>(if (!expr.isExpr) {
-            "\${$expr}"
-        } else {
-            expr
-        }, null)
     }
 
     @ColorInt
