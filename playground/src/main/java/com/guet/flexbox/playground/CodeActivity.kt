@@ -12,9 +12,9 @@ import androidx.core.widget.NestedScrollView
 import com.didichuxing.doraemonkit.util.UIUtils
 import com.google.android.material.appbar.AppBarLayout
 import com.google.gson.Gson
-import com.guet.flexbox.ContentNode
 import com.guet.flexbox.PageHostView
 import com.guet.flexbox.PageUtils
+import com.guet.flexbox.TemplateNode
 import com.guet.flexbox.compiler.Compiler
 import thereisnospon.codeview.CodeView
 import thereisnospon.codeview.CodeViewTheme
@@ -71,7 +71,7 @@ class CodeActivity : AppCompatActivity() {
                 Collections.singletonMap("url", url)
             }
             val s = Compiler.compile(code)
-            val contentRaw = gson.fromJson(s, ContentNode::class.java)
+            val contentRaw = gson.fromJson(s, TemplateNode::class.java)
             val content = PageUtils.preload(this, contentRaw, data)
             runOnUiThread {
                 lithoView.unmountAllItems()

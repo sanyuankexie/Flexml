@@ -19,7 +19,7 @@ import android.widget.PopupWindow
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import com.google.gson.Gson
-import com.guet.flexbox.ContentNode
+import com.guet.flexbox.TemplateNode
 import com.guet.flexbox.PageHostView
 import com.guet.flexbox.PageUtils
 import com.guet.flexbox.compiler.Compiler
@@ -111,7 +111,7 @@ class SearchActivity : AppCompatActivity(), PageHostView.EventHandler {
             val gson = Gson()
             val input = resources.assets.open("layout/search/history_list.xml")
             val s = Compiler.compile(input)
-            val contentRaw = gson.fromJson(s, ContentNode::class.java)
+            val contentRaw = gson.fromJson(s, TemplateNode::class.java)
             val rawData = sharedPreferences.getStringSet(
                     "history_list",
                     null

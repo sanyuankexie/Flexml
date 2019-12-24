@@ -97,7 +97,7 @@ class MainActivity : AppCompatActivity(), PageHostView.EventHandler {
                         val pages = (count..count + 9).map {
                             val next = Random.Default.nextInt(0, 49)
                             @Suppress("UNCHECKED_CAST")
-                            PageUtils.preload(application, renderInfo.feed[next].content,
+                            PageUtils.preload(application, renderInfo.feed[next].template,
                                     HashMap<String, Any>(renderInfo.feed[next].data as Map<String, Any>)
                                             .apply {
                                                 this["index"] = it

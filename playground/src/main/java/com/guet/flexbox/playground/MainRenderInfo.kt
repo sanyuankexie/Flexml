@@ -3,9 +3,9 @@ package com.guet.flexbox.playground
 import android.content.Context
 import android.os.AsyncTask
 import com.google.gson.Gson
-import com.guet.flexbox.ContentNode
 import com.guet.flexbox.PageUtils
 import com.guet.flexbox.PreloadPage
+import com.guet.flexbox.TemplateNode
 import com.guet.flexbox.compiler.Compiler
 import java.util.*
 
@@ -28,7 +28,7 @@ class MainRenderInfo(
                                 c,
                                 gson.fromJson(
                                         Compiler.compile(input),
-                                        ContentNode::class.java
+                                        TemplateNode::class.java
                                 ),
                                 Collections.singletonMap("url", it))
                         input.close()
@@ -38,7 +38,7 @@ class MainRenderInfo(
                         val input = assets.open(it)
                         val json = gson.fromJson(
                                 Compiler.compile(input),
-                                ContentNode::class.java
+                                TemplateNode::class.java
                         )
                         input.close()
                         val node = (1..50).map { index ->
@@ -54,7 +54,7 @@ class MainRenderInfo(
                     val input = assets.open(functionPath)
                     val function = PageUtils.preload(
                             c,
-                            gson.fromJson(Compiler.compile(input), ContentNode::class.java),
+                            gson.fromJson(Compiler.compile(input), TemplateNode::class.java),
                             mapOf(
                                     "url" to functionPath,
                                     "icons" to res.getStringArray(R.array.function_icons)

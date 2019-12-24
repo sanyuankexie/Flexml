@@ -18,7 +18,7 @@ import androidx.core.widget.NestedScrollView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.facebook.litho.config.ComponentsConfiguration;
-import com.guet.flexbox.ContentNode;
+import com.guet.flexbox.TemplateNode;
 import com.guet.flexbox.PageHostView;
 import com.guet.flexbox.PageUtils;
 import com.guet.flexbox.PreloadPage;
@@ -63,9 +63,9 @@ public class OverviewActivity
         public void run() {
             try {
                 Response<Map<String, Object>> dataResponse = mMockService.data().execute();
-                Response<ContentNode> layout = mMockService.layout().execute();
+                Response<TemplateNode> layout = mMockService.layout().execute();
                 Map<String, Object> dataBody = dataResponse.body();
-                ContentNode layoutBody = layout.body();
+                TemplateNode layoutBody = layout.body();
                 mLayout = PageUtils.preload(
                         getApplicationContext(),
                         Objects.requireNonNull(layoutBody),
