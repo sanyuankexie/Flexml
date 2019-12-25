@@ -48,7 +48,6 @@ dependencies {
     api 'com.facebook.soloader:soloader:0.5.1'
     implementation 'com.facebook.yoga:proguard-annotations:1.16.0'
 
-
     kapt 'com.facebook.litho:litho-processor:0.33.0'
 
     testImplementation 'junit:junit:4.12'

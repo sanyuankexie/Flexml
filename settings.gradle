@@ -1,1 +1,1 @@
-include ':playground', ':core', ':el', ':mock', ':beans', ':compiler'
+include ':playground', ':core', ':el', ':beans'

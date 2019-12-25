@@ -9,15 +9,12 @@
           <set>
             <option value="$PROJECT_DIR$" />
             <option value="$PROJECT_DIR$/beans" />
-            <option value="$PROJECT_DIR$/compiler" />
             <option value="$PROJECT_DIR$/core" />
             <option value="$PROJECT_DIR$/el" />
-            <option value="$PROJECT_DIR$/mock" />
             <option value="$PROJECT_DIR$/playground" />
           </set>
         </option>
         <option name="resolveModulePerSourceSet" value="false" />
-        <option name="testRunner" value="PLATFORM" />
       </GradleProjectSettings>
     </option>
   </component>
