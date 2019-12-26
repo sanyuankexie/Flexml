@@ -5,9 +5,9 @@ import retrofit2.Call
 import retrofit2.http.GET
 
 interface MockService {
-    @GET("/data")
+    @GET("/datasource")
     fun data(): Call<Map<String, Any>>
 
-    @GET("/layout")
+    @GET("/template")
     fun layout(): Call<TemplateNode>
 }
