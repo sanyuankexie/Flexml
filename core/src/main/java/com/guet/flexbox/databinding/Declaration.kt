@@ -3,7 +3,7 @@ package com.guet.flexbox.databinding
 import com.facebook.litho.Component
 import com.facebook.litho.ComponentContext
 import com.guet.flexbox.TemplateNode
-import com.guet.flexbox.build.ComponentAdapt
+import com.guet.flexbox.build.ToComponent
 import com.guet.flexbox.el.PropsELContext
 
 internal abstract class Declaration(
@@ -25,14 +25,14 @@ internal abstract class Declaration(
 
     internal open fun transform(
             c: ComponentContext,
-            adapt: ComponentAdapt<*>?,
+            to: ToComponent<*>?,
             type: String,
             attrs: Map<String, Any>,
             data: PropsELContext,
             children: List<TemplateNode>,
             upperVisibility: Boolean
     ): List<Component> {
-        return parent?.transform(c, adapt, type, attrs, data, children, upperVisibility)
+        return parent?.transform(c, to, type, attrs, data, children, upperVisibility)
                 ?: throw UnsupportedOperationException()
     }
 }

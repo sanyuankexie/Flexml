@@ -10,7 +10,7 @@ import java.util.concurrent.ThreadFactory
 import java.util.concurrent.atomic.AtomicInteger
 import kotlin.math.max
 
-internal object StackAdapt : ComponentAdapt<Component.ContainerBuilder<*>>(CommonAdapt), ThreadFactory {
+internal object ToStack : ToComponent<Component.ContainerBuilder<*>>(Common), ThreadFactory {
 
     private val count = AtomicInteger(0)
 
@@ -22,7 +22,7 @@ internal object StackAdapt : ComponentAdapt<Component.ContainerBuilder<*>>(Commo
     override val attributeSet: AttributeSet<Component.ContainerBuilder<*>>
         get() = emptyMap()
 
-    override fun onCreate(c: ComponentContext, type: String, visibility: Boolean, attrs: Map<String, Any>): Component.ContainerBuilder<*> {
+    override fun create(c: ComponentContext, type: String, visibility: Boolean, attrs: Map<String, Any>): Component.ContainerBuilder<*> {
         return Row.create(c)
     }
 

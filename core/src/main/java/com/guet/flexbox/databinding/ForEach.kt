@@ -2,9 +2,8 @@ package com.guet.flexbox.databinding
 
 import com.facebook.litho.Component
 import com.facebook.litho.ComponentContext
-import com.guet.flexbox.PageUtils
 import com.guet.flexbox.TemplateNode
-import com.guet.flexbox.build.ComponentAdapt
+import com.guet.flexbox.build.ToComponent
 import com.guet.flexbox.el.PropsELContext
 
 internal object ForEach : Declaration() {
@@ -16,7 +15,7 @@ internal object ForEach : Declaration() {
 
     override fun transform(
             c: ComponentContext,
-            adapt: ComponentAdapt<*>?,
+            to: ToComponent<*>?,
             type: String,
             attrs: Map<String, Any>,
             data: PropsELContext,
@@ -29,7 +28,7 @@ internal object ForEach : Declaration() {
         return items.map {
             data.scope(mapOf(name to items)) {
                 children.map {
-                    PageUtils.bindNode(c, it, data, upperVisibility)
+                    Toolkit.bindNode(c, it, data, upperVisibility)
                 }
             }.flatten()
         }.flatten()

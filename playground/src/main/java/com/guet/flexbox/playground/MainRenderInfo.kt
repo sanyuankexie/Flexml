@@ -3,16 +3,16 @@ package com.guet.flexbox.playground
 import android.content.Context
 import android.os.AsyncTask
 import com.google.gson.Gson
-import com.guet.flexbox.PageUtils
-import com.guet.flexbox.PreloadPage
+import com.guet.flexbox.databinding.Toolkit
+import com.guet.flexbox.Page
 import com.guet.flexbox.TemplateNode
 import com.guet.flexbox.compiler.Compiler
 import java.util.*
 
 class MainRenderInfo(
-        val banner: List<PreloadPage>,
-        val function: PreloadPage,
-        val feed: List<PreloadPage>
+        val banner: List<Page>,
+        val function: Page,
+        val feed: List<Page>
 ) {
     companion object {
 
@@ -24,7 +24,7 @@ class MainRenderInfo(
                     val assets = res.assets
                     val banner = res.getStringArray(R.array.banner_paths).map {
                         val input = assets.open(it)
-                        val lockedInfo = PageUtils.preload(
+                        val lockedInfo = Toolkit.preload(
                                 c,
                                 gson.fromJson(
                                         Compiler.compile(input),
@@ -42,7 +42,7 @@ class MainRenderInfo(
                         )
                         input.close()
                         val node = (1..50).map { index ->
-                            PageUtils.preload(
+                            Toolkit.preload(
                                     c,
                                     json,
                                     mapOf("url" to it, "index" to index)
@@ -52,7 +52,7 @@ class MainRenderInfo(
                     }.flatten()
                     val functionPath = res.getString(R.string.function_path)
                     val input = assets.open(functionPath)
-                    val function = PageUtils.preload(
+                    val function = Toolkit.preload(
                             c,
                             gson.fromJson(Compiler.compile(input), TemplateNode::class.java),
                             mapOf(

@@ -1,6 +1,5 @@
 package com.guet.flexbox.databinding
 
-import android.content.Context
 import android.graphics.Typeface
 import android.text.Layout
 import android.text.TextUtils
@@ -33,7 +32,7 @@ internal object AbstractText : Declaration(Common) {
                 "normal" to Typeface.NORMAL,
                 "bold" to Typeface.BOLD
         ), Typeface.NORMAL) {
-            override fun cast(c: Context, props: PropsELContext, raw: String): Int? {
+            override fun cast(props: PropsELContext, raw: String): Int? {
                 return scope[raw] ?: fallback
             }
         }

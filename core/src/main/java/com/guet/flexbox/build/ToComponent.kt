@@ -14,7 +14,9 @@ import com.guet.flexbox.widget.CornerOutlineProvider
 import com.guet.flexbox.widget.NoOpDrawable
 import com.guet.flexbox.widget.parseUrl
 
-internal abstract class ComponentAdapt<C : Component.Builder<*>>(private val parent: ComponentAdapt<in C>? = null) {
+internal abstract class ToComponent<C : Component.Builder<*>>(
+        private val parent: ToComponent<in C>? = null
+) {
 
     protected abstract val attributeSet: AttributeSet<C>
 
@@ -36,14 +38,14 @@ internal abstract class ComponentAdapt<C : Component.Builder<*>>(private val par
         }
     }
 
-    fun create(
+    fun toComponent(
             c: ComponentContext,
             type: String,
             visibility: Boolean,
             attrs: Map<String, Any>,
             children: List<Component>
     ): Component {
-        val com = onCreate(c, type, visibility, attrs)
+        val com = create(c, type, visibility, attrs)
         for ((key, value) in attrs) {
             assign(com, key, value, visibility, attrs)
         }
@@ -112,7 +114,7 @@ internal abstract class ComponentAdapt<C : Component.Builder<*>>(private val par
     ) {
     }
 
-    protected abstract fun onCreate(
+    protected abstract fun create(
             c: ComponentContext,
             type: String,
             visibility: Boolean,

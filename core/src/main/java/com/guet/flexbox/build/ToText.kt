@@ -10,7 +10,7 @@ import com.facebook.litho.widget.Text
 import com.facebook.litho.widget.VerticalGravity
 
 
-internal object TextAdapt : ComponentAdapt<Text.Builder>(CommonAdapt) {
+internal object ToText : ToComponent<Text.Builder>(Common) {
 
     private val invisibleColor = ColorStateList.valueOf(Color.TRANSPARENT)
 
@@ -76,7 +76,7 @@ internal object TextAdapt : ComponentAdapt<Text.Builder>(CommonAdapt) {
         }
     }
 
-    override fun onCreate(c: ComponentContext, type: String, visibility: Boolean, attrs: Map<String, Any>): Text.Builder {
+    override fun create(c: ComponentContext, type: String, visibility: Boolean, attrs: Map<String, Any>): Text.Builder {
         return Text.create(c)
     }
 }

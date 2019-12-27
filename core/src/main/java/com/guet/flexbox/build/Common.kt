@@ -9,7 +9,7 @@ import com.guet.flexbox.R
 import com.guet.flexbox.el.LambdaExpression
 import java.util.*
 
-internal object CommonAdapt : ComponentAdapt<Component.Builder<*>>() {
+internal object Common : ToComponent<Component.Builder<*>>() {
 
     override val attributeSet: AttributeSet<Component.Builder<*>> by create {
         this["width"] = object : Assignment<Component.Builder<*>, Double>() {
@@ -99,7 +99,7 @@ internal object CommonAdapt : ComponentAdapt<Component.Builder<*>>() {
         }
     }
 
-    override fun onCreate(c: ComponentContext, type: String, visibility: Boolean, attrs: Map<String, Any>): Component.Builder<*> {
+    override fun create(c: ComponentContext, type: String, visibility: Boolean, attrs: Map<String, Any>): Component.Builder<*> {
         throw UnsupportedOperationException()
     }
 }

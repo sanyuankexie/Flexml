@@ -9,25 +9,22 @@ import android.view.View
 import androidx.annotation.MainThread
 import com.facebook.litho.*
 import com.facebook.litho.config.ComponentsConfiguration
+import com.guet.flexbox.databinding.Toolkit
 import com.guet.flexbox.el.PropsELContext
 
-class PageHostView @JvmOverloads constructor(
+class HostingView @JvmOverloads constructor(
         context: Context, attrs: AttributeSet? = null
 ) : LithoView(context, attrs) {
 
     private val pageContext = object : PageContext {
         override fun send(key: String, vararg data: Any) {
-            _eventHandler?.handleEvent(this@PageHostView, key, data)
+            _eventHandler?.handleEvent(this@HostingView, key, data)
         }
     }
 
     private var _onDirtyMountListener: OnDirtyMountListener? = null
 
     private var _eventHandler: EventHandler? = null
-
-    private var data: Any? = null
-
-    private var template: TemplateNode? = null
 
     init {
         componentTree = ComponentTree.create(componentContext)
@@ -56,12 +53,10 @@ class PageHostView @JvmOverloads constructor(
     }
 
     @MainThread
-    fun setContentAsync(preloadPage: PreloadPage) {
+    fun setContentAsync(page: Page) {
         ThreadUtils.assertMainThread()
-        preloadPage.exposed.target = pageContext
-        template = preloadPage.template
-        data = preloadPage.data
-        componentTree?.setRootAndSizeSpecAsync(preloadPage.component,
+        page.exposed.target = pageContext
+        componentTree?.setRootAndSizeSpecAsync(page.component,
                 SizeSpec.makeSizeSpec(measuredWidth, SizeSpec.EXACTLY),
                 when (layoutParams?.height) {
                     LayoutParams.WRAP_CONTENT -> SizeSpec.makeSizeSpec(0, SizeSpec.UNSPECIFIED)
@@ -79,7 +74,7 @@ class PageHostView @JvmOverloads constructor(
         val mW = measuredWidth
         WorkerThreadHandler.post {
             val elContext = PropsELContext(data, pageContext)
-            val component = PageUtils.bindNode(c, node, elContext).single()
+            val component = Toolkit.bindNode(c, node, elContext).single()
             tree.setRootAndSizeSpec(component,
                     SizeSpec.makeSizeSpec(mW, SizeSpec.EXACTLY),
                     when (height) {

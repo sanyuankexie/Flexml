@@ -10,9 +10,9 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityOptionsCompat
 import androidx.recyclerview.widget.RecyclerView
-import com.guet.flexbox.PageHostView
-import com.guet.flexbox.PageUtils
-import com.guet.flexbox.PreloadPage
+import com.guet.flexbox.HostingView
+import com.guet.flexbox.databinding.Toolkit
+import com.guet.flexbox.Page
 import com.guet.flexbox.playground.widget.BannerAdapter
 import com.guet.flexbox.playground.widget.FlexBoxAdapter
 import com.guet.flexbox.playground.widget.PullToRefreshLayout
@@ -24,16 +24,16 @@ import es.dmoral.toasty.Toasty
 import java.util.concurrent.atomic.AtomicBoolean
 import kotlin.random.Random
 
-class MainActivity : AppCompatActivity(), PageHostView.EventHandler {
+class MainActivity : AppCompatActivity(), HostingView.EventHandler {
 
     private val bannerAdapter = BannerAdapter()
     private val feedAdapter = FlexBoxAdapter(this::handleEvent)
     private val loaded = AtomicBoolean(false)
     private lateinit var pullToRefresh: PullToRefreshLayout
     private lateinit var floatToolbar: LinearLayout
-    private lateinit var banner: MZBannerView<PreloadPage>
+    private lateinit var banner: MZBannerView<Page>
     private lateinit var feed: RecyclerView
-    private lateinit var function: PageHostView
+    private lateinit var function: HostingView
     private val renderInfo: MainRenderInfo by MainRenderInfo.wait()
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -97,7 +97,7 @@ class MainActivity : AppCompatActivity(), PageHostView.EventHandler {
                         val pages = (count..count + 9).map {
                             val next = Random.Default.nextInt(0, 49)
                             @Suppress("UNCHECKED_CAST")
-                            PageUtils.preload(application, renderInfo.feed[next].template,
+                            Toolkit.preload(application, renderInfo.feed[next].template,
                                     HashMap<String, Any>(renderInfo.feed[next].data as Map<String, Any>)
                                             .apply {
                                                 this["index"] = it

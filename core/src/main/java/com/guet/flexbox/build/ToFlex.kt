@@ -1,12 +1,15 @@
 package com.guet.flexbox.build
 
-import com.facebook.litho.*
+import com.facebook.litho.Column
+import com.facebook.litho.Component
+import com.facebook.litho.ComponentContext
+import com.facebook.litho.Row
 import com.facebook.yoga.YogaAlign
 import com.facebook.yoga.YogaFlexDirection
 import com.facebook.yoga.YogaJustify
 import com.facebook.yoga.YogaWrap
 
-internal object FlexAdapt : ComponentAdapt<Component.ContainerBuilder<*>>(CommonAdapt) {
+internal object ToFlex : ToComponent<Component.ContainerBuilder<*>>(Common) {
 
     override val attributeSet: AttributeSet<Component.ContainerBuilder<*>> by create {
         this["flexWrap"] = object : Assignment<Component.ContainerBuilder<*>, YogaWrap>() {
@@ -31,7 +34,7 @@ internal object FlexAdapt : ComponentAdapt<Component.ContainerBuilder<*>>(Common
         }
     }
 
-    override fun onCreate(c: ComponentContext, type: String, visibility: Boolean, attrs: Map<String, Any>): Component.ContainerBuilder<*> {
+    override fun create(c: ComponentContext, type: String, visibility: Boolean, attrs: Map<String, Any>): Component.ContainerBuilder<*> {
         val component: Component.ContainerBuilder<*>
         when (attrs.getOrElse("flexDirection") { YogaFlexDirection.ROW }) {
             YogaFlexDirection.COLUMN -> {

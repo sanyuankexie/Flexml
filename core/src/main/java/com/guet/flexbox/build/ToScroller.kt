@@ -6,7 +6,7 @@ import com.facebook.litho.widget.HorizontalScroll
 import com.facebook.litho.widget.VerticalScroll
 import com.guet.flexbox.Orientation
 
-internal object ScrollerAdapt : ComponentAdapt<Component.Builder<*>>(CommonAdapt) {
+internal object ToScroller : ToComponent<Component.Builder<*>>(Common) {
 
     override val attributeSet: AttributeSet<Component.Builder<*>> by create {
         this["scrollBarEnable"] = object : Assignment<Component.Builder<*>, Boolean>() {
@@ -29,7 +29,7 @@ internal object ScrollerAdapt : ComponentAdapt<Component.Builder<*>>(CommonAdapt
         }
     }
 
-    override fun onCreate(c: ComponentContext, type: String, visibility: Boolean, attrs: Map<String, Any>): Component.Builder<*> {
+    override fun create(c: ComponentContext, type: String, visibility: Boolean, attrs: Map<String, Any>): Component.Builder<*> {
         return when (attrs.getOrElse("orientation") { Orientation.HORIZONTAL }) {
             Orientation.HORIZONTAL -> {
                 HorizontalScroll.create(c)

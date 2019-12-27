@@ -9,7 +9,7 @@ import com.guet.flexbox.EventBridge
 import com.guet.flexbox.R
 import com.guet.flexbox.el.LambdaExpression
 
-internal object TextInputAdapt : ComponentAdapt<TextInput.Builder>(CommonAdapt) {
+internal object ToTextInput : ToComponent<TextInput.Builder>(Common) {
     override val attributeSet: AttributeSet<TextInput.Builder> by create {
         this["maxLines"] = object : Assignment<TextInput.Builder, Double>() {
             override fun TextInput.Builder.assign(display: Boolean, other: Map<String, Any>, value: Double) {
@@ -43,7 +43,7 @@ internal object TextInputAdapt : ComponentAdapt<TextInput.Builder>(CommonAdapt) 
         }
     }
 
-    override fun onCreate(c: ComponentContext, type: String, visibility: Boolean, attrs: Map<String, Any>): TextInput.Builder {
+    override fun create(c: ComponentContext, type: String, visibility: Boolean, attrs: Map<String, Any>): TextInput.Builder {
         return TextInput.create(c)
     }
 }

@@ -19,9 +19,9 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.facebook.litho.config.ComponentsConfiguration;
 import com.guet.flexbox.TemplateNode;
-import com.guet.flexbox.PageHostView;
-import com.guet.flexbox.PageUtils;
-import com.guet.flexbox.PreloadPage;
+import com.guet.flexbox.HostingView;
+import com.guet.flexbox.databinding.Toolkit;
+import com.guet.flexbox.Page;
 import com.guet.flexbox.playground.widget.QuickHandler;
 
 import org.jetbrains.annotations.NotNull;
@@ -40,13 +40,13 @@ import retrofit2.converter.gson.GsonConverterFactory;
 public class OverviewActivity
         extends AppCompatActivity
         implements View.OnClickListener,
-        PageHostView.EventHandler,
+        HostingView.EventHandler,
         Runnable,
         NestedScrollView.OnScrollChangeListener,
         SwipeRefreshLayout.OnRefreshListener {
 
     private SwipeRefreshLayout mSwipeRefreshLayout;
-    private PageHostView mLithoView;
+    private HostingView mLithoView;
     private SwitchView mIsLiveReload;
     private SwitchView mIsOpenConsole;
     private SwitchView mIsOpenBianjie;
@@ -56,7 +56,7 @@ public class OverviewActivity
     private QuickHandler mNetwork = new QuickHandler("network");
     private MockService mMockService;
     private ArrayAdapter<String> mAdapter;
-    private PreloadPage mLayout;
+    private Page mLayout;
     private Runnable mReload = new Runnable() {
         @WorkerThread
         @Override
@@ -66,7 +66,7 @@ public class OverviewActivity
                 Response<TemplateNode> layout = mMockService.layout().execute();
                 Map<String, Object> dataBody = dataResponse.body();
                 TemplateNode layoutBody = layout.body();
-                mLayout = PageUtils.preload(
+                mLayout = Toolkit.preload(
                         getApplicationContext(),
                         Objects.requireNonNull(layoutBody),
                         dataBody

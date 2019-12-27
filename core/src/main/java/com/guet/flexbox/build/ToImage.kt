@@ -4,7 +4,7 @@ import android.widget.ImageView.ScaleType
 import com.facebook.litho.ComponentContext
 import com.guet.flexbox.widget.AsyncImage
 
-internal object ImageAdapt : ComponentAdapt<AsyncImage.Builder>(CommonAdapt) {
+internal object ToImage : ToComponent<AsyncImage.Builder>(Common) {
 
     override val attributeSet: AttributeSet<AsyncImage.Builder> by create {
         this["scaleType"] = object : Assignment<AsyncImage.Builder, ScaleType>() {
@@ -33,7 +33,7 @@ internal object ImageAdapt : ComponentAdapt<AsyncImage.Builder>(CommonAdapt) {
         }
     }
 
-    override fun onCreate(c: ComponentContext, type: String, visibility: Boolean, attrs: Map<String, Any>): AsyncImage.Builder {
+    override fun create(c: ComponentContext, type: String, visibility: Boolean, attrs: Map<String, Any>): AsyncImage.Builder {
         return AsyncImage.create(c)
     }
 }

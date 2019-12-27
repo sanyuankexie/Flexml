@@ -12,8 +12,8 @@ import androidx.core.widget.NestedScrollView
 import com.didichuxing.doraemonkit.util.UIUtils
 import com.google.android.material.appbar.AppBarLayout
 import com.google.gson.Gson
-import com.guet.flexbox.PageHostView
-import com.guet.flexbox.PageUtils
+import com.guet.flexbox.HostingView
+import com.guet.flexbox.databinding.Toolkit
 import com.guet.flexbox.TemplateNode
 import com.guet.flexbox.compiler.Compiler
 import thereisnospon.codeview.CodeView
@@ -25,7 +25,7 @@ class CodeActivity : AppCompatActivity() {
 
     private lateinit var scroll: NestedScrollView
     private lateinit var codeView: CodeView
-    private lateinit var lithoView: PageHostView
+    private lateinit var lithoView: HostingView
     private lateinit var appbar: AppBarLayout
     private lateinit var host: CoordinatorLayout
     private lateinit var title: TextView
@@ -72,7 +72,7 @@ class CodeActivity : AppCompatActivity() {
             }
             val s = Compiler.compile(code)
             val contentRaw = gson.fromJson(s, TemplateNode::class.java)
-            val content = PageUtils.preload(this, contentRaw, data)
+            val content = Toolkit.preload(this, contentRaw, data)
             runOnUiThread {
                 lithoView.unmountAllItems()
                 lithoView.setContentAsync(content)

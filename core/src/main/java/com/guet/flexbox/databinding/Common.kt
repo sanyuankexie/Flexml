@@ -1,13 +1,11 @@
 package com.guet.flexbox.databinding
 
-import android.content.Context
 import com.facebook.litho.Component
 import com.facebook.litho.ComponentContext
 import com.facebook.yoga.YogaAlign
-import com.guet.flexbox.PageUtils
 import com.guet.flexbox.TemplateNode
 import com.guet.flexbox.Visibility
-import com.guet.flexbox.build.ComponentAdapt
+import com.guet.flexbox.build.ToComponent
 import com.guet.flexbox.el.LambdaExpression
 import com.guet.flexbox.el.PropsELContext
 
@@ -46,7 +44,7 @@ internal object Common : Declaration() {
             value("padding$edge")
         }
         this["clickUrl"] = object : AttributeInfo<LambdaExpression>() {
-            override fun cast(c: Context, props: PropsELContext, raw: String): LambdaExpression? {
+            override fun cast(props: PropsELContext, raw: String): LambdaExpression? {
                 return props.tryGetValue("\${()->pageContext.send('${props.tryGetValue<String>(raw)}')}")
             }
         }
@@ -56,7 +54,7 @@ internal object Common : Declaration() {
 
     override fun transform(
             c: ComponentContext,
-            adapt: ComponentAdapt<*>?,
+            to: ToComponent<*>?,
             type: String,
             attrs: Map<String, Any>,
             data: PropsELContext,
@@ -72,9 +70,9 @@ internal object Common : Declaration() {
             emptyList()
         } else {
             children.map {
-                PageUtils.bindNode(c, it, data, visibility)
+                Toolkit.bindNode(c, it, data, visibility)
             }.flatten()
         }
-        return listOf(adapt!!.create(c, type, visibility, attrs, childrenComponent))
+        return listOf(to!!.toComponent(c, type, visibility, attrs, childrenComponent))
     }
 }

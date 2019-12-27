@@ -9,14 +9,14 @@ import com.facebook.litho.viewcompat.ViewBinder
 import com.facebook.litho.viewcompat.ViewCreator
 import java.lang.reflect.Constructor
 
-internal object NativeAdapt : ComponentAdapt<ViewCompatComponent.Builder<View>>(CommonAdapt) {
+internal object ToMount : ToComponent<ViewCompatComponent.Builder<View>>(Common) {
 
     private val viewTypeCache = HashMap<Class<*>, ReflectViewCreator>(32)
 
     override val attributeSet: AttributeSet<ViewCompatComponent.Builder<View>>
         get() = emptyMap()
 
-    override fun onCreate(c: ComponentContext, type: String, visibility: Boolean, attrs: Map<String, Any>): ViewCompatComponent.Builder<View> {
+    override fun create(c: ComponentContext, type: String, visibility: Boolean, attrs: Map<String, Any>): ViewCompatComponent.Builder<View> {
         val typeClass = attrs["type"] as Class<*>
         val creator = viewTypeCache.getOrPut(typeClass) {
             ReflectViewCreator(typeClass.getConstructor(Context::class.java))

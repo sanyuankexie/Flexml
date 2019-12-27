@@ -1,6 +1,5 @@
 package com.guet.flexbox.databinding
 
-import android.content.Context
 import com.guet.flexbox.el.PropsELContext
 
 internal abstract class AttributeInfo<T : Any>(
@@ -8,7 +7,6 @@ internal abstract class AttributeInfo<T : Any>(
         protected val fallback: T? = null
 ) {
     abstract fun cast(
-            c: Context,
             props: PropsELContext,
             raw: String
     ): T?

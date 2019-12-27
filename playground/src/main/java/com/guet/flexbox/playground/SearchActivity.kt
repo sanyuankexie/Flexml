@@ -19,16 +19,16 @@ import android.widget.PopupWindow
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import com.google.gson.Gson
-import com.guet.flexbox.PageHostView
-import com.guet.flexbox.PageUtils
+import com.guet.flexbox.HostingView
+import com.guet.flexbox.databinding.Toolkit
 import com.guet.flexbox.TemplateNode
 import java.util.*
 import kotlin.collections.HashSet
 
-class SearchActivity : AppCompatActivity(), PageHostView.EventHandler {
+class SearchActivity : AppCompatActivity(), HostingView.EventHandler {
 
     private lateinit var sharedPreferences: SharedPreferences
-    private lateinit var list: PageHostView
+    private lateinit var list: HostingView
     private lateinit var editText: EditText
     private var popupWindow: PopupWindow? = null
 
@@ -125,7 +125,7 @@ class SearchActivity : AppCompatActivity(), PageHostView.EventHandler {
                     listData
             )
             input.close()
-            val content = PageUtils.preload(this, contentRaw, data)
+            val content = Toolkit.preload(this, contentRaw, data)
             runOnUiThread {
                 list.setContentAsync(content)
             }
