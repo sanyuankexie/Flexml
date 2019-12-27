@@ -13,9 +13,9 @@ import com.guet.flexbox.el.PropsELContext
 
 object Toolkit {
 
+    @JvmStatic
     @JvmOverloads
     @WorkerThread
-    @JvmStatic
     fun preload(
             c: Context,
             templateNode: TemplateNode,
@@ -29,7 +29,7 @@ object Toolkit {
                 templateNode,
                 elContext
         ).single()
-        return Page(com, dispatcher)
+        return Page(templateNode, data, com, dispatcher)
     }
 
     internal fun bindAttr(
