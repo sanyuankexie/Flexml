@@ -23,7 +23,7 @@ internal object When : Declaration() {
         for (item in children) {
             if (item.type == "case") {
                 val itemAttrs = item.attrs
-                if (itemAttrs != null && Toolkit.bindAttr(Case, itemAttrs, data)["test"] == true) {
+                if (itemAttrs != null && Toolkit.bindAttr(If, itemAttrs, data)["test"] == true) {
                     return item.children?.map {
                         Toolkit.bindNode(c, it, data, upperVisibility)
                     }?.flatten() ?: emptyList()

@@ -7,7 +7,7 @@ import com.guet.flexbox.build.ToComponent
 import com.guet.flexbox.el.PropsELContext
 
 
-internal object Case : Declaration() {
+internal object If : Declaration() {
 
     override val attributeSet: AttributeSet by create {
         bool("test")
