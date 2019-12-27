@@ -83,6 +83,7 @@ object Toolkit {
             "Stack" to (Common to ToStack),
             "for" to (For to null),
             "foreach" to (ForEach to null),
-            "when" to (When to null)
+            "when" to (When to null),
+            "case" to (Case to null)
     )
 }

@@ -37,9 +37,4 @@ internal object When : Declaration() {
         }?.flatten() ?: emptyList()
     }
 
-    private object Case : Declaration() {
-        override val attributeSet: AttributeSet by create {
-            bool("test")
-        }
-    }
 }
