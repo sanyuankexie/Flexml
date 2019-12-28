@@ -39,7 +39,6 @@ public class OverviewActivity
         extends AppCompatActivity
         implements View.OnClickListener,
         HostingView.EventHandler,
-        Runnable,
         NestedScrollView.OnScrollChangeListener,
         SwipeRefreshLayout.OnRefreshListener {
 
@@ -48,6 +47,15 @@ public class OverviewActivity
     private SwitchView mIsLiveReload;
     private SwitchView mIsOpenConsole;
     private ListView mConsole;
+    private Runnable mRefresh = new Runnable() {
+        @Override
+        public void run() {
+            if (mIsLiveReload.isOpened()) {
+                onRefresh();
+            }
+            mMainThread.postDelayed(this, 1000);
+        }
+    };
 
     private Handler mMainThread = new Handler();
     private QuickHandler mNetwork = new QuickHandler("network");
@@ -95,14 +103,14 @@ public class OverviewActivity
     @Override
     protected void onStart() {
         super.onStart();
-        mNetwork.removeCallbacks(this);
-        mNetwork.post(this);
+        mNetwork.removeCallbacks(mRefresh);
+        mNetwork.post(mRefresh);
     }
 
     @Override
     protected void onStop() {
         super.onStop();
-        mNetwork.removeCallbacks(this);
+        mNetwork.removeCallbacks(mRefresh);
     }
 
     @Override
@@ -183,11 +191,4 @@ public class OverviewActivity
         mNetwork.post(mReload);
     }
 
-    @Override
-    public void run() {
-        if (mIsLiveReload.isOpened()) {
-            onRefresh();
-        }
-        mMainThread.postDelayed(this, 1000);
-    }
 }
