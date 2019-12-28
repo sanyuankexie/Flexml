@@ -15,7 +15,6 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.core.widget.NestedScrollView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
-import com.facebook.litho.config.ComponentsConfiguration;
 import com.guet.flexbox.HostingView;
 import com.guet.flexbox.Page;
 import com.guet.flexbox.TemplateNode;
@@ -180,7 +179,6 @@ public class OverviewActivity
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        ComponentsConfiguration.debugHighlightMountBounds = false;
         mMainThread.removeCallbacksAndMessages(null);
         mNetwork.getLooper().quit();
     }
