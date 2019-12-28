@@ -55,6 +55,7 @@
                             android:layout_width="0dp"
                             android:layout_height="match_parent" />
                         <ch.ielse.view.SwitchView
+                            app:isOpened="true"
                             android:id="@+id/is_live_reload"
                             android:layout_marginRight="12dp"
                             android:layout_marginLeft="12dp"
