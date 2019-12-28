@@ -20,98 +20,78 @@
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize">
         </androidx.appcompat.widget.Toolbar>
-        <androidx.cardview.widget.CardView
-            android:layout_marginTop="10dp"
-            android:layout_marginRight="10dp"
-            android:layout_marginLeft="10dp"
-            android:layout_marginBottom="5dp"
-            app:cardBackgroundColor="@android:color/white"
-            android:elevation="10dp"
-            app:cardCornerRadius="20dp"
+        <FrameLayout
+            android:background="@drawable/ic_background_transition"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
-            <LinearLayout
-                android:layout_margin="5dp"
-                android:orientation="vertical"
+            <androidx.cardview.widget.CardView
+                android:layout_marginTop="10dp"
+                android:layout_marginRight="10dp"
+                android:layout_marginLeft="10dp"
+                android:layout_marginBottom="5dp"
+                app:cardBackgroundColor="@android:color/white"
+                android:elevation="10dp"
+                app:cardCornerRadius="20dp"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent">
+                android:layout_height="wrap_content">
                 <LinearLayout
-                    android:background="@android:color/white"
-                    android:gravity="center_vertical"
-                    android:orientation="horizontal"
+                    android:layout_margin="5dp"
+                    android:orientation="vertical"
                     android:layout_width="match_parent"
-                    android:layout_height="44dp">
-                    <TextView
-                        android:layout_marginLeft="12dp"
-                        android:gravity="left|center_vertical"
-                        android:textSize="18dp"
-                        android:textColor="@android:color/black"
-                        android:layout_weight="1"
-                        android:text="LiveReload"
-                        android:layout_width="0dp"
-                        android:layout_height="match_parent" />
-                    <ch.ielse.view.SwitchView
-                        android:id="@+id/is_live_reload"
-                        android:layout_marginRight="12dp"
-                        android:layout_marginLeft="12dp"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"/>
+                    android:layout_height="match_parent">
+                    <LinearLayout
+                        android:background="@android:color/white"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal"
+                        android:layout_width="match_parent"
+                        android:layout_height="44dp">
+                        <TextView
+                            android:layout_marginLeft="12dp"
+                            android:gravity="left|center_vertical"
+                            android:textSize="18dp"
+                            android:textColor="@android:color/black"
+                            android:layout_weight="1"
+                            android:text="LiveReload"
+                            android:layout_width="0dp"
+                            android:layout_height="match_parent" />
+                        <ch.ielse.view.SwitchView
+                            android:id="@+id/is_live_reload"
+                            android:layout_marginRight="12dp"
+                            android:layout_marginLeft="12dp"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"/>
+                    </LinearLayout>
+                    <View
+                        android:background="@android:color/darker_gray"
+                        android:layout_width="match_parent"
+                        android:layout_height="0.1dp"/>
+                    <LinearLayout
+                        android:background="@android:color/white"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal"
+                        android:layout_width="match_parent"
+                        android:layout_height="44dp">
+                        <TextView
+                            android:layout_marginLeft="12dp"
+                            android:gravity="left|center_vertical"
+                            android:textSize="18dp"
+                            android:textColor="@android:color/black"
+                            android:layout_weight="1"
+                            android:text="是否打开控制台"
+                            android:layout_width="0dp"
+                            android:layout_height="match_parent" />
+                        <ch.ielse.view.SwitchView
+                            android:id="@+id/is_open_console"
+                            android:layout_marginRight="12dp"
+                            android:layout_marginLeft="12dp"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"/>
+                    </LinearLayout>
                 </LinearLayout>
-                <View
-                    android:background="@android:color/darker_gray"
-                    android:layout_width="match_parent"
-                    android:layout_height="0.1dp"/>
-                <LinearLayout
-                    android:background="@android:color/white"
-                    android:gravity="center_vertical"
-                    android:orientation="horizontal"
-                    android:layout_width="match_parent"
-                    android:layout_height="44dp">
-                    <TextView
-                        android:layout_marginLeft="12dp"
-                        android:gravity="left|center_vertical"
-                        android:textSize="18dp"
-                        android:textColor="@android:color/black"
-                        android:layout_weight="1"
-                        android:text="是否打开控制台"
-                        android:layout_width="0dp"
-                        android:layout_height="match_parent" />
-                    <ch.ielse.view.SwitchView
-                        android:id="@+id/is_open_console"
-                        android:layout_marginRight="12dp"
-                        android:layout_marginLeft="12dp"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"/>
-                </LinearLayout>
-                <View
-                    android:background="@android:color/darker_gray"
-                    android:layout_width="match_parent"
-                    android:layout_height="0.1dp"/>
-                <LinearLayout
-                    android:background="@android:color/white"
-                    android:gravity="center_vertical"
-                    android:orientation="horizontal"
-                    android:layout_width="match_parent"
-                    android:layout_height="44dp">
-                    <TextView
-                        android:layout_marginLeft="12dp"
-                        android:gravity="left|center_vertical"
-                        android:textSize="18dp"
-                        android:textColor="@android:color/black"
-                        android:layout_weight="1"
-                        android:text="是否打开布局边界"
-                        android:layout_width="0dp"
-                        android:layout_height="match_parent" />
-                    <ch.ielse.view.SwitchView
-                        android:id="@+id/is_open_bianjie"
-                        android:layout_marginRight="12dp"
-                        android:layout_marginLeft="12dp"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"/>
-                </LinearLayout>
-            </LinearLayout>
-        </androidx.cardview.widget.CardView>
+            </androidx.cardview.widget.CardView>
+        </FrameLayout>
         <FrameLayout
+            android:layout_marginTop="10dp"
             android:layout_weight="1"
             android:layout_width="match_parent"
             android:layout_height="0dp">
@@ -120,10 +100,6 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent">
             </com.guet.flexbox.HostingView>
-            <View
-                android:id="@+id/transition"
-                android:layout_width="match_parent"
-                android:layout_height="20dp"/>
             <ListView
                 android:visibility="gone"
                 android:paddingLeft="5dp"

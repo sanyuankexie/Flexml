@@ -1,8 +1,6 @@
 package com.guet.flexbox.playground;
 
 import android.content.Intent;
-import android.graphics.Color;
-import android.graphics.drawable.GradientDrawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.View;
@@ -18,10 +16,10 @@ import androidx.core.widget.NestedScrollView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.facebook.litho.config.ComponentsConfiguration;
-import com.guet.flexbox.TemplateNode;
 import com.guet.flexbox.HostingView;
-import com.guet.flexbox.databinding.Toolkit;
 import com.guet.flexbox.Page;
+import com.guet.flexbox.TemplateNode;
+import com.guet.flexbox.databinding.Toolkit;
 import com.guet.flexbox.playground.widget.QuickHandler;
 
 import org.jetbrains.annotations.NotNull;
@@ -49,7 +47,6 @@ public class OverviewActivity
     private HostingView mLithoView;
     private SwitchView mIsLiveReload;
     private SwitchView mIsOpenConsole;
-    private SwitchView mIsOpenBianjie;
     private ListView mConsole;
 
     private Handler mMainThread = new Handler();
@@ -118,15 +115,7 @@ public class OverviewActivity
         mSwipeRefreshLayout = findViewById(R.id.pull);
         mIsLiveReload = findViewById(R.id.is_live_reload);
         mIsOpenConsole = findViewById(R.id.is_open_console);
-        mIsOpenBianjie = findViewById(R.id.is_open_bianjie);
         mConsole = findViewById(R.id.console);
-        findViewById(R.id.transition).setBackground(new GradientDrawable(
-                GradientDrawable.Orientation.TOP_BOTTOM,
-                new int[]{
-                        getResources().getColor(R.color.background),
-                        Color.TRANSPARENT
-                }));
-        mIsOpenBianjie.setOnClickListener(this);
         mSwipeRefreshLayout.setOnRefreshListener(this);
         mIsOpenConsole.setOnClickListener(this);
         mAdapter = new ArrayAdapter<>(this, R.layout.console_item, R.id.text);
@@ -157,12 +146,8 @@ public class OverviewActivity
     public void onClick(View v) {
         if (v.getId() == R.id.is_open_console) {
             mConsole.setVisibility(mIsOpenConsole.isOpened() ? View.VISIBLE : View.GONE);
-        } else if (v.getId() == R.id.is_open_bianjie) {
-            ComponentsConfiguration.debugHighlightInteractiveBounds = mIsOpenBianjie.isOpened();
-            ComponentsConfiguration.debugHighlightMountBounds = mIsOpenBianjie.isOpened();
         }
     }
-
 
     @Override
     public void handleEvent(@NotNull View v, @NotNull String key, @NotNull Object[] value) {
@@ -187,6 +172,7 @@ public class OverviewActivity
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        ComponentsConfiguration.debugHighlightMountBounds = false;
         mMainThread.removeCallbacksAndMessages(null);
         mNetwork.getLooper().quit();
     }

@@ -2,7 +2,6 @@ package com.guet.flexbox
 
 import java.lang.ref.WeakReference
 
-
 interface PageContext {
     fun send(key: String, vararg data: Any)
 }

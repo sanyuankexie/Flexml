@@ -41,6 +41,9 @@ internal object ToScroller : ToComponent<Component.Builder<*>>(Common) {
     }
 
     override fun onInstallChildren(owner: Component.Builder<*>, type: String, visibility: Boolean, attrs: Map<String, Any>, children: List<Component>) {
+        if (children.isNullOrEmpty()) {
+            return
+        }
         if (owner is HorizontalScroll.Builder) {
             owner.contentProps(children.single())
         } else if (owner is VerticalScroll.Builder) {

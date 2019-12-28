@@ -11,8 +11,8 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityOptionsCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.guet.flexbox.HostingView
-import com.guet.flexbox.databinding.Toolkit
 import com.guet.flexbox.Page
+import com.guet.flexbox.databinding.Toolkit
 import com.guet.flexbox.playground.widget.BannerAdapter
 import com.guet.flexbox.playground.widget.FlexBoxAdapter
 import com.guet.flexbox.playground.widget.PullToRefreshLayout
@@ -204,7 +204,6 @@ class MainActivity : AppCompatActivity(), HostingView.EventHandler {
                     val intent = Intent(this, OverviewActivity::class.java)
                     intent.putExtra("url", content)
                     startActivity(intent)
-                    finish()
                 } else {
                     Toasty.error(this, "解析二维码失败", Toast.LENGTH_LONG)
                             .show()
