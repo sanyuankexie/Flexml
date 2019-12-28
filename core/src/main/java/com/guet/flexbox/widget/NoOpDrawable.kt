@@ -4,9 +4,10 @@ import android.graphics.Canvas
 import android.graphics.ColorFilter
 import android.graphics.PixelFormat
 import android.graphics.Rect
+import android.graphics.drawable.Drawable
 import com.facebook.litho.drawable.ComparableDrawable
 
-internal class NoOpDrawable : ComparableDrawable() {
+internal class NoOpDrawable : Drawable(), ComparableDrawable {
 
     init {
         super.setBounds(0, 0, 0, 0)

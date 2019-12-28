@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    android:orientation="vertical"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.guet.flexbox.playground.SearchActivity">
+    <LinearLayout
+        android:visibility="visible"
+        android:id="@+id/toolbar"
+        android:paddingTop="10dp"
+        android:paddingBottom="10dp"
+        android:background="@color/colorPrimary"
+        android:gravity="center"
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="60dp">
+        <EditText
+            android:transitionName="search"
+            android:imeOptions="actionSend"
+            android:singleLine="true"
+            android:id="@+id/search"
+            android:textSize="16dp"
+            android:gravity="center_vertical"
+            android:hint="模板链接"
+            android:background="@drawable/ic_search_background"
+            android:layout_marginLeft="15dp"
+            android:layout_marginRight="15dp"
+            android:layout_weight="1"
+            android:layout_width="0dp"
+            android:layout_height="36dp" />
+        <TextView
+            android:id="@+id/cancel"
+            android:text="取消"
+            android:textColor="@android:color/white"
+            android:gravity="center_vertical"
+            android:textSize="20dp"
+            android:layout_marginRight="15dp"
+            android:layout_width="wrap_content"
+            android:layout_height="36dp" />
+    </LinearLayout>
+    <com.guet.flexbox.HostingView
+        android:id="@+id/list"
+        android:layout_weight="1"
+        android:layout_width="match_parent"
+        android:layout_height="0dp">
+    </com.guet.flexbox.HostingView>
+</LinearLayout>

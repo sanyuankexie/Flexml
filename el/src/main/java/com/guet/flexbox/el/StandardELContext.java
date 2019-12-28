@@ -36,8 +36,7 @@ public class StandardELContext extends ELContext {
     public StandardELContext(ExpressionFactory factory) {
         wrappedContext = null;
         variableMapper = new StandardVariableMapper();
-        functionMapper =
-                new StandardFunctionMapper(factory.getInitFunctionMap());
+        functionMapper = new StandardFunctionMapper(factory.getInitFunctionMap());
         standardResolver = new CompositeELResolver();
         customResolvers = new CompositeELResolver();
 

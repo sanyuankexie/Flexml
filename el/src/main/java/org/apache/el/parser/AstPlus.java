@@ -21,6 +21,7 @@ package org.apache.el.parser;
 import com.guet.flexbox.el.ELException;
 
 import org.apache.el.lang.ELArithmetic;
+import org.apache.el.lang.ELSupport;
 import org.apache.el.lang.EvaluationContext;
 
 
@@ -33,10 +34,23 @@ public final class AstPlus extends ArithmeticNode {
     }
 
     @Override
+    public Class<?> getType(EvaluationContext ctx) throws ELException {
+        Object obj0 = this.children[0].getValue(ctx);
+        Object obj1 = this.children[1].getValue(ctx);
+        if (obj0 instanceof String || obj1 instanceof String) {
+            return String.class;
+        }
+        return super.getType(ctx);
+    }
+
+    @Override
     public Object getValue(EvaluationContext ctx)
             throws ELException {
         Object obj0 = this.children[0].getValue(ctx);
         Object obj1 = this.children[1].getValue(ctx);
+        if (obj0 instanceof String || obj1 instanceof String) {
+            return ELSupport.coerceToString(ctx, obj0) + ELSupport.coerceToString(ctx, obj1);
+        }
         return ELArithmetic.add(obj0, obj1);
     }
 }

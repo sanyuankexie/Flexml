@@ -2,7 +2,7 @@ package com.guet.flexbox.el
 
 import org.json.JSONObject
 
-internal object JSONObjectELResolver : ELResolver() {
+internal class JSONObjectELResolver(private val isReadOnly: Boolean = false) : ELResolver() {
 
     override fun getValue(context: ELContext, base: Any?, property: Any?): Any? {
         if (base is JSONObject) {
@@ -21,6 +21,9 @@ internal object JSONObjectELResolver : ELResolver() {
     }
 
     override fun setValue(context: ELContext, base: Any?, property: Any?, value: Any?) {
+        if (isReadOnly) {
+            throw PropertyNotWritableException()
+        }
         if (base is JSONObject) {
             context.setPropertyResolved(base, property)
             base.put(property.toString(), value)
@@ -28,7 +31,7 @@ internal object JSONObjectELResolver : ELResolver() {
     }
 
     override fun isReadOnly(context: ELContext, base: Any?, property: Any?): Boolean {
-        return false
+        return isReadOnly
     }
 
     override fun getCommonPropertyType(context: ELContext?, base: Any?): Class<*>? {

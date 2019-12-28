@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <item name="on_click" type="id"/>
+    <item name="on_visible" type="id"/>
+    <item name="on_text_changed" type="id"/>
+</resources>

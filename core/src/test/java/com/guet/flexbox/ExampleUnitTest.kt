@@ -1,5 +1,6 @@
 package com.guet.flexbox
 
+import com.guet.flexbox.el.ELProcessor
 import org.junit.Assert.assertEquals
 import org.junit.Test
 
@@ -11,6 +12,9 @@ import org.junit.Test
 class ExampleUnitTest {
     @Test
     fun addition_isCorrect() {
+        val p = ELProcessor()
+        p.defineBean("x", emptyList<Any>())
+        val x = p.eval("()->x.stream().map(x->x)")
         assertEquals(4, (2 + 2).toLong())
     }
 }
