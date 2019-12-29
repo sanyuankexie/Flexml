@@ -1,0 +1,12 @@
+{
+  "icons": [
+    "res://drawable?name=ic_01",
+    "res://drawable?name=ic_02",
+    "res://drawable?name=ic_03",
+    "res://drawable?name=ic_04",
+    "res://drawable?name=ic_05",
+    "res://drawable?name=ic_06",
+    "res://drawable?name=ic_07",
+    "res://drawable?name=ic_08"
+  ]
+}

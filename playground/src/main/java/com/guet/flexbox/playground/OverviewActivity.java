@@ -12,13 +12,14 @@ import androidx.annotation.WorkerThread;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
-import androidx.core.widget.NestedScrollView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
+import com.google.android.material.appbar.AppBarLayout;
 import com.guet.flexbox.HostingView;
 import com.guet.flexbox.Page;
 import com.guet.flexbox.TemplateNode;
 import com.guet.flexbox.databinding.Toolkit;
+import com.guet.flexbox.playground.model.MockService;
 import com.guet.flexbox.playground.widget.QuickHandler;
 
 import org.jetbrains.annotations.NotNull;
@@ -38,9 +39,10 @@ public class OverviewActivity
         extends AppCompatActivity
         implements View.OnClickListener,
         HostingView.EventHandler,
-        NestedScrollView.OnScrollChangeListener,
-        SwipeRefreshLayout.OnRefreshListener {
+        SwipeRefreshLayout.OnRefreshListener,
+        AppBarLayout.OnOffsetChangedListener {
 
+    private AppBarLayout mAppBarLayout;
     private SwipeRefreshLayout mSwipeRefreshLayout;
     private HostingView mLithoView;
     private SwitchView mIsLiveReload;
@@ -123,6 +125,8 @@ public class OverviewActivity
         mIsLiveReload = findViewById(R.id.is_live_reload);
         mIsOpenConsole = findViewById(R.id.is_open_console);
         mConsole = findViewById(R.id.console);
+        mAppBarLayout = findViewById(R.id.appbar);
+        mAppBarLayout.addOnOffsetChangedListener(this);
         mSwipeRefreshLayout.setOnRefreshListener(this);
         mIsOpenConsole.setOnClickListener(this);
         mAdapter = new ArrayAdapter<>(this, R.layout.console_item, R.id.text);
@@ -162,21 +166,6 @@ public class OverviewActivity
     }
 
     @Override
-    public void onScrollChange(
-            NestedScrollView v,
-            int scrollX,
-            int scrollY,
-            int oldScrollX,
-            int oldScrollY
-    ) {
-        if (!mSwipeRefreshLayout.isRefreshing()) {
-            mSwipeRefreshLayout.setEnabled(scrollY <= 0);
-        } else {
-            mSwipeRefreshLayout.setEnabled(true);
-        }
-    }
-
-    @Override
     protected void onDestroy() {
         super.onDestroy();
         mMainThread.removeCallbacksAndMessages(null);
@@ -189,4 +178,12 @@ public class OverviewActivity
         mNetwork.post(mReload);
     }
 
+    @Override
+    public void onOffsetChanged(AppBarLayout appBarLayout, int verticalOffset) {
+        if (verticalOffset >= 0) {
+            mSwipeRefreshLayout.setEnabled(true);
+        } else {
+            mSwipeRefreshLayout.setEnabled(false);
+        }
+    }
 }
