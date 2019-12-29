@@ -157,7 +157,7 @@ public class OverviewActivity
     }
 
     @Override
-    public void handleEvent(@NotNull View v, @NotNull String key, @NotNull Object[] value) {
+    public void handleEvent(@NotNull HostingView host, @NotNull String key, @NotNull Object[] value) {
         mAdapter.add("event type=" + key + " : event values=" + Arrays.toString(value));
     }
 

@@ -5,7 +5,7 @@ import android.text.TextUtils.TruncateAt
 import com.facebook.litho.ComponentContext
 import com.facebook.litho.widget.TextChangedEvent
 import com.facebook.litho.widget.TextInput
-import com.guet.flexbox.EventBridge
+import com.guet.flexbox.EventSystem
 import com.guet.flexbox.R
 import com.guet.flexbox.el.LambdaExpression
 
@@ -38,7 +38,7 @@ internal object ToTextInput : ToComponent<TextInput.Builder>(Common) {
         }
         this["onTextChanged"] = object : Assignment<TextInput.Builder, LambdaExpression>() {
             override fun TextInput.Builder.assign(display: Boolean, other: Map<String, Any>, value: LambdaExpression) {
-                textChangedEventHandler(EventBridge.newEventHandler<TextChangedEvent>(R.id.on_text_changed, value))
+                textChangedEventHandler(EventSystem.newEventHandler<TextChangedEvent>(R.id.on_text_changed, value))
             }
         }
     }

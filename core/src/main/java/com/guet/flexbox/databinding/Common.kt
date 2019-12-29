@@ -45,7 +45,7 @@ internal object Common : Declaration() {
         }
         this["clickUrl"] = object : AttributeInfo<LambdaExpression>() {
             override fun cast(props: PropsELContext, raw: String): LambdaExpression? {
-                return props.tryGetValue("\${()->pageContext.send('${props.tryGetValue<String>(raw)}')}")
+                return props.tryGetValue("\${v->pageContext.send('${props.tryGetValue<String>(raw)}',v)}")
             }
         }
         typed<LambdaExpression>("onClick")

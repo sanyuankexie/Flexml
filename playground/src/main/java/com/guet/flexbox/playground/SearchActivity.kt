@@ -20,8 +20,8 @@ import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import com.google.gson.Gson
 import com.guet.flexbox.HostingView
-import com.guet.flexbox.databinding.Toolkit
 import com.guet.flexbox.TemplateNode
+import com.guet.flexbox.databinding.Toolkit
 import java.util.*
 import kotlin.collections.HashSet
 
@@ -157,7 +157,7 @@ class SearchActivity : AppCompatActivity(), HostingView.EventHandler {
         finish()
     }
 
-    override fun handleEvent(v: View, key: String, value: Array<out Any>) {
+    override fun handleEvent(host: HostingView, key: String, value: Array<out Any>) {
         handleEvent(key)
     }
 }

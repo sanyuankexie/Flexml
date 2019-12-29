@@ -132,7 +132,7 @@ class MainActivity : AppCompatActivity(), HostingView.EventHandler {
 
     }
 
-    private fun load(){
+    private fun load() {
         val bannerInfo = renderInfo.banner.let {
             return@let when (it.size) {
                 1 -> {
@@ -175,8 +175,8 @@ class MainActivity : AppCompatActivity(), HostingView.EventHandler {
         startActivityForResult(intent, REQUEST_CODE)
     }
 
-    override fun handleEvent(v: View, key: String, value: Array<out Any>) {
-        handleEvent(v, key)
+    override fun handleEvent(host: HostingView, key: String, value: Array<out Any>) {
+        handleEvent(host, key)
     }
 
     private fun handleEvent(v: View, url: String) {

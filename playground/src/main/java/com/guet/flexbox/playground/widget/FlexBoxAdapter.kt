@@ -12,8 +12,8 @@ class FlexBoxAdapter(
         private val onClick: (v: View, url: String) -> Unit
 ) : BaseQuickAdapter<Page, BaseViewHolder>(R.layout.feed_item), HostingView.EventHandler {
 
-    override fun handleEvent(v: View, key: String, value: Array<out Any>) {
-        onClick(v, key)
+    override fun handleEvent(host: HostingView, key: String, value: Array<out Any>) {
+        onClick(host, key)
     }
 
     override fun onViewRecycled(holder: BaseViewHolder) {
