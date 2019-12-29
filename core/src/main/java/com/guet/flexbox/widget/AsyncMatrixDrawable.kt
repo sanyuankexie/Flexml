@@ -2,14 +2,8 @@ package com.guet.flexbox.widget
 
 import android.annotation.TargetApi
 import android.content.Context
-import android.graphics.Color
-import android.graphics.drawable.ColorDrawable
 import android.graphics.drawable.Drawable
-import android.graphics.drawable.GradientDrawable
-import android.graphics.drawable.TransitionDrawable
-import android.net.Uri
 import android.os.Build.VERSION_CODES.LOLLIPOP
-import android.text.TextUtils
 import android.view.MotionEvent
 import android.view.View
 import android.widget.ImageView.ScaleType
@@ -19,7 +13,6 @@ import com.bumptech.glide.request.target.Target
 import com.bumptech.glide.request.transition.Transition
 import com.facebook.litho.DrawableMatrix
 import com.facebook.litho.Touchable
-import com.facebook.litho.drawable.ComparableGradientDrawable
 
 internal class AsyncMatrixDrawable(
         private val c: Context
@@ -139,74 +132,5 @@ internal class AsyncMatrixDrawable(
                 drawableWidth,
                 drawableHeight
         )
-    }
-}
-
-internal fun transition(current: Drawable?, next: Drawable): Drawable {
-    val transitionDrawable = TransitionDrawable(arrayOf(
-            current ?: ColorDrawable(Color.TRANSPARENT), next
-    ))
-    transitionDrawable.isCrossFadeEnabled = true
-    transitionDrawable.startTransition(200)
-    return transitionDrawable
-}
-
-private val orientations: Map<String, GradientDrawable.Orientation> = mapOf(
-        "t2b" to GradientDrawable.Orientation.TOP_BOTTOM,
-        "tr2bl" to GradientDrawable.Orientation.TR_BL,
-        "l2r" to GradientDrawable.Orientation.LEFT_RIGHT,
-        "br2tl" to GradientDrawable.Orientation.BR_TL,
-        "b2t" to GradientDrawable.Orientation.BOTTOM_TOP,
-        "r2l" to GradientDrawable.Orientation.RIGHT_LEFT,
-        "tl2br" to GradientDrawable.Orientation.TL_BR
-)
-
-private fun String.toOrientation(): GradientDrawable.Orientation {
-    return orientations.getValue(this)
-}
-
-internal fun parseUrl(c: Context, url: CharSequence): Any? {
-    when {
-        TextUtils.isEmpty(url) -> {
-            return null
-        }
-        url.startsWith("res://") -> {
-            val uri = Uri.parse(url.toString())
-            when (uri.host) {
-                "gradient" -> {
-                    val type = uri.getQueryParameter(
-                            "orientation"
-                    )?.toOrientation()
-                    val colors = uri.getQueryParameters("color")?.map {
-                        Color.parseColor(it)
-                    }?.toIntArray()
-                    return if (type != null && colors != null && colors.isNotEmpty()) {
-                        ComparableGradientDrawable(type, colors)
-                    } else {
-                        null
-                    }
-                }
-                "drawable" -> {
-                    val name = uri.getQueryParameter("name")
-                    if (name != null) {
-                        val id = c.resources.getIdentifier(
-                                name,
-                                "drawable",
-                                c.packageName
-                        )
-                        if (id != 0) {
-                            return id
-                        }
-                    }
-                    return null
-                }
-                else -> {
-                    return null
-                }
-            }
-        }
-        else -> {
-            return url
-        }
     }
 }

@@ -6,5 +6,5 @@ class Page internal constructor(
         val template: TemplateNode,
         val data: Any?,
         internal val component: Component,
-        internal val exposed: ExposedPageContext
+        internal val eventBridge: EventBridge
 )

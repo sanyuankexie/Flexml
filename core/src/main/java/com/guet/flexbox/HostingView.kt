@@ -5,7 +5,6 @@ import android.graphics.Rect
 import android.os.Handler
 import android.os.HandlerThread
 import android.util.AttributeSet
-import android.view.View
 import androidx.annotation.MainThread
 import com.facebook.litho.*
 import com.facebook.litho.config.ComponentsConfiguration
@@ -55,7 +54,7 @@ class HostingView @JvmOverloads constructor(
     @MainThread
     fun setContentAsync(page: Page) {
         ThreadUtils.assertMainThread()
-        page.exposed.target = pageContext
+        page.eventBridge.target = pageContext
         componentTree?.setRootAndSizeSpecAsync(page.component,
                 SizeSpec.makeSizeSpec(measuredWidth, SizeSpec.EXACTLY),
                 when (layoutParams?.height) {
@@ -85,7 +84,7 @@ class HostingView @JvmOverloads constructor(
     }
 
     interface EventHandler {
-        fun handleEvent(v: View, key: String, value: Array<out Any>)
+        fun handleEvent(host: HostingView, key: String, value: Array<out Any>)
     }
 
     private companion object WorkerThreadHandler : Handler({

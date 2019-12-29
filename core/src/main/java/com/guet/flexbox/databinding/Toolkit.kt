@@ -4,7 +4,7 @@ import android.content.Context
 import androidx.annotation.WorkerThread
 import com.facebook.litho.Component
 import com.facebook.litho.ComponentContext
-import com.guet.flexbox.ExposedPageContext
+import com.guet.flexbox.EventBridge
 import com.guet.flexbox.FakePageContext
 import com.guet.flexbox.Page
 import com.guet.flexbox.TemplateNode
@@ -22,14 +22,14 @@ object Toolkit {
             data: Any? = null
     ): Page {
         val componentContext = ComponentContext(c)
-        val dispatcher = ExposedPageContext()
-        val elContext = PropsELContext(data, FakePageContext(dispatcher))
+        val eventBridge = EventBridge()
+        val elContext = PropsELContext(data, FakePageContext(eventBridge))
         val com = bindNode(
                 componentContext,
                 templateNode,
                 elContext
         ).single()
-        return Page(templateNode, data, com, dispatcher)
+        return Page(templateNode, data, com, eventBridge)
     }
 
     internal fun bindAttr(
