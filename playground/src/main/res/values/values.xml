@@ -10,5 +10,6 @@
     </string>
     <string-array name="feed_paths">
         <item><![CDATA[layout/homepage/feeds/three_entries]]></item>
+        <item><![CDATA[layout/homepage/feeds/multi_images]]></item>
     </string-array>
 </resources>

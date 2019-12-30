@@ -5,7 +5,7 @@ import java.util.List;
 
 public final class TextProvider {
 
-    private static String generation(String theme, int sum) {
+    static String generation(String theme, int sum) {
         StringBuilder res = new StringBuilder(sum);
         while (res.length() < sum) {
             int num = (int) (Math.random() * 100);
@@ -38,7 +38,7 @@ public final class TextProvider {
         int num = (int) (Math.random() * data.size());
         return data.get(num);
     }
-    
+
     private TextProvider() {
     }
 
@@ -198,6 +198,7 @@ public final class TextProvider {
             "曾经提到过",
             "说过一句富有哲理的话"
     );
+
     private static List<String> after = Arrays.asList(
             "这不禁令我深思. ",
             "带着这句话, 我们还要更加慎重的审视这个问题: ",

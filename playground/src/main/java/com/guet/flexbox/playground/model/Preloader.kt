@@ -13,7 +13,7 @@ import retrofit2.Callback
 import retrofit2.Response
 import java.io.FileNotFoundException
 import java.util.concurrent.CountDownLatch
-import kotlin.random.Random
+import kotlin.random.Random.Default
 
 object Preloader {
 
@@ -21,7 +21,7 @@ object Preloader {
     private val templateSource = HashMap<String, String>()
     private val templateCache = HashMap<String, TemplateNode>()
     private val dataSourceCache = HashMap<String, Map<String, Any>>()
-    private val randomImageUrls = ArrayList<String>(10)
+    private val randomImageUrls = ArrayList<String>(5)
     private lateinit var homepageCache: Homepage
 
     fun init(ctx: Context, callback: () -> Unit) {
@@ -37,7 +37,7 @@ object Preloader {
                 //功能区
                 val function = loadPage(c, res.getString(R.string.function_path))
                 //Feed流
-                val feed = loadMoreFeedItem(c, 50)
+                val feed = loadMoreFeedItem(c, 10)
                 homepageCache = Homepage(banner, function, feed)
                 callback()
             }
@@ -47,7 +47,7 @@ object Preloader {
     @WorkerThread
     private fun loadNewImages() {
         randomImageUrls.clear()
-        val randomImageCount = Random.Default.nextInt(10, 15)
+        val randomImageCount = Default.nextInt(5, 10)
         val result = (1..randomImageCount).map {
             object : CountDownLatch(1), Callback<ACGImage> {
 
@@ -82,16 +82,21 @@ object Preloader {
         val res = c.resources
         val feedUrls = res.getStringArray(R.array.feed_paths)
         return (1..count).map {
-            val type = 0
+            val type = Default.nextInt(0, feedUrls.size)
             val url = feedUrls[type]
             val data = if (type == 1) {
                 HashMap<String, Any>().apply {
+                    val sum = Default.nextInt(30, 50)
+                    val text = TextProvider.generation("好评", sum)
+                    put("text", text)
                     if (randomImageUrls.isNotEmpty()) {
-                        val rowCount = Random.Default.nextInt(0, 5)
+                        val rowCount = Default.nextInt(1, 5)
                         val images = (1..rowCount).map {
-                            val imageIndex = Random.Default.nextInt(0, randomImageUrls.size)
-                            randomImageUrls[imageIndex]
-                        }
+                            (1..3).map {
+                                val imageIndex = Default.nextInt(0, randomImageUrls.size)
+                                randomImageUrls[imageIndex]
+                            }
+                        }.flatten()
                         put("images", images)
                     }
                 }
@@ -99,7 +104,7 @@ object Preloader {
                 HashMap<String, Any>().apply {
                     if (randomImageUrls.isNotEmpty()) {
                         val images = (1..3).map {
-                            val imageIndex = Random.Default.nextInt(0, randomImageUrls.size)
+                            val imageIndex = Default.nextInt(0, randomImageUrls.size)
                             randomImageUrls[imageIndex]
                         }
                         put("images", images)

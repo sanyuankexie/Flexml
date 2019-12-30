@@ -6,6 +6,7 @@ import android.os.Handler;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.annotation.WorkerThread;
@@ -42,6 +43,7 @@ public class OverviewActivity
         SwipeRefreshLayout.OnRefreshListener,
         AppBarLayout.OnOffsetChangedListener {
 
+    private Toast toast;
     private AppBarLayout mAppBarLayout;
     private SwipeRefreshLayout mSwipeRefreshLayout;
     private HostingView mLithoView;
@@ -86,7 +88,11 @@ public class OverviewActivity
             } catch (Exception e) {
                 e.printStackTrace();
                 runOnUiThread(() -> {
-                    Toasty.error(getApplicationContext(), "刷新失败").show();
+                    if (toast != null) {
+                        toast.cancel();
+                    }
+                    toast = Toasty.error(getApplicationContext(), "刷新失败");
+                    toast.show();
                     if (mSwipeRefreshLayout.isRefreshing()) {
                         mSwipeRefreshLayout.setRefreshing(false);
                     }

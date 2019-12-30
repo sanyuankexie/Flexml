@@ -28,7 +28,7 @@
             </androidx.appcompat.widget.Toolbar>
             <FrameLayout
                 app:layout_scrollFlags="scroll"
-                android:background="@drawable/ic_background_transition"
+                android:background="@drawable/ic_background_transition2"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
                 <androidx.cardview.widget.CardView
@@ -100,6 +100,7 @@
             </FrameLayout>
         </com.google.android.material.appbar.AppBarLayout>
         <androidx.core.widget.NestedScrollView
+            android:background="@color/gainsboro"
             app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior"
             android:layout_width="match_parent"
             android:layout_height="match_parent">
