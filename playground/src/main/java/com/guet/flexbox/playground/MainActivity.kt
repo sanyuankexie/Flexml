@@ -10,6 +10,7 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityOptionsCompat
 import androidx.recyclerview.widget.RecyclerView
+import com.blankj.utilcode.util.NetworkUtils
 import com.guet.flexbox.HostingView
 import com.guet.flexbox.Page
 import com.guet.flexbox.playground.model.Homepage
@@ -120,7 +121,13 @@ class MainActivity : AppCompatActivity(), HostingView.EventHandler {
         val jump = headerView.findViewById<View>(R.id.jump)
         fJump.setOnClickListener(handleToJump)
         jump.setOnClickListener(handleToJump)
-
+        NetworkUtils.isAvailableAsync {
+            if (!it) {
+                runOnUiThread {
+                    Toasty.error(this, "没网加载不了图片哦").show()
+                }
+            }
+        }
     }
 
     private fun load() {
