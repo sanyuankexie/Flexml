@@ -2,9 +2,11 @@ package com.guet.flexbox.playground
 
 import android.os.AsyncTask
 import android.os.Bundle
+import android.widget.ImageView
 import androidx.appcompat.app.AppCompatActivity
 import com.bumptech.glide.Glide
 import com.vansuita.materialabout.builder.AboutBuilder
+import com.vansuita.materialabout.views.AboutView
 
 
 class AboutActivity : AppCompatActivity() {
@@ -45,6 +47,12 @@ class AboutActivity : AppCompatActivity() {
                         .setLinksAnimated(true)
                         .setShowAsCard(true)
                         .build()
+                val iconView = AboutView::class.java
+                        .getDeclaredField("ivAppIcon")
+                        .apply {
+                            isAccessible = true
+                        }.get(view) as ImageView
+                iconView.scaleType = ImageView.ScaleType.FIT_XY
                 setContentView(view)
             }
         }
