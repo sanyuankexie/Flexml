@@ -9,19 +9,12 @@ public final class TextProvider {
         StringBuilder res = new StringBuilder(sum);
         while (res.length() < sum) {
             int num = (int) (Math.random() * 100);
-            if (num < 5) {
-                //5%概率换个行
-                res.append("\r\n");
-            } else if (num < 30) {
+            if (num < 30) {
                 //25%概率说个名言
                 res.append(randomChoice(famous)
                         .replace("a", randomChoice(before))
                         .replace("b", randomChoice(after))
                 );
-                if ((int) (Math.random() * 100) < 50) {
-                    //写完名言后50%概率换个行
-                    res.append("\r\n");
-                }
             } else {
                 //70%概率说着车轱辘话，为了不能跑题啊，哈哈哈
                 res.append(randomChoice(remark)
