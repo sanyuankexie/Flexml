@@ -29,7 +29,7 @@ object Toolkit {
                 templateNode,
                 elContext
         ).single()
-        return Page(templateNode, data, com, eventBridge)
+        return Page(com, eventBridge)
     }
 
     internal fun bindAttr(

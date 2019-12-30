@@ -18,7 +18,7 @@
             <Text
                 textStyle="bold"
                 textSize="16"
-                text="${'三条目:第'+index+'项'}">
+                text="三条目">
             </Text>
             <Text
                 textColor="WHITE"
@@ -99,7 +99,7 @@
                     borderRadius="4"
                     scaleType="fitXY"
                     flexGrow="1"
-                    url="https://5b0988e595225.cdn.sohucs.com/images/20180606/0a49d21848324503a1e04c4b942a1631.png">
+                    url="${images[0]}">
                 </Image>
                 <Text
                     marginTop="5"
@@ -118,7 +118,7 @@
                     borderRadius="4"
                     scaleType="fitXY"
                     flexGrow="1"
-                    url="https://uploadfile.bizhizu.cn/2014/1127/20141127031018144.jpg">
+                    url="${images[1]}">
                 </Image>
                 <Text
                     marginTop="5"
@@ -139,7 +139,7 @@
                     borderRadius="4"
                     scaleType="fitXY"
                     flexGrow="1"
-                    url="https://5b0988e595225.cdn.sohucs.com/images/20180606/0a49d21848324503a1e04c4b942a1631.png">
+                    url="${images[2]}">
                 </Image>
                 <Text
                     marginTop="5"

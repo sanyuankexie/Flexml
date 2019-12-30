@@ -1,4 +1,4 @@
-package com.guet.flexbox.playground
+package com.guet.flexbox.playground.model
 
 import com.guet.flexbox.TemplateNode
 import retrofit2.Call

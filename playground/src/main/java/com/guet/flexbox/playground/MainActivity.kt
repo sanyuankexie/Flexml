@@ -12,7 +12,8 @@ import androidx.core.app.ActivityOptionsCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.guet.flexbox.HostingView
 import com.guet.flexbox.Page
-import com.guet.flexbox.databinding.Toolkit
+import com.guet.flexbox.playground.model.Homepage
+import com.guet.flexbox.playground.model.Preloader
 import com.guet.flexbox.playground.widget.BannerAdapter
 import com.guet.flexbox.playground.widget.FlexBoxAdapter
 import com.guet.flexbox.playground.widget.PullToRefreshLayout
@@ -22,7 +23,6 @@ import com.yzq.zxinglibrary.common.Constant
 import com.zhouwei.mzbanner.MZBannerView
 import es.dmoral.toasty.Toasty
 import java.util.concurrent.atomic.AtomicBoolean
-import kotlin.random.Random
 
 class MainActivity : AppCompatActivity(), HostingView.EventHandler {
 
@@ -34,13 +34,11 @@ class MainActivity : AppCompatActivity(), HostingView.EventHandler {
     private lateinit var banner: MZBannerView<Page>
     private lateinit var feed: RecyclerView
     private lateinit var function: HostingView
-    private val renderInfo: MainRenderInfo by MainRenderInfo.wait()
+    private val homepageInfo: Homepage by Preloader.waitHomepage()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
         setContentView(R.layout.activity_main)
-        MainRenderInfo.initAsync(this.application)
         pullToRefresh = findViewById(R.id.pull_to_refresh)
         floatToolbar = findViewById(R.id.toolbar)
         feed = findViewById(R.id.feed)
@@ -69,7 +67,7 @@ class MainActivity : AppCompatActivity(), HostingView.EventHandler {
         function.setEventHandler(this)
         load()
         feedAdapter.addHeaderView(headerView)
-        feedAdapter.setNewData(renderInfo.feed)
+        feedAdapter.setNewData(homepageInfo.feed)
         feed.apply {
             adapter = feedAdapter
             addOnScrollListener(object : RecyclerView.OnScrollListener() {
@@ -94,19 +92,12 @@ class MainActivity : AppCompatActivity(), HostingView.EventHandler {
                         return
                     }
                     AsyncTask.THREAD_POOL_EXECUTOR.execute {
-                        val pages = (count..count + 9).map {
-                            val next = Random.Default.nextInt(0, 49)
-                            @Suppress("UNCHECKED_CAST")
-                            Toolkit.preload(application, renderInfo.feed[next].template,
-                                    HashMap<String, Any>(renderInfo.feed[next].data as Map<String, Any>)
-                                            .apply {
-                                                this["index"] = it
-                                            })
-                        }
+                        val pages = Preloader.loadMoreFeedItem(application, 10)
                         runOnUiThread {
                             v.finish(Runnable {
                                 feedAdapter.addData(pages)
                             })
+                            Toasty.success(application, "加载成功").show()
                         }
                     }
                 }
@@ -133,7 +124,15 @@ class MainActivity : AppCompatActivity(), HostingView.EventHandler {
     }
 
     private fun load() {
-        val bannerInfo = renderInfo.banner.let {
+        val bannerInfo = ensurePageCount(homepageInfo.banner)
+        banner.setPages(bannerInfo, bannerAdapter)
+        feedAdapter.setNewData(homepageInfo.feed)
+        function.unmountAllItems()
+        function.setContentAsync(homepageInfo.function)
+    }
+
+    private fun ensurePageCount(pages: List<Page>): List<Page> {
+        return pages.let {
             return@let when (it.size) {
                 1 -> {
                     listOf(it[0], it[0], it[0])
@@ -146,10 +145,6 @@ class MainActivity : AppCompatActivity(), HostingView.EventHandler {
                 }
             }
         }
-        banner.setPages(bannerInfo, bannerAdapter)
-        feedAdapter.setNewData(renderInfo.feed)
-        function.unmountAllItems()
-        function.setContentAsync(renderInfo.function)
     }
 
     override fun onResume() {

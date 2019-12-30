@@ -9,22 +9,23 @@ import android.webkit.WebView
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
-import com.didichuxing.doraemonkit.DoraemonKit
-import com.facebook.soloader.SoLoader
+import com.guet.flexbox.playground.model.Preloader
 
 class StartupActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        MainRenderInfo.initAsync(this.application)
-        DoraemonKit.install(application)
-        SoLoader.init(this, false)
+        val ctx = application
+        Preloader.init(ctx) {
+            runOnUiThread {
+                ActivityCompat.requestPermissions(
+                        this,
+                        definedPermissions,
+                        REQUEST_CODE
+                )
+            }
+        }
         initWebView()
-        ActivityCompat.requestPermissions(
-                this,
-                definedPermissions,
-                REQUEST_CODE
-        )
     }
 
     private fun initWebView() {

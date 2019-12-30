@@ -11,13 +11,10 @@ import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.widget.NestedScrollView
 import com.didichuxing.doraemonkit.util.UIUtils
 import com.google.android.material.appbar.AppBarLayout
-import com.google.gson.Gson
 import com.guet.flexbox.HostingView
-import com.guet.flexbox.TemplateNode
-import com.guet.flexbox.databinding.Toolkit
+import com.guet.flexbox.playground.model.Preloader
 import thereisnospon.codeview.CodeView
 import thereisnospon.codeview.CodeViewTheme
-import java.util.*
 import kotlin.math.abs
 
 class CodeActivity : AppCompatActivity() {
@@ -57,24 +54,11 @@ class CodeActivity : AppCompatActivity() {
     private fun loadData() {
         val url = this.intent.getStringExtra("url")
         AsyncTask.THREAD_POOL_EXECUTOR.execute {
-            val gson = Gson()
-            val input = resources.assets.open(url)
-            val code = input.reader().readText()
-            input.close()
-            val data = if (url == resources.getString(R.string.function_path)) {
-                mapOf(
-                        "icons" to resources.getStringArray(R.array.function_icons),
-                        "url" to url
-                )
-            } else {
-                Collections.singletonMap("url", url)
-            }
-            val s = Compiler.compile(code)
-            val contentRaw = gson.fromJson(s, TemplateNode::class.java)
-            val content = Toolkit.preload(this, contentRaw, data)
+            val page = Preloader.loadPage(application, url)
+            val code = Preloader.loadTemplateSource(application, url)
             runOnUiThread {
                 lithoView.unmountAllItems()
-                lithoView.setContentAsync(content)
+                lithoView.setContentAsync(page)
                 codeView.showCode(code)
             }
         }

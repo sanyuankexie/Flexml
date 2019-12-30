@@ -18,10 +18,9 @@ import android.widget.FrameLayout
 import android.widget.PopupWindow
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
-import com.google.gson.Gson
 import com.guet.flexbox.HostingView
-import com.guet.flexbox.TemplateNode
 import com.guet.flexbox.databinding.Toolkit
+import com.guet.flexbox.playground.model.Compiler
 import java.util.*
 import kotlin.collections.HashSet
 
@@ -107,10 +106,13 @@ class SearchActivity : AppCompatActivity(), HostingView.EventHandler {
 
     private fun loadHistory() {
         AsyncTask.THREAD_POOL_EXECUTOR.execute {
-            val gson = Gson()
-            val input = resources.assets.open("layout/search/history_list.xml")
-            val s = Compiler.compile(input)
-            val contentRaw = gson.fromJson(s, TemplateNode::class.java)
+            val input = resources
+                    .assets
+                    .open("layout/search/history_list.xml")
+                    .use {
+                        it.reader().readText()
+                    }
+            val template = Compiler.compile(input)
             val rawData = sharedPreferences.getStringSet(
                     "history_list",
                     null
@@ -124,8 +126,7 @@ class SearchActivity : AppCompatActivity(), HostingView.EventHandler {
                     "list",
                     listData
             )
-            input.close()
-            val content = Toolkit.preload(this, contentRaw, data)
+            val content = Toolkit.preload(this, template, data)
             runOnUiThread {
                 list.setContentAsync(content)
             }
