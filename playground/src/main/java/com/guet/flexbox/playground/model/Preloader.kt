@@ -86,7 +86,7 @@ object Preloader {
             val url = feedUrls[type]
             val data = if (type == 1) {
                 HashMap<String, Any>().apply {
-                    val sum = Default.nextInt(30, 50)
+                    val sum = Default.nextInt(50, 80)
                     val text = TextProvider.generation("好评", sum)
                     put("text", text)
                     if (randomImageUrls.isNotEmpty()) {
