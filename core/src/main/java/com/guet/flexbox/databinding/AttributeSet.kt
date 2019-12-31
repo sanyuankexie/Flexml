@@ -1,6 +1,7 @@
 package com.guet.flexbox.databinding
 
 import android.graphics.Color
+import com.guet.flexbox.PageContext
 import com.guet.flexbox.el.PropsELContext
 
 internal inline val CharSequence.isExpr: Boolean
@@ -56,7 +57,7 @@ internal inline fun <reified V : Enum<V>> HashMap<String, AttributeInfo<*>>.enum
 
 internal inline fun <reified T : Any> HashMap<String, AttributeInfo<*>>.typed(name: String) {
     this[name] = object : AttributeInfo<T>() {
-        override fun cast(props: PropsELContext, raw: String): T? {
+        override fun cast(pageContext: PageContext, props: PropsELContext, raw: String): T? {
             return props.tryGetValue<T>(if (!raw.isExpr) {
                 "\${$raw}"
             } else {

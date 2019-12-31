@@ -15,15 +15,15 @@ class HostingView @JvmOverloads constructor(
         context: Context, attrs: AttributeSet? = null
 ) : LithoView(context, attrs) {
 
-    private val pageContext = object : PageContext {
+    private val pageContext = object : PageContext() {
         override fun send(key: String, vararg data: Any) {
-            _eventHandler?.handleEvent(this@HostingView, key, data)
+            _eventListener?.handleEvent(this@HostingView, key, data)
         }
     }
 
     private var _onDirtyMountListener: OnDirtyMountListener? = null
 
-    private var _eventHandler: EventHandler? = null
+    private var _eventListener: EventListener? = null
 
     init {
         componentTree = ComponentTree.create(componentContext)
@@ -38,8 +38,8 @@ class HostingView @JvmOverloads constructor(
         }
     }
 
-    fun setEventHandler(eventHandler: EventHandler) {
-        _eventHandler = eventHandler
+    fun setEventHandler(eventListener: EventListener) {
+        _eventListener = eventListener
     }
 
     override fun setOnDirtyMountListener(onDirtyMountListener: OnDirtyMountListener?) {
@@ -72,8 +72,8 @@ class HostingView @JvmOverloads constructor(
         val mH = measuredHeight
         val mW = measuredWidth
         WorkerThreadHandler.post {
-            val elContext = PropsELContext(data, pageContext)
-            val component = Toolkit.bindNode(c, node, elContext).single()
+            val elContext = PropsELContext(data)
+            val component = Toolkit.bindNode(c, node, pageContext, elContext).single()
             tree.setRootAndSizeSpec(component,
                     SizeSpec.makeSizeSpec(mW, SizeSpec.EXACTLY),
                     when (height) {
@@ -83,7 +83,7 @@ class HostingView @JvmOverloads constructor(
         }
     }
 
-    interface EventHandler {
+    interface EventListener {
         fun handleEvent(host: HostingView, key: String, value: Array<out Any>)
     }
 

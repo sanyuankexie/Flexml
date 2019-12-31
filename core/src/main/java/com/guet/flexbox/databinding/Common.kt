@@ -3,11 +3,14 @@ package com.guet.flexbox.databinding
 import com.facebook.litho.Component
 import com.facebook.litho.ComponentContext
 import com.facebook.yoga.YogaAlign
+import com.guet.flexbox.PageContext
 import com.guet.flexbox.TemplateNode
 import com.guet.flexbox.Visibility
 import com.guet.flexbox.build.ToComponent
 import com.guet.flexbox.el.LambdaExpression
 import com.guet.flexbox.el.PropsELContext
+import com.guet.flexbox.event.ClickUrlEventHandler
+import com.guet.flexbox.event.OnClickEventHandler
 
 internal object Common : Declaration() {
 
@@ -43,13 +46,26 @@ internal object Common : Declaration() {
             value("margin$edge")
             value("padding$edge")
         }
-        this["clickUrl"] = object : AttributeInfo<LambdaExpression>() {
-            override fun cast(props: PropsELContext, raw: String): LambdaExpression? {
-                return props.tryGetValue("\${v->pageContext.send('${props.tryGetValue<String>(raw)}',v)}")
+        this["clickUrl"] = object : AttributeInfo<ClickUrlEventHandler>() {
+            override fun cast(
+                    pageContext: PageContext,
+                    props: PropsELContext,
+                    raw: String
+            ): ClickUrlEventHandler? {
+                return ClickUrlEventHandler(pageContext, props.getValue(raw))
             }
         }
-        typed<LambdaExpression>("onClick")
-        typed<LambdaExpression>("onView")
+        this["onClick"] = object : AttributeInfo<OnClickEventHandler>() {
+            override fun cast(
+                    pageContext: PageContext,
+                    props: PropsELContext,
+                    raw: String
+            ): OnClickEventHandler? {
+                return props.tryGetValue<LambdaExpression>(raw)?.let {
+                    OnClickEventHandler(pageContext, props, it)
+                }
+            }
+        }
     }
 
     override fun transform(
@@ -57,6 +73,7 @@ internal object Common : Declaration() {
             to: ToComponent<*>?,
             type: String,
             attrs: Map<String, Any>,
+            pageContext: PageContext,
             data: PropsELContext,
             children: List<TemplateNode>,
             upperVisibility: Boolean
@@ -70,7 +87,7 @@ internal object Common : Declaration() {
             emptyList()
         } else {
             children.map {
-                Toolkit.bindNode(c, it, data, visibility)
+                Toolkit.bindNode(c, it, pageContext, data, visibility)
             }.flatten()
         }
         return listOf(to!!.toComponent(c, type, visibility, attrs, childrenComponent))

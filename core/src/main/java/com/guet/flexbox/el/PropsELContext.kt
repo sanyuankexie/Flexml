@@ -5,15 +5,13 @@ import android.graphics.Color
 import android.net.Uri
 import androidx.annotation.ColorInt
 import com.guet.flexbox.BuildConfig
-import com.guet.flexbox.PageContext
 import org.json.JSONArray
 import java.lang.reflect.Method
 import java.lang.reflect.Modifier
 import java.util.*
 
 class PropsELContext(
-        data: Any?,
-        pageContext: PageContext
+        data: Any?
 ) : ELContext() {
 
     private val variableMapper = StandardVariableMapper()
@@ -21,9 +19,6 @@ class PropsELContext(
     private val standardResolver = CompositeELResolver()
 
     init {
-        standardResolver.add(BeanNameELResolver(FromMapResolver(
-                Collections.singletonMap("pageContext", pageContext))
-        ))
         createPropELResolver(data)?.let {
             standardResolver.add(it)
         }
@@ -39,7 +34,6 @@ class PropsELContext(
         standardResolver.add(jsonObject)
         standardResolver.add(jsonArray)
     }
-
 
     private fun createPropELResolver(data: Any?): ELResolver? {
         return when {
@@ -82,7 +76,7 @@ class PropsELContext(
 
     @ColorInt
     @Throws(ELException::class)
-    internal fun getColor(expr: String): Int {
+    fun getColor(expr: String): Int {
         return try {
             Color.parseColor(expr)
         } catch (e: IllegalArgumentException) {
@@ -108,31 +102,6 @@ class PropsELContext(
                 e.printStackTrace()
             }
             fallback
-        }
-    }
-
-    internal inline fun <T> scope(scope: Map<String, Any>, action: () -> T): T {
-        enterLambdaScope(scope)
-        try {
-            return action()
-        } finally {
-            exitLambdaScope()
-        }
-    }
-
-    private inline val CharSequence.isExpr: Boolean
-        get() = length > 3 && startsWith("\${") && endsWith('}')
-
-    internal inline fun <reified T : Enum<T>> tryGetEnum(
-            expr: String?,
-            scope: Map<String, T>,
-            fallback: T? = enumValues<T>().first()): T? {
-        return when {
-            expr == null -> fallback
-            expr.isExpr -> scope(scope) {
-                tryGetValue(expr, fallback)
-            }
-            else -> scope[expr] ?: fallback
         }
     }
 

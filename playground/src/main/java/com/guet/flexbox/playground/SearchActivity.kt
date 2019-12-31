@@ -24,7 +24,7 @@ import com.guet.flexbox.playground.model.Compiler
 import java.util.*
 import kotlin.collections.HashSet
 
-class SearchActivity : AppCompatActivity(), HostingView.EventHandler {
+class SearchActivity : AppCompatActivity(), HostingView.EventListener {
 
     private lateinit var sharedPreferences: SharedPreferences
     private lateinit var list: HostingView

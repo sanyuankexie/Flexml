@@ -4,9 +4,8 @@ import com.facebook.litho.Component
 import com.facebook.litho.ComponentContext
 import com.facebook.yoga.YogaAlign
 import com.facebook.yoga.YogaEdge
-import com.guet.flexbox.EventSystem
-import com.guet.flexbox.R
-import com.guet.flexbox.el.LambdaExpression
+import com.guet.flexbox.event.ClickUrlEventHandler
+import com.guet.flexbox.event.OnClickEventHandler
 import java.util.*
 
 internal object Common : ToComponent<Component.Builder<*>>() {
@@ -80,21 +79,16 @@ internal object Common : ToComponent<Component.Builder<*>>() {
                 }
             }
         }
-        this["clickUrl"] = object : Assignment<Component.Builder<*>, LambdaExpression>() {
-            override fun Component.Builder<*>.assign(display: Boolean, other: Map<String, Any>, value: LambdaExpression) {
+        this["clickUrl"] = object : Assignment<Component.Builder<*>, ClickUrlEventHandler>() {
+            override fun Component.Builder<*>.assign(display: Boolean, other: Map<String, Any>, value: ClickUrlEventHandler) {
                 if (!other.containsKey("onClick")) {
-                    clickHandler(EventSystem.newEventHandler(R.id.on_click, value))
+                    clickHandler(value)
                 }
             }
         }
-        this["onClick"] = object : Assignment<Component.Builder<*>, LambdaExpression>() {
-            override fun Component.Builder<*>.assign(display: Boolean, other: Map<String, Any>, value: LambdaExpression) {
-                clickHandler(EventSystem.newEventHandler(R.id.on_click, value))
-            }
-        }
-        this["onView"] = object : Assignment<Component.Builder<*>, LambdaExpression>() {
-            override fun Component.Builder<*>.assign(display: Boolean, other: Map<String, Any>, value: LambdaExpression) {
-                clickHandler(EventSystem.newEventHandler(R.id.on_visible, value))
+        this["onClick"] = object : Assignment<Component.Builder<*>, OnClickEventHandler>() {
+            override fun Component.Builder<*>.assign(display: Boolean, other: Map<String, Any>, value: OnClickEventHandler) {
+                clickHandler(value)
             }
         }
     }

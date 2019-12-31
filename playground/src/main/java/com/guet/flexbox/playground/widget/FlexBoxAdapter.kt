@@ -10,7 +10,7 @@ import com.guet.flexbox.playground.R
 
 class FlexBoxAdapter(
         private val onClick: (v: View, url: String) -> Unit
-) : BaseQuickAdapter<Page, BaseViewHolder>(R.layout.feed_item), HostingView.EventHandler {
+) : BaseQuickAdapter<Page, BaseViewHolder>(R.layout.feed_item), HostingView.EventListener {
 
     override fun handleEvent(host: HostingView, key: String, value: Array<out Any>) {
         onClick(host, key)
