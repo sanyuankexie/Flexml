@@ -12,7 +12,7 @@ class OnClickEventHandler(
         private val pageContext: PageContext,
         private val elContext: ELContext,
         private val executable: LambdaExpression
-) : AbstractEventHandler<ClickEvent>() {
+) : EventHandler<ClickEvent>() {
     override fun dispatchEvent(event: ClickEvent) {
         elContext.scope(Collections.singletonMap(
                 "pageContext", JoinPageContext(pageContext, event.view)

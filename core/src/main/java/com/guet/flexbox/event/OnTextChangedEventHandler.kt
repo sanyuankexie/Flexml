@@ -12,7 +12,7 @@ class OnTextChangedEventHandler(
         private val pageContext: PageContext,
         private val elContext: ELContext,
         private val executable: LambdaExpression
-) : AbstractEventHandler<TextChangedEvent>() {
+) : EventHandler<TextChangedEvent>() {
     override fun dispatchEvent(event: TextChangedEvent) {
         elContext.scope(Collections.singletonMap(
                 "pageContext", JoinPageContext(pageContext, event.view, event.text)

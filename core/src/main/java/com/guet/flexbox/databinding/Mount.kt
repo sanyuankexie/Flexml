@@ -3,6 +3,7 @@ package com.guet.flexbox.databinding
 import android.view.View
 import com.guet.flexbox.PageContext
 import com.guet.flexbox.el.PropsELContext
+import com.guet.flexbox.el.scope
 
 internal object Mount : Declaration(Common) {
     override val attributeSet: AttributeSet by create {

@@ -6,7 +6,7 @@ import com.guet.flexbox.PageContext
 class ClickUrlEventHandler(
         private val pageContext: PageContext,
         private val url: String
-) : AbstractEventHandler<ClickEvent>() {
+) : EventHandler<ClickEvent>() {
 
     override fun dispatchEvent(event: ClickEvent) {
         pageContext.send(url)

@@ -6,6 +6,7 @@ import com.guet.flexbox.PageContext
 import com.guet.flexbox.TemplateNode
 import com.guet.flexbox.build.ToComponent
 import com.guet.flexbox.el.PropsELContext
+import com.guet.flexbox.el.scope
 
 internal object For : Declaration() {
     override val attributeSet: AttributeSet by create {
