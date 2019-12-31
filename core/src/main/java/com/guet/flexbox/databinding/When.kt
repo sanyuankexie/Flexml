@@ -2,6 +2,7 @@ package com.guet.flexbox.databinding
 
 import com.facebook.litho.Component
 import com.facebook.litho.ComponentContext
+import com.guet.flexbox.PageContext
 import com.guet.flexbox.TemplateNode
 import com.guet.flexbox.build.ToComponent
 import com.guet.flexbox.el.PropsELContext
@@ -15,6 +16,7 @@ internal object When : Declaration() {
             to: ToComponent<*>?,
             type: String,
             attrs: Map<String, Any>,
+            pageContext: PageContext,
             data: PropsELContext,
             children: List<TemplateNode>,
             upperVisibility: Boolean
@@ -23,9 +25,14 @@ internal object When : Declaration() {
         for (item in children) {
             if (item.type == "case") {
                 val itemAttrs = item.attrs
-                if (itemAttrs != null && Toolkit.bindAttr(If, itemAttrs, data)["test"] == true) {
+                if (itemAttrs != null && Toolkit.bindAttr(
+                                If,
+                                itemAttrs,
+                                pageContext,
+                                data
+                        )["test"] == true) {
                     return item.children?.map {
-                        Toolkit.bindNode(c, it, data, upperVisibility)
+                        Toolkit.bindNode(c, it, pageContext, data, upperVisibility)
                     }?.flatten() ?: emptyList()
                 }
             } else if (item.type == "else" && elseItem == null) {
@@ -33,7 +40,7 @@ internal object When : Declaration() {
             }
         }
         return elseItem?.children?.map {
-            Toolkit.bindNode(c, it, data, upperVisibility)
+            Toolkit.bindNode(c, it, pageContext, data, upperVisibility)
         }?.flatten() ?: emptyList()
     }
 

@@ -1,10 +1,12 @@
 package com.guet.flexbox.databinding
 
 import android.graphics.Color
+import com.guet.flexbox.PageContext
 import com.guet.flexbox.el.PropsELContext
+import com.guet.flexbox.el.scope
 
 internal class ColorAttribute(scope: Map<String, Int>, fallback: Int?) : AttributeInfo<Int>(scope, fallback) {
-    override fun cast(props: PropsELContext, raw: String): Int? {
+    override fun cast(pageContext: PageContext, props: PropsELContext, raw: String): Int? {
         return if (raw.isExpr) {
             props.scope(scope) {
                 props.tryGetColor(raw, fallback)

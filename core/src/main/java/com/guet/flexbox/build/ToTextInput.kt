@@ -3,11 +3,8 @@ package com.guet.flexbox.build
 import android.graphics.Typeface
 import android.text.TextUtils.TruncateAt
 import com.facebook.litho.ComponentContext
-import com.facebook.litho.widget.TextChangedEvent
 import com.facebook.litho.widget.TextInput
-import com.guet.flexbox.EventSystem
-import com.guet.flexbox.R
-import com.guet.flexbox.el.LambdaExpression
+import com.guet.flexbox.event.OnTextChangedEventHandler
 
 internal object ToTextInput : ToComponent<TextInput.Builder>(Common) {
     override val attributeSet: AttributeSet<TextInput.Builder> by create {
@@ -36,9 +33,13 @@ internal object ToTextInput : ToComponent<TextInput.Builder>(Common) {
                 ellipsize(value)
             }
         }
-        this["onTextChanged"] = object : Assignment<TextInput.Builder, LambdaExpression>() {
-            override fun TextInput.Builder.assign(display: Boolean, other: Map<String, Any>, value: LambdaExpression) {
-                textChangedEventHandler(EventSystem.newEventHandler<TextChangedEvent>(R.id.on_text_changed, value))
+        this["onTextChanged"] = object : Assignment<TextInput.Builder, OnTextChangedEventHandler>() {
+            override fun TextInput.Builder.assign(
+                    display: Boolean,
+                    other: Map<String, Any>,
+                    value: OnTextChangedEventHandler
+            ) {
+                textChangedEventHandler(value)
             }
         }
     }

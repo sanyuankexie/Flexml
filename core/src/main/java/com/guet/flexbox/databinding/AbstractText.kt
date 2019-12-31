@@ -4,6 +4,7 @@ import android.graphics.Typeface
 import android.text.Layout
 import android.text.TextUtils
 import com.facebook.litho.widget.VerticalGravity
+import com.guet.flexbox.PageContext
 import com.guet.flexbox.el.PropsELContext
 
 
@@ -32,7 +33,7 @@ internal object AbstractText : Declaration(Common) {
                 "normal" to Typeface.NORMAL,
                 "bold" to Typeface.BOLD
         ), Typeface.NORMAL) {
-            override fun cast(props: PropsELContext, raw: String): Int? {
+            override fun cast(pageContext: PageContext, props: PropsELContext, raw: String): Int? {
                 return scope[raw] ?: fallback
             }
         }

@@ -2,9 +2,11 @@ package com.guet.flexbox.databinding
 
 import com.facebook.litho.Component
 import com.facebook.litho.ComponentContext
+import com.guet.flexbox.PageContext
 import com.guet.flexbox.TemplateNode
 import com.guet.flexbox.build.ToComponent
 import com.guet.flexbox.el.PropsELContext
+import com.guet.flexbox.el.scope
 
 internal object ForEach : Declaration() {
 
@@ -18,6 +20,7 @@ internal object ForEach : Declaration() {
             to: ToComponent<*>?,
             type: String,
             attrs: Map<String, Any>,
+            pageContext: PageContext,
             data: PropsELContext,
             children: List<TemplateNode>,
             upperVisibility: Boolean
@@ -28,7 +31,7 @@ internal object ForEach : Declaration() {
         return items.map {
             data.scope(mapOf(name to items)) {
                 children.map {
-                    Toolkit.bindNode(c, it, data, upperVisibility)
+                    Toolkit.bindNode(c, it, pageContext, data, upperVisibility)
                 }
             }.flatten()
         }.flatten()

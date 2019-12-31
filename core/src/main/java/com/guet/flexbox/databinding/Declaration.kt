@@ -2,6 +2,7 @@ package com.guet.flexbox.databinding
 
 import com.facebook.litho.Component
 import com.facebook.litho.ComponentContext
+import com.guet.flexbox.PageContext
 import com.guet.flexbox.TemplateNode
 import com.guet.flexbox.build.ToComponent
 import com.guet.flexbox.el.PropsELContext
@@ -28,11 +29,12 @@ internal abstract class Declaration(
             to: ToComponent<*>?,
             type: String,
             attrs: Map<String, Any>,
+            pageContext: PageContext,
             data: PropsELContext,
             children: List<TemplateNode>,
             upperVisibility: Boolean
     ): List<Component> {
-        return parent?.transform(c, to, type, attrs, data, children, upperVisibility)
+        return parent?.transform(c, to, type, attrs,pageContext, data, children, upperVisibility)
                 ?: throw UnsupportedOperationException()
     }
 }
