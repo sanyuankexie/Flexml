@@ -8,14 +8,10 @@ import com.guet.flexbox.Page
 import com.guet.flexbox.TemplateNode
 import com.guet.flexbox.databinding.DataBindingUtils
 import com.guet.flexbox.playground.R
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
 import java.io.FileNotFoundException
-import java.util.concurrent.CountDownLatch
 import kotlin.random.Random.Default
 
-object Preloader {
+object AppPreloader {
 
     private val gson = Gson()
     private val templateSource = HashMap<String, String>()
@@ -29,6 +25,7 @@ object Preloader {
         AsyncTask.THREAD_POOL_EXECUTOR.execute {
             synchronized(this) {
                 val res = c.resources
+                randomImageUrls.addAll(res.getStringArray(R.array.images))
                 //头部轮播图
                 val banner = res.getStringArray(R.array.banner_paths)
                         .map { url ->
@@ -44,41 +41,17 @@ object Preloader {
         }
     }
 
-    @WorkerThread
-    private fun loadNewImages() {
-        randomImageUrls.clear()
-        val randomImageCount = Default.nextInt(5, 10)
-        val result = (1..randomImageCount).map {
-            object : CountDownLatch(1), Callback<ACGImage> {
-
-                @Volatile
-                private var result: String? = null
-
-                override fun onFailure(call: Call<ACGImage>, t: Throwable) {
-                    countDown()
-                }
-
-                override fun onResponse(call: Call<ACGImage>, response: Response<ACGImage>) {
-                    result = response.body()?.imgurl
-                    countDown()
-                }
-
-                fun get(): String? {
-                    await()
-                    return result
-                }
-            }.apply {
-                ImageService.random.get().enqueue(this)
-            }
-        }.mapNotNull {
-            it.get()
-        }
-        randomImageUrls.addAll(result)
-    }
 
     @WorkerThread
     fun loadMoreFeedItem(c: Context, count: Int): List<Page> {
-        loadNewImages()
+        try {
+            val url = ImageService.random.get().execute().body()?.imgurl
+            if (!url.isNullOrEmpty()) {
+                randomImageUrls.add(url)
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
         val res = c.resources
         val feedUrls = res.getStringArray(R.array.feed_paths)
         return (1..count).map {
