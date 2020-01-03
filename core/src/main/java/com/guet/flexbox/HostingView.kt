@@ -8,7 +8,7 @@ import android.util.AttributeSet
 import androidx.annotation.MainThread
 import com.facebook.litho.*
 import com.facebook.litho.config.ComponentsConfiguration
-import com.guet.flexbox.databinding.Toolkit
+import com.guet.flexbox.databinding.DataBindingUtils
 import com.guet.flexbox.el.PropsELContext
 
 class HostingView @JvmOverloads constructor(
@@ -73,7 +73,7 @@ class HostingView @JvmOverloads constructor(
         val mW = measuredWidth
         WorkerThreadHandler.post {
             val elContext = PropsELContext(data)
-            val component = Toolkit.bindNode(c, node, pageContext, elContext).single()
+            val component = DataBindingUtils.bindNode(c, node, pageContext, elContext).single()
             tree.setRootAndSizeSpec(component,
                     SizeSpec.makeSizeSpec(mW, SizeSpec.EXACTLY),
                     when (height) {

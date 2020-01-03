@@ -6,7 +6,7 @@ import androidx.annotation.WorkerThread
 import com.google.gson.Gson
 import com.guet.flexbox.Page
 import com.guet.flexbox.TemplateNode
-import com.guet.flexbox.databinding.Toolkit
+import com.guet.flexbox.databinding.DataBindingUtils
 import com.guet.flexbox.playground.R
 import retrofit2.Call
 import retrofit2.Callback
@@ -151,7 +151,7 @@ object Preloader {
     fun loadPage(c: Context, url: String, data: (Map<String, Any>) = emptyMap()): Page {
         val template = loadTemplateNode(c, url)
         val dataSource = loadDataSource(c, url)
-        return Toolkit.preload(c, template, HashMap(dataSource).apply {
+        return DataBindingUtils.preload(c, template, HashMap(dataSource).apply {
             put("url", url)
             putAll(data)
         })

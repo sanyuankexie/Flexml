@@ -31,7 +31,7 @@ internal object For : Declaration() {
         return (from..to).map { index ->
             data.scope(mapOf(name to index)) {
                 children.map {
-                    Toolkit.bindNode(c, it, pageContext, data, upperVisibility)
+                    DataBindingUtils.bindNode(c, it, pageContext, data, upperVisibility)
                 }
             }.flatten()
         }.flatten()

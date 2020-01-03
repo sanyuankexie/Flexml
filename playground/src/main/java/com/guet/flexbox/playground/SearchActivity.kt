@@ -19,7 +19,7 @@ import android.widget.PopupWindow
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import com.guet.flexbox.HostingView
-import com.guet.flexbox.databinding.Toolkit
+import com.guet.flexbox.databinding.DataBindingUtils
 import com.guet.flexbox.playground.model.Compiler
 import java.util.*
 import kotlin.collections.HashSet
@@ -126,7 +126,7 @@ class SearchActivity : AppCompatActivity(), HostingView.EventListener {
                     "list",
                     listData
             )
-            val content = Toolkit.preload(this, template, data)
+            val content = DataBindingUtils.preload(this, template, data)
             runOnUiThread {
                 list.setContentAsync(content)
             }
