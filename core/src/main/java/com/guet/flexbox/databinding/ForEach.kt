@@ -31,7 +31,7 @@ internal object ForEach : Declaration() {
         return items.map {
             data.scope(mapOf(name to items)) {
                 children.map {
-                    Toolkit.bindNode(c, it, pageContext, data, upperVisibility)
+                    DataBindingUtils.bindNode(c, it, pageContext, data, upperVisibility)
                 }
             }.flatten()
         }.flatten()

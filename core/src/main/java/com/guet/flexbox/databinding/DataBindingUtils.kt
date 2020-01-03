@@ -8,7 +8,7 @@ import com.guet.flexbox.*
 import com.guet.flexbox.build.*
 import com.guet.flexbox.el.PropsELContext
 
-object Toolkit {
+object DataBindingUtils {
 
     @JvmStatic
     @JvmOverloads

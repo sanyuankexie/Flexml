@@ -87,7 +87,7 @@ internal object Common : Declaration() {
             emptyList()
         } else {
             children.map {
-                Toolkit.bindNode(c, it, pageContext, data, visibility)
+                DataBindingUtils.bindNode(c, it, pageContext, data, visibility)
             }.flatten()
         }
         return listOf(to!!.toComponent(c, type, visibility, attrs, childrenComponent))

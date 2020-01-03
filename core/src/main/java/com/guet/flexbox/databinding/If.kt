@@ -26,7 +26,7 @@ internal object If : Declaration() {
     ): List<Component> {
         if (attrs.getValue("test") as Boolean) {
             return children.map {
-                Toolkit.bindNode(c, it, pageContext, data, upperVisibility)
+                DataBindingUtils.bindNode(c, it, pageContext, data, upperVisibility)
             }.flatten()
         }
         return emptyList()

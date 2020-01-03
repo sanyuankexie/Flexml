@@ -25,14 +25,14 @@ internal object When : Declaration() {
         for (item in children) {
             if (item.type == "case") {
                 val itemAttrs = item.attrs
-                if (itemAttrs != null && Toolkit.bindAttr(
+                if (itemAttrs != null && DataBindingUtils.bindAttr(
                                 If,
                                 itemAttrs,
                                 pageContext,
                                 data
                         )["test"] == true) {
                     return item.children?.map {
-                        Toolkit.bindNode(c, it, pageContext, data, upperVisibility)
+                        DataBindingUtils.bindNode(c, it, pageContext, data, upperVisibility)
                     }?.flatten() ?: emptyList()
                 }
             } else if (item.type == "else" && elseItem == null) {
@@ -40,7 +40,7 @@ internal object When : Declaration() {
             }
         }
         return elseItem?.children?.map {
-            Toolkit.bindNode(c, it, pageContext, data, upperVisibility)
+            DataBindingUtils.bindNode(c, it, pageContext, data, upperVisibility)
         }?.flatten() ?: emptyList()
     }
 
