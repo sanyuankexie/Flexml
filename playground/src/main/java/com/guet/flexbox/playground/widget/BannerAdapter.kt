@@ -2,8 +2,8 @@ package com.guet.flexbox.playground.widget
 
 import android.content.Context
 import android.view.View
-import com.guet.flexbox.HostingView
-import com.guet.flexbox.Page
+import com.guet.flexbox.litho.HostingView
+import com.guet.flexbox.litho.Page
 import com.zhouwei.mzbanner.holder.MZHolderCreator
 import com.zhouwei.mzbanner.holder.MZViewHolder
 

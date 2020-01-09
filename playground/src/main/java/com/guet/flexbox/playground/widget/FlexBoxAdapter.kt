@@ -3,8 +3,8 @@ package com.guet.flexbox.playground.widget
 import android.view.View
 import com.chad.library.adapter.base.BaseQuickAdapter
 import com.chad.library.adapter.base.BaseViewHolder
-import com.guet.flexbox.HostingView
-import com.guet.flexbox.Page
+import com.guet.flexbox.litho.HostingView
+import com.guet.flexbox.litho.Page
 import com.guet.flexbox.playground.R
 
 

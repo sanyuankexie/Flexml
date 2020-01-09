@@ -16,10 +16,10 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.google.android.material.appbar.AppBarLayout;
-import com.guet.flexbox.HostingView;
-import com.guet.flexbox.Page;
 import com.guet.flexbox.TemplateNode;
-import com.guet.flexbox.databinding.DataBindingUtils;
+import com.guet.flexbox.litho.DefaultBuildUtils;
+import com.guet.flexbox.litho.HostingView;
+import com.guet.flexbox.litho.Page;
 import com.guet.flexbox.playground.model.MockService;
 import com.guet.flexbox.playground.widget.QuickHandler;
 
@@ -74,7 +74,7 @@ public class OverviewActivity
                 Response<TemplateNode> layout = mMockService.layout().execute();
                 Map<String, Object> dataBody = dataResponse.body();
                 TemplateNode layoutBody = layout.body();
-                mLayout = DataBindingUtils.preload(
+                mLayout = DefaultBuildUtils.preload(
                         getApplicationContext(),
                         Objects.requireNonNull(layoutBody),
                         dataBody

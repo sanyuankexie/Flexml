@@ -11,8 +11,8 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityOptionsCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.blankj.utilcode.util.NetworkUtils
-import com.guet.flexbox.HostingView
-import com.guet.flexbox.Page
+import com.guet.flexbox.litho.HostingView
+import com.guet.flexbox.litho.Page
 import com.guet.flexbox.playground.model.Homepage
 import com.guet.flexbox.playground.model.AppPreloader
 import com.guet.flexbox.playground.widget.BannerAdapter

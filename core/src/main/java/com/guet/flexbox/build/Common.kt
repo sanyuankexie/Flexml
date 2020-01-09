@@ -1,99 +1,107 @@
 package com.guet.flexbox.build
 
-import com.facebook.litho.Component
-import com.facebook.litho.ComponentContext
+import com.facebook.litho.ClickEvent
 import com.facebook.yoga.YogaAlign
-import com.facebook.yoga.YogaEdge
-import com.guet.flexbox.event.ClickUrlEventHandler
-import com.guet.flexbox.event.OnClickEventHandler
+import com.guet.flexbox.JoinPageContext
+import com.guet.flexbox.PageContext
+import com.guet.flexbox.TemplateNode
+import com.guet.flexbox.Visibility
+import com.guet.flexbox.el.LambdaExpression
+import com.guet.flexbox.el.PropsELContext
+import com.guet.flexbox.el.scope
+import com.guet.flexbox.litho.LithoEventHandler
 import java.util.*
 
-internal object Common : ToComponent<Component.Builder<*>>() {
+internal object Common : Declaration() {
 
-    override val attributeSet: AttributeSet<Component.Builder<*>> by create {
-        this["width"] = object : Assignment<Component.Builder<*>, Double>() {
-            override fun Component.Builder<*>.assign(display: Boolean, other: Map<String, Any>, value: Double) {
-                widthPx(value.toPx())
-            }
-        }
-        this["height"] = object : Assignment<Component.Builder<*>, Double>() {
-            override fun Component.Builder<*>.assign(display: Boolean, other: Map<String, Any>, value: Double) {
-                heightPx(value.toPx())
-            }
-        }
-        this["minWidth"] = object : Assignment<Component.Builder<*>, Double>() {
-            override fun Component.Builder<*>.assign(display: Boolean, other: Map<String, Any>, value: Double) {
-                minWidthPx(value.toPx())
-            }
-        }
-        this["maxWidth"] = object : Assignment<Component.Builder<*>, Double>() {
-            override fun Component.Builder<*>.assign(display: Boolean, other: Map<String, Any>, value: Double) {
-                maxWidthPx(value.toPx())
-            }
-        }
-        this["minHeight"] = object : Assignment<Component.Builder<*>, Double>() {
-            override fun Component.Builder<*>.assign(display: Boolean, other: Map<String, Any>, value: Double) {
-                minHeightPx(value.toPx())
-            }
-        }
-        this["maxWidth"] = object : Assignment<Component.Builder<*>, Double>() {
-            override fun Component.Builder<*>.assign(display: Boolean, other: Map<String, Any>, value: Double) {
-                maxHeightPx(value.toPx())
-            }
-        }
-        this["flexGrow"] = object : Assignment<Component.Builder<*>, Double>() {
-            override fun Component.Builder<*>.assign(display: Boolean, other: Map<String, Any>, value: Double) {
-                flexGrow(value.toFloat())
-            }
-        }
-        this["flexShrink"] = object : Assignment<Component.Builder<*>, Double>() {
-            override fun Component.Builder<*>.assign(display: Boolean, other: Map<String, Any>, value: Double) {
-                flexShrink(value.toFloat())
-            }
-        }
-        this["alignSelf"] = object : Assignment<Component.Builder<*>, YogaAlign>() {
-            override fun Component.Builder<*>.assign(display: Boolean, other: Map<String, Any>, value: YogaAlign) {
-                alignSelf(value)
-            }
-        }
-        this["margin"] = object : Assignment<Component.Builder<*>, Double>() {
-            override fun Component.Builder<*>.assign(display: Boolean, other: Map<String, Any>, value: Double) {
-                marginPx(YogaEdge.ALL, value.toPx())
-            }
-        }
-        this["padding"] = object : Assignment<Component.Builder<*>, Double>() {
-            override fun Component.Builder<*>.assign(display: Boolean, other: Map<String, Any>, value: Double) {
-                paddingPx(YogaEdge.ALL, value.toPx())
-            }
-        }
+    override val attributeSet: AttributeSet by create {
+        enum("visibility", mapOf(
+                "visible" to Visibility.VISIBLE,
+                "invisible" to Visibility.INVISIBLE,
+                "gone" to Visibility.GONE
+        ))
+        value("width")
+        value("height")
+        value("flexGrow")
+        value("flexShrink")
+        value("minWidth")
+        value("maxWidth")
+        value("minHeight")
+        value("maxHeight")
+        enum("alignSelf", mapOf(
+                "auto" to YogaAlign.AUTO,
+                "flexStart" to YogaAlign.FLEX_START,
+                "flexEnd" to YogaAlign.FLEX_END,
+                "center" to YogaAlign.CENTER,
+                "baseline" to YogaAlign.BASELINE,
+                "stretch" to YogaAlign.STRETCH
+        ))
+        value("margin")
+        value("padding")
+        color("borderColor")
+        value("borderRadius")
+        value("borderWidth")
+        text("background")
         for (edge in arrayOf("Left", "Right", "Top", "Bottom")) {
-            val yogaEdge = YogaEdge.valueOf(edge.toUpperCase(Locale.US))
-            this["margin$edge"] = object : Assignment<Component.Builder<*>, Double>() {
-                override fun Component.Builder<*>.assign(display: Boolean, other: Map<String, Any>, value: Double) {
-                    marginPx(yogaEdge, value.toPx())
-                }
-            }
-            this["padding$edge"] = object : Assignment<Component.Builder<*>, Double>() {
-                override fun Component.Builder<*>.assign(display: Boolean, other: Map<String, Any>, value: Double) {
-                    paddingPx(yogaEdge, value.toPx())
+            value("margin$edge")
+            value("padding$edge")
+        }
+        typed("clickUrl") { pageContext, props, raw ->
+            val url = props.tryGetValue<String>(raw)
+            url?.let {
+                LithoEventHandler.create<ClickEvent> {
+                    pageContext.send(url)
                 }
             }
         }
-        this["clickUrl"] = object : Assignment<Component.Builder<*>, ClickUrlEventHandler>() {
-            override fun Component.Builder<*>.assign(display: Boolean, other: Map<String, Any>, value: ClickUrlEventHandler) {
-                if (!other.containsKey("onClick")) {
-                    clickHandler(value)
+        typed("onClick") { pageContext, elContext, raw ->
+            elContext.tryGetValue<LambdaExpression>(raw)?.let { executable ->
+                LithoEventHandler.create<ClickEvent> { event ->
+                    elContext.scope(Collections.singletonMap(
+                            "pageContext", JoinPageContext(pageContext, event.view)
+                    )) {
+                        executable.invoke(elContext)
+                    }
                 }
-            }
-        }
-        this["onClick"] = object : Assignment<Component.Builder<*>, OnClickEventHandler>() {
-            override fun Component.Builder<*>.assign(display: Boolean, other: Map<String, Any>, value: OnClickEventHandler) {
-                clickHandler(value)
             }
         }
     }
 
-    override fun create(c: ComponentContext, type: String, visibility: Boolean, attrs: Map<String, Any>): Component.Builder<*> {
-        throw UnsupportedOperationException()
+    override fun transform(
+            bindings: BuildUtils,
+            to: Binding?,
+            type: String,
+            attrs: Map<String, Any>,
+            pageContext: PageContext,
+            data: PropsELContext,
+            children: List<TemplateNode>,
+            upperVisibility: Boolean,
+            other: Any
+    ): List<Any> {
+        val selfVisibility = attrs["visibility"] ?: Visibility.VISIBLE
+        if (selfVisibility == Visibility.GONE) {
+            return emptyList()
+        }
+        val visibility = selfVisibility == Visibility.VISIBLE && upperVisibility
+        val childrenComponent = if (children.isEmpty()) {
+            emptyList()
+        } else {
+            children.map {
+                bindings.bindNode(
+                        it,
+                        pageContext,
+                        data,
+                        visibility,
+                        other
+                )
+            }.flatten()
+        }
+        return listOf(to!!.invoke(
+                type,
+                visibility,
+                attrs,
+                childrenComponent,
+                other
+        ))
     }
 }

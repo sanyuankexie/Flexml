@@ -11,7 +11,7 @@ import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.widget.NestedScrollView
 import com.didichuxing.doraemonkit.util.UIUtils
 import com.google.android.material.appbar.AppBarLayout
-import com.guet.flexbox.HostingView
+import com.guet.flexbox.litho.HostingView
 import com.guet.flexbox.playground.model.AppPreloader
 import thereisnospon.codeview.CodeView
 import thereisnospon.codeview.CodeViewTheme
