@@ -29,7 +29,7 @@ class HostingView @JvmOverloads constructor(
     init {
         componentTree = ComponentTree.create(componentContext)
                 .isReconciliationEnabled(false)
-                .layoutThreadHandler(WorkerThreadHandler)
+                .layoutThreadHandler(Companion)
                 .build()
         super.setOnDirtyMountListener { view ->
             this.performIncrementalMount(
@@ -72,7 +72,7 @@ class HostingView @JvmOverloads constructor(
         val height = layoutParams?.width ?: 0
         val mH = measuredHeight
         val mW = measuredWidth
-        WorkerThreadHandler.post {
+        Companion.post {
             val elContext = PropsELContext(data)
             val component = DefaultBuildUtils.bindNode(
                     node,
@@ -94,7 +94,7 @@ class HostingView @JvmOverloads constructor(
         fun handleEvent(host: HostingView, key: String, value: Array<out Any>)
     }
 
-    private companion object WorkerThreadHandler : Handler({
+    private companion object : Handler({
         val thread = HandlerThread("WorkerThread")
         thread.start()
         thread.looper

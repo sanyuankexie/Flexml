@@ -35,7 +35,7 @@ object DefaultBuildUtils : BuildUtils() {
         return Page(com as Component, eventBridge)
     }
 
-    override val bindingMap: Map<String, Pair<Declaration, Binding?>> by lazy {
+    override val buildMap: Map<String, ToWidget> by lazy {
         mapOf(
                 "Empty" to (Empty to ToEmpty),
                 "Flex" to (Flex to ToFlex),

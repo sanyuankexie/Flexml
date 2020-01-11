@@ -2,6 +2,7 @@ package com.guet.flexbox.build
 
 import android.graphics.Color
 import com.guet.flexbox.PageContext
+import com.guet.flexbox.TemplateNode
 import com.guet.flexbox.el.PropsELContext
 
 internal inline val CharSequence.isExpr: Boolean
@@ -75,12 +76,39 @@ internal class Registry {
         get() = _value
 }
 
-typealias Binding = (
+internal typealias WidgetFactory = (
         type: String,
         visibility: Boolean,
         attrs: Map<String, Any>,
         children: List<Any>,
         other: Any
 ) -> Any
+
+typealias ToWidget = Pair<Declaration, WidgetFactory?>
+
+internal fun ToWidget.toWidget(
+        bindings: BuildUtils,
+        type: String,
+        attrs: Map<String, Any>,
+        pageContext: PageContext,
+        data: PropsELContext,
+        children: List<TemplateNode>,
+        upperVisibility: Boolean,
+        other: Any
+): List<Any> {
+    return first.transform(
+            bindings,
+            second,
+            type,
+            attrs,
+            pageContext,
+            data,
+            children,
+            upperVisibility,
+            other
+    )
+}
+
+internal operator fun ToWidget.get(name: String): AttributeInfo<*>? = first[name]
 
 typealias EventHandler<T> = (T) -> Unit

@@ -12,12 +12,23 @@ abstract class BuildUtils {
             pageContext: PageContext,
             data: PropsELContext
     ): Map<String, Any> {
-        return attrs.let {
-            HashMap<String, Any>(it.size).apply {
+        return buildMap[name]?.let {
+            bindAttr(it, attrs, pageContext, data)
+        } ?: emptyMap()
+    }
+
+    private fun bindAttr(
+            toWidget: ToWidget,
+            attrs: Map<String, String>,
+            pageContext: PageContext,
+            data: PropsELContext
+    ): Map<String, Any> {
+        return if (attrs.isNullOrEmpty()) {
+            emptyMap()
+        } else {
+            HashMap<String, Any>(attrs.size).apply {
                 for ((key, raw) in attrs) {
-                    val result = bindingMap[name]
-                            ?.first
-                            ?.get(key)
+                    val result = toWidget[key]
                             ?.cast(pageContext, data, raw)
                     if (result != null) {
                         this[key] = result
@@ -35,14 +46,13 @@ abstract class BuildUtils {
             c: Any
     ): List<Any> {
         val type = templateNode.type
-        val pair = bindingMap[type] ?: Common to null
+        val toWidget: ToWidget = buildMap[type] ?: default
         val values = templateNode.attrs?.let {
-            bindAttr(type, it, pageContext, data)
+            bindAttr(toWidget, it, pageContext, data)
         } ?: emptyMap()
         val children = templateNode.children ?: emptyList()
-        return pair.first.transform(
+        return toWidget.toWidget(
                 this,
-                pair.second,
                 type,
                 values,
                 pageContext,
@@ -53,5 +63,9 @@ abstract class BuildUtils {
         )
     }
 
-    protected abstract val bindingMap: Map<String, Pair<Declaration, Binding?>>
+    protected abstract val buildMap: Map<String, ToWidget>
+
+    companion object {
+        private val default: ToWidget = Common to null
+    }
 }

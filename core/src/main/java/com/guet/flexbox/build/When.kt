@@ -10,7 +10,7 @@ internal object When : Declaration() {
 
     override fun transform(
             bindings: BuildUtils,
-            to: Binding?,
+            to: WidgetFactory?,
             type: String,
             attrs: Map<String, Any>,
             pageContext: PageContext,

@@ -23,7 +23,7 @@ abstract class Declaration(
 
     internal open fun transform(
             bindings: BuildUtils,
-            to: Binding?,
+            to: WidgetFactory?,
             type: String,
             attrs: Map<String, Any>,
             pageContext: PageContext,

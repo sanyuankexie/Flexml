@@ -2,25 +2,21 @@ package com.guet.flexbox.litho
 
 import android.graphics.Color
 import android.graphics.drawable.Drawable
-import android.util.LruCache
-import android.view.ViewOutlineProvider
 import com.facebook.litho.Border
 import com.facebook.litho.Component
 import com.facebook.litho.ComponentContext
 import com.facebook.litho.drawable.ComparableColorDrawable
 import com.facebook.yoga.YogaEdge
-import com.guet.flexbox.build.Binding
+import com.guet.flexbox.build.WidgetFactory
 import com.guet.flexbox.litho.widget.AsyncLazyDrawable
 import com.guet.flexbox.litho.widget.CornerOutlineProvider
 import com.guet.flexbox.litho.widget.NoOpDrawable
 
 internal abstract class ToComponent<C : Component.Builder<*>>(
         private val parent: ToComponent<in C>? = null
-) : Binding {
+) : WidgetFactory {
 
     protected abstract val attributeSet: AttributeSet<C>
-
-    private val caches = LruCache<Int, ViewOutlineProvider>(32)
 
     private fun assign(
             c: C,
@@ -85,11 +81,7 @@ internal abstract class ToComponent<C : Component.Builder<*>>(
                         .build()
         )
         if (borderRadius > 0) {
-            var outline: ViewOutlineProvider? = caches[borderRadius]
-            if (outline == null) {
-                outline = CornerOutlineProvider(borderRadius)
-                caches.put(borderColor, outline)
-            }
+            val outline = CornerOutlineProvider(borderRadius)
             c.outlineProvider(outline)
             c.clipToOutline(true)
         }

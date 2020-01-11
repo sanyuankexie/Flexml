@@ -4,7 +4,6 @@ import com.guet.flexbox.PageContext
 import com.guet.flexbox.TemplateNode
 import com.guet.flexbox.el.PropsELContext
 
-
 internal object If : Declaration() {
 
     override val attributeSet: AttributeSet by create {
@@ -13,7 +12,7 @@ internal object If : Declaration() {
 
     override fun transform(
             bindings: BuildUtils,
-            to: Binding?,
+            to: WidgetFactory?,
             type: String,
             attrs: Map<String, Any>,
             pageContext: PageContext,
