@@ -63,7 +63,7 @@ internal object Common : ToComponent<Component.Builder<*>>() {
             clickHandler(value)
         }
         register("shadowElevation") { _, _, value: Double ->
-            shadowElevationPx(value.toFloat())
+            shadowElevationPx(value.toPx().toFloat())
         }
     }
 
