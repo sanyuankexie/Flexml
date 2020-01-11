@@ -11,7 +11,6 @@ internal object ToStack : ToComponent<Stack.Builder>(Common) {
 
     override fun create(
             c: ComponentContext,
-            type: String,
             visibility: Boolean,
             attrs: Map<String, Any>
     ): Stack.Builder {
@@ -20,7 +19,6 @@ internal object ToStack : ToComponent<Stack.Builder>(Common) {
 
     override fun onInstallChildren(
             owner: Stack.Builder,
-            type: String,
             visibility: Boolean,
             attrs: Map<String, Any>,
             children: List<Component>

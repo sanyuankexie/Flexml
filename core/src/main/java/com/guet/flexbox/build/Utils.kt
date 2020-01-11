@@ -76,7 +76,7 @@ internal class Registry {
         get() = _value
 }
 
-internal typealias WidgetFactory = (
+internal typealias Factory = (
         type: String,
         visibility: Boolean,
         attrs: Map<String, Any>,
@@ -84,31 +84,25 @@ internal typealias WidgetFactory = (
         other: Any
 ) -> Any
 
-typealias ToWidget = Pair<Declaration, WidgetFactory?>
+typealias ToWidget = Pair<Declaration, Factory?>
 
 internal fun ToWidget.toWidget(
         bindings: BuildUtils,
-        type: String,
-        attrs: Map<String, Any>,
+        template: TemplateNode,
         pageContext: PageContext,
         data: PropsELContext,
-        children: List<TemplateNode>,
         upperVisibility: Boolean,
         other: Any
 ): List<Any> {
     return first.transform(
             bindings,
+            template,
             second,
-            type,
-            attrs,
             pageContext,
             data,
-            children,
             upperVisibility,
             other
     )
 }
-
-internal operator fun ToWidget.get(name: String): AttributeInfo<*>? = first[name]
 
 typealias EventHandler<T> = (T) -> Unit

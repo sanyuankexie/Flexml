@@ -30,7 +30,6 @@ internal object ToImage : ToComponent<NetworkImage.Builder>(Common) {
 
     override fun create(
             c: ComponentContext,
-            type: String,
             visibility: Boolean,
             attrs: Map<String, Any>
     ): NetworkImage.Builder {

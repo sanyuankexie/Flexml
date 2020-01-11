@@ -21,25 +21,40 @@ abstract class Declaration(
         return null
     }
 
+    fun bindAttrs(
+            attrs: Map<String, String>?,
+            pageContext: PageContext,
+            data: PropsELContext
+    ): Map<String, Any> {
+        return if (attrs.isNullOrEmpty()) {
+            emptyMap()
+        } else {
+            HashMap<String, Any>(attrs.size).also {
+                for ((key, raw) in attrs) {
+                    val result = this[key]?.cast(pageContext, data, raw)
+                    if (result != null) {
+                        it[key] = result
+                    }
+                }
+            }
+        }
+    }
+
     internal open fun transform(
             bindings: BuildUtils,
-            to: WidgetFactory?,
-            type: String,
-            attrs: Map<String, Any>,
+            template: TemplateNode,
+            factory: Factory?,
             pageContext: PageContext,
             data: PropsELContext,
-            children: List<TemplateNode>,
             upperVisibility: Boolean,
             other: Any
     ): List<Any> {
         return parent?.transform(
                 bindings,
-                to,
-                type,
-                attrs,
+                template,
+                factory,
                 pageContext,
                 data,
-                children,
                 upperVisibility,
                 other
         ) ?: throw UnsupportedOperationException()

@@ -1,6 +1,7 @@
 package com.guet.flexbox.litho
 
 import android.content.Context
+import android.view.View
 import androidx.annotation.WorkerThread
 import com.facebook.litho.Component
 import com.facebook.litho.ComponentContext
@@ -35,21 +36,30 @@ object LithoBuildUtils : BuildUtils() {
         return Page(com as Component, eventBridge)
     }
 
-    override val buildMap: Map<String, ToWidget> by lazy {
-        mapOf(
-                "Empty" to (Empty to ToEmpty),
-                "Flex" to (Flex to ToFlex),
-                "Banner" to (Banner to ToBanner),
-                "Image" to (Image to ToImage),
-                "ViewCompat" to (ViewCompat to ToViewCompat),
-                "Scroller" to (Scroller to ToScroller),
-                "TextInput" to (TextInput to ToTextInput),
-                "Text" to (Text to ToText),
-                "Stack" to (Common to ToStack),
-                "for" to (For to null),
-                "foreach" to (ForEach to null),
-                "when" to (When to null),
-                "if" to (If to null)
-        )
+
+    private val widgets = HashMap<String, ToWidget>(mapOf(
+            "Empty" to (Empty to ToEmpty),
+            "Flex" to (Flex to ToFlex),
+            "Banner" to (Banner to ToBanner),
+            "Image" to (Image to ToImage),
+            "Scroller" to (Scroller to ToScroller),
+            "TextInput" to (TextInput to ToTextInput),
+            "Text" to (Text to ToText),
+            "Stack" to (Common to ToStack),
+            "for" to (For to null),
+            "foreach" to (ForEach to null),
+            "when" to (When to null),
+            "if" to (If to null)
+    ))
+
+    fun register(
+            name: String,
+            type: Class<out View>
+    ) {
+        if (!widgets.containsKey(name)) {
+            widgets[name] = ViewCompat to ToViewCompat(type)
+        }
     }
+
+    override val buildMap: Map<String, ToWidget> = widgets
 }

@@ -70,15 +70,24 @@ internal object Common : Declaration() {
 
     override fun transform(
             bindings: BuildUtils,
-            to: WidgetFactory?,
-            type: String,
-            attrs: Map<String, Any>,
+            template: TemplateNode,
+            factory: Factory?,
             pageContext: PageContext,
             data: PropsELContext,
-            children: List<TemplateNode>,
             upperVisibility: Boolean,
             other: Any
     ): List<Any> {
+        if (factory == null) {
+            return emptyList()
+        }
+        val type = template.type
+        val rawAttrs = template.attrs
+        val attrs = if (rawAttrs != null) {
+            bindAttrs(rawAttrs, pageContext, data)
+        } else {
+            emptyMap()
+        }
+        val children = template.children ?: emptyList()
         val selfVisibility = attrs["visibility"] ?: Visibility.VISIBLE
         if (selfVisibility == Visibility.GONE) {
             return emptyList()
@@ -97,7 +106,7 @@ internal object Common : Declaration() {
                 )
             }.flatten()
         }
-        return listOf(to!!.invoke(
+        return listOf(factory.invoke(
                 type,
                 visibility,
                 attrs,

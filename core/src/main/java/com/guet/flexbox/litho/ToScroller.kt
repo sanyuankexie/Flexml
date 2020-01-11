@@ -25,7 +25,7 @@ internal object ToScroller : ToComponent<Component.Builder<*>>(Common) {
         }
     }
 
-    override fun create(c: ComponentContext, type: String, visibility: Boolean, attrs: Map<String, Any>): Component.Builder<*> {
+    override fun create(c: ComponentContext, visibility: Boolean, attrs: Map<String, Any>): Component.Builder<*> {
         return when (attrs.getOrElse("orientation") { Orientation.HORIZONTAL }) {
             Orientation.HORIZONTAL -> {
                 HorizontalScroll.create(c)
@@ -36,7 +36,7 @@ internal object ToScroller : ToComponent<Component.Builder<*>>(Common) {
         }
     }
 
-    override fun onInstallChildren(owner: Component.Builder<*>, type: String, visibility: Boolean, attrs: Map<String, Any>, children: List<Component>) {
+    override fun onInstallChildren(owner: Component.Builder<*>, visibility: Boolean, attrs: Map<String, Any>, children: List<Component>) {
         if (children.isNullOrEmpty()) {
             return
         }

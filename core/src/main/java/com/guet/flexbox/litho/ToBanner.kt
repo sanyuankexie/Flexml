@@ -16,7 +16,6 @@ internal object ToBanner : ToComponent<Banner.Builder>(Common) {
 
     override fun create(
             c: ComponentContext,
-            type: String,
             visibility: Boolean,
             attrs: Map<String, Any>
     ): Banner.Builder {
@@ -25,7 +24,6 @@ internal object ToBanner : ToComponent<Banner.Builder>(Common) {
 
     override fun onInstallChildren(
             owner: Banner.Builder,
-            type: String,
             visibility: Boolean,
             attrs: Map<String, Any>,
             children: List<Component>

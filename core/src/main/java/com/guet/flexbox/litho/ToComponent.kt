@@ -7,14 +7,14 @@ import com.facebook.litho.Component
 import com.facebook.litho.ComponentContext
 import com.facebook.litho.drawable.ComparableColorDrawable
 import com.facebook.yoga.YogaEdge
-import com.guet.flexbox.build.WidgetFactory
+import com.guet.flexbox.build.Factory
 import com.guet.flexbox.litho.widget.AsyncLazyDrawable
 import com.guet.flexbox.litho.widget.CornerOutlineProvider
 import com.guet.flexbox.litho.widget.NoOpDrawable
 
 internal abstract class ToComponent<C : Component.Builder<*>>(
         private val parent: ToComponent<in C>? = null
-) : WidgetFactory {
+) : Factory {
 
     protected abstract val attributeSet: AttributeSet<C>
 
@@ -56,13 +56,13 @@ internal abstract class ToComponent<C : Component.Builder<*>>(
             attrs: Map<String, Any>,
             children: List<Component>
     ): Component {
-        val com = create(c, type, visibility, attrs)
+        val com = create(c, visibility, attrs)
         for ((key, value) in attrs) {
             assign(com, key, value, visibility, attrs)
         }
         createBorder(com, attrs)
         createBackground(com, attrs)
-        onInstallChildren(com, type, visibility, attrs, children)
+        onInstallChildren(com, visibility, attrs, children)
         return com.build()
     }
 
@@ -114,7 +114,6 @@ internal abstract class ToComponent<C : Component.Builder<*>>(
 
     protected open fun onInstallChildren(
             owner: C,
-            type: String,
             visibility: Boolean,
             attrs: Map<String, Any>,
             children: List<Component>
@@ -123,7 +122,6 @@ internal abstract class ToComponent<C : Component.Builder<*>>(
 
     protected abstract fun create(
             c: ComponentContext,
-            type: String,
             visibility: Boolean,
             attrs: Map<String, Any>
     ): C

@@ -26,7 +26,7 @@ internal object ToFlex : ToComponent<Component.ContainerBuilder<*>>(Common) {
         }
     }
 
-    override fun create(c: ComponentContext, type: String, visibility: Boolean, attrs: Map<String, Any>): Component.ContainerBuilder<*> {
+    override fun create(c: ComponentContext, visibility: Boolean, attrs: Map<String, Any>): Component.ContainerBuilder<*> {
         val component: Component.ContainerBuilder<*>
         when (attrs.getOrElse("flexDirection") { YogaFlexDirection.ROW }) {
             YogaFlexDirection.COLUMN -> {
@@ -47,7 +47,7 @@ internal object ToFlex : ToComponent<Component.ContainerBuilder<*>>(Common) {
         return component
     }
 
-    override fun onInstallChildren(owner: Component.ContainerBuilder<*>, type: String, visibility: Boolean, attrs: Map<String, Any>, children: List<Component>) {
+    override fun onInstallChildren(owner: Component.ContainerBuilder<*>, visibility: Boolean, attrs: Map<String, Any>, children: List<Component>) {
         children.forEach {
             owner.child(it)
         }

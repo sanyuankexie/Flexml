@@ -10,21 +10,22 @@ internal object When : Declaration() {
 
     override fun transform(
             bindings: BuildUtils,
-            to: WidgetFactory?,
-            type: String,
-            attrs: Map<String, Any>,
+            template: TemplateNode,
+            factory: Factory?,
             pageContext: PageContext,
             data: PropsELContext,
-            children: List<TemplateNode>,
             upperVisibility: Boolean,
             other: Any
     ): List<Any> {
         var elseItem: TemplateNode? = null
+        val children = template.children
+        if (children.isNullOrEmpty()) {
+            return emptyList()
+        }
         for (item in children) {
             if (item.type == "case") {
                 val itemAttrs = item.attrs
-                if (itemAttrs != null && bindings.bindAttr(
-                                "if",
+                if (itemAttrs != null && If.bindAttrs(
                                 itemAttrs,
                                 pageContext,
                                 data

@@ -10,23 +10,19 @@ internal object Empty : Declaration(Common) {
 
     override fun transform(
             bindings: BuildUtils,
-            to: WidgetFactory?,
-            type: String,
-            attrs: Map<String, Any>,
+            template: TemplateNode,
+            factory: Factory?,
             pageContext: PageContext,
             data: PropsELContext,
-            children: List<TemplateNode>,
             upperVisibility: Boolean,
             other: Any
     ): List<Any> {
         return super.transform(
                 bindings,
-                to,
-                type,
-                attrs,
+                template,
+                factory,
                 pageContext,
                 data,
-                children,
                 false,
                 other
         )

@@ -233,16 +233,27 @@ class PropsELContext(
                     .toString()
         }
 
-        @Prefix("res")
-        @JvmName("drawable")
-        @JvmStatic
-        fun load(name: String): String {
+        private fun buildResUri(type: String, name: String): String {
             return Uri.Builder()
                     .scheme("res")
-                    .authority("drawable")
+                    .authority(type)
                     .appendQueryParameter("name", name)
                     .build()
                     .toString()
+        }
+
+        @Prefix("res")
+        @JvmName("drawable")
+        @JvmStatic
+        fun drawable(name: String): String {
+            return buildResUri("drawable", name)
+        }
+
+        @Prefix("res")
+        @JvmName("array")
+        @JvmStatic
+        fun array(name: String): String {
+            return buildResUri("array", name)
         }
 
         @Prefix("dimen")

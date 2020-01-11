@@ -12,15 +12,22 @@ internal object If : Declaration() {
 
     override fun transform(
             bindings: BuildUtils,
-            to: WidgetFactory?,
-            type: String,
-            attrs: Map<String, Any>,
+            template: TemplateNode,
+            factory: Factory?,
             pageContext: PageContext,
             data: PropsELContext,
-            children: List<TemplateNode>,
             upperVisibility: Boolean,
             other: Any
     ): List<Any> {
+        val children = template.children
+        if (children.isNullOrEmpty()) {
+            return emptyList()
+        }
+        val attrs = bindAttrs(
+                template.attrs,
+                pageContext,
+                data
+        )
         if (attrs.getValue("test") as Boolean) {
             return children.map {
                 bindings.bindNode(

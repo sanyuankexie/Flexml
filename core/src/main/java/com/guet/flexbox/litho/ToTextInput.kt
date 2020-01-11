@@ -28,7 +28,7 @@ internal object ToTextInput : ToComponent<TextInput.Builder>(Common) {
         }
     }
 
-    override fun create(c: ComponentContext, type: String, visibility: Boolean, attrs: Map<String, Any>): TextInput.Builder {
+    override fun create(c: ComponentContext, visibility: Boolean, attrs: Map<String, Any>): TextInput.Builder {
         return TextInput.create(c)
     }
 }

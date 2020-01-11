@@ -56,7 +56,7 @@ internal object ToText : ToComponent<Text.Builder>(Common) {
         }
     }
 
-    override fun create(c: ComponentContext, type: String, visibility: Boolean, attrs: Map<String, Any>): Text.Builder {
+    override fun create(c: ComponentContext, visibility: Boolean, attrs: Map<String, Any>): Text.Builder {
         return Text.create(c)
     }
 }

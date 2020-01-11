@@ -67,7 +67,7 @@ internal object Common : ToComponent<Component.Builder<*>>() {
         }
     }
 
-    override fun create(c: ComponentContext, type: String, visibility: Boolean, attrs: Map<String, Any>): Component.Builder<*> {
+    override fun create(c: ComponentContext, visibility: Boolean, attrs: Map<String, Any>): Component.Builder<*> {
         throw UnsupportedOperationException()
     }
 }
