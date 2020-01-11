@@ -41,6 +41,7 @@ internal object Common : Declaration() {
         color("borderColor")
         value("borderRadius")
         value("borderWidth")
+        value("shadowElevation")
         text("background")
         for (edge in arrayOf("Left", "Right", "Top", "Bottom")) {
             value("margin$edge")

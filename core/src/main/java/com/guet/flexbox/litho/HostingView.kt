@@ -74,7 +74,7 @@ class HostingView @JvmOverloads constructor(
         val mW = measuredWidth
         Companion.post {
             val elContext = PropsELContext(data)
-            val component = DefaultBuildUtils.bindNode(
+            val component = LithoBuildUtils.bindNode(
                     node,
                     pageContext,
                     elContext,

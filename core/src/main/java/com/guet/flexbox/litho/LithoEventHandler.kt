@@ -21,7 +21,7 @@ class LithoEventHandler<T> private constructor(
             return LithoEventHandler(handler)
         }
 
-        override fun getEventDispatcher(): com.facebook.litho.EventDispatcher = this
+        override fun getEventDispatcher(): EventDispatcher = this
 
         override fun dispatchOnEvent(eventHandler: com.facebook.litho.EventHandler<in Any?>?, eventState: Any?): Any? {
             eventHandler?.dispatchEvent(eventState)

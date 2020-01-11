@@ -11,7 +11,7 @@ import com.guet.flexbox.build.*
 import com.guet.flexbox.build.Common
 import com.guet.flexbox.el.PropsELContext
 
-object DefaultBuildUtils : BuildUtils() {
+object LithoBuildUtils : BuildUtils() {
 
     @JvmStatic
     @JvmOverloads
@@ -39,8 +39,9 @@ object DefaultBuildUtils : BuildUtils() {
         mapOf(
                 "Empty" to (Empty to ToEmpty),
                 "Flex" to (Flex to ToFlex),
+                "Banner" to (Banner to ToBanner),
                 "Image" to (Image to ToImage),
-                "Mount" to (Mount to ToMount),
+                "ViewCompat" to (ViewCompat to ToViewCompat),
                 "Scroller" to (Scroller to ToScroller),
                 "TextInput" to (TextInput to ToTextInput),
                 "Text" to (Text to ToText),

@@ -1,12 +1,11 @@
 package com.guet.flexbox.build
 
 import android.view.View
-import com.guet.flexbox.PageContext
 import com.guet.flexbox.el.PropsELContext
 
-internal object Mount : Declaration(Common) {
+internal object ViewCompat : Declaration(Common) {
     override val attributeSet: AttributeSet by create {
-        typed("type") { _: PageContext,
+        typed("type") { _,
                         props: PropsELContext,
                         raw: String ->
             val text = props.tryGetValue<String>(raw) ?: return@typed null

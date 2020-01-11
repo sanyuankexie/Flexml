@@ -14,7 +14,7 @@ import com.blankj.utilcode.util.NetworkUtils
 import com.guet.flexbox.litho.HostingView
 import com.guet.flexbox.litho.Page
 import com.guet.flexbox.playground.model.Homepage
-import com.guet.flexbox.playground.model.AppPreloader
+import com.guet.flexbox.playground.model.AppBundle
 import com.guet.flexbox.playground.widget.BannerAdapter
 import com.guet.flexbox.playground.widget.FlexBoxAdapter
 import com.guet.flexbox.playground.widget.PullToRefreshLayout
@@ -35,7 +35,7 @@ class MainActivity : AppCompatActivity(), HostingView.EventListener {
     private lateinit var banner: MZBannerView<Page>
     private lateinit var feed: RecyclerView
     private lateinit var function: HostingView
-    private val homepageInfo: Homepage by AppPreloader.waitHomepage()
+    private val homepageInfo: Homepage by AppBundle.waitHomepage()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -93,7 +93,7 @@ class MainActivity : AppCompatActivity(), HostingView.EventListener {
                         return
                     }
                     AsyncTask.THREAD_POOL_EXECUTOR.execute {
-                        val pages = AppPreloader.loadMoreFeedItem(application, 10)
+                        val pages = AppBundle.loadMoreFeedItem(application, 10)
                         runOnUiThread {
                             v.finish(Runnable {
                                 feedAdapter.addData(pages)

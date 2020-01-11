@@ -41,15 +41,13 @@ internal abstract class ToComponent<C : Component.Builder<*>>(
             attrs: Map<String, Any>,
             children: List<Any>,
             other: Any
-    ): Any {
-        return toComponent(
-                other as ComponentContext,
-                type,
-                visibility,
-                attrs,
-                children as List<Component>
-        )
-    }
+    ): Any = toComponent(
+            other as ComponentContext,
+            type,
+            visibility,
+            attrs,
+            children as List<Component>
+    )
 
     private fun toComponent(
             c: ComponentContext,

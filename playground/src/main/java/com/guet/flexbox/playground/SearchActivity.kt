@@ -18,7 +18,7 @@ import android.widget.FrameLayout
 import android.widget.PopupWindow
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
-import com.guet.flexbox.litho.DefaultBuildUtils
+import com.guet.flexbox.litho.LithoBuildUtils
 import com.guet.flexbox.litho.HostingView
 import com.guet.flexbox.playground.model.Compiler
 import java.util.*
@@ -126,7 +126,7 @@ class SearchActivity : AppCompatActivity(), HostingView.EventListener {
                     "list",
                     listData
             )
-            val content = DefaultBuildUtils.preload(this, template, data)
+            val content = LithoBuildUtils.preload(this, template, data)
             runOnUiThread {
                 list.setContentAsync(content)
             }

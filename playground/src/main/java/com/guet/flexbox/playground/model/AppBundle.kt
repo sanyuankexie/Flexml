@@ -5,13 +5,13 @@ import android.os.AsyncTask
 import androidx.annotation.WorkerThread
 import com.google.gson.Gson
 import com.guet.flexbox.TemplateNode
-import com.guet.flexbox.litho.DefaultBuildUtils
+import com.guet.flexbox.litho.LithoBuildUtils
 import com.guet.flexbox.litho.Page
 import com.guet.flexbox.playground.R
 import java.io.FileNotFoundException
 import kotlin.random.Random.Default
 
-object AppPreloader {
+object AppBundle {
 
     private val gson = Gson()
     private val templateSource = HashMap<String, String>()
@@ -124,7 +124,7 @@ object AppPreloader {
     fun loadPage(c: Context, url: String, data: (Map<String, Any>) = emptyMap()): Page {
         val template = loadTemplateNode(c, url)
         val dataSource = loadDataSource(c, url)
-        return DefaultBuildUtils.preload(c, template, HashMap(dataSource).apply {
+        return LithoBuildUtils.preload(c, template, HashMap(dataSource).apply {
             put("url", url)
             putAll(data)
         })

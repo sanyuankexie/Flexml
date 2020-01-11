@@ -62,6 +62,9 @@ internal object Common : ToComponent<Component.Builder<*>>() {
         register("onClick") { _, _, value: EventHandler<ClickEvent> ->
             clickHandler(value)
         }
+        register("shadowElevation") { _, _, value: Double ->
+            shadowElevationPx(value.toFloat())
+        }
     }
 
     override fun create(c: ComponentContext, type: String, visibility: Boolean, attrs: Map<String, Any>): Component.Builder<*> {

@@ -4,8 +4,6 @@ import android.graphics.Typeface
 import android.text.Layout
 import android.text.TextUtils
 import com.facebook.litho.widget.VerticalGravity
-import com.guet.flexbox.PageContext
-import com.guet.flexbox.el.PropsELContext
 
 
 internal object AbstractText : Declaration(Common) {
@@ -34,8 +32,8 @@ internal object AbstractText : Declaration(Common) {
                 "normal" to Typeface.NORMAL,
                 "bold" to Typeface.BOLD
         )
-        typed("textStyle") { _: PageContext,
-                             _: PropsELContext,
+        typed("textStyle") { _,
+                             _,
                              raw: String ->
             scope[raw]
         }

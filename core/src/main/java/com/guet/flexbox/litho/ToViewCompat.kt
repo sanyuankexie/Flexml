@@ -9,7 +9,7 @@ import com.facebook.litho.viewcompat.ViewBinder
 import com.facebook.litho.viewcompat.ViewCreator
 import java.lang.reflect.Constructor
 
-internal object ToMount : ToComponent<ViewCompatComponent.Builder<View>>(Common) {
+internal object ToViewCompat : ToComponent<ViewCompatComponent.Builder<View>>(Common) {
 
     private val viewTypeCache = HashMap<Class<*>, ReflectViewCreator>(32)
 

@@ -9,14 +9,14 @@ import android.webkit.WebView
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
-import com.guet.flexbox.playground.model.AppPreloader
+import com.guet.flexbox.playground.model.AppBundle
 
 class StartupActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         val ctx = application
-        AppPreloader.init(ctx) {
+        AppBundle.init(ctx) {
             runOnUiThread {
                 ActivityCompat.requestPermissions(
                         this,
