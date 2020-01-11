@@ -11,8 +11,6 @@ object ViewCompat : Declaration(Common) {
     override val attributeSet: AttributeSet
         get() = emptyMap()
 
-    private val OTHER_ATTRS_KEY: String = ViewCompat::class.java.name
-
     override fun onBind(
             rawAttrs: Map<String, String>?,
             pageContext: PageContext,
@@ -22,8 +20,8 @@ object ViewCompat : Declaration(Common) {
         if (!rawAttrs.isNullOrEmpty()) {
             val otherRawAttrs = HashMap(rawAttrs)
             otherRawAttrs.keys.removeAll(attrs.keys)
-            attrs = HashMap(attrs).apply {
-                this[OTHER_ATTRS_KEY] = otherRawAttrs to data
+            if (otherRawAttrs.isNotEmpty()) {
+                attrs = AttrsMap(attrs, data, otherRawAttrs)
             }
         }
         return attrs
@@ -56,11 +54,20 @@ object ViewCompat : Declaration(Common) {
             c: Context,
             map: Map<String, Any>
     ): android.util.AttributeSet {
-        val (attrs, data) = map
-                .getValue(OTHER_ATTRS_KEY)
-                as Pair<HashMap<String, String>, PropsELContext>
-        return AndroidAttributeSet(c, attrs, data)
+        val attributesMap = map
+                as AttrsMap<String, Any>
+        return AndroidAttributeSet(
+                c,
+                attributesMap.other,
+                attributesMap.data
+        )
     }
+
+    private class AttrsMap<K, V>(
+            private val target: Map<K, V>,
+            val data: PropsELContext,
+            val other: Map<String, String>
+    ) : Map<K, V> by target
 
     private class AndroidAttributeSet(
             private val c: Context,
