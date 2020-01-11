@@ -83,6 +83,14 @@ typealias Factory = (
         other: Any
 ) -> Any
 
+
+internal class ExtraMap<K, V, T>(
+        private val target: Map<K, V>,
+        val extra: T
+) : Map<K, V> by target
+
+internal typealias ViewCompatExtra = ExtraMap<String, Any, Pair<Map<String, String>, PropsELContext>>
+
 typealias ToWidget = Pair<Declaration, Factory?>
 
 internal fun ToWidget.toWidget(
@@ -105,4 +113,4 @@ internal fun ToWidget.toWidget(
     )
 }
 
-internal typealias EventHandler<T> = (T) -> Unit
+typealias EventHandler<T> = (T) -> Unit
