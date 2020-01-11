@@ -76,7 +76,7 @@ internal class Registry {
         get() = _value
 }
 
-internal typealias Factory = (
+typealias Factory = (
         visibility: Boolean,
         attrs: Map<String, Any>,
         children: List<Any>,
