@@ -8,9 +8,9 @@ abstract class Declaration(
         private val parent: Declaration? = null
 ) {
 
-    protected abstract val attributeSet: AttributeSet
+    internal abstract val attributeSet: AttributeSet
 
-    operator fun get(name: String): AttributeInfo<*>? {
+    internal operator fun get(name: String): AttributeInfo<*>? {
         val v = attributeSet[name]
         if (v != null) {
             return v
@@ -21,16 +21,16 @@ abstract class Declaration(
         return null
     }
 
-    fun bindAttrs(
-            attrs: Map<String, String>?,
+    open fun onBind(
+            rawAttrs: Map<String, String>?,
             pageContext: PageContext,
             data: PropsELContext
     ): Map<String, Any> {
-        return if (attrs.isNullOrEmpty()) {
+        return if (rawAttrs.isNullOrEmpty()) {
             emptyMap()
         } else {
-            HashMap<String, Any>(attrs.size).also {
-                for ((key, raw) in attrs) {
+            HashMap<String, Any>(rawAttrs.size).also {
+                for ((key, raw) in rawAttrs) {
                     val result = this[key]?.cast(pageContext, data, raw)
                     if (result != null) {
                         it[key] = result
@@ -40,23 +40,52 @@ abstract class Declaration(
         }
     }
 
-    internal open fun transform(
+    open fun onBuild(
             bindings: BuildUtils,
-            template: TemplateNode,
+            attrs: Map<String, Any>,
+            children: List<TemplateNode>,
             factory: Factory?,
             pageContext: PageContext,
             data: PropsELContext,
             upperVisibility: Boolean,
             other: Any
     ): List<Any> {
-        return parent?.transform(
+        return parent?.onBuild(
                 bindings,
-                template,
+                attrs,
+                children,
                 factory,
                 pageContext,
                 data,
                 upperVisibility,
                 other
         ) ?: throw UnsupportedOperationException()
+    }
+
+    fun transform(
+            bindings: BuildUtils,
+            rawAttrs: Map<String, String>,
+            children: List<TemplateNode>,
+            factory: Factory?,
+            pageContext: PageContext,
+            data: PropsELContext,
+            upperVisibility: Boolean,
+            other: Any
+    ): List<Any> {
+        val attrs = onBind(
+                rawAttrs,
+                pageContext,
+                data
+        )
+        return onBuild(
+                bindings,
+                attrs,
+                children,
+                factory,
+                pageContext,
+                data,
+                upperVisibility,
+                other
+        )
     }
 }

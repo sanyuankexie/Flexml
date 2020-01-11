@@ -4,13 +4,15 @@ import com.guet.flexbox.PageContext
 import com.guet.flexbox.TemplateNode
 import com.guet.flexbox.el.PropsELContext
 
-internal object When : Declaration() {
+object When : Declaration() {
+
     override val attributeSet: AttributeSet
         get() = emptyMap()
 
-    override fun transform(
+    override fun onBuild(
             bindings: BuildUtils,
-            template: TemplateNode,
+            attrs: Map<String, Any>,
+            children: List<TemplateNode>,
             factory: Factory?,
             pageContext: PageContext,
             data: PropsELContext,
@@ -18,14 +20,13 @@ internal object When : Declaration() {
             other: Any
     ): List<Any> {
         var elseItem: TemplateNode? = null
-        val children = template.children
         if (children.isNullOrEmpty()) {
             return emptyList()
         }
         for (item in children) {
             if (item.type == "case") {
                 val itemAttrs = item.attrs
-                if (itemAttrs != null && If.bindAttrs(
+                if (itemAttrs != null && If.onBind(
                                 itemAttrs,
                                 pageContext,
                                 data

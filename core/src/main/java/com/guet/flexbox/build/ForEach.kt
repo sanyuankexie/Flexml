@@ -5,7 +5,7 @@ import com.guet.flexbox.TemplateNode
 import com.guet.flexbox.el.PropsELContext
 import com.guet.flexbox.el.scope
 
-internal object ForEach : Declaration() {
+object ForEach : Declaration() {
 
     override val attributeSet: AttributeSet by create {
         text("var")
@@ -14,24 +14,16 @@ internal object ForEach : Declaration() {
         }
     }
 
-    override fun transform(
+    override fun onBuild(
             bindings: BuildUtils,
-            template: TemplateNode,
+            attrs: Map<String, Any>,
+            children: List<TemplateNode>,
             factory: Factory?,
             pageContext: PageContext,
             data: PropsELContext,
             upperVisibility: Boolean,
             other: Any
     ): List<Any> {
-        val children = template.children
-        if (children.isNullOrEmpty()) {
-            return emptyList()
-        }
-        val attrs = bindAttrs(
-                template.attrs,
-                pageContext,
-                data
-        )
         val name = attrs.getValue("var") as String
         @Suppress("UNCHECKED_CAST")
         val items = attrs.getValue("items") as List<Any>

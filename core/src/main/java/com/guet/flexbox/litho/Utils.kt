@@ -38,7 +38,7 @@ internal class Registry<C : Component.Builder<*>> {
         get() = _value
 }
 
-typealias Assignment<C, V> = C.(display: Boolean, other: Map<String, Any>, value: V) -> Unit
+internal typealias Assignment<C, V> = C.(display: Boolean, other: Map<String, Any>, value: V) -> Unit
 
 private val orientations: Map<String, GradientDrawable.Orientation> = mapOf(
         "t2b" to GradientDrawable.Orientation.TOP_BOTTOM,

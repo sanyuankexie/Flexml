@@ -4,7 +4,6 @@ import android.content.Context
 import android.net.Uri
 import com.guet.flexbox.PageContext
 import com.guet.flexbox.TemplateNode
-import com.guet.flexbox.Visibility
 import com.guet.flexbox.el.PropsELContext
 
 object ViewCompat : Declaration(Common) {
@@ -14,30 +13,12 @@ object ViewCompat : Declaration(Common) {
 
     private val OTHER_ATTRS_KEY: String = ViewCompat::class.java.name
 
-    override fun transform(
-            bindings: BuildUtils,
-            template: TemplateNode,
-            factory: Factory?,
+    override fun onBind(
+            rawAttrs: Map<String, String>?,
             pageContext: PageContext,
-            data: PropsELContext,
-            upperVisibility: Boolean,
-            other: Any
-    ): List<Any> {
-        if (factory == null) {
-            return emptyList()
-        }
-        val type = template.type
-        val rawAttrs = template.attrs
-        var attrs = if (rawAttrs != null) {
-            bindAttrs(rawAttrs, pageContext, data)
-        } else {
-            emptyMap()
-        }
-        val selfVisibility = attrs["visibility"] ?: Visibility.VISIBLE
-        if (selfVisibility == Visibility.GONE) {
-            return emptyList()
-        }
-        val visibility = selfVisibility == Visibility.VISIBLE && upperVisibility
+            data: PropsELContext
+    ): Map<String, Any> {
+        var attrs = super.onBind(rawAttrs, pageContext, data)
         if (!rawAttrs.isNullOrEmpty()) {
             val otherRawAttrs = HashMap(rawAttrs)
             otherRawAttrs.keys.removeAll(attrs.keys)
@@ -45,28 +26,47 @@ object ViewCompat : Declaration(Common) {
                 this[OTHER_ATTRS_KEY] = otherRawAttrs to data
             }
         }
-        return listOf(factory.invoke(
-                type,
-                visibility,
+        return attrs
+    }
+
+    override fun onBuild(
+            bindings: BuildUtils,
+            attrs: Map<String, Any>,
+            children: List<TemplateNode>,
+            factory: Factory?,
+            pageContext: PageContext,
+            data: PropsELContext,
+            upperVisibility: Boolean,
+            other: Any
+    ): List<Any> {
+        return super.onBuild(
+                bindings,
                 attrs,
                 emptyList(),
+                factory,
+                pageContext,
+                data,
+                upperVisibility,
                 other
-        ))
+        )
     }
 
     @Suppress("UNCHECKED_CAST")
-    fun obtainAttributes(c: Context, map: Map<String, Any>): android.util.AttributeSet {
+    fun obtainAttributes(
+            c: Context,
+            map: Map<String, Any>
+    ): android.util.AttributeSet {
         val (attrs, data) = map
                 .getValue(OTHER_ATTRS_KEY)
                 as Pair<HashMap<String, String>, PropsELContext>
         return AndroidAttributeSet(c, attrs, data)
     }
 
-    private class AndroidAttributeSet internal constructor(
+    private class AndroidAttributeSet(
             private val c: Context,
             private val attrs: Map<String, String>,
-            private val data: PropsELContext
-    ) : android.util.AttributeSet {
+            private val data: PropsELContext)
+        : android.util.AttributeSet {
 
         private val indices = attrs.keys.toTypedArray()
 

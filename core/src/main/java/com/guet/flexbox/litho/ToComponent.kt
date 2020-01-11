@@ -36,14 +36,12 @@ internal abstract class ToComponent<C : Component.Builder<*>>(
 
     @Suppress("UNCHECKED_CAST")
     override fun invoke(
-            type: String,
             visibility: Boolean,
             attrs: Map<String, Any>,
             children: List<Any>,
             other: Any
     ): Any = toComponent(
             other as ComponentContext,
-            type,
             visibility,
             attrs,
             children as List<Component>
@@ -51,7 +49,6 @@ internal abstract class ToComponent<C : Component.Builder<*>>(
 
     private fun toComponent(
             c: ComponentContext,
-            type: String,
             visibility: Boolean,
             attrs: Map<String, Any>,
             children: List<Component>

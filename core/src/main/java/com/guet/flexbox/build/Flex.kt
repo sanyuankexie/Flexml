@@ -5,7 +5,7 @@ import com.facebook.yoga.YogaFlexDirection
 import com.facebook.yoga.YogaJustify
 import com.facebook.yoga.YogaWrap
 
-internal object Flex : Declaration(Common) {
+object Flex : Declaration(Common) {
     override val attributeSet: AttributeSet by create {
         enum("flexWrap", mapOf(
                 "wrap" to YogaWrap.WRAP,

@@ -4,22 +4,24 @@ import com.guet.flexbox.PageContext
 import com.guet.flexbox.TemplateNode
 import com.guet.flexbox.el.PropsELContext
 
-internal object Empty : Declaration(Common) {
+object Empty : Declaration(Common) {
     override val attributeSet: AttributeSet
         get() = emptyMap()
 
-    override fun transform(
+    override fun onBuild(
             bindings: BuildUtils,
-            template: TemplateNode,
+            attrs: Map<String, Any>,
+            children: List<TemplateNode>,
             factory: Factory?,
             pageContext: PageContext,
             data: PropsELContext,
             upperVisibility: Boolean,
             other: Any
     ): List<Any> {
-        return super.transform(
+        return super.onBuild(
                 bindings,
-                template,
+                attrs,
+                children,
                 factory,
                 pageContext,
                 data,

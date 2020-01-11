@@ -8,7 +8,7 @@ import com.guet.flexbox.el.PropsELContext
 internal inline val CharSequence.isExpr: Boolean
     get() = length > 3 && startsWith("\${") && endsWith('}')
 
-typealias AttributeSet = Map<String, AttributeInfo<*>>
+internal typealias AttributeSet = Map<String, AttributeInfo<*>>
 
 internal inline fun create(crossinline action: Registry.() -> Unit): Lazy<AttributeSet> {
     return lazy {
@@ -19,7 +19,7 @@ internal inline fun create(crossinline action: Registry.() -> Unit): Lazy<Attrib
 internal class Registry {
     private val _value = HashMap<String, AttributeInfo<*>>()
 
-    internal fun text(
+    fun text(
             name: String,
             scope: (Map<String, String>) = emptyMap(),
             fallback: String = ""
@@ -27,7 +27,7 @@ internal class Registry {
         _value[name] = TextAttribute(scope, fallback)
     }
 
-    internal fun bool(
+    fun bool(
             name: String,
             scope: Map<String, Boolean> = emptyMap(),
             fallback: Boolean = false
@@ -35,7 +35,7 @@ internal class Registry {
         _value[name] = BoolAttribute(scope, fallback)
     }
 
-    internal fun value(
+    fun value(
             name: String,
             scope: Map<String, Double> = emptyMap(),
             fallback: Double = 0.0
@@ -43,7 +43,7 @@ internal class Registry {
         _value[name] = ValueAttribute(scope, fallback)
     }
 
-    internal fun color(
+    fun color(
             name: String,
             scope: Map<String, Int> = emptyMap(),
             fallback: Int = Color.TRANSPARENT
@@ -51,7 +51,7 @@ internal class Registry {
         _value[name] = ColorAttribute(scope, fallback)
     }
 
-    internal inline fun <reified V : Enum<V>> enum(
+    inline fun <reified V : Enum<V>> enum(
             name: String,
             scope: Map<String, V>,
             fallback: V = enumValues<V>().first()
@@ -59,7 +59,7 @@ internal class Registry {
         _value[name] = EnumAttribute(scope, fallback)
     }
 
-    internal inline fun <T : Any> typed(
+    inline fun <T : Any> typed(
             name: String,
             scope: (Map<String, T>) = emptyMap(),
             fallback: T? = null,
@@ -77,7 +77,6 @@ internal class Registry {
 }
 
 internal typealias Factory = (
-        type: String,
         visibility: Boolean,
         attrs: Map<String, Any>,
         children: List<Any>,
@@ -96,7 +95,8 @@ internal fun ToWidget.toWidget(
 ): List<Any> {
     return first.transform(
             bindings,
-            template,
+            template.attrs ?: emptyMap(),
+            template.children ?: emptyList(),
             second,
             pageContext,
             data,
@@ -105,4 +105,4 @@ internal fun ToWidget.toWidget(
     )
 }
 
-typealias EventHandler<T> = (T) -> Unit
+internal typealias EventHandler<T> = (T) -> Unit

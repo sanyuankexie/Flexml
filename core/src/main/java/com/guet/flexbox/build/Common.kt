@@ -12,7 +12,7 @@ import com.guet.flexbox.el.scope
 import com.guet.flexbox.litho.LithoEventHandler
 import java.util.*
 
-internal object Common : Declaration() {
+object Common : Declaration() {
 
     override val attributeSet: AttributeSet by create {
         enum("visibility", mapOf(
@@ -68,9 +68,10 @@ internal object Common : Declaration() {
         }
     }
 
-    override fun transform(
+    override fun onBuild(
             bindings: BuildUtils,
-            template: TemplateNode,
+            attrs: Map<String, Any>,
+            children: List<TemplateNode>,
             factory: Factory?,
             pageContext: PageContext,
             data: PropsELContext,
@@ -80,14 +81,6 @@ internal object Common : Declaration() {
         if (factory == null) {
             return emptyList()
         }
-        val type = template.type
-        val rawAttrs = template.attrs
-        val attrs = if (rawAttrs != null) {
-            bindAttrs(rawAttrs, pageContext, data)
-        } else {
-            emptyMap()
-        }
-        val children = template.children ?: emptyList()
         val selfVisibility = attrs["visibility"] ?: Visibility.VISIBLE
         if (selfVisibility == Visibility.GONE) {
             return emptyList()
@@ -107,7 +100,6 @@ internal object Common : Declaration() {
             }.flatten()
         }
         return listOf(factory.invoke(
-                type,
                 visibility,
                 attrs,
                 childrenComponent,
