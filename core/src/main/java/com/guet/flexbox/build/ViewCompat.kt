@@ -60,11 +60,4 @@ object ViewCompat : Declaration(Common) {
                 data
         )
     }
-
-    private class DataTransfer<K, V>(
-            private val target: Map<K, V>,
-            val data: PropsELContext,
-            val other: Map<String, String>
-    ) : Map<K, V> by target
-
 }
