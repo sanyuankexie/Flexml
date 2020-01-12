@@ -7,7 +7,6 @@ import androidx.annotation.WorkerThread
 import com.facebook.litho.Component
 import com.facebook.litho.ComponentContext
 import com.guet.flexbox.EventBridge
-import com.guet.flexbox.FakePageContext
 import com.guet.flexbox.TemplateNode
 import com.guet.flexbox.build.*
 import com.guet.flexbox.build.Common
@@ -25,11 +24,10 @@ object LithoBuildUtils : BuildUtils() {
     ): Page {
         val componentContext = ComponentContext(c)
         val eventBridge = EventBridge()
-        val proxy = FakePageContext(eventBridge)
         val elContext = PropsELContext(data)
         val com = bindNode(
                 templateNode,
-                proxy,
+                eventBridge,
                 elContext,
                 true,
                 componentContext

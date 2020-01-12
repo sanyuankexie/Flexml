@@ -2,10 +2,7 @@ package com.guet.flexbox.build
 
 import com.facebook.litho.ClickEvent
 import com.facebook.yoga.YogaAlign
-import com.guet.flexbox.JoinPageContext
-import com.guet.flexbox.PageContext
-import com.guet.flexbox.TemplateNode
-import com.guet.flexbox.Visibility
+import com.guet.flexbox.*
 import com.guet.flexbox.el.LambdaExpression
 import com.guet.flexbox.el.PropsELContext
 import com.guet.flexbox.el.scope
@@ -61,7 +58,10 @@ object Common : Declaration() {
                     elContext.scope(Collections.singletonMap(
                             "pageContext", JoinPageContext(pageContext, event.view)
                     )) {
-                        executable.invoke(elContext)
+                        val transaction = executable.invoke(elContext) as? ComposeOperation
+                        if (transaction != null) {
+
+                        }
                     }
                 }
             }
