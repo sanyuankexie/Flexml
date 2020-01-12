@@ -2,51 +2,49 @@ package com.guet.flexbox.litho
 
 import android.content.Context
 import android.view.View
-import android.view.ViewGroup
+import com.facebook.litho.Component
 import com.facebook.litho.ComponentContext
-import com.facebook.litho.ViewCompatComponent
-import com.facebook.litho.viewcompat.SimpleViewBinder
-import com.facebook.litho.viewcompat.ViewCreator
 import com.guet.flexbox.build.ViewCompat
 import java.lang.reflect.Constructor
+import com.guet.flexbox.litho.widget.ViewCompat as LithoViewCompat
 
 internal class ToViewCompat(
         viewType: Class<out View>
-) : ToComponent<ViewCompatComponent.Builder<View>>(Common) {
+) : ToComponent<LithoViewCompat.Builder>(Common) {
 
     private val name = viewType.name
 
-    private val constructor: Constructor<*> = viewType.getConstructor(
+    private val constructor: Constructor<out View> = viewType.getConstructor(
             Context::class.java,
             android.util.AttributeSet::class.java
     )
 
-    override val attributeSet: AttributeSet<ViewCompatComponent.Builder<View>>
+    override val attributeSet: AttributeSet<LithoViewCompat.Builder>
         get() = emptyMap()
+
 
     override fun create(
             c: ComponentContext,
             visibility: Boolean,
             attrs: Map<String, Any>
-    ): ViewCompatComponent.Builder<View> {
-        val attributeSet = ViewCompat.obtainAttributes(c.androidContext, attrs)
-        val creator = ReflectViewCreator(
-                constructor,
-                attributeSet
+    ): LithoViewCompat.Builder {
+        val attributeSet = ViewCompat.obtainAttributes(
+                c.androidContext,
+                attrs
         )
-        return ViewCompatComponent.get(creator, name)
-                .create(c)
-                .viewBinder(NoOpViewBinder)
+        @Suppress("UNCHECKED_CAST")
+        return LithoViewCompat.create(c)
+                .attrs(attributeSet)
+                .name(name)
+                .constructor(constructor as Constructor<View>)
     }
 
-    private class ReflectViewCreator(
-            private val constructor: Constructor<*>,
-            private val attributeSet: android.util.AttributeSet
-    ) : ViewCreator<View> {
-        override fun createView(c: Context, parent: ViewGroup?): View {
-            return (constructor.newInstance(c, attributeSet) as View)
-        }
+    override fun onInstallChildren(
+            owner: LithoViewCompat.Builder,
+            visibility: Boolean,
+            attrs: Map<String, Any>,
+            children: List<Component>
+    ) {
+        owner.children(children)
     }
-
-    companion object NoOpViewBinder : SimpleViewBinder<View>()
 }

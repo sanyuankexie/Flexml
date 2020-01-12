@@ -3,7 +3,6 @@ package com.guet.flexbox.build
 import android.content.Context
 import android.util.ArrayMap
 import com.guet.flexbox.PageContext
-import com.guet.flexbox.TemplateNode
 import com.guet.flexbox.el.PropsELContext
 
 object ViewCompat : Declaration(Common) {
@@ -26,28 +25,6 @@ object ViewCompat : Declaration(Common) {
             }
         }
         return attrs
-    }
-
-    override fun onBuild(
-            bindings: BuildUtils,
-            attrs: Map<String, Any>,
-            children: List<TemplateNode>,
-            factory: Factory?,
-            pageContext: PageContext,
-            data: PropsELContext,
-            upperVisibility: Boolean,
-            other: Any
-    ): List<Any> {
-        return super.onBuild(
-                bindings,
-                attrs,
-                emptyList(),
-                factory,
-                pageContext,
-                data,
-                upperVisibility,
-                other
-        )
     }
 
     @Suppress("UNCHECKED_CAST")

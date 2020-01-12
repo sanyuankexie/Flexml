@@ -22,7 +22,7 @@ object BannerSpec {
     private val mainThread = Handler(Looper.getMainLooper())
 
     @OnCreateLayout
-    fun onCreateLayoutWithSizeSpec(
+    fun onCreateLayout(
             c: ComponentContext,
             @Prop(optional = true) timeSpan: Long,
             @Prop(optional = true) isCircular: Boolean,
