@@ -6,7 +6,7 @@ import androidx.annotation.WorkerThread
 import com.google.gson.Gson
 import com.guet.flexbox.TemplateNode
 import com.guet.flexbox.litho.LithoBuildUtils
-import com.guet.flexbox.litho.Page
+import com.guet.flexbox.litho.PreloadPage
 import com.guet.flexbox.playground.R
 import java.io.FileNotFoundException
 import kotlin.random.Random.Default
@@ -43,7 +43,7 @@ object AppBundle {
 
 
     @WorkerThread
-    fun loadMoreFeedItem(c: Context, count: Int): List<Page> {
+    fun loadMoreFeedItem(c: Context, count: Int): List<PreloadPage> {
         try {
             val url = ImageService.random.get().execute().body()?.imgurl
             if (!url.isNullOrEmpty()) {
@@ -121,7 +121,7 @@ object AppBundle {
     }
 
     @WorkerThread
-    fun loadPage(c: Context, url: String, data: (Map<String, Any>) = emptyMap()): Page {
+    fun loadPage(c: Context, url: String, data: (Map<String, Any>) = emptyMap()): PreloadPage {
         val template = loadTemplateNode(c, url)
         val dataSource = loadDataSource(c, url)
         return LithoBuildUtils.preload(c, template, HashMap(dataSource).apply {

@@ -12,9 +12,9 @@ import androidx.core.app.ActivityOptionsCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.blankj.utilcode.util.NetworkUtils
 import com.guet.flexbox.litho.HostingView
-import com.guet.flexbox.litho.Page
-import com.guet.flexbox.playground.model.Homepage
+import com.guet.flexbox.litho.PreloadPage
 import com.guet.flexbox.playground.model.AppBundle
+import com.guet.flexbox.playground.model.Homepage
 import com.guet.flexbox.playground.widget.BannerAdapter
 import com.guet.flexbox.playground.widget.FlexBoxAdapter
 import com.guet.flexbox.playground.widget.PullToRefreshLayout
@@ -32,7 +32,7 @@ class MainActivity : AppCompatActivity(), HostingView.EventListener {
     private val loaded = AtomicBoolean(false)
     private lateinit var pullToRefresh: PullToRefreshLayout
     private lateinit var floatToolbar: LinearLayout
-    private lateinit var banner: MZBannerView<Page>
+    private lateinit var banner: MZBannerView<PreloadPage>
     private lateinit var feed: RecyclerView
     private lateinit var function: HostingView
     private val homepageInfo: Homepage by AppBundle.waitHomepage()
@@ -138,7 +138,7 @@ class MainActivity : AppCompatActivity(), HostingView.EventListener {
         function.setContentAsync(homepageInfo.function)
     }
 
-    private fun ensurePageCount(pages: List<Page>): List<Page> {
+    private fun ensurePageCount(pages: List<PreloadPage>): List<PreloadPage> {
         return pages.let {
             return@let when (it.size) {
                 1 -> {
@@ -177,7 +177,7 @@ class MainActivity : AppCompatActivity(), HostingView.EventListener {
         startActivityForResult(intent, REQUEST_CODE)
     }
 
-    override fun handleEvent(host: HostingView, key: String, value: Array<out Any>) {
+    override fun handleEvent(host: HostingView, key: String, value: Array<out Any?>) {
         handleEvent(host, key)
     }
 

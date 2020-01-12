@@ -19,7 +19,7 @@ import com.google.android.material.appbar.AppBarLayout;
 import com.guet.flexbox.TemplateNode;
 import com.guet.flexbox.litho.LithoBuildUtils;
 import com.guet.flexbox.litho.HostingView;
-import com.guet.flexbox.litho.Page;
+import com.guet.flexbox.litho.PreloadPage;
 import com.guet.flexbox.playground.model.MockService;
 import com.guet.flexbox.playground.widget.QuickHandler;
 
@@ -64,7 +64,7 @@ public class OverviewActivity
     private QuickHandler mNetwork = new QuickHandler("network");
     private MockService mMockService;
     private ArrayAdapter<String> mAdapter;
-    private Page mLayout;
+    private PreloadPage mLayout;
     private Runnable mReload = new Runnable() {
         @WorkerThread
         @Override

@@ -18,8 +18,8 @@ import android.widget.FrameLayout
 import android.widget.PopupWindow
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
-import com.guet.flexbox.litho.LithoBuildUtils
 import com.guet.flexbox.litho.HostingView
+import com.guet.flexbox.litho.LithoBuildUtils
 import com.guet.flexbox.playground.model.Compiler
 import java.util.*
 import kotlin.collections.HashSet
@@ -158,7 +158,7 @@ class SearchActivity : AppCompatActivity(), HostingView.EventListener {
         finish()
     }
 
-    override fun handleEvent(host: HostingView, key: String, value: Array<out Any>) {
+    override fun handleEvent(host: HostingView, key: String, value: Array<out Any?>) {
         handleEvent(key)
     }
 }

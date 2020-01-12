@@ -21,7 +21,7 @@ object LithoBuildUtils : BuildUtils() {
             c: Context,
             templateNode: TemplateNode,
             data: Any? = null
-    ): Page {
+    ): PreloadPage {
         val componentContext = ComponentContext(c)
         val eventBridge = EventBridge()
         val elContext = PropsELContext(data)
@@ -31,8 +31,8 @@ object LithoBuildUtils : BuildUtils() {
                 elContext,
                 true,
                 componentContext
-        ).single()
-        return Page(com as Component, eventBridge)
+        ).single() as Component
+        return PreloadPage(templateNode, com, eventBridge)
     }
 
 

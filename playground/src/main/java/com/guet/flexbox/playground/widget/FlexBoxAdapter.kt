@@ -4,15 +4,15 @@ import android.view.View
 import com.chad.library.adapter.base.BaseQuickAdapter
 import com.chad.library.adapter.base.BaseViewHolder
 import com.guet.flexbox.litho.HostingView
-import com.guet.flexbox.litho.Page
+import com.guet.flexbox.litho.PreloadPage
 import com.guet.flexbox.playground.R
 
 
 class FlexBoxAdapter(
         private val onClick: (v: View, url: String) -> Unit
-) : BaseQuickAdapter<Page, BaseViewHolder>(R.layout.feed_item), HostingView.EventListener {
+) : BaseQuickAdapter<PreloadPage, BaseViewHolder>(R.layout.feed_item), HostingView.EventListener {
 
-    override fun handleEvent(host: HostingView, key: String, value: Array<out Any>) {
+    override fun handleEvent(host: HostingView, key: String, value: Array<out Any?>) {
         onClick(host, key)
     }
 
@@ -21,7 +21,7 @@ class FlexBoxAdapter(
         lithoView?.unmountAllItems()
     }
 
-    override fun convert(helper: BaseViewHolder, item: Page) {
+    override fun convert(helper: BaseViewHolder, item: PreloadPage) {
         val lithoView = helper.getView<HostingView>(R.id.litho)
         lithoView.setEventHandler(this)
         lithoView.setContentAsync(item)

@@ -19,7 +19,9 @@ object TextInput : Declaration(AbstractText) {
                     elContext.scope(Collections.singletonMap(
                             "pageContext", JoinPageContext(pageContext, event.view, event.text)
                     )) {
-                        executable.invoke(elContext, event.text)
+                        @Suppress("UNCHECKED_CAST")
+                        (executable.invoke(elContext, event.text) as? (PropsELContext) -> Unit)
+                                ?.invoke(elContext)
                     }
                 }
             }

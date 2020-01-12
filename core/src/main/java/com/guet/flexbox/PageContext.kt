@@ -1,25 +1,27 @@
 package com.guet.flexbox
 
+import com.guet.flexbox.transaction.HttpTransaction
+import com.guet.flexbox.transaction.RefreshTransaction
 import java.lang.ref.WeakReference
 
-interface PageContext {
-    fun send(key: String, vararg data: Any?)
+abstract class PageContext {
+    abstract fun send(key: String, vararg data: Any?)
 
-    fun http(url: String): HttpTransaction?
+    abstract fun http(): HttpTransaction?
 
-    fun refresh(): RefreshTransaction?
+    abstract fun refresh(): RefreshTransaction?
 }
 
-internal abstract class ProxyContext : PageContext {
+internal abstract class ProxyContext : PageContext() {
 
-    protected abstract var target: PageContext?
+    internal abstract var target: PageContext?
 
     override fun send(key: String, vararg data: Any?) {
         target?.send(key, data)
     }
 
-    override fun http(url: String): HttpTransaction? {
-        return target?.http(url)
+    override fun http(): HttpTransaction? {
+        return target?.http()
     }
 
     override fun refresh(): RefreshTransaction? {

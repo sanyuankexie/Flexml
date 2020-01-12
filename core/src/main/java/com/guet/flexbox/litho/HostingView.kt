@@ -11,16 +11,79 @@ import com.facebook.litho.config.ComponentsConfiguration
 import com.guet.flexbox.PageContext
 import com.guet.flexbox.TemplateNode
 import com.guet.flexbox.el.PropsELContext
+import com.guet.flexbox.transaction.HttpTransaction
+import com.guet.flexbox.transaction.RefreshTransaction
 
 class HostingView @JvmOverloads constructor(
         context: Context, attrs: AttributeSet? = null
 ) : LithoView(context, attrs) {
 
-    private val pageContext = object : PageContext() {
-        override fun send(key: String, vararg data: Any) {
+    private val pageContext = HostingContext()
+
+    private inner class HostingContext : PageContext() {
+
+        override fun send(key: String, vararg data: Any?) {
             _eventListener?.handleEvent(this@HostingView, key, data)
         }
+
+        override fun http(): HttpTransaction? {
+            return HostingHttpTransaction()
+        }
+
+        override fun refresh(): RefreshTransaction? {
+            return HostingRefreshTransaction()
+        }
     }
+
+    private inner class HostingRefreshTransaction : RefreshTransaction() {
+        override fun commit(): (PropsELContext) -> Unit {
+            return { elContext ->
+                val node = template
+                if (node != null) {
+                    runs.forEach {
+                        it.invoke(elContext)
+                    }
+                    setContentAsync(node, elContext)
+                }
+            }
+        }
+    }
+
+    private inner class HostingHttpTransaction : HttpTransaction() {
+        override fun commit(): (PropsELContext) -> Unit {
+            return { elContext ->
+                val node = template
+                val http = _httpClient
+                val success = success
+                val error = error
+                if (node != null && http != null) {
+                    http.enqueue(
+                            url!!,
+                            method!!,
+                            prams,
+                            {
+                                if (success != null) {
+                                    post {
+                                        success.invoke(elContext)
+                                    }
+                                }
+                            },
+                            {
+                                if (error != null) {
+                                    post {
+                                        error.invoke(elContext)
+                                    }
+                                }
+                            }
+                    )
+                }
+            }
+        }
+    }
+
+    private var template: TemplateNode? = null
+
+    private var _httpClient: HttpClient? = null
 
     private var _onDirtyMountListener: OnDirtyMountListener? = null
 
@@ -29,7 +92,7 @@ class HostingView @JvmOverloads constructor(
     init {
         componentTree = ComponentTree.create(componentContext)
                 .isReconciliationEnabled(false)
-                .layoutThreadHandler(Companion)
+                .layoutThreadHandler(Asynchronous)
                 .build()
         super.setOnDirtyMountListener { view ->
             this.performIncrementalMount(
@@ -39,8 +102,12 @@ class HostingView @JvmOverloads constructor(
         }
     }
 
-    fun setEventHandler(eventListener: EventListener) {
+    fun setEventHandler(eventListener: EventListener?) {
         _eventListener = eventListener
+    }
+
+    fun setHttpClient(httpClient: HttpClient?) {
+        _httpClient = httpClient
     }
 
     override fun setOnDirtyMountListener(onDirtyMountListener: OnDirtyMountListener?) {
@@ -53,8 +120,9 @@ class HostingView @JvmOverloads constructor(
     }
 
     @MainThread
-    fun setContentAsync(page: Page) {
+    fun setContentAsync(page: PreloadPage) {
         ThreadUtils.assertMainThread()
+        template = page.template
         page.eventBridge.target = pageContext
         componentTree?.setRootAndSizeSpecAsync(page.component,
                 SizeSpec.makeSizeSpec(measuredWidth, SizeSpec.EXACTLY),
@@ -67,40 +135,70 @@ class HostingView @JvmOverloads constructor(
     @MainThread
     fun setContentAsync(node: TemplateNode, data: Any?) {
         ThreadUtils.assertMainThread()
-        val tree = componentTree ?: return
-        val c = componentContext
-        val height = layoutParams?.width ?: 0
-        val mH = measuredHeight
-        val mW = measuredWidth
-        Companion.post {
-            val elContext = PropsELContext(data)
-            val component = LithoBuildUtils.bindNode(
-                    node,
-                    pageContext,
-                    elContext,
-                    true,
-                    c
-            ).single()
-            tree.setRootAndSizeSpec(component as Component,
-                    SizeSpec.makeSizeSpec(mW, SizeSpec.EXACTLY),
-                    when (height) {
-                        LayoutParams.WRAP_CONTENT -> SizeSpec.makeSizeSpec(0, SizeSpec.UNSPECIFIED)
-                        else -> SizeSpec.makeSizeSpec(mH, SizeSpec.EXACTLY)
-                    })
+        val elContext = PropsELContext(data)
+        template = node
+        setContentAsync(node, elContext)
+    }
+
+    private fun setContentAsync(
+            node: TemplateNode,
+            elContext: PropsELContext
+    ) {
+        val tree = componentTree
+        if (tree != null) {
+            val c = componentContext
+            val height = layoutParams?.width ?: 0
+            val mH = measuredHeight
+            val mW = measuredWidth
+            Asynchronous.post {
+                val component = LithoBuildUtils.bindNode(
+                        node,
+                        pageContext,
+                        elContext,
+                        true,
+                        c
+                ).single()
+                tree.setRootAndSizeSpec(
+                        component as Component,
+                        SizeSpec.makeSizeSpec(mW, SizeSpec.EXACTLY),
+                        when (height) {
+                            LayoutParams.WRAP_CONTENT ->
+                                SizeSpec.makeSizeSpec(
+                                        0,
+                                        SizeSpec.UNSPECIFIED
+                                )
+                            else ->
+                                SizeSpec.makeSizeSpec(
+                                        mH,
+                                        SizeSpec.EXACTLY
+                                )
+                        })
+            }
         }
     }
 
     interface EventListener {
-        fun handleEvent(host: HostingView, key: String, value: Array<out Any>)
+        fun handleEvent(host: HostingView, key: String, value: Array<out Any?>)
     }
 
-    private companion object : Handler({
+    interface HttpClient {
+        fun enqueue(
+                url: String,
+                method: String,
+                prams: Map<String, String>,
+                success: (Any) -> Unit,
+                error: () -> Unit
+        )
+    }
+
+    private companion object Asynchronous : Handler({
         val thread = HandlerThread("WorkerThread")
         thread.start()
         thread.looper
     }()), LithoHandler {
 
         init {
+
             ComponentsConfiguration.incrementalMountWhenNotVisible = true
         }
 
