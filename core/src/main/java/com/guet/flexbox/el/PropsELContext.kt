@@ -35,22 +35,6 @@ class PropsELContext(
         standardResolver.add(jsonArray)
     }
 
-    private fun createPropELResolver(data: Any?): ELResolver? {
-        return when {
-            data is Map<*, *> && data.keys.all { it is String } -> {
-                PropsELResolver(data, map)
-            }
-            data is JSONArray -> {
-                PropsELResolver(data, jsonObject)
-            }
-            data != null -> {
-                PropsELResolver(data, bean)
-            }
-            else -> {
-                return null
-            }
-        }
-    }
 
     override fun getELResolver(): ELResolver = standardResolver
 
@@ -181,13 +165,30 @@ class PropsELContext(
         private val staticField = StaticFieldELResolver()
         private val resources = ResourceBundleELResolver()
 
+        private fun createPropELResolver(data: Any?): ELResolver? {
+            return when {
+                data is Map<*, *> && data.keys.all { it is String } -> {
+                    PropsELResolver(data, map)
+                }
+                data is JSONArray -> {
+                    PropsELResolver(data, jsonObject)
+                }
+                data != null -> {
+                    PropsELResolver(data, bean)
+                }
+                else -> {
+                    return null
+                }
+            }
+        }
+
         private val expressionFactory = ELManager.getExpressionFactory()
 
         @Suppress("UNCHECKED_CAST")
-        internal val colorMap = Collections.unmodifiableMap((Color::class.java
-                .getDeclaredField("sColorNameMap")
-                .apply { isAccessible = true }
-                .get(null) as Map<String, Int>))
+        internal val colorMap = Collections.unmodifiableMap(
+                (Color::class.java.getDeclaredField("sColorNameMap")
+                        .apply { isAccessible = true }
+                        .get(null) as Map<String, Int>))
 
         internal val functions = Functions::class.java.declaredMethods
                 .filter {

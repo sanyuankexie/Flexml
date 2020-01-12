@@ -84,12 +84,12 @@ typealias Factory = (
 ) -> Any
 
 
-internal class ExtraMap<K, V, T>(
+internal class HasExtraMap<K, V, T>(
         private val target: Map<K, V>,
         val extra: T
 ) : Map<K, V> by target
 
-internal typealias ViewCompatExtra = ExtraMap<String, Any, Pair<Map<String, String>, PropsELContext>>
+internal typealias ViewCompatExtraMap = HasExtraMap<String, Any, Pair<Map<String, String>, PropsELContext>>
 
 typealias ToWidget = Pair<Declaration, Factory?>
 

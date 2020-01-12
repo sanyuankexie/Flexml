@@ -20,7 +20,8 @@ object ViewCompat : Declaration(Common) {
             val otherRawAttrs = HashMap(rawAttrs)
             otherRawAttrs.keys.removeAll(attrs.keys)
             if (otherRawAttrs.isNotEmpty()) {
-                attrs = ViewCompatExtra(attrs, otherRawAttrs to data)
+                val extra = otherRawAttrs to data
+                attrs = ViewCompatExtraMap(attrs, extra)
             }
         }
         return attrs
@@ -53,7 +54,7 @@ object ViewCompat : Declaration(Common) {
             c: Context,
             map: Map<String, Any>
     ): android.util.AttributeSet {
-        val (other, data) = (map as ViewCompatExtra).extra
+        val (other, data) = (map as ViewCompatExtraMap).extra
         return AndroidAttributeSet(
                 c,
                 other,
