@@ -63,9 +63,16 @@
                 android:textSize="25dp" />
         </FrameLayout>
     </com.google.android.material.appbar.AppBarLayout>
-    <FrameLayout
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize">
+        <ImageView
+            android:id="@+id/go_back"
+            android:src="@drawable/go_back"
+            android:layout_marginLeft="10dp"
+            android:layout_gravity="center_vertical"
+            android:layout_width="30dp"
+            android:layout_height="30dp" />
         <com.guet.flexbox.playground.widget.MarqueeText
             android:id="@+id/title"
             android:layout_width="match_parent"
@@ -80,7 +87,7 @@
             android:singleLine="true"
             android:textColor="@android:color/white"
             android:textSize="20dp" />
-    </FrameLayout>
+    </LinearLayout>
     <androidx.core.widget.NestedScrollView
         android:id="@+id/scroll"
         android:layout_marginLeft="10dp"

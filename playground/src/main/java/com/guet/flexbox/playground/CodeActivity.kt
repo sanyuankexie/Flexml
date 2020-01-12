@@ -34,6 +34,10 @@ class CodeActivity : AppCompatActivity() {
         host = findViewById(R.id.host)
         title = findViewById(R.id.title)
         lithoView = findViewById(R.id.dynamic)
+        val back = findViewById<View>(R.id.go_back)
+        back.setOnClickListener {
+            finishAfterTransition()
+        }
         val lithoHost = findViewById<View>(R.id.lithoHost)
         appbar.addOnOffsetChangedListener(AppBarLayout.OnOffsetChangedListener { _: AppBarLayout, verticalOffset: Int ->
             lithoHost.alpha = 1f - (abs(verticalOffset.toFloat()) / lithoHost.height.toFloat())
