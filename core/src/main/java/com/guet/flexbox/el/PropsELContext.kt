@@ -156,12 +156,12 @@ class PropsELContext(
 
     private companion object {
 
-        private val array = ArrayELResolver(true)
-        private val bean = BeanELResolver(true)
-        private val map = MapELResolver(true)
-        private val list = ListELResolver(true)
-        private val jsonObject = JSONObjectELResolver(true)
-        private val jsonArray = JSONArrayELResolver(true)
+        private val array = ArrayELResolver(false)
+        private val bean = BeanELResolver(false)
+        private val map = MapELResolver(false)
+        private val list = ListELResolver(false)
+        private val jsonObject = JSONObjectELResolver(false)
+        private val jsonArray = JSONArrayELResolver(false)
         private val staticField = StaticFieldELResolver()
         private val resources = ResourceBundleELResolver()
 
