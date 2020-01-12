@@ -1,6 +1,7 @@
 package com.guet.flexbox.litho
 
 import android.content.Context
+import android.util.ArrayMap
 import android.view.View
 import androidx.annotation.WorkerThread
 import com.facebook.litho.Component
@@ -37,7 +38,7 @@ object LithoBuildUtils : BuildUtils() {
     }
 
 
-    private val widgets = HashMap<String, ToWidget>(mapOf(
+    private val widgets = ArrayMap<String, ToWidget>(mapOf(
             "Empty" to (Empty to ToEmpty),
             "Flex" to (Flex to ToFlex),
             "Banner" to (Banner to ToBanner),

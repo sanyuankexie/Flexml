@@ -2,16 +2,23 @@ package com.guet.flexbox.build
 
 import android.content.Context
 import android.net.Uri
+import android.util.ArrayMap
 import android.util.AttributeSet
 import com.guet.flexbox.el.PropsELContext
 
 internal class AndroidAttributeSet(
         private val c: Context,
-        private val attrs: Map<String, String>,
-        private val data: PropsELContext)
-    : AttributeSet {
+        attrs: Map<String, String>,
+        private val data: PropsELContext
+) : AttributeSet {
 
-    private val indices = attrs.keys.toTypedArray()
+    private val attrs: ArrayMap<String, String> = if (
+            attrs is ArrayMap<String, String>
+    ) {
+        attrs
+    } else {
+        ArrayMap(attrs)
+    }
 
     override fun getPositionDescription(): String = ""
 
@@ -42,14 +49,14 @@ internal class AndroidAttributeSet(
     }
 
     override fun getAttributeValue(index: Int): String {
-        return getAttributeValue("", indices[index])
+        return data.tryGetValue(attrs.valueAt(index)) ?: ""
     }
 
     override fun getAttributeValue(
             namespace: String?,
             name: String?
     ): String {
-        return data.tryGetValue(attrs[name])!!
+        return data.tryGetValue(attrs[name]) ?: ""
     }
 
     override fun getAttributeIntValue(
@@ -57,18 +64,14 @@ internal class AndroidAttributeSet(
             attribute: String?,
             defaultValue: Int
     ): Int {
-        return data.tryGetValue(attrs[attribute], defaultValue)!!
+        return data.tryGetValue(attrs[attribute], defaultValue) ?: 0
     }
 
     override fun getAttributeIntValue(
             index: Int,
             defaultValue: Int
     ): Int {
-        return getAttributeIntValue(
-                "",
-                indices[index],
-                defaultValue
-        )
+        return data.tryGetValue(attrs.valueAt(index), defaultValue) ?: 0
     }
 
     override fun getIdAttribute(): String = ""
@@ -83,24 +86,23 @@ internal class AndroidAttributeSet(
         return data.tryGetValue(
                 attrs[attribute],
                 defaultValue
-        )!!
+        ) ?: 0f
     }
 
     override fun getAttributeFloatValue(
             index: Int,
             defaultValue: Float
     ): Float {
-        return getAttributeFloatValue(
-                "",
-                indices[index],
+        return data.tryGetValue(
+                attrs.valueAt(index),
                 defaultValue
-        )
+        ) ?: 0f
     }
 
     override fun getStyleAttribute(): Int = 0
 
     override fun getAttributeName(index: Int): String {
-        return indices[index]
+        return attrs.valueAt(index)
     }
 
     override fun getAttributeListValue(
@@ -109,7 +111,7 @@ internal class AndroidAttributeSet(
             options: Array<out String>?,
             defaultValue: Int
     ): Int {
-        return getResourcesId(attribute, "array")
+        return getResourcesId(attrs[attribute], "array")
     }
 
     override fun getAttributeListValue(
@@ -117,12 +119,7 @@ internal class AndroidAttributeSet(
             options: Array<out String>?,
             defaultValue: Int
     ): Int {
-        return getAttributeListValue(
-                "",
-                indices[index],
-                options,
-                defaultValue
-        )
+        return getResourcesId(attrs.valueAt(index), "array")
     }
 
     override fun getClassAttribute(): String = ""
@@ -132,18 +129,18 @@ internal class AndroidAttributeSet(
             attribute: String?,
             defaultValue: Boolean
     ): Boolean {
-        return data.tryGetValue(attrs[attribute], defaultValue)!!
+        return data.tryGetValue(attrs[attribute], defaultValue) ?: false
     }
 
     override fun getAttributeBooleanValue(
             index: Int,
             defaultValue: Boolean
     ): Boolean {
-        return getAttributeBooleanValue("", indices[index], defaultValue)
+        return data.tryGetValue(attrs.valueAt(index), defaultValue) ?: false
     }
 
-    private fun getResourcesId(attribute: String?, type: String): Int {
-        val text = data.tryGetValue<String>(attrs[attribute])
+    private fun getResourcesId(raw: String?, type: String): Int {
+        val text = data.tryGetValue<String>(raw)
         if (!text.isNullOrEmpty()) {
             val uri = Uri.parse(text)
             if (uri.host == type) {
@@ -165,13 +162,13 @@ internal class AndroidAttributeSet(
             attribute: String?,
             defaultValue: Int
     ): Int {
-        return getResourcesId(attribute, "drawable")
+        return getResourcesId(attrs[attribute], "drawable")
     }
 
     override fun getAttributeResourceValue(
             index: Int,
             defaultValue: Int
     ): Int {
-        return getAttributeResourceValue("", indices[index], defaultValue)
+        return getResourcesId(attrs.valueAt(index), "drawable")
     }
 }

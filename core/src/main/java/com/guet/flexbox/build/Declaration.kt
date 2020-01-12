@@ -1,5 +1,6 @@
 package com.guet.flexbox.build
 
+import android.util.ArrayMap
 import com.guet.flexbox.PageContext
 import com.guet.flexbox.TemplateNode
 import com.guet.flexbox.el.PropsELContext
@@ -29,7 +30,7 @@ abstract class Declaration(
         return if (rawAttrs.isNullOrEmpty()) {
             emptyMap()
         } else {
-            HashMap<String, Any>(rawAttrs.size).also {
+            ArrayMap<String, Any>(rawAttrs.size).also {
                 for ((key, raw) in rawAttrs) {
                     val result = this[key]?.cast(pageContext, data, raw)
                     if (result != null) {

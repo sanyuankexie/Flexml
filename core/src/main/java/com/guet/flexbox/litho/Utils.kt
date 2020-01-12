@@ -6,6 +6,7 @@ import android.graphics.Color
 import android.graphics.drawable.GradientDrawable
 import android.net.Uri
 import android.text.TextUtils
+import android.util.ArrayMap
 import com.facebook.litho.Component
 import com.facebook.litho.drawable.ComparableGradientDrawable
 
@@ -25,7 +26,7 @@ internal inline fun <T : Component.Builder<*>> create(crossinline action: Regist
 
 internal class Registry<C : Component.Builder<*>> {
 
-    private val _value = HashMap<String, Assignment<C, *>>()
+    private val _value = ArrayMap<String, Assignment<C, *>>()
 
     fun <T> register(
             name: String,

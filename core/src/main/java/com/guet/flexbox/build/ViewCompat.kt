@@ -1,6 +1,7 @@
 package com.guet.flexbox.build
 
 import android.content.Context
+import android.util.ArrayMap
 import com.guet.flexbox.PageContext
 import com.guet.flexbox.TemplateNode
 import com.guet.flexbox.el.PropsELContext
@@ -17,7 +18,7 @@ object ViewCompat : Declaration(Common) {
     ): Map<String, Any> {
         var attrs = super.onBind(rawAttrs, pageContext, data)
         if (!rawAttrs.isNullOrEmpty()) {
-            val otherRawAttrs = HashMap(rawAttrs)
+            val otherRawAttrs = ArrayMap(rawAttrs)
             otherRawAttrs.keys.removeAll(attrs.keys)
             if (otherRawAttrs.isNotEmpty()) {
                 val extra = otherRawAttrs to data

@@ -1,6 +1,7 @@
 package com.guet.flexbox.build
 
 import android.graphics.Color
+import android.util.ArrayMap
 import com.guet.flexbox.PageContext
 import com.guet.flexbox.TemplateNode
 import com.guet.flexbox.el.PropsELContext
@@ -17,7 +18,7 @@ internal inline fun create(crossinline action: Registry.() -> Unit): Lazy<Attrib
 }
 
 internal class Registry {
-    private val _value = HashMap<String, AttributeInfo<*>>()
+    private val _value = ArrayMap<String, AttributeInfo<*>>()
 
     fun text(
             name: String,
