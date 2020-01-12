@@ -6,7 +6,7 @@ import com.guet.flexbox.el.PropsELContext
 import com.guet.flexbox.el.scope
 
 object For : Declaration() {
-    override val attributeSet: AttributeSet by create {
+    override val attributeInfoSet: AttributeInfoSet by create {
         text("var")
         value("from")
         value("to")
@@ -14,17 +14,17 @@ object For : Declaration() {
 
     override fun onBuild(
             bindings: BuildUtils,
-            attrs: Map<String, Any>,
+            attrs: AttributeSet,
             children: List<TemplateNode>,
             factory: Factory?,
             pageContext: PageContext,
             data: PropsELContext,
             upperVisibility: Boolean,
             other: Any
-    ): List<Any> {
-        val name = attrs.getValue("var") as String
-        val from = (attrs.getValue("from") as Double).toInt()
-        val end = (attrs.getValue("to") as Double).toInt()
+    ): List<Child<Any>> {
+        val name = attrs.declarations.getValue("var") as String
+        val from = (attrs.declarations.getValue("from") as Double).toInt()
+        val end = (attrs.declarations.getValue("to") as Double).toInt()
         return (from..end).map { index ->
             data.scope(mapOf(name to index)) {
                 children.map {

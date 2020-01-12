@@ -6,11 +6,12 @@ import com.facebook.litho.ComponentContext
 import com.facebook.litho.EventHandler
 import com.facebook.yoga.YogaAlign
 import com.facebook.yoga.YogaEdge
+import com.guet.flexbox.build.AttributeSet
 import java.util.*
 
 internal object Common : ToComponent<Component.Builder<*>>() {
 
-    override val attributeSet: AttributeSet<Component.Builder<*>> by create {
+    override val attributeAssignSet: AttributeAssignSet<Component.Builder<*>> by create {
         register("width") { _, _, value: Double ->
             widthPx(value.toPx())
         }
@@ -67,7 +68,11 @@ internal object Common : ToComponent<Component.Builder<*>>() {
         }
     }
 
-    override fun create(c: ComponentContext, visibility: Boolean, attrs: Map<String, Any>): Component.Builder<*> {
+    override fun create(
+            c: ComponentContext,
+            visibility: Boolean,
+            attrs: AttributeSet
+    ): Component.Builder<*> {
         throw UnsupportedOperationException()
     }
 }

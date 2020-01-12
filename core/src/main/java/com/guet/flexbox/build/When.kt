@@ -6,19 +6,19 @@ import com.guet.flexbox.el.PropsELContext
 
 object When : Declaration() {
 
-    override val attributeSet: AttributeSet
+    override val attributeInfoSet: AttributeInfoSet
         get() = emptyMap()
 
     override fun onBuild(
             bindings: BuildUtils,
-            attrs: Map<String, Any>,
+            attrs: AttributeSet,
             children: List<TemplateNode>,
             factory: Factory?,
             pageContext: PageContext,
             data: PropsELContext,
             upperVisibility: Boolean,
             other: Any
-    ): List<Any> {
+    ): List<Child<Any>> {
         var elseItem: TemplateNode? = null
         if (children.isNullOrEmpty()) {
             return emptyList()
@@ -30,7 +30,7 @@ object When : Declaration() {
                                 itemAttrs,
                                 pageContext,
                                 data
-                        )["test"] == true) {
+                        ).declarations["test"] == true) {
                     return item.children?.map {
                         bindings.bindNode(
                                 it,

@@ -1,11 +1,11 @@
 package com.guet.flexbox.litho
 
-import com.facebook.litho.Component
 import com.facebook.litho.ComponentContext
+import com.guet.flexbox.build.AttributeSet
 import com.guet.flexbox.litho.widget.Banner
 
 internal object ToBanner : ToComponent<Banner.Builder>(Common) {
-    override val attributeSet: AttributeSet<Banner.Builder> by create {
+    override val attributeAssignSet: AttributeAssignSet<Banner.Builder> by create {
         register("isCircular") { _, _, value: Boolean ->
             isCircular(value)
         }
@@ -17,7 +17,7 @@ internal object ToBanner : ToComponent<Banner.Builder>(Common) {
     override fun create(
             c: ComponentContext,
             visibility: Boolean,
-            attrs: Map<String, Any>
+            attrs: AttributeSet
     ): Banner.Builder {
         return Banner.create(c)
     }
@@ -25,9 +25,11 @@ internal object ToBanner : ToComponent<Banner.Builder>(Common) {
     override fun onInstallChildren(
             owner: Banner.Builder,
             visibility: Boolean,
-            attrs: Map<String, Any>,
-            children: List<Component>
+            attrs: AttributeSet,
+            children: List<ChildComponent>
     ) {
-        owner.children(children)
+        owner.children(children.map {
+            it.widget
+        })
     }
 }

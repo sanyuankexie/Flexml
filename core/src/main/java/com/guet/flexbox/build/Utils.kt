@@ -9,9 +9,9 @@ import com.guet.flexbox.el.PropsELContext
 internal inline val CharSequence.isExpr: Boolean
     get() = length > 3 && startsWith("\${") && endsWith('}')
 
-internal typealias AttributeSet = Map<String, AttributeInfo<*>>
+internal typealias AttributeInfoSet = Map<String, AttributeInfo<*>>
 
-internal inline fun create(crossinline action: Registry.() -> Unit): Lazy<AttributeSet> {
+internal inline fun create(crossinline action: Registry.() -> Unit): Lazy<AttributeInfoSet> {
     return lazy {
         Registry().apply(action).value
     }
@@ -73,24 +73,22 @@ internal class Registry {
         }
     }
 
-    val value: AttributeSet
+    val value: AttributeInfoSet
         get() = _value
 }
 
 typealias Factory = (
         visibility: Boolean,
-        attrs: Map<String, Any>,
-        children: List<Any>,
+        attrs: AttributeSet,
+        children: List<Child<Any>>,
         other: Any
 ) -> Any
 
 
-internal class HasExtraMap<K, V, T>(
-        private val target: Map<K, V>,
-        val extra: T
-) : Map<K, V> by target
-
-internal typealias ViewCompatExtraMap = HasExtraMap<String, Any, Pair<Map<String, String>, PropsELContext>>
+class Child<T>(
+        val widget: T,
+        val attrs: AttributeSet
+)
 
 typealias ToWidget = Pair<Declaration, Factory?>
 
@@ -101,7 +99,7 @@ internal fun ToWidget.toWidget(
         data: PropsELContext,
         upperVisibility: Boolean,
         other: Any
-): List<Any> {
+): List<Child<Any>> {
     return first.transform(
             bindings,
             template.attrs ?: emptyMap(),

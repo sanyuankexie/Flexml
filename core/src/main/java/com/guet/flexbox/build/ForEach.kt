@@ -7,7 +7,7 @@ import com.guet.flexbox.el.scope
 
 object ForEach : Declaration() {
 
-    override val attributeSet: AttributeSet by create {
+    override val attributeInfoSet: AttributeInfoSet by create {
         text("var")
         typed("items") { _, props, raw ->
             props.tryGetValue<List<Any>>(raw)
@@ -16,17 +16,17 @@ object ForEach : Declaration() {
 
     override fun onBuild(
             bindings: BuildUtils,
-            attrs: Map<String, Any>,
+            attrs: AttributeSet,
             children: List<TemplateNode>,
             factory: Factory?,
             pageContext: PageContext,
             data: PropsELContext,
             upperVisibility: Boolean,
             other: Any
-    ): List<Any> {
-        val name = attrs.getValue("var") as String
+    ): List<Child<Any>> {
+        val name = attrs.declarations.getValue("var") as String
         @Suppress("UNCHECKED_CAST")
-        val items = attrs.getValue("items") as List<Any>
+        val items = attrs.declarations.getValue("items") as List<Any>
         return items.map {
             data.scope(mapOf(name to items)) {
                 children.map {

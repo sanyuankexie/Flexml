@@ -9,8 +9,9 @@ import android.text.TextUtils
 import android.util.ArrayMap
 import com.facebook.litho.Component
 import com.facebook.litho.drawable.ComparableGradientDrawable
+import com.guet.flexbox.build.Child
 
-internal typealias AttributeSet<C> = Map<String, Assignment<C, *>>
+internal typealias AttributeAssignSet<C> = Map<String, Assignment<C, *>>
 
 private val metrics = Resources.getSystem().displayMetrics
 
@@ -18,11 +19,13 @@ internal inline fun <reified T : Number> T.toPx(): Int {
     return (this.toFloat() * metrics.widthPixels / 360f).toInt()
 }
 
-internal inline fun <T : Component.Builder<*>> create(crossinline action: Registry<T>.() -> Unit): Lazy<AttributeSet<T>> {
+internal inline fun <T : Component.Builder<*>> create(crossinline action: Registry<T>.() -> Unit): Lazy<AttributeAssignSet<T>> {
     return lazy {
         Registry<T>().apply(action).value
     }
 }
+
+internal typealias ChildComponent = Child<Component>
 
 internal class Registry<C : Component.Builder<*>> {
 
@@ -35,7 +38,7 @@ internal class Registry<C : Component.Builder<*>> {
         _value[name] = assignment
     }
 
-    val value: AttributeSet<C>
+    val value: AttributeAssignSet<C>
         get() = _value
 }
 

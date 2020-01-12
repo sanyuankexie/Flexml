@@ -7,7 +7,7 @@ import com.facebook.litho.widget.VerticalGravity
 
 object AbstractText : Declaration(Common) {
 
-    override val attributeSet: AttributeSet by create {
+    override val attributeInfoSet: AttributeInfoSet by create {
         enum("verticalGravity", mapOf(
                 "top" to VerticalGravity.TOP,
                 "bottom" to VerticalGravity.BOTTOM,

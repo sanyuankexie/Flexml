@@ -31,7 +31,7 @@ object LithoBuildUtils : BuildUtils() {
                 elContext,
                 true,
                 componentContext
-        ).single() as Component
+        ).single().widget as Component
         return PreloadPage(templateNode, com, eventBridge)
     }
 
@@ -56,7 +56,7 @@ object LithoBuildUtils : BuildUtils() {
             type: Class<out View>
     ) {
         if (!widgets.containsKey(name)) {
-            widgets[name] = ViewCompat to ToViewCompat(type)
+            widgets[name] = Common to ToViewCompat(type)
         }
     }
 

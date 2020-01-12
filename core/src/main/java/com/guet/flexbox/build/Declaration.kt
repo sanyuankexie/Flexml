@@ -9,10 +9,10 @@ abstract class Declaration(
         private val parent: Declaration? = null
 ) {
 
-    internal abstract val attributeSet: AttributeSet
+    internal abstract val attributeInfoSet: AttributeInfoSet
 
     internal operator fun get(name: String): AttributeInfo<*>? {
-        val v = attributeSet[name]
+        val v = attributeInfoSet[name]
         if (v != null) {
             return v
         }
@@ -26,9 +26,9 @@ abstract class Declaration(
             rawAttrs: Map<String, String>?,
             pageContext: PageContext,
             data: PropsELContext
-    ): Map<String, Any> {
-        return if (rawAttrs.isNullOrEmpty()) {
-            emptyMap()
+    ): AttributeSet {
+        val expose = if (rawAttrs.isNullOrEmpty()) {
+            emptyMap<String, Any>()
         } else {
             ArrayMap<String, Any>(rawAttrs.size).also {
                 for ((key, raw) in rawAttrs) {
@@ -39,18 +39,23 @@ abstract class Declaration(
                 }
             }
         }
+        return AttributeSet(
+                expose,
+                rawAttrs ?: emptyMap(),
+                data
+        )
     }
 
     open fun onBuild(
             bindings: BuildUtils,
-            attrs: Map<String, Any>,
+            attrs: AttributeSet,
             children: List<TemplateNode>,
             factory: Factory?,
             pageContext: PageContext,
             data: PropsELContext,
             upperVisibility: Boolean,
             other: Any
-    ): List<Any> {
+    ): List<Child<Any>> {
         return parent?.onBuild(
                 bindings,
                 attrs,
@@ -72,7 +77,7 @@ abstract class Declaration(
             data: PropsELContext,
             upperVisibility: Boolean,
             other: Any
-    ): List<Any> {
+    ): List<Child<Any>> {
         val attrs = onBind(
                 rawAttrs,
                 pageContext,

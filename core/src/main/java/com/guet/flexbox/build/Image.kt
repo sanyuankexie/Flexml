@@ -3,7 +3,7 @@ package com.guet.flexbox.build
 import android.widget.ImageView.ScaleType
 
 internal object Image : Declaration(Common) {
-    override val attributeSet: AttributeSet by create {
+    override val attributeInfoSet: AttributeInfoSet by create {
         enum("scaleType", mapOf(
                 "center" to ScaleType.CENTER,
                 "fitCenter" to ScaleType.FIT_CENTER,

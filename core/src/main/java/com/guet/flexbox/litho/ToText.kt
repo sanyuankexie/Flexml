@@ -8,13 +8,14 @@ import android.text.TextUtils.TruncateAt
 import com.facebook.litho.ComponentContext
 import com.facebook.litho.widget.Text
 import com.facebook.litho.widget.VerticalGravity
+import com.guet.flexbox.build.AttributeSet
 
 
 internal object ToText : ToComponent<Text.Builder>(Common) {
 
     private val invisibleColor = ColorStateList.valueOf(Color.TRANSPARENT)
 
-    override val attributeSet: AttributeSet<Text.Builder> by create {
+    override val attributeAssignSet: AttributeAssignSet<Text.Builder> by create {
         register("verticalGravity") { _, _, value: VerticalGravity ->
             verticalGravity(value)
         }
@@ -56,7 +57,11 @@ internal object ToText : ToComponent<Text.Builder>(Common) {
         }
     }
 
-    override fun create(c: ComponentContext, visibility: Boolean, attrs: Map<String, Any>): Text.Builder {
+    override fun create(
+            c: ComponentContext,
+            visibility: Boolean,
+            attrs: AttributeSet
+    ): Text.Builder {
         return Text.create(c)
     }
 }

@@ -12,7 +12,7 @@ abstract class BuildUtils {
             data: PropsELContext,
             upperVisibility: Boolean = true,
             c: Any
-    ): List<Any> {
+    ): List<Child<Any>> {
         val type = templateNode.type
         val toWidget: ToWidget = buildMap[type] ?: default
         return toWidget.toWidget(

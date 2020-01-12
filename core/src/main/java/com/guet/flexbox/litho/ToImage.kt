@@ -2,11 +2,12 @@ package com.guet.flexbox.litho
 
 import android.widget.ImageView.ScaleType
 import com.facebook.litho.ComponentContext
+import com.guet.flexbox.build.AttributeSet
 import com.guet.flexbox.litho.widget.NetworkImage
 
 internal object ToImage : ToComponent<NetworkImage.Builder>(Common) {
 
-    override val attributeSet: AttributeSet<NetworkImage.Builder> by create {
+    override val attributeAssignSet: AttributeAssignSet<NetworkImage.Builder> by create {
         register("scaleType") { _, _, value: ScaleType ->
             scaleType(value)
         }
@@ -31,7 +32,7 @@ internal object ToImage : ToComponent<NetworkImage.Builder>(Common) {
     override fun create(
             c: ComponentContext,
             visibility: Boolean,
-            attrs: Map<String, Any>
+            attrs: AttributeSet
     ): NetworkImage.Builder {
         return NetworkImage.create(c)
     }

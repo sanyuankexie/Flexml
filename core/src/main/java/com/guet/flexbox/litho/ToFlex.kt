@@ -8,10 +8,11 @@ import com.facebook.yoga.YogaAlign
 import com.facebook.yoga.YogaFlexDirection
 import com.facebook.yoga.YogaJustify
 import com.facebook.yoga.YogaWrap
+import com.guet.flexbox.build.AttributeSet
 
 internal object ToFlex : ToComponent<Component.ContainerBuilder<*>>(Common) {
 
-    override val attributeSet: AttributeSet<Component.ContainerBuilder<*>> by create {
+    override val attributeAssignSet: AttributeAssignSet<Component.ContainerBuilder<*>> by create {
         register("flexWrap") { _, _, value: YogaWrap ->
             wrap(value)
         }
@@ -26,9 +27,13 @@ internal object ToFlex : ToComponent<Component.ContainerBuilder<*>>(Common) {
         }
     }
 
-    override fun create(c: ComponentContext, visibility: Boolean, attrs: Map<String, Any>): Component.ContainerBuilder<*> {
+    override fun create(
+            c: ComponentContext,
+            visibility: Boolean,
+            attrs: AttributeSet
+    ): Component.ContainerBuilder<*> {
         val component: Component.ContainerBuilder<*>
-        when (attrs.getOrElse("flexDirection") { YogaFlexDirection.ROW }) {
+        when (attrs.declarations.getOrElse("flexDirection") { YogaFlexDirection.ROW }) {
             YogaFlexDirection.COLUMN -> {
                 component = Column.create(c)
             }
@@ -47,9 +52,14 @@ internal object ToFlex : ToComponent<Component.ContainerBuilder<*>>(Common) {
         return component
     }
 
-    override fun onInstallChildren(owner: Component.ContainerBuilder<*>, visibility: Boolean, attrs: Map<String, Any>, children: List<Component>) {
+    override fun onInstallChildren(
+            owner: Component.ContainerBuilder<*>,
+            visibility: Boolean,
+            attrs: AttributeSet,
+            children: List<ChildComponent>
+    ) {
         children.forEach {
-            owner.child(it)
+            owner.child(it.widget)
         }
     }
 }

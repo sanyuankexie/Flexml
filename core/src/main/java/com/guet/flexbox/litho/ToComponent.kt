@@ -7,6 +7,8 @@ import com.facebook.litho.Component
 import com.facebook.litho.ComponentContext
 import com.facebook.litho.drawable.ComparableColorDrawable
 import com.facebook.yoga.YogaEdge
+import com.guet.flexbox.build.AttributeSet
+import com.guet.flexbox.build.Child
 import com.guet.flexbox.build.Factory
 import com.guet.flexbox.litho.widget.AsyncLazyDrawable
 import com.guet.flexbox.litho.widget.CornerOutlineProvider
@@ -16,7 +18,7 @@ internal abstract class ToComponent<C : Component.Builder<*>>(
         private val parent: ToComponent<in C>? = null
 ) : Factory {
 
-    protected abstract val attributeSet: AttributeSet<C>
+    protected abstract val attributeAssignSet: AttributeAssignSet<C>
 
     private fun assign(
             c: C,
@@ -26,7 +28,7 @@ internal abstract class ToComponent<C : Component.Builder<*>>(
             other: Map<String, Any>
     ) {
         @Suppress("UNCHECKED_CAST")
-        val assignment = attributeSet[name] as? Assignment<C, Any>
+        val assignment = attributeAssignSet[name] as? Assignment<C, Any>
         if (assignment != null) {
             assignment(c, display, other, value)
         } else {
@@ -37,28 +39,28 @@ internal abstract class ToComponent<C : Component.Builder<*>>(
     @Suppress("UNCHECKED_CAST")
     override fun invoke(
             visibility: Boolean,
-            attrs: Map<String, Any>,
-            children: List<Any>,
+            attrs: AttributeSet,
+            children: List<Child<Any>>,
             other: Any
     ): Any = toComponent(
             other as ComponentContext,
             visibility,
             attrs,
-            children as List<Component>
+            children as List<ChildComponent>
     )
 
     private fun toComponent(
             c: ComponentContext,
             visibility: Boolean,
-            attrs: Map<String, Any>,
-            children: List<Component>
+            attrs: AttributeSet,
+            children: List<ChildComponent>
     ): Component {
         val com = create(c, visibility, attrs)
-        for ((key, value) in attrs) {
-            assign(com, key, value, visibility, attrs)
+        for ((key, value) in attrs.declarations) {
+            assign(com, key, value, visibility, attrs.declarations)
         }
-        createBorder(com, attrs)
-        createBackground(com, attrs)
+        createBorder(com, attrs.declarations)
+        createBackground(com, attrs.declarations)
         onInstallChildren(com, visibility, attrs, children)
         return com.build()
     }
@@ -112,14 +114,15 @@ internal abstract class ToComponent<C : Component.Builder<*>>(
     protected open fun onInstallChildren(
             owner: C,
             visibility: Boolean,
-            attrs: Map<String, Any>,
-            children: List<Component>
+            attrs: AttributeSet,
+            children: List<ChildComponent>
     ) {
+
     }
 
     protected abstract fun create(
             c: ComponentContext,
             visibility: Boolean,
-            attrs: Map<String, Any>
+            attrs: AttributeSet
     ): C
 }

@@ -10,7 +10,7 @@ import com.guet.flexbox.litho.LithoEventHandler
 import java.util.*
 
 object TextInput : Declaration(AbstractText) {
-    override val attributeSet: AttributeSet by create {
+    override val attributeInfoSet: AttributeInfoSet by create {
         typed("onTextChanged") { pageContext: PageContext,
                                  elContext: PropsELContext,
                                  raw: String ->

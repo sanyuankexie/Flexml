@@ -5,9 +5,10 @@ import android.text.TextUtils.TruncateAt
 import com.facebook.litho.ComponentContext
 import com.facebook.litho.EventHandler
 import com.facebook.litho.widget.TextInput
+import com.guet.flexbox.build.AttributeSet
 
 internal object ToTextInput : ToComponent<TextInput.Builder>(Common) {
-    override val attributeSet: AttributeSet<TextInput.Builder> by create {
+    override val attributeAssignSet: AttributeAssignSet<TextInput.Builder> by create {
         register("maxLines") { _, _, value: Double ->
             maxLines(value.toInt())
         }
@@ -28,7 +29,11 @@ internal object ToTextInput : ToComponent<TextInput.Builder>(Common) {
         }
     }
 
-    override fun create(c: ComponentContext, visibility: Boolean, attrs: Map<String, Any>): TextInput.Builder {
+    override fun create(
+            c: ComponentContext,
+            visibility: Boolean,
+            attrs: AttributeSet
+    ): TextInput.Builder {
         return TextInput.create(c)
     }
 }

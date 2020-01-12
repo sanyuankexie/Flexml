@@ -14,7 +14,7 @@ import java.util.*
 
 object Common : Declaration() {
 
-    override val attributeSet: AttributeSet by create {
+    override val attributeInfoSet: AttributeInfoSet by create {
         enum("visibility", mapOf(
                 "visible" to Visibility.VISIBLE,
                 "invisible" to Visibility.INVISIBLE,
@@ -72,18 +72,18 @@ object Common : Declaration() {
 
     override fun onBuild(
             bindings: BuildUtils,
-            attrs: Map<String, Any>,
+            attrs: AttributeSet,
             children: List<TemplateNode>,
             factory: Factory?,
             pageContext: PageContext,
             data: PropsELContext,
             upperVisibility: Boolean,
             other: Any
-    ): List<Any> {
+    ): List<Child<Any>> {
         if (factory == null) {
             return emptyList()
         }
-        val selfVisibility = attrs["visibility"] ?: Visibility.VISIBLE
+        val selfVisibility = attrs.declarations["visibility"] ?: Visibility.VISIBLE
         if (selfVisibility == Visibility.GONE) {
             return emptyList()
         }
@@ -101,11 +101,12 @@ object Common : Declaration() {
                 )
             }.flatten()
         }
-        return listOf(factory.invoke(
-                visibility,
-                attrs,
-                childrenComponent,
-                other
-        ))
+        return listOf(Child(
+                factory.invoke(
+                        visibility,
+                        attrs,
+                        childrenComponent,
+                        other
+                ), attrs))
     }
 }

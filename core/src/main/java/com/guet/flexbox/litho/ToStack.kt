@@ -1,18 +1,18 @@
 package com.guet.flexbox.litho
 
-import com.facebook.litho.Component
 import com.facebook.litho.ComponentContext
+import com.guet.flexbox.build.AttributeSet
 import com.guet.flexbox.litho.widget.Stack
 
 internal object ToStack : ToComponent<Stack.Builder>(Common) {
 
-    override val attributeSet: AttributeSet<Stack.Builder>
+    override val attributeAssignSet: AttributeAssignSet<Stack.Builder>
         get() = emptyMap()
 
     override fun create(
             c: ComponentContext,
             visibility: Boolean,
-            attrs: Map<String, Any>
+            attrs: AttributeSet
     ): Stack.Builder {
         return Stack.create(c)
     }
@@ -20,12 +20,14 @@ internal object ToStack : ToComponent<Stack.Builder>(Common) {
     override fun onInstallChildren(
             owner: Stack.Builder,
             visibility: Boolean,
-            attrs: Map<String, Any>,
-            children: List<Component>
+            attrs: AttributeSet,
+            children: List<ChildComponent>
     ) {
         if (children.isEmpty()) {
             return
         }
-        owner.children(children)
+        owner.children(children.map {
+            it.widget
+        })
     }
 }

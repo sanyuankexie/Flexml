@@ -6,21 +6,21 @@ import com.guet.flexbox.el.PropsELContext
 
 object If : Declaration() {
 
-    override val attributeSet: AttributeSet by create {
+    override val attributeInfoSet: AttributeInfoSet by create {
         bool("test")
     }
 
     override fun onBuild(
             bindings: BuildUtils,
-            attrs: Map<String, Any>,
+            attrs: AttributeSet,
             children: List<TemplateNode>,
             factory: Factory?,
             pageContext: PageContext,
             data: PropsELContext,
             upperVisibility: Boolean,
             other: Any
-    ): List<Any> {
-        if (attrs.getValue("test") as Boolean) {
+    ): List<Child<Any>> {
+        if (attrs.declarations.getValue("test") as Boolean) {
             return children.map {
                 bindings.bindNode(
                         it,
