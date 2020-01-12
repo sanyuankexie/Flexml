@@ -39,11 +39,7 @@ abstract class Declaration(
                 }
             }
         }
-        return AttributeSet(
-                expose,
-                rawAttrs ?: emptyMap(),
-                data
-        )
+        return expose
     }
 
     open fun onBuild(

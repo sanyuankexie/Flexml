@@ -24,9 +24,9 @@ object ForEach : Declaration() {
             upperVisibility: Boolean,
             other: Any
     ): List<Child<Any>> {
-        val name = attrs.declarations.getValue("var") as String
+        val name = attrs.getValue("var") as String
         @Suppress("UNCHECKED_CAST")
-        val items = attrs.declarations.getValue("items") as List<Any>
+        val items = attrs.getValue("items") as List<Any>
         return items.map {
             data.scope(mapOf(name to items)) {
                 children.map {

@@ -33,7 +33,7 @@ internal object ToFlex : ToComponent<Component.ContainerBuilder<*>>(Common) {
             attrs: AttributeSet
     ): Component.ContainerBuilder<*> {
         val component: Component.ContainerBuilder<*>
-        when (attrs.declarations.getOrElse("flexDirection") { YogaFlexDirection.ROW }) {
+        when (attrs.getOrElse("flexDirection") { YogaFlexDirection.ROW }) {
             YogaFlexDirection.COLUMN -> {
                 component = Column.create(c)
             }

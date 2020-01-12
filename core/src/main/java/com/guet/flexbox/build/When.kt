@@ -30,7 +30,7 @@ object When : Declaration() {
                                 itemAttrs,
                                 pageContext,
                                 data
-                        ).declarations["test"] == true) {
+                        )["test"] == true) {
                     return item.children?.map {
                         bindings.bindNode(
                                 it,

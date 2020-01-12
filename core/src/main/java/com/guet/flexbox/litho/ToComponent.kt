@@ -14,7 +14,7 @@ import com.guet.flexbox.litho.widget.AsyncLazyDrawable
 import com.guet.flexbox.litho.widget.CornerOutlineProvider
 import com.guet.flexbox.litho.widget.NoOpDrawable
 
-internal abstract class ToComponent<C : Component.Builder<*>>(
+abstract class ToComponent<C : Component.Builder<*>>(
         private val parent: ToComponent<in C>? = null
 ) : Factory {
 
@@ -56,11 +56,11 @@ internal abstract class ToComponent<C : Component.Builder<*>>(
             children: List<ChildComponent>
     ): Component {
         val com = create(c, visibility, attrs)
-        for ((key, value) in attrs.declarations) {
-            assign(com, key, value, visibility, attrs.declarations)
+        for ((key, value) in attrs) {
+            assign(com, key, value, visibility, attrs)
         }
-        createBorder(com, attrs.declarations)
-        createBackground(com, attrs.declarations)
+        createBorder(com, attrs)
+        createBackground(com, attrs)
         onInstallChildren(com, visibility, attrs, children)
         return com.build()
     }

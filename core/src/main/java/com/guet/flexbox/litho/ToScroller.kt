@@ -31,7 +31,7 @@ internal object ToScroller : ToComponent<Component.Builder<*>>(Common) {
             visibility: Boolean,
             attrs: AttributeSet
     ): Component.Builder<*> {
-        return when (attrs.declarations.getOrElse("orientation") { Orientation.HORIZONTAL }) {
+        return when (attrs.getOrElse("orientation") { Orientation.HORIZONTAL }) {
             Orientation.HORIZONTAL -> {
                 HorizontalScroll.create(c)
             }

@@ -2,7 +2,6 @@ package com.guet.flexbox.litho
 
 import android.content.Context
 import android.util.ArrayMap
-import android.view.View
 import androidx.annotation.WorkerThread
 import com.facebook.litho.Component
 import com.facebook.litho.ComponentContext
@@ -51,15 +50,6 @@ object LithoBuildUtils : BuildUtils() {
                 "if" to (If to null)
         )
         arr.toMap(ArrayMap<String, ToWidget>(arr.size))
-    }
-
-    fun register(
-            name: String,
-            type: Class<out View>
-    ) {
-        if (!widgets.containsKey(name)) {
-            widgets[name] = Common to ToViewCompat(type)
-        }
     }
 
     override val buildMap: Map<String, ToWidget> = widgets

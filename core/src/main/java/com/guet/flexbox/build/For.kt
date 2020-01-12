@@ -22,9 +22,9 @@ object For : Declaration() {
             upperVisibility: Boolean,
             other: Any
     ): List<Child<Any>> {
-        val name = attrs.declarations.getValue("var") as String
-        val from = (attrs.declarations.getValue("from") as Double).toInt()
-        val end = (attrs.declarations.getValue("to") as Double).toInt()
+        val name = attrs.getValue("var") as String
+        val from = (attrs.getValue("from") as Double).toInt()
+        val end = (attrs.getValue("to") as Double).toInt()
         return (from..end).map { index ->
             data.scope(mapOf(name to index)) {
                 children.map {

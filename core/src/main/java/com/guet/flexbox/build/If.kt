@@ -20,7 +20,7 @@ object If : Declaration() {
             upperVisibility: Boolean,
             other: Any
     ): List<Child<Any>> {
-        if (attrs.declarations.getValue("test") as Boolean) {
+        if (attrs.getValue("test") as Boolean) {
             return children.map {
                 bindings.bindNode(
                         it,

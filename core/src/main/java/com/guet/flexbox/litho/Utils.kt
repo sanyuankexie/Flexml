@@ -13,13 +13,13 @@ import com.guet.flexbox.build.Child
 
 internal typealias AttributeAssignSet<C> = Map<String, Assignment<C, *>>
 
-private val metrics = Resources.getSystem().displayMetrics
+private val pt = Resources.getSystem().displayMetrics.widthPixels / 360f
 
-internal inline fun <reified T : Number> T.toPx(): Int {
-    return (this.toFloat() * metrics.widthPixels / 360f).toInt()
+fun <T : Number> T.toPx(): Int {
+    return (this.toDouble() * pt).toInt()
 }
 
-internal inline fun <T : Component.Builder<*>> create(crossinline action: Registry<T>.() -> Unit): Lazy<AttributeAssignSet<T>> {
+inline fun <T : Component.Builder<*>> create(crossinline action: Registry<T>.() -> Unit): Lazy<AttributeAssignSet<T>> {
     return lazy {
         Registry<T>().apply(action).value
     }
@@ -27,7 +27,7 @@ internal inline fun <T : Component.Builder<*>> create(crossinline action: Regist
 
 internal typealias ChildComponent = Child<Component>
 
-internal class Registry<C : Component.Builder<*>> {
+class Registry<C : Component.Builder<*>> {
 
     private val _value = ArrayMap<String, Assignment<C, *>>()
 
@@ -42,7 +42,7 @@ internal class Registry<C : Component.Builder<*>> {
         get() = _value
 }
 
-internal typealias Assignment<C, V> = C.(display: Boolean, other: Map<String, Any>, value: V) -> Unit
+typealias Assignment<C, V> = C.(display: Boolean, other: Map<String, Any>, value: V) -> Unit
 
 private val orientations: Map<String, GradientDrawable.Orientation> = mapOf(
         "t2b" to GradientDrawable.Orientation.TOP_BOTTOM,

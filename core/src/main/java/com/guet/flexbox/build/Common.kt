@@ -83,7 +83,7 @@ object Common : Declaration() {
         if (factory == null) {
             return emptyList()
         }
-        val selfVisibility = attrs.declarations["visibility"] ?: Visibility.VISIBLE
+        val selfVisibility = attrs["visibility"] ?: Visibility.VISIBLE
         if (selfVisibility == Visibility.GONE) {
             return emptyList()
         }

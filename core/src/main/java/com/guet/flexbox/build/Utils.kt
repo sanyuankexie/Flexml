@@ -17,6 +17,8 @@ internal inline fun create(crossinline action: Registry.() -> Unit): Lazy<Attrib
     }
 }
 
+typealias AttributeSet = Map<String, Any>
+
 internal class Registry {
     private val _value = ArrayMap<String, AttributeInfo<*>>()
 
