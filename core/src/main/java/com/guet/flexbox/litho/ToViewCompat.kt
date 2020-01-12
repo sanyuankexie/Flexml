@@ -20,7 +20,7 @@ internal class ToViewCompat(
         return ViewCompat.create(
                 c,
                 viewType,
-                attrs.createAndroidAttributeSet(c.androidContext)
+                attrs.toAndroidAttributeSet(c.androidContext)
         )
     }
 

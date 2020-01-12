@@ -9,7 +9,7 @@ class AttributeSet(
         private val raw: Map<String, String>,
         private val data: PropsELContext
 ) {
-    fun createAndroidAttributeSet(c: Context): AttributeSet {
+    fun toAndroidAttributeSet(c: Context): AttributeSet {
         return AndroidAttributeSet(c, raw, data)
     }
 }

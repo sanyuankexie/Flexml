@@ -18,9 +18,7 @@ class ViewCompat private constructor(
     override fun canMeasure(): Boolean = true
 
     override fun hasChildLithoViews(): Boolean {
-        return view is ViewGroup && (0 until view.childCount).any {
-            view.getChildAt(it) is LithoView
-        }
+        return view is ViewGroup && view.childCount > 0
     }
 
     override fun onMeasure(
@@ -72,16 +70,11 @@ class ViewCompat private constructor(
             if (view is ViewGroup && c != null && children.isNotEmpty()) {
                 children.map {
                     val attributeSet = it.attrs
-                            .createAndroidAttributeSet(c.androidContext)
+                            .toAndroidAttributeSet(c.androidContext)
                     val prams = view
                             .generateLayoutParams(attributeSet)
                     val widget = it.widget
-                    val childView = if (widget is ViewCompat) {
-                        widget.view
-                    } else {
-                        LithoView.create(c, widget)
-                    }
-                    childView.apply {
+                    LithoView.create(c, widget).apply {
                         layoutParams = prams
                     }
                 }.forEach {

@@ -11,7 +11,7 @@ abstract class Declaration(
 
     internal abstract val attributeInfoSet: AttributeInfoSet
 
-    internal operator fun get(name: String): AttributeInfo<*>? {
+    private operator fun get(name: String): AttributeInfo<*>? {
         val v = attributeInfoSet[name]
         if (v != null) {
             return v

@@ -4,6 +4,7 @@ import android.content.Context
 import android.net.Uri
 import android.util.ArrayMap
 import android.util.AttributeSet
+import android.view.ViewGroup.LayoutParams
 import com.guet.flexbox.el.PropsELContext
 
 internal class AndroidAttributeSet(
@@ -56,7 +57,7 @@ internal class AndroidAttributeSet(
             namespace: String?,
             name: String?
     ): String {
-        return data.tryGetValue(attrs[name]) ?: ""
+        return data.tryGetValue(attrs.check(name)) ?: ""
     }
 
     override fun getAttributeIntValue(
@@ -64,7 +65,7 @@ internal class AndroidAttributeSet(
             attribute: String?,
             defaultValue: Int
     ): Int {
-        return data.tryGetValue(attrs[attribute], defaultValue) ?: 0
+        return data.tryGetValue(attrs.check(attribute), defaultValue) ?: 0
     }
 
     override fun getAttributeIntValue(
@@ -84,7 +85,7 @@ internal class AndroidAttributeSet(
             defaultValue: Float
     ): Float {
         return data.tryGetValue(
-                attrs[attribute],
+                attrs.check(attribute),
                 defaultValue
         ) ?: 0f
     }
@@ -111,7 +112,7 @@ internal class AndroidAttributeSet(
             options: Array<out String>?,
             defaultValue: Int
     ): Int {
-        return getResourcesId(attrs[attribute], "array")
+        return getResourcesId(attrs.check(attribute), "array")
     }
 
     override fun getAttributeListValue(
@@ -129,7 +130,7 @@ internal class AndroidAttributeSet(
             attribute: String?,
             defaultValue: Boolean
     ): Boolean {
-        return data.tryGetValue(attrs[attribute], defaultValue) ?: false
+        return data.tryGetValue(attrs.check(attribute), defaultValue) ?: false
     }
 
     override fun getAttributeBooleanValue(
@@ -162,7 +163,7 @@ internal class AndroidAttributeSet(
             attribute: String?,
             defaultValue: Int
     ): Int {
-        return getResourcesId(attrs[attribute], "drawable")
+        return getResourcesId(attrs.check(attribute), "drawable")
     }
 
     override fun getAttributeResourceValue(
@@ -170,5 +171,30 @@ internal class AndroidAttributeSet(
             defaultValue: Int
     ): Int {
         return getResourcesId(attrs.valueAt(index), "drawable")
+    }
+
+    companion object {
+
+        private fun ArrayMap<String, String>.check(key: String?): String? {
+            key ?: return null
+            val value = this[key]
+            if (value == null) {
+                val newKeyWithDefault = androidRedirect[key]
+                if (newKeyWithDefault != null) {
+                    val (newKey, default) = newKeyWithDefault
+                    return this[newKey] ?: default
+                }
+            }
+            return null
+        }
+
+        private val androidRedirect: Map<String, Pair<String, String?>> = mapOf(
+                "layout_height" to ("height" to LayoutParams.MATCH_PARENT.toString()),
+                "layout_width" to ("width" to LayoutParams.MATCH_PARENT.toString()),
+                "layout_marginTop" to ("marginTop" to null),
+                "layout_marginLeft" to ("marginLeft" to null),
+                "layout_marginRight" to ("marginRight" to null),
+                "layout_marginBottom" to ("marginBottom" to null)
+        )
     }
 }
