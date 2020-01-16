@@ -36,31 +36,28 @@ object BannerSpec {
         }
     }
 
-    private fun createRecyclerBinder(
-            c: ComponentContext,
-            circular: Boolean
-    ): RecyclerBinder {
-        return RecyclerBinder.Builder()
-                .layoutInfo(LinearLayoutInfo(
-                        c,
-                        LinearLayoutManager.HORIZONTAL,
-                        false
-                ))
-                .isCircular(circular)
-                .build(c)
-    }
 
     @OnCreateLayout
     fun onCreateLayout(
             c: ComponentContext,
             @Prop(optional = true) timeSpan: Long,
             @Prop(optional = true) isCircular: Boolean,
+            @Prop(optional = true) wrapContent: Boolean,
             @Prop(optional = true, varArg = "child") children: List<Component>?
     ): Component {
         if (children.isNullOrEmpty()) {
             return EmptyComponent.create(c).build()
         }
-        val target = createRecyclerBinder(c, isCircular)
+        val target = RecyclerBinder.Builder()
+                .layoutInfo(LinearLayoutInfo(
+                        c,
+                        LinearLayoutManager.HORIZONTAL,
+                        false
+                ))
+                .canMeasure(true)
+                .wrapContent(wrapContent)
+                .isCircular(isCircular)
+                .build(c)
         val cc = children.map {
             ComponentRenderInfo.create()
                     .component(Row.create(c)
