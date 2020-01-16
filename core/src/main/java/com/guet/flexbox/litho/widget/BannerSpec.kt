@@ -7,6 +7,7 @@ import androidx.recyclerview.widget.PagerSnapHelper
 import androidx.recyclerview.widget.RecyclerView
 import com.facebook.litho.Component
 import com.facebook.litho.ComponentContext
+import com.facebook.litho.Row
 import com.facebook.litho.annotations.LayoutSpec
 import com.facebook.litho.annotations.OnCreateLayout
 import com.facebook.litho.annotations.Prop
@@ -17,9 +18,37 @@ import com.facebook.litho.widget.*
 object BannerSpec {
 
     @PropDefault
-    val timeSpan = 2000L
+    val timeSpan = 3000L
 
     private val mainThread = Handler(Looper.getMainLooper())
+
+    private val emptyCallback = object : ChangeSetCompleteCallback {
+
+        override fun onDataBound() {
+
+        }
+
+        override fun onDataRendered(
+                isMounted: Boolean,
+                uptimeMillis: Long
+        ) {
+
+        }
+    }
+
+    private fun createRecyclerBinder(
+            c: ComponentContext,
+            circular: Boolean
+    ): RecyclerBinder {
+        return RecyclerBinder.Builder()
+                .layoutInfo(LinearLayoutInfo(
+                        c,
+                        LinearLayoutManager.HORIZONTAL,
+                        false
+                ))
+                .isCircular(circular)
+                .build(c)
+    }
 
     @OnCreateLayout
     fun onCreateLayout(
@@ -31,44 +60,45 @@ object BannerSpec {
         if (children.isNullOrEmpty()) {
             return EmptyComponent.create(c).build()
         }
-        val binder = RecyclerBinder.Builder()
-                .layoutInfo(LinearLayoutInfo(
-                        c,
-                        LinearLayoutManager.HORIZONTAL,
-                        false
-                ))
-                .isCircular(isCircular)
-                .build(c)
-                .apply {
-                    insertRangeAtAsync(0, children.map {
-                        ComponentRenderInfo.create()
-                                .component(it)
-                                .build()
-                    })
-                }.run {
-                    if (timeSpan > 0) {
-                        CarouselWrapper(this, timeSpan)
-                    } else {
-                        this
-                    }
-                }
+        val target = createRecyclerBinder(c, isCircular)
+        val cc = children.map {
+            ComponentRenderInfo.create()
+                    .component(Row.create(c)
+                            .flexGrow(1f)
+                            .child(it)
+                    ).build()
+        }
+        target.insertRangeAtAsync(0, cc)
+        target.notifyChangeSetCompleteAsync(
+                true,
+                emptyCallback
+        )
         return Recycler.create(c)
-                .binder(binder)
+                .binder(when {
+                    timeSpan > 0 -> BinderWrapper(target, timeSpan)
+                    else -> target
+                })
                 .snapHelper(PagerSnapHelper())
                 .build()
     }
 
-    private class CarouselWrapper(
+    class BinderWrapper(
             private val target: RecyclerBinder,
             private val timeSpan: Long
     ) : Binder<RecyclerView> by target, Runnable {
 
         override fun run() {
-            target.scrollSmoothToPosition(
-                    target.findFirstVisibleItemPosition(),
-                    1,
-                    SmoothScrollAlignmentType.SNAP_TO_CENTER
-            )
+            var pos = target.findFirstFullyVisibleItemPosition()
+            if (pos == RecyclerView.NO_POSITION) {
+                pos = target.findFirstVisibleItemPosition()
+            }
+            if (pos != RecyclerView.NO_POSITION) {
+                target.scrollSmoothToPosition(
+                        pos,
+                        1,
+                        SmoothScrollAlignmentType.SNAP_TO_CENTER
+                )
+            }
             mainThread.postDelayed(this, timeSpan)
         }
 
