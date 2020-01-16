@@ -45,15 +45,11 @@
                 android:layout_width="25dp"
                 android:layout_height="25dp" />
         </LinearLayout>
-        <com.zhouwei.mzbanner.MZBannerView
+        <com.guet.flexbox.litho.HostingView
             android:id="@+id/banner"
-            app:middle_page_cover="true"
-            app:open_mz_mode="true"
-            app:canLoop="true"
-            app:indicatorAlign="center"
-            android:layout_height="150dp"
-            android:layout_width="match_parent">
-        </com.zhouwei.mzbanner.MZBannerView>
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+        </com.guet.flexbox.litho.HostingView>
     </LinearLayout>
     <FrameLayout
         android:layout_width="match_parent"

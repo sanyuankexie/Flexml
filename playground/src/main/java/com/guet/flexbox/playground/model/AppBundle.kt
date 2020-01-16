@@ -27,10 +27,7 @@ object AppBundle {
                 val res = c.resources
                 randomImageUrls.addAll(res.getStringArray(R.array.images))
                 //头部轮播图
-                val banner = res.getStringArray(R.array.banner_paths)
-                        .map { url ->
-                            loadPage(c, url)
-                        }
+                val banner = loadPage(c, res.getString(R.string.banner_path))
                 //功能区
                 val function = loadPage(c, res.getString(R.string.function_path))
                 //Feed流

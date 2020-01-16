@@ -17,8 +17,13 @@ import com.facebook.litho.widget.*
 @LayoutSpec
 object BannerSpec {
 
+
     @PropDefault
     val timeSpan = 3000L
+
+    @get:JvmName(name = "getIsCircular")
+    @PropDefault
+    val isCircular: Boolean = true
 
     private val mainThread = Handler(Looper.getMainLooper())
 
@@ -35,7 +40,6 @@ object BannerSpec {
 
         }
     }
-
 
     @OnCreateLayout
     fun onCreateLayout(

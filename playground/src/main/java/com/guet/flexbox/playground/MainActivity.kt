@@ -12,27 +12,23 @@ import androidx.core.app.ActivityOptionsCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.blankj.utilcode.util.NetworkUtils
 import com.guet.flexbox.litho.HostingView
-import com.guet.flexbox.litho.PreloadPage
 import com.guet.flexbox.playground.model.AppBundle
 import com.guet.flexbox.playground.model.Homepage
-import com.guet.flexbox.playground.widget.BannerAdapter
 import com.guet.flexbox.playground.widget.FlexBoxAdapter
 import com.guet.flexbox.playground.widget.PullToRefreshLayout
 import com.yzq.zxinglibrary.android.CaptureActivity
 import com.yzq.zxinglibrary.bean.ZxingConfig
 import com.yzq.zxinglibrary.common.Constant
-import com.zhouwei.mzbanner.MZBannerView
 import es.dmoral.toasty.Toasty
 import java.util.concurrent.atomic.AtomicBoolean
 
 class MainActivity : AppCompatActivity(), HostingView.EventListener {
 
-    private val bannerAdapter = BannerAdapter()
     private val feedAdapter = FlexBoxAdapter(this::handleEvent)
     private val loaded = AtomicBoolean(false)
     private lateinit var pullToRefresh: PullToRefreshLayout
     private lateinit var floatToolbar: LinearLayout
-    private lateinit var banner: MZBannerView<PreloadPage>
+    private lateinit var banner: HostingView
     private lateinit var feed: RecyclerView
     private lateinit var function: HostingView
     private val homepageInfo: Homepage by AppBundle.waitHomepage()
@@ -131,27 +127,9 @@ class MainActivity : AppCompatActivity(), HostingView.EventListener {
     }
 
     private fun load() {
-        val bannerInfo = ensurePageCount(homepageInfo.banner)
-        banner.setPages(bannerInfo, bannerAdapter)
-        feedAdapter.setNewData(homepageInfo.feed)
-        function.unmountAllItems()
+        banner.setContentAsync(homepageInfo.banner)
         function.setContentAsync(homepageInfo.function)
-    }
-
-    private fun ensurePageCount(pages: List<PreloadPage>): List<PreloadPage> {
-        return pages.let {
-            return@let when (it.size) {
-                1 -> {
-                    listOf(it[0], it[0], it[0])
-                }
-                2 -> {
-                    listOf(it[0], it[1], it[0])
-                }
-                else -> {
-                    it
-                }
-            }
-        }
+        feedAdapter.setNewData(homepageInfo.feed)
     }
 
     override fun onResume() {

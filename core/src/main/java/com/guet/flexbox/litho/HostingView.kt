@@ -81,6 +81,8 @@ class HostingView @JvmOverloads constructor(
         }
     }
 
+
+
     private var template: TemplateNode? = null
 
     private var _httpClient: HttpClient? = null
@@ -101,6 +103,15 @@ class HostingView @JvmOverloads constructor(
             _onDirtyMountListener?.onDirtyMount(view)
         }
     }
+
+
+    override fun performLayout(changed: Boolean, left: Int, top: Int, right: Int, bottom: Int) {
+        super.performLayout(changed, left, top, right, bottom)
+        this.performIncrementalMount(
+                Rect(0, 0, measuredWidth, measuredHeight), false
+        )
+    }
+
 
     fun setEventHandler(eventListener: EventListener?) {
         _eventListener = eventListener
@@ -159,7 +170,7 @@ class HostingView @JvmOverloads constructor(
                         c
                 ).single()
                 tree.setRootAndSizeSpec(
-                        component as Component,
+                        component.widget as Component,
                         SizeSpec.makeSizeSpec(mW, SizeSpec.EXACTLY),
                         when (height) {
                             LayoutParams.WRAP_CONTENT ->
@@ -198,7 +209,6 @@ class HostingView @JvmOverloads constructor(
     }()), LithoHandler {
 
         init {
-
             ComponentsConfiguration.incrementalMountWhenNotVisible = true
         }
 
