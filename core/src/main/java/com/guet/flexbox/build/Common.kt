@@ -62,8 +62,9 @@ object Common : Declaration() {
                             "pageContext", JoinPageContext(pageContext, event.view)
                     )) {
                         @Suppress("UNCHECKED_CAST")
-                        (executable.invoke(elContext) as? (PropsELContext) -> Unit)
-                                ?.invoke(elContext)
+                        executable.invoke(elContext)?.run {
+                            this as? Set<(PropsELContext) -> Unit>
+                        }?.firstOrNull()?.invoke(elContext)
                     }
                 }
             }

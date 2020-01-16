@@ -2,6 +2,7 @@ package com.guet.flexbox.build
 
 import com.guet.flexbox.PageContext
 import com.guet.flexbox.el.PropsELContext
+import com.guet.flexbox.el.scope
 
 internal class EnumAttribute<V : Enum<V>>(
         scope: Map<String, Enum<V>>,
@@ -9,7 +10,9 @@ internal class EnumAttribute<V : Enum<V>>(
 ) : AttributeInfo<Enum<V>>(scope, fallback) {
     override fun cast(pageContext: PageContext, props: PropsELContext, raw: String): Enum<V>? {
         return if (raw.isExpr) {
-            props.tryGetValue(raw, fallback)
+            props.scope(scope) {
+                props.tryGetValue(raw, fallback)
+            }
         } else {
             scope[raw] ?: fallback
         }

@@ -50,7 +50,7 @@ class PropsELContext(
                         expr,
                         type
                 ).getValue(this)
-                ?: throw ELException()
+                ?: throw ELException("$expr out null")
     }
 
     @Throws(ELException::class)

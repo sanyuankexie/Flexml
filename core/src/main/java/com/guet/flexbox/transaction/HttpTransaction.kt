@@ -21,7 +21,7 @@ abstract class HttpTransaction : PageTransaction() {
         return this
     }
 
-    fun pram(key: String, value: String): HttpTransaction {
+    fun with(key: String, value: String): HttpTransaction {
         prams[key] = value
         return this
     }

@@ -103,7 +103,12 @@
             <Flex
                 alignItems="center"
                 flexDirection="row">
-                <Image width="20" height="20" url="https://s2.ax1x.com/2019/12/29/luvy2d.png">
+                <Image
+                    visibility="${!clicked?visible:gone}"
+                    onClick="${()->{pageContext.refresh().with(()->{clicked=!clicked}).commit()}}"
+                    width="20"
+                    height="20"
+                    url="https://s2.ax1x.com/2019/12/29/luvy2d.png">
                 </Image>
                 <Text
                     horizontalGravity="center"

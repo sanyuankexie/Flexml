@@ -127,7 +127,7 @@ class MainActivity : AppCompatActivity(), HostingView.EventListener {
     }
 
     private fun load() {
-        banner.setContentAsync(homepageInfo.banner)
+        banner.setContentAsync(homepageInfo.function)
         function.setContentAsync(homepageInfo.function)
         feedAdapter.setNewData(homepageInfo.feed)
     }

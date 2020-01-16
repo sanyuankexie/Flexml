@@ -69,6 +69,7 @@ object AppBundle {
                         }.flatten()
                         put("images", images)
                     }
+                    put("clicked", false)
                 }
             } else {
                 HashMap<String, Any>().apply {

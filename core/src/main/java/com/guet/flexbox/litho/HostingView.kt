@@ -40,7 +40,7 @@ class HostingView @JvmOverloads constructor(
             return { elContext ->
                 val node = template
                 if (node != null) {
-                    runs.forEach {
+                    actions.forEach {
                         it.invoke(elContext)
                     }
                     setContentAsync(node, elContext)
@@ -80,7 +80,6 @@ class HostingView @JvmOverloads constructor(
             }
         }
     }
-
 
 
     private var template: TemplateNode? = null

@@ -4,10 +4,10 @@ import com.guet.flexbox.el.LambdaExpression
 
 abstract class RefreshTransaction : PageTransaction() {
 
-    protected val runs = ArrayList<LambdaExpression>()
+    protected val actions = ArrayList<LambdaExpression>()
 
-    fun with(lambdaExpression: LambdaExpression): RefreshTransaction {
-        runs.add(lambdaExpression)
+    fun with(l: LambdaExpression): RefreshTransaction {
+        actions.add(l)
         return this
     }
 }

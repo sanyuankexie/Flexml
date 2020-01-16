@@ -14,6 +14,7 @@ import com.facebook.litho.annotations.Prop
 import com.facebook.litho.annotations.PropDefault
 import com.facebook.litho.widget.*
 
+@Deprecated("TODO")
 @LayoutSpec
 object BannerSpec {
 
@@ -58,7 +59,6 @@ object BannerSpec {
                         LinearLayoutManager.HORIZONTAL,
                         false
                 ))
-                .canMeasure(true)
                 .wrapContent(wrapContent)
                 .isCircular(isCircular)
                 .build(c)
