@@ -104,18 +104,17 @@
                 alignItems="center"
                 flexDirection="row">
                 <Image
-                    visibility="${!clicked?visible:gone}"
+                    padding="2.5"
                     onClick="${()->{pageContext.refresh().with(()->{clicked=!clicked}).commit()}}"
-                    width="20"
-                    height="20"
-                    url="https://s2.ax1x.com/2019/12/29/luvy2d.png">
+                    width="25"
+                    height="25"
+                    url="${!clicked?'https://s2.ax1x.com/2019/12/29/luvy2d.png':'https://s2.ax1x.com/2020/01/17/lxWxsO.png'}">
                 </Image>
                 <Text
                     horizontalGravity="center"
                     verticalGravity="center"
                     textSize="15"
                     text="7"
-                    marginLeft="3"
                     marginRight="20">
                 </Text>
                 <Image width="20" height="20" url="https://s2.ax1x.com/2019/12/29/luvbMn.png">
