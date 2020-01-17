@@ -1,7 +1,7 @@
 package com.guet.flexbox
 
 import com.guet.flexbox.el.ELProcessor
-import org.junit.Assert.assertEquals
+import org.junit.Assert
 import org.junit.Test
 
 /**
@@ -11,10 +11,10 @@ import org.junit.Test
  */
 class ExampleUnitTest {
     @Test
-    fun addition_isCorrect() {
+    fun addition_isCorrect2() {
         val p = ELProcessor()
         p.defineBean("x", emptyList<Any>())
-        val x = p.eval("()->x.stream().map(x->x)")
-        assertEquals(4, (2 + 2).toLong())
+        val x = p.eval("()->{pageContext.refresh().with(()->{clicked=!clicked}).commit()}")
+        Assert.assertEquals(4, (2 + 2).toLong())
     }
 }

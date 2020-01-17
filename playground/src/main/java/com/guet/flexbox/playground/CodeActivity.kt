@@ -11,8 +11,8 @@ import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.widget.NestedScrollView
 import com.didichuxing.doraemonkit.util.UIUtils
 import com.google.android.material.appbar.AppBarLayout
-import com.guet.flexbox.HostingView
-import com.guet.flexbox.playground.model.AppPreloader
+import com.guet.flexbox.litho.HostingView
+import com.guet.flexbox.playground.model.AppBundle
 import thereisnospon.codeview.CodeView
 import thereisnospon.codeview.CodeViewTheme
 import kotlin.math.abs
@@ -34,6 +34,10 @@ class CodeActivity : AppCompatActivity() {
         host = findViewById(R.id.host)
         title = findViewById(R.id.title)
         lithoView = findViewById(R.id.dynamic)
+        val back = findViewById<View>(R.id.go_back)
+        back.setOnClickListener {
+            finishAfterTransition()
+        }
         val lithoHost = findViewById<View>(R.id.lithoHost)
         appbar.addOnOffsetChangedListener(AppBarLayout.OnOffsetChangedListener { _: AppBarLayout, verticalOffset: Int ->
             lithoHost.alpha = 1f - (abs(verticalOffset.toFloat()) / lithoHost.height.toFloat())
@@ -54,8 +58,8 @@ class CodeActivity : AppCompatActivity() {
     private fun loadData() {
         val url = this.intent.getStringExtra("url")
         AsyncTask.THREAD_POOL_EXECUTOR.execute {
-            val page = AppPreloader.loadPage(application, url)
-            val code = AppPreloader.loadTemplateSource(application, url)
+            val page = AppBundle.loadPage(application, url)
+            val code = AppBundle.loadTemplateSource(application, url)
             runOnUiThread {
                 lithoView.unmountAllItems()
                 lithoView.setContentAsync(page)

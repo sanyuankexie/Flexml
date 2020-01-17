@@ -11,7 +11,7 @@ import java.lang.reflect.Modifier
 import java.util.*
 
 class PropsELContext(
-        data: Any?
+        val data: Any?
 ) : ELContext() {
 
     private val variableMapper = StandardVariableMapper()
@@ -35,22 +35,6 @@ class PropsELContext(
         standardResolver.add(jsonArray)
     }
 
-    private fun createPropELResolver(data: Any?): ELResolver? {
-        return when {
-            data is Map<*, *> && data.keys.all { it is String } -> {
-                PropsELResolver(data, map)
-            }
-            data is JSONArray -> {
-                PropsELResolver(data, jsonObject)
-            }
-            data != null -> {
-                PropsELResolver(data, bean)
-            }
-            else -> {
-                return null
-            }
-        }
-    }
 
     override fun getELResolver(): ELResolver = standardResolver
 
@@ -66,7 +50,7 @@ class PropsELContext(
                         expr,
                         type
                 ).getValue(this)
-                ?: throw ELException()
+                ?: throw ELException("$expr out null")
     }
 
     @Throws(ELException::class)
@@ -172,22 +156,39 @@ class PropsELContext(
 
     private companion object {
 
-        private val array = ArrayELResolver(true)
-        private val bean = BeanELResolver(true)
-        private val map = MapELResolver(true)
-        private val list = ListELResolver(true)
-        private val jsonObject = JSONObjectELResolver(true)
-        private val jsonArray = JSONArrayELResolver(true)
+        private val array = ArrayELResolver(false)
+        private val bean = BeanELResolver(false)
+        private val map = MapELResolver(false)
+        private val list = ListELResolver(false)
+        private val jsonObject = JSONObjectELResolver(false)
+        private val jsonArray = JSONArrayELResolver(false)
         private val staticField = StaticFieldELResolver()
         private val resources = ResourceBundleELResolver()
+
+        private fun createPropELResolver(data: Any?): ELResolver? {
+            return when {
+                data is Map<*, *> && data.keys.all { it is String } -> {
+                    PropsELResolver(data, map)
+                }
+                data is JSONArray -> {
+                    PropsELResolver(data, jsonObject)
+                }
+                data != null -> {
+                    PropsELResolver(data, bean)
+                }
+                else -> {
+                    return null
+                }
+            }
+        }
 
         private val expressionFactory = ELManager.getExpressionFactory()
 
         @Suppress("UNCHECKED_CAST")
-        internal val colorMap = Collections.unmodifiableMap((Color::class.java
-                .getDeclaredField("sColorNameMap")
-                .apply { isAccessible = true }
-                .get(null) as Map<String, Int>))
+        internal val colorMap = Collections.unmodifiableMap(
+                (Color::class.java.getDeclaredField("sColorNameMap")
+                        .apply { isAccessible = true }
+                        .get(null) as Map<String, Int>))
 
         internal val functions = Functions::class.java.declaredMethods
                 .filter {
@@ -233,16 +234,27 @@ class PropsELContext(
                     .toString()
         }
 
-        @Prefix("res")
-        @JvmName("drawable")
-        @JvmStatic
-        fun load(name: String): String {
+        private fun buildResUri(type: String, name: String): String {
             return Uri.Builder()
                     .scheme("res")
-                    .authority("drawable")
+                    .authority(type)
                     .appendQueryParameter("name", name)
                     .build()
                     .toString()
+        }
+
+        @Prefix("res")
+        @JvmName("drawable")
+        @JvmStatic
+        fun drawable(name: String): String {
+            return buildResUri("drawable", name)
+        }
+
+        @Prefix("res")
+        @JvmName("array")
+        @JvmStatic
+        fun array(name: String): String {
+            return buildResUri("array", name)
         }
 
         @Prefix("dimen")

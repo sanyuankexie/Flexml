@@ -1,37 +1,66 @@
 package com.guet.flexbox
 
+import android.view.View
+import com.guet.flexbox.transaction.HttpTransaction
+import com.guet.flexbox.transaction.RefreshTransaction
 import java.lang.ref.WeakReference
 
-abstract class PageContext {
-    abstract fun send(key: String, vararg data: Any)
+abstract class HostingContext {
+
+    abstract fun send(source: View, values: Array<out Any?>)
+
+    abstract fun http(source: View): HttpTransaction?
+
+    abstract fun refresh(source: View): RefreshTransaction?
+
+    fun withView(source: View): PageContext {
+        return PageContext(source, this)
+    }
 }
 
-internal class EventBridge : PageContext() {
+class PageContext(
+        private val source: View,
+        private val host: HostingContext
+) {
 
-    private var _target: WeakReference<PageContext>? = null
+    fun send(vararg values: Any?) {
+        host.send(source, values)
+    }
 
-    var target: PageContext?
-        get() = _target?.get()
+    fun http(): HttpTransaction? {
+        return host.http(source)
+    }
+
+    fun refresh(): RefreshTransaction? {
+        return host.refresh(source)
+    }
+}
+
+internal class ForwardContext : HostingContext() {
+
+    private var _target: WeakReference<HostingContext>? = null
+
+    var target: HostingContext?
         set(value) {
-            _target = WeakReference<PageContext>(value)
+            _target = if (value != null) {
+                WeakReference(value)
+            } else {
+                null
+            }
+        }
+        get() {
+            return _target?.get()
         }
 
-    override fun send(key: String, vararg data: Any) {
-        target?.send(key, data)
+    override fun send(source: View, values: Array<out Any?>) {
+        target?.send(source, values)
     }
-}
 
-internal class FakePageContext(private val target: PageContext) : PageContext() {
-    override fun send(key: String, vararg data: Any) {
-        target.send(key, data)
+    override fun refresh(source: View): RefreshTransaction? {
+        return target?.refresh(source)
     }
-}
 
-internal class JoinPageContext(
-        private val target: PageContext,
-        private vararg val args: Any
-) : PageContext() {
-    override fun send(key: String, vararg data: Any) {
-        target.send(key, args.zip(data))
+    override fun http(source: View): HttpTransaction? {
+        return target?.http(source)
     }
 }

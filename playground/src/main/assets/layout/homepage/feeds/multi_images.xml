@@ -103,17 +103,29 @@
             <Flex
                 alignItems="center"
                 flexDirection="row">
-                <Image width="20" height="20" url="https://s2.ax1x.com/2019/12/29/luvy2d.png">
-                </Image>
+                <Flex
+                    alignItems="center"
+                    justifyContent="center"
+                    width="25"
+                    height="25"
+                    onClick="${()->{pageContext.refresh().with(()->{clicked=!clicked}).commit()}}">
+                    <Image
+                        width="18"
+                        height="18"
+                        url="${!clicked?'https://s2.ax1x.com/2019/12/29/luvy2d.png':'https://s2.ax1x.com/2020/01/17/lxWxsO.png'}">
+                    </Image>
+                </Flex>
                 <Text
                     horizontalGravity="center"
                     verticalGravity="center"
                     textSize="15"
                     text="7"
-                    marginLeft="3"
                     marginRight="20">
                 </Text>
-                <Image width="20" height="20" url="https://s2.ax1x.com/2019/12/29/luvbMn.png">
+                <Image
+                    width="18"
+                    height="18"
+                    url="https://s2.ax1x.com/2019/12/29/luvbMn.png">
                 </Image>
                 <Text
                     horizontalGravity="center"

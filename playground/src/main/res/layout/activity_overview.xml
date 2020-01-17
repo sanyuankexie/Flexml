@@ -104,11 +104,11 @@
             app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior"
             android:layout_width="match_parent"
             android:layout_height="match_parent">
-            <com.guet.flexbox.HostingView
+            <com.guet.flexbox.litho.HostingView
                 android:id="@+id/host"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
-            </com.guet.flexbox.HostingView>
+            </com.guet.flexbox.litho.HostingView>
         </androidx.core.widget.NestedScrollView>
         <ListView
             android:visibility="gone"

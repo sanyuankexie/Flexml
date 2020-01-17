@@ -18,14 +18,27 @@ import android.widget.FrameLayout
 import android.widget.PopupWindow
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
-import com.guet.flexbox.HostingView
-import com.guet.flexbox.databinding.DataBindingUtils
+import com.guet.flexbox.litho.HostingView
+import com.guet.flexbox.litho.LithoBuildUtils
+import com.guet.flexbox.litho.PageEventAdapter
 import com.guet.flexbox.playground.model.Compiler
 import java.util.*
 import kotlin.collections.HashSet
 
-class SearchActivity : AppCompatActivity(), HostingView.EventListener {
+class SearchActivity : AppCompatActivity() {
 
+    private val handler = object : PageEventAdapter() {
+        override fun onEventDispatched(
+                h: HostingView,
+                source: View,
+                vararg values: Any?
+        ) {
+            val url = values[0] as? String
+            if (url != null) {
+                handleEvent(url)
+            }
+        }
+    }
     private lateinit var sharedPreferences: SharedPreferences
     private lateinit var list: HostingView
     private lateinit var editText: EditText
@@ -36,7 +49,7 @@ class SearchActivity : AppCompatActivity(), HostingView.EventListener {
         setContentView(R.layout.activity_search)
         sharedPreferences = getSharedPreferences("history", Context.MODE_PRIVATE)
         list = findViewById(R.id.list)
-        list.setEventHandler(this)
+        list.setPageEventListener(handler)
         editText = findViewById(R.id.search)
         editText.apply {
             setOnFocusChangeListener { v, hasFocus ->
@@ -126,7 +139,7 @@ class SearchActivity : AppCompatActivity(), HostingView.EventListener {
                     "list",
                     listData
             )
-            val content = DataBindingUtils.preload(this, template, data)
+            val content = LithoBuildUtils.preload(this, template, data)
             runOnUiThread {
                 list.setContentAsync(content)
             }
@@ -156,9 +169,5 @@ class SearchActivity : AppCompatActivity(), HostingView.EventListener {
                 }
         )
         finish()
-    }
-
-    override fun handleEvent(host: HostingView, key: String, value: Array<out Any>) {
-        handleEvent(key)
     }
 }

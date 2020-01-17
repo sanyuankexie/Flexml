@@ -1,15 +1,33 @@
 package com.guet.flexbox.playground.test
 
+import android.annotation.TargetApi
 import android.content.Context
 import android.graphics.*
 import android.graphics.drawable.BitmapDrawable
+import android.os.Build
 import android.util.AttributeSet
 import android.view.View
 import com.guet.flexbox.playground.R
 
+@TargetApi(Build.VERSION_CODES.P)
 class TestView @JvmOverloads constructor(
         context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
 ) : View(context, attrs, defStyleAttr) {
+
+
+
+    init {
+
+        val cc= context.theme.obtainStyledAttributes(
+                R.styleable.CoordinatorLayout_Layout
+        )
+        R.styleable.RecycleListView
+        val xx = cc.peekValue(R.styleable.CoordinatorLayout_Layout_layout_behavior)
+        val x= cc.peekValue(R.styleable.CoordinatorLayout_Layout_android_layout_gravity)
+        post {
+
+        }
+    }
 
     private val bitmap = BitmapDrawable(resources, BitmapFactory.decodeResource(resources, R.drawable.ic_launcher))
     private val paint = Paint().apply {
@@ -41,7 +59,6 @@ class TestView @JvmOverloads constructor(
     override fun onDraw(canvas: Canvas) {
 
 
-
         val sc = canvas.saveLayer(null, null, Canvas.ALL_SAVE_FLAG);
         bitmap.bounds = canvas.clipBounds
         bitmap.draw(canvas)
@@ -60,7 +77,6 @@ class TestView @JvmOverloads constructor(
 
 
         canvas.restoreToCount(sc)
-
 
 
     }

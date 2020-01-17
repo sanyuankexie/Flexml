@@ -11,31 +11,40 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityOptionsCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.blankj.utilcode.util.NetworkUtils
-import com.guet.flexbox.HostingView
-import com.guet.flexbox.Page
+import com.guet.flexbox.litho.HostingView
+import com.guet.flexbox.litho.PageEventAdapter
+import com.guet.flexbox.playground.model.AppBundle
 import com.guet.flexbox.playground.model.Homepage
-import com.guet.flexbox.playground.model.AppPreloader
-import com.guet.flexbox.playground.widget.BannerAdapter
 import com.guet.flexbox.playground.widget.FlexBoxAdapter
 import com.guet.flexbox.playground.widget.PullToRefreshLayout
 import com.yzq.zxinglibrary.android.CaptureActivity
 import com.yzq.zxinglibrary.bean.ZxingConfig
 import com.yzq.zxinglibrary.common.Constant
-import com.zhouwei.mzbanner.MZBannerView
 import es.dmoral.toasty.Toasty
 import java.util.concurrent.atomic.AtomicBoolean
 
-class MainActivity : AppCompatActivity(), HostingView.EventListener {
+class MainActivity : AppCompatActivity() {
 
-    private val bannerAdapter = BannerAdapter()
+    private val handler = object : PageEventAdapter() {
+        override fun onEventDispatched(
+                h: HostingView,
+                source: View,
+                vararg values: Any?
+        ) {
+            val url = values[0] as? String
+            if (url != null) {
+                handleEvent(source, url)
+            }
+        }
+    }
     private val feedAdapter = FlexBoxAdapter(this::handleEvent)
     private val loaded = AtomicBoolean(false)
     private lateinit var pullToRefresh: PullToRefreshLayout
     private lateinit var floatToolbar: LinearLayout
-    private lateinit var banner: MZBannerView<Page>
+    private lateinit var banner: HostingView
     private lateinit var feed: RecyclerView
     private lateinit var function: HostingView
-    private val homepageInfo: Homepage by AppPreloader.waitHomepage()
+    private val homepageInfo: Homepage by AppBundle.waitHomepage()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -65,7 +74,7 @@ class MainActivity : AppCompatActivity(), HostingView.EventListener {
         fSearch.setOnClickListener(handleToSearch)
         search.setOnClickListener(handleToSearch)
         function = headerView.findViewById(R.id.function)
-        function.setEventHandler(this)
+        function.setPageEventListener(handler)
         load()
         feedAdapter.addHeaderView(headerView)
         feedAdapter.setNewData(homepageInfo.feed)
@@ -93,7 +102,7 @@ class MainActivity : AppCompatActivity(), HostingView.EventListener {
                         return
                     }
                     AsyncTask.THREAD_POOL_EXECUTOR.execute {
-                        val pages = AppPreloader.loadMoreFeedItem(application, 10)
+                        val pages = AppBundle.loadMoreFeedItem(application, 10)
                         runOnUiThread {
                             v.finish(Runnable {
                                 feedAdapter.addData(pages)
@@ -131,27 +140,9 @@ class MainActivity : AppCompatActivity(), HostingView.EventListener {
     }
 
     private fun load() {
-        val bannerInfo = ensurePageCount(homepageInfo.banner)
-        banner.setPages(bannerInfo, bannerAdapter)
-        feedAdapter.setNewData(homepageInfo.feed)
-        function.unmountAllItems()
+        banner.setContentAsync(homepageInfo.function)
         function.setContentAsync(homepageInfo.function)
-    }
-
-    private fun ensurePageCount(pages: List<Page>): List<Page> {
-        return pages.let {
-            return@let when (it.size) {
-                1 -> {
-                    listOf(it[0], it[0], it[0])
-                }
-                2 -> {
-                    listOf(it[0], it[1], it[0])
-                }
-                else -> {
-                    it
-                }
-            }
-        }
+        feedAdapter.setNewData(homepageInfo.feed)
     }
 
     override fun onResume() {
@@ -175,10 +166,6 @@ class MainActivity : AppCompatActivity(), HostingView.EventListener {
         }
         intent.putExtra(Constant.INTENT_ZXING_CONFIG, config)
         startActivityForResult(intent, REQUEST_CODE)
-    }
-
-    override fun handleEvent(host: HostingView, key: String, value: Array<out Any>) {
-        handleEvent(host, key)
     }
 
     private fun handleEvent(v: View, url: String) {

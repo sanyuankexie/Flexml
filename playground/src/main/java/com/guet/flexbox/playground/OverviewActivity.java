@@ -16,16 +16,16 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.google.android.material.appbar.AppBarLayout;
-import com.guet.flexbox.HostingView;
-import com.guet.flexbox.Page;
 import com.guet.flexbox.TemplateNode;
-import com.guet.flexbox.databinding.DataBindingUtils;
+import com.guet.flexbox.litho.HostingView;
+import com.guet.flexbox.litho.LithoBuildUtils;
+import com.guet.flexbox.litho.Page;
+import com.guet.flexbox.litho.PageEventAdapter;
 import com.guet.flexbox.playground.model.MockService;
 import com.guet.flexbox.playground.widget.QuickHandler;
 
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Arrays;
 import java.util.Map;
 import java.util.Objects;
 
@@ -39,10 +39,20 @@ import retrofit2.converter.gson.GsonConverterFactory;
 public class OverviewActivity
         extends AppCompatActivity
         implements View.OnClickListener,
-        HostingView.EventListener,
         SwipeRefreshLayout.OnRefreshListener,
         AppBarLayout.OnOffsetChangedListener {
 
+    private PageEventAdapter handler = new PageEventAdapter(){
+        @Override
+        public void onEventDispatched(
+                @NotNull HostingView h,
+                @NotNull View source,
+                @Nullable Object[] values) {
+            if (values != null) {
+                handleEvent((String) values[0]);
+            }
+        }
+    };
     private Toast toast;
     private AppBarLayout mAppBarLayout;
     private SwipeRefreshLayout mSwipeRefreshLayout;
@@ -74,7 +84,7 @@ public class OverviewActivity
                 Response<TemplateNode> layout = mMockService.layout().execute();
                 Map<String, Object> dataBody = dataResponse.body();
                 TemplateNode layoutBody = layout.body();
-                mLayout = DataBindingUtils.preload(
+                mLayout = LithoBuildUtils.preload(
                         getApplicationContext(),
                         Objects.requireNonNull(layoutBody),
                         dataBody
@@ -137,6 +147,7 @@ public class OverviewActivity
         mIsOpenConsole.setOnClickListener(this);
         mAdapter = new ArrayAdapter<>(this, R.layout.console_item, R.id.text);
         mConsole.setAdapter(mAdapter);
+        mLithoView.setPageEventListener(handler);
         Intent intent = getIntent();
         Bundle bundle = intent.getExtras();
         if (bundle != null) {
@@ -166,9 +177,8 @@ public class OverviewActivity
         }
     }
 
-    @Override
-    public void handleEvent(@NotNull HostingView host, @NotNull String key, @NotNull Object[] value) {
-        mAdapter.add("event type=" + key + " : event values=" + Arrays.toString(value));
+    private void handleEvent(@NotNull String key) {
+        mAdapter.add("event type=" + key);
     }
 
     @Override
