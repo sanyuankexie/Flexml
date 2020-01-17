@@ -288,7 +288,7 @@ class HostingView @JvmOverloads constructor(
         }
     }
 
-    private object Asynchronous : Handler({
+    internal object Asynchronous : Handler({
         val thread = HandlerThread("WorkerThread")
         thread.start()
         thread.looper

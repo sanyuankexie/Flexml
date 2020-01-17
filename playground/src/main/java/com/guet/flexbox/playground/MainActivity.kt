@@ -81,7 +81,11 @@ class MainActivity : AppCompatActivity() {
         feed.apply {
             adapter = feedAdapter
             addOnScrollListener(object : RecyclerView.OnScrollListener() {
-                override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                override fun onScrolled(
+                        recyclerView: RecyclerView,
+                        dx: Int,
+                        dy: Int
+                ) {
                     val y = recyclerView.computeVerticalScrollOffset()
                     if (!pullToRefresh.isRefreshOrLoad && y > 0) {
                         floatToolbar.visibility = View.VISIBLE
@@ -140,7 +144,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun load() {
-        banner.setContentAsync(homepageInfo.function)
+        banner.setContentAsync(homepageInfo.banner)
         function.setContentAsync(homepageInfo.function)
         feedAdapter.setNewData(homepageInfo.feed)
     }
