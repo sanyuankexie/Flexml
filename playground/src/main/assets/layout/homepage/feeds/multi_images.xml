@@ -103,13 +103,18 @@
             <Flex
                 alignItems="center"
                 flexDirection="row">
-                <Image
-                    padding="2.5"
-                    onClick="${()->{pageContext.refresh().with(()->{clicked=!clicked}).commit()}}"
+                <Flex
+                    alignItems="center"
+                    justifyContent="center"
                     width="25"
                     height="25"
-                    url="${!clicked?'https://s2.ax1x.com/2019/12/29/luvy2d.png':'https://s2.ax1x.com/2020/01/17/lxWxsO.png'}">
-                </Image>
+                    onClick="${()->{pageContext.refresh().with(()->{clicked=!clicked}).commit()}}">
+                    <Image
+                        width="18"
+                        height="18"
+                        url="${!clicked?'https://s2.ax1x.com/2019/12/29/luvy2d.png':'https://s2.ax1x.com/2020/01/17/lxWxsO.png'}">
+                    </Image>
+                </Flex>
                 <Text
                     horizontalGravity="center"
                     verticalGravity="center"
@@ -117,7 +122,10 @@
                     text="7"
                     marginRight="20">
                 </Text>
-                <Image width="20" height="20" url="https://s2.ax1x.com/2019/12/29/luvbMn.png">
+                <Image
+                    width="18"
+                    height="18"
+                    url="https://s2.ax1x.com/2019/12/29/luvbMn.png">
                 </Image>
                 <Text
                     horizontalGravity="center"
