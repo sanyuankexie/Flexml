@@ -19,7 +19,7 @@ object If : Declaration() {
             data: PropsELContext,
             upperVisibility: Boolean,
             other: Any
-    ): List<Child<Any>> {
+    ): List<Child> {
         if (attrs.getValue("test") as Boolean) {
             return children.map {
                 bindings.bindNode(

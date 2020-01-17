@@ -1,9 +1,9 @@
 package com.guet.flexbox.playground.model
 
-import com.guet.flexbox.litho.PreloadPage
+import com.guet.flexbox.litho.Page
 
 class Homepage(
-        val banner: PreloadPage,
-        val function: PreloadPage,
-        val feed: List<PreloadPage>
+        val banner: Page,
+        val function: Page,
+        val feed: List<Page>
 )

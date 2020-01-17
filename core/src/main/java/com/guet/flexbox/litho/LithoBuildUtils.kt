@@ -20,7 +20,7 @@ object LithoBuildUtils : BuildUtils() {
             c: Context,
             templateNode: TemplateNode,
             data: Any? = null
-    ): PreloadPage {
+    ): Page {
         val componentContext = ComponentContext(c)
         val eventBridge = EventBridge()
         val elContext = PropsELContext(data)
@@ -30,8 +30,8 @@ object LithoBuildUtils : BuildUtils() {
                 elContext,
                 true,
                 componentContext
-        ).single().widget as Component
-        return PreloadPage(templateNode, com, eventBridge)
+        ).single() as Component
+        return Page(templateNode, com, eventBridge)
     }
 
     private val widgets by lazy {
@@ -52,5 +52,5 @@ object LithoBuildUtils : BuildUtils() {
         arr.toMap(ArrayMap<String, ToWidget>(arr.size))
     }
 
-    override val buildMap: Map<String, ToWidget> = widgets
+    override val toWidgetTable: Map<String, ToWidget> = widgets
 }

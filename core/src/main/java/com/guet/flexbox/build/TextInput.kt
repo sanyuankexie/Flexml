@@ -1,12 +1,12 @@
 package com.guet.flexbox.build
 
 import com.facebook.litho.widget.TextChangedEvent
-import com.guet.flexbox.JoinPageContext
 import com.guet.flexbox.PageContext
 import com.guet.flexbox.el.LambdaExpression
 import com.guet.flexbox.el.PropsELContext
 import com.guet.flexbox.el.scope
 import com.guet.flexbox.litho.LithoEventHandler
+import com.guet.flexbox.withView
 import java.util.*
 
 object TextInput : Declaration(AbstractText) {
@@ -17,11 +17,9 @@ object TextInput : Declaration(AbstractText) {
             elContext.tryGetValue<LambdaExpression>(raw)?.let { executable ->
                 LithoEventHandler.create<TextChangedEvent> { event ->
                     elContext.scope(Collections.singletonMap(
-                            "pageContext", JoinPageContext(pageContext, event.view, event.text)
+                            "pageContext", pageContext.withView(event.view)
                     )) {
-                        @Suppress("UNCHECKED_CAST")
-                        (executable.invoke(elContext, event.text) as? (PropsELContext) -> Unit)
-                                ?.invoke(elContext)
+                        executable.exec(elContext, event.text)
                     }
                 }
             }

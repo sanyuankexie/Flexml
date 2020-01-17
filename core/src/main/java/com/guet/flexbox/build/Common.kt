@@ -2,7 +2,6 @@ package com.guet.flexbox.build
 
 import com.facebook.litho.ClickEvent
 import com.facebook.yoga.YogaAlign
-import com.guet.flexbox.JoinPageContext
 import com.guet.flexbox.PageContext
 import com.guet.flexbox.TemplateNode
 import com.guet.flexbox.Visibility
@@ -10,6 +9,7 @@ import com.guet.flexbox.el.LambdaExpression
 import com.guet.flexbox.el.PropsELContext
 import com.guet.flexbox.el.scope
 import com.guet.flexbox.litho.LithoEventHandler
+import com.guet.flexbox.withView
 import java.util.*
 
 object Common : Declaration() {
@@ -51,7 +51,7 @@ object Common : Declaration() {
             val url = props.tryGetValue<String>(raw)
             url?.let {
                 LithoEventHandler.create<ClickEvent> {
-                    pageContext.send(url, arrayOf(it.view))
+                    pageContext.send(url, it.view)
                 }
             }
         }
@@ -59,12 +59,9 @@ object Common : Declaration() {
             elContext.tryGetValue<LambdaExpression>(raw)?.let { executable ->
                 LithoEventHandler.create<ClickEvent> { event ->
                     elContext.scope(Collections.singletonMap(
-                            "pageContext", JoinPageContext(pageContext, event.view)
+                            "pageContext", pageContext.withView(event.view)
                     )) {
-                        @Suppress("UNCHECKED_CAST")
-                        executable.invoke(elContext)?.run {
-                            this as? Set<(PropsELContext) -> Unit>
-                        }?.firstOrNull()?.invoke(elContext)
+                        executable.exec(elContext)
                     }
                 }
             }
@@ -80,7 +77,7 @@ object Common : Declaration() {
             data: PropsELContext,
             upperVisibility: Boolean,
             other: Any
-    ): List<Child<Any>> {
+    ): List<Child> {
         if (factory == null) {
             return emptyList()
         }
@@ -102,12 +99,11 @@ object Common : Declaration() {
                 )
             }.flatten()
         }
-        return listOf(Child(
-                factory.invoke(
-                        visibility,
-                        attrs,
-                        childrenComponent,
-                        other
-                ), attrs))
+        return listOf(factory.invoke(
+                visibility,
+                attrs,
+                childrenComponent,
+                other
+        ))
     }
 }

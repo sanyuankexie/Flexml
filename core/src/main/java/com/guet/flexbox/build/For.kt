@@ -21,7 +21,7 @@ object For : Declaration() {
             data: PropsELContext,
             upperVisibility: Boolean,
             other: Any
-    ): List<Child<Any>> {
+    ): List<Child> {
         val name = attrs.getValue("var") as String
         val from = (attrs.getValue("from") as Double).toInt()
         val end = (attrs.getValue("to") as Double).toInt()

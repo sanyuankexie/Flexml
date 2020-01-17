@@ -11,7 +11,7 @@ import java.lang.reflect.Modifier
 import java.util.*
 
 class PropsELContext(
-        data: Any?
+        val data: Any?
 ) : ELContext() {
 
     private val variableMapper = StandardVariableMapper()

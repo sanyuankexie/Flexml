@@ -18,7 +18,7 @@ object When : Declaration() {
             data: PropsELContext,
             upperVisibility: Boolean,
             other: Any
-    ): List<Child<Any>> {
+    ): List<Child> {
         var elseItem: TemplateNode? = null
         if (children.isNullOrEmpty()) {
             return emptyList()

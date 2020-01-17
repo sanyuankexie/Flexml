@@ -27,8 +27,8 @@ abstract class Declaration(
             pageContext: PageContext,
             data: PropsELContext
     ): AttributeSet {
-        val expose = if (rawAttrs.isNullOrEmpty()) {
-            emptyMap<String, Any>()
+        return if (rawAttrs.isNullOrEmpty()) {
+            emptyMap()
         } else {
             ArrayMap<String, Any>(rawAttrs.size).also {
                 for ((key, raw) in rawAttrs) {
@@ -39,7 +39,6 @@ abstract class Declaration(
                 }
             }
         }
-        return expose
     }
 
     open fun onBuild(
@@ -51,7 +50,7 @@ abstract class Declaration(
             data: PropsELContext,
             upperVisibility: Boolean,
             other: Any
-    ): List<Child<Any>> {
+    ): List<Child> {
         return parent?.onBuild(
                 bindings,
                 attrs,
@@ -73,7 +72,7 @@ abstract class Declaration(
             data: PropsELContext,
             upperVisibility: Boolean,
             other: Any
-    ): List<Child<Any>> {
+    ): List<Child> {
         val attrs = onBind(
                 rawAttrs,
                 pageContext,

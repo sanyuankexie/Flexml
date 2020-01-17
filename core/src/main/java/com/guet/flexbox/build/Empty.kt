@@ -17,7 +17,7 @@ object Empty : Declaration(Common) {
             data: PropsELContext,
             upperVisibility: Boolean,
             other: Any
-    ): List<Child<Any>> {
+    ): List<Child> {
         return super.onBuild(
                 bindings,
                 attrs,

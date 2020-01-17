@@ -12,6 +12,7 @@ import androidx.core.app.ActivityOptionsCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.blankj.utilcode.util.NetworkUtils
 import com.guet.flexbox.litho.HostingView
+import com.guet.flexbox.litho.PageEventAdapter
 import com.guet.flexbox.playground.model.AppBundle
 import com.guet.flexbox.playground.model.Homepage
 import com.guet.flexbox.playground.widget.FlexBoxAdapter
@@ -22,8 +23,20 @@ import com.yzq.zxinglibrary.common.Constant
 import es.dmoral.toasty.Toasty
 import java.util.concurrent.atomic.AtomicBoolean
 
-class MainActivity : AppCompatActivity(), HostingView.EventListener {
+class MainActivity : AppCompatActivity() {
 
+    private val handler = object : PageEventAdapter() {
+        override fun onEventDispatched(
+                h: HostingView,
+                source: View,
+                vararg values: Any?
+        ) {
+            val url = values[0] as? String
+            if (url != null) {
+                handleEvent(source, url)
+            }
+        }
+    }
     private val feedAdapter = FlexBoxAdapter(this::handleEvent)
     private val loaded = AtomicBoolean(false)
     private lateinit var pullToRefresh: PullToRefreshLayout
@@ -61,7 +74,7 @@ class MainActivity : AppCompatActivity(), HostingView.EventListener {
         fSearch.setOnClickListener(handleToSearch)
         search.setOnClickListener(handleToSearch)
         function = headerView.findViewById(R.id.function)
-        function.setEventHandler(this)
+        function.setPageEventListener(handler)
         load()
         feedAdapter.addHeaderView(headerView)
         feedAdapter.setNewData(homepageInfo.feed)
@@ -153,10 +166,6 @@ class MainActivity : AppCompatActivity(), HostingView.EventListener {
         }
         intent.putExtra(Constant.INTENT_ZXING_CONFIG, config)
         startActivityForResult(intent, REQUEST_CODE)
-    }
-
-    override fun handleEvent(host: HostingView, key: String, value: Array<out Any?>) {
-        handleEvent(host, key)
     }
 
     private fun handleEvent(v: View, url: String) {

@@ -12,9 +12,9 @@ abstract class BuildUtils {
             data: PropsELContext,
             upperVisibility: Boolean = true,
             c: Any
-    ): List<Child<Any>> {
+    ): List<Child> {
         val type = templateNode.type
-        val toWidget: ToWidget = buildMap[type] ?: default
+        val toWidget: ToWidget = toWidgetTable[type] ?: default
         return toWidget.toWidget(
                 this,
                 templateNode,
@@ -25,7 +25,7 @@ abstract class BuildUtils {
         )
     }
 
-    protected abstract val buildMap: Map<String, ToWidget>
+    protected abstract val toWidgetTable: Map<String, ToWidget>
 
     companion object {
         private val default: ToWidget = Common to null

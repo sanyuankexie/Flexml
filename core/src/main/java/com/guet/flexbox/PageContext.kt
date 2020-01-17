@@ -1,23 +1,27 @@
 package com.guet.flexbox
 
+import android.view.View
 import com.guet.flexbox.transaction.HttpTransaction
 import com.guet.flexbox.transaction.RefreshTransaction
 import java.lang.ref.WeakReference
+import java.util.*
 
 abstract class PageContext {
-    abstract fun send(key: String, vararg data: Any?)
+
+    abstract fun send(vararg values: Any?)
 
     abstract fun http(): HttpTransaction?
 
     abstract fun refresh(): RefreshTransaction?
+
 }
 
-internal abstract class ProxyContext : PageContext() {
+internal abstract class ForwardContext : PageContext() {
 
     internal abstract var target: PageContext?
 
-    override fun send(key: String, vararg data: Any?) {
-        target?.send(key, data)
+    override fun send(vararg values: Any?) {
+        target?.send(values)
     }
 
     override fun http(): HttpTransaction? {
@@ -29,7 +33,7 @@ internal abstract class ProxyContext : PageContext() {
     }
 }
 
-internal class EventBridge : ProxyContext() {
+internal class EventBridge : ForwardContext() {
 
     private var _target: WeakReference<PageContext>? = null
 
@@ -38,29 +42,19 @@ internal class EventBridge : ProxyContext() {
         set(value) {
             _target = WeakReference<PageContext>(value)
         }
+}
 
-    override fun send(key: String, vararg data: Any?) {
-        target?.send(key, data)
+private class ContextWithView(
+        override var target: PageContext?,
+        private val v: View
+) : ForwardContext() {
+    override fun send(vararg values: Any?) {
+        super.send(values.toCollection(LinkedList()).apply {
+            add(0, v)
+        })
     }
 }
 
-internal class JoinPageContext(
-        private var _target: PageContext?,
-        private vararg val args: Any
-) : ProxyContext() {
-
-    override var target: PageContext?
-        get() = _target
-        set(value) {
-            _target = value
-        }
-
-    override fun send(key: String, vararg data: Any?) {
-        val array = Array<Any?>(data.size + 1) {}
-        for (index in data.indices) {
-            array[index] = data[index]
-        }
-        array[array.size - 1] = args
-        target?.send(key, array)
-    }
+internal fun PageContext.withView(v: View): PageContext {
+    return ContextWithView(this, v)
 }

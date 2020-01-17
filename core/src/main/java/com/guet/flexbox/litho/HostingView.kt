@@ -5,9 +5,12 @@ import android.graphics.Rect
 import android.os.Handler
 import android.os.HandlerThread
 import android.util.AttributeSet
+import android.view.View
 import androidx.annotation.MainThread
 import com.facebook.litho.*
 import com.facebook.litho.config.ComponentsConfiguration
+import com.guet.flexbox.EventBridge
+import com.guet.flexbox.HttpClient
 import com.guet.flexbox.PageContext
 import com.guet.flexbox.TemplateNode
 import com.guet.flexbox.el.PropsELContext
@@ -22,8 +25,12 @@ class HostingView @JvmOverloads constructor(
 
     private inner class HostingContext : PageContext() {
 
-        override fun send(key: String, vararg data: Any?) {
-            _eventListener?.handleEvent(this@HostingView, key, data)
+        override fun send(vararg values: Any?) {
+            _pageEventListener?.onEventDispatched(
+                    this@HostingView
+                    , values[0] as View
+                    , values.copyOfRange(1, values.size)
+            )
         }
 
         override fun http(): HttpTransaction? {
@@ -43,7 +50,21 @@ class HostingView @JvmOverloads constructor(
                     actions.forEach {
                         it.invoke(elContext)
                     }
-                    setContentAsync(node, elContext)
+                    setContentAsyncInternal(node, elContext) {
+                        post {
+                            val newPage = Page(
+                                    node,
+                                    it,
+                                    EventBridge().apply {
+                                        target = pageContext
+                                    }
+                            )
+                            _pageEventListener?.onPageChanged(
+                                    newPage,
+                                    elContext.data
+                            )
+                        }
+                    }
                 }
             }
         }
@@ -56,10 +77,13 @@ class HostingView @JvmOverloads constructor(
                 val http = _httpClient
                 val success = success
                 val error = error
-                if (node != null && http != null) {
+                val url = url
+                val method = method
+                if (node != null && http != null
+                        && url != null && method != null) {
                     http.enqueue(
-                            url!!,
-                            method!!,
+                            url,
+                            method,
                             prams,
                             {
                                 if (success != null) {
@@ -81,14 +105,13 @@ class HostingView @JvmOverloads constructor(
         }
     }
 
-
     private var template: TemplateNode? = null
 
     private var _httpClient: HttpClient? = null
 
     private var _onDirtyMountListener: OnDirtyMountListener? = null
 
-    private var _eventListener: EventListener? = null
+    private var _pageEventListener: PageEventListener? = null
 
     init {
         componentTree = ComponentTree.create(componentContext)
@@ -103,7 +126,6 @@ class HostingView @JvmOverloads constructor(
         }
     }
 
-
     override fun performLayout(changed: Boolean, left: Int, top: Int, right: Int, bottom: Int) {
         super.performLayout(changed, left, top, right, bottom)
         this.performIncrementalMount(
@@ -112,8 +134,8 @@ class HostingView @JvmOverloads constructor(
     }
 
 
-    fun setEventHandler(eventListener: EventListener?) {
-        _eventListener = eventListener
+    fun setPageEventListener(pageEventListener: PageEventListener?) {
+        _pageEventListener = pageEventListener
     }
 
     fun setHttpClient(httpClient: HttpClient?) {
@@ -130,7 +152,7 @@ class HostingView @JvmOverloads constructor(
     }
 
     @MainThread
-    fun setContentAsync(page: PreloadPage) {
+    fun setContentAsync(page: Page) {
         ThreadUtils.assertMainThread()
         template = page.template
         page.eventBridge.target = pageContext
@@ -147,12 +169,13 @@ class HostingView @JvmOverloads constructor(
         ThreadUtils.assertMainThread()
         val elContext = PropsELContext(data)
         template = node
-        setContentAsync(node, elContext)
+        setContentAsyncInternal(node, elContext)
     }
 
-    private fun setContentAsync(
+    private fun setContentAsyncInternal(
             node: TemplateNode,
-            elContext: PropsELContext
+            elContext: PropsELContext,
+            callback: ((Component) -> Unit)? = null
     ) {
         val tree = componentTree
         if (tree != null) {
@@ -169,7 +192,7 @@ class HostingView @JvmOverloads constructor(
                         c
                 ).single()
                 tree.setRootAndSizeSpec(
-                        component.widget as Component,
+                        component as Component,
                         SizeSpec.makeSizeSpec(mW, SizeSpec.EXACTLY),
                         when (height) {
                             LayoutParams.WRAP_CONTENT ->
@@ -183,21 +206,22 @@ class HostingView @JvmOverloads constructor(
                                         SizeSpec.EXACTLY
                                 )
                         })
+                callback?.invoke(component)
             }
         }
     }
 
-    interface EventListener {
-        fun handleEvent(host: HostingView, key: String, value: Array<out Any?>)
-    }
+    interface PageEventListener {
 
-    interface HttpClient {
-        fun enqueue(
-                url: String,
-                method: String,
-                prams: Map<String, String>,
-                success: (Any) -> Unit,
-                error: () -> Unit
+        fun onEventDispatched(
+                h: HostingView,
+                source: View,
+                vararg values: Any?
+        )
+
+        fun onPageChanged(
+                page: Page,
+                data: Any?
         )
     }
 

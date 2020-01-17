@@ -4,6 +4,7 @@ import android.graphics.Color
 import android.util.ArrayMap
 import com.guet.flexbox.PageContext
 import com.guet.flexbox.TemplateNode
+import com.guet.flexbox.el.LambdaExpression
 import com.guet.flexbox.el.PropsELContext
 
 internal inline val CharSequence.isExpr: Boolean
@@ -82,15 +83,11 @@ internal class Registry {
 typealias Factory = (
         visibility: Boolean,
         attrs: AttributeSet,
-        children: List<Child<Any>>,
+        children: List<Child>,
         other: Any
 ) -> Any
 
-
-class Child<T>(
-        val widget: T,
-        val attrs: AttributeSet
-)
+typealias Child = Any
 
 typealias ToWidget = Pair<Declaration, Factory?>
 
@@ -101,7 +98,7 @@ internal fun ToWidget.toWidget(
         data: PropsELContext,
         upperVisibility: Boolean,
         other: Any
-): List<Child<Any>> {
+): List<Child> {
     return first.transform(
             bindings,
             template.attrs ?: emptyMap(),
@@ -112,6 +109,16 @@ internal fun ToWidget.toWidget(
             upperVisibility,
             other
     )
+}
+
+@Suppress("UNCHECKED_CAST")
+internal fun LambdaExpression.exec(
+        elContext: PropsELContext,
+        vararg values: Any?
+) {
+    this.invoke(elContext, values)?.run {
+        this as? Set<(PropsELContext) -> Unit>
+    }?.firstOrNull()?.invoke(elContext)
 }
 
 typealias EventHandler<T> = (T) -> Unit

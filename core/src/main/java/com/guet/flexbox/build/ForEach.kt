@@ -23,7 +23,7 @@ object ForEach : Declaration() {
             data: PropsELContext,
             upperVisibility: Boolean,
             other: Any
-    ): List<Child<Any>> {
+    ): List<Child> {
         val name = attrs.getValue("var") as String
         @Suppress("UNCHECKED_CAST")
         val items = attrs.getValue("items") as List<Any>
