@@ -64,8 +64,6 @@ object BannerSpec {
             children: List<Component>
     ) : PagerAdapter(), Runnable {
 
-        private val cache = LinkedList<LithoView>()
-
         private val componentTrees: List<ComponentTree>
 
         init {
@@ -93,6 +91,8 @@ object BannerSpec {
             lithoView.componentTree = null
             lithoView.setInvalidStateLogParamsList(null)
             lithoView.resetMountStartupLoggingInfo()
+            @Suppress("UNCHECKED_CAST")
+            val cache = container.tag as LinkedList<LithoView>
             container.removeView(lithoView)
             cache.push(lithoView)
         }
@@ -132,6 +132,12 @@ object BannerSpec {
         }
 
         override fun instantiateItem(container: ViewGroup, position: Int): Any {
+            @Suppress("UNCHECKED_CAST")
+            var cache = container.tag as? LinkedList<LithoView>
+            if (cache == null) {
+                cache = LinkedList()
+                container.tag = cache
+            }
             val v = if (cache.isEmpty()) {
                 LithoView(c)
             } else {
