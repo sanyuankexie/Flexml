@@ -1,17 +1,15 @@
 package com.guet.flexbox.litho
 
-import android.view.View
 import com.facebook.litho.ClickEvent
 import com.facebook.litho.EventDispatcher
 import com.facebook.litho.HasEventDispatcher
 import com.facebook.litho.widget.TextChangedEvent
 import com.guet.flexbox.build.EventHandler
-import com.guet.flexbox.build.EventHandlerFactory
 import com.facebook.litho.EventHandler as BaseEventHandler
 
-class LithoEventHandler private constructor(
+class LithoEventHandler(
         private val target: EventHandler
-) : BaseEventHandler<Any>(Factory, 0) {
+) : BaseEventHandler<Any>(LithoEventHandler, 0) {
 
     override fun dispatchEvent(event: Any) {
         when (event) {
@@ -28,17 +26,12 @@ class LithoEventHandler private constructor(
         return other is LithoEventHandler && target == other.target
     }
 
-    companion object Factory : HasEventDispatcher,
-            EventDispatcher,
-            EventHandlerFactory {
-
-        override fun create(a: (View, Array<out Any?>) -> Unit): Any {
-            return LithoEventHandler(a)
-        }
+    private companion object : HasEventDispatcher,
+            EventDispatcher {
 
         override fun getEventDispatcher(): EventDispatcher = this
 
-        override fun dispatchOnEvent(eventHandler: com.facebook.litho.EventHandler<in Any?>?, eventState: Any?): Any? {
+        override fun dispatchOnEvent(eventHandler: BaseEventHandler<in Any?>?, eventState: Any?): Any? {
             eventHandler?.dispatchEvent(eventState)
             return null
         }

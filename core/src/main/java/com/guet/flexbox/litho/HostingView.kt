@@ -25,25 +25,39 @@ class HostingView @JvmOverloads constructor(
 
     private inner class HostingContextImpl : HostingContext() {
 
-        override fun send(source: View, vararg values: Any?) {
-            TODO()
+        override fun send(source: View, values: Array<out Any?>) {
+            _pageEventListener?.onEventDispatched(
+                    this@HostingView,
+                    source,
+                    values
+            )
         }
 
         override fun http(source: View): HttpTransaction? {
-            TODO()
+            return HttpTransactionImpl(source)
         }
 
         override fun refresh(source: View): RefreshTransaction? {
-            TODO()
+            return RefreshTransactionImpl(source)
         }
 
     }
 
-    private inner class HostingRefreshTransaction : RefreshTransaction() {
+    private inner class RefreshTransactionImpl(
+            private val source: View
+    ) : RefreshTransaction() {
         override fun commit(): (PropsELContext) -> Unit {
             return { elContext ->
+                _pageEventListener?.run {
+                    sends.forEach {
+                        onEventDispatched(
+                                this@HostingView,
+                                source,
+                                it
+                        )
+                    }
+                }
                 val node = template
-
                 if (node != null) {
                     actions.forEach {
                         it.invoke(elContext)
@@ -58,6 +72,7 @@ class HostingView @JvmOverloads constructor(
                                     }
                             )
                             _pageEventListener?.onPageChanged(
+                                    this@HostingView,
                                     newPage,
                                     elContext.data
                             )
@@ -68,9 +83,20 @@ class HostingView @JvmOverloads constructor(
         }
     }
 
-    private inner class HostingHttpTransaction : HttpTransaction() {
+    private inner class HttpTransactionImpl(
+            private val source: View
+    ) : HttpTransaction() {
         override fun commit(): (PropsELContext) -> Unit {
             return { elContext ->
+                _pageEventListener?.run {
+                    sends.forEach {
+                        onEventDispatched(
+                                this@HostingView,
+                                source,
+                                it
+                        )
+                    }
+                }
                 val node = template
                 val http = _httpClient
                 val success = success
@@ -79,24 +105,36 @@ class HostingView @JvmOverloads constructor(
                 val method = method
                 if (node != null && http != null
                         && url != null && method != null) {
+                    val onSuccess: ((Any) -> Unit)? = if (success != null) {
+                        {
+                            post {
+                                success.invoke(
+                                        elContext,
+                                        pageContext.withView(source),
+                                        it
+                                )
+                            }
+                        }
+                    } else {
+                        null
+                    }
+                    val onError: (() -> Unit)? = if (error != null) {
+                        {
+                            post {
+                                error.invoke(elContext,
+                                        pageContext.withView(source)
+                                )
+                            }
+                        }
+                    } else {
+                        null
+                    }
                     http.enqueue(
                             url,
                             method,
                             prams,
-                            {
-                                if (success != null) {
-                                    post {
-                                        success.invoke(elContext)
-                                    }
-                                }
-                            },
-                            {
-                                if (error != null) {
-                                    post {
-                                        error.invoke(elContext)
-                                    }
-                                }
-                            }
+                            onSuccess,
+                            onError
                     )
                 }
             }
@@ -123,14 +161,6 @@ class HostingView @JvmOverloads constructor(
             _onDirtyMountListener?.onDirtyMount(view)
         }
     }
-
-    override fun performLayout(changed: Boolean, left: Int, top: Int, right: Int, bottom: Int) {
-        super.performLayout(changed, left, top, right, bottom)
-        this.performIncrementalMount(
-                Rect(0, 0, measuredWidth, measuredHeight), false
-        )
-    }
-
 
     fun setPageEventListener(pageEventListener: PageEventListener?) {
         _pageEventListener = pageEventListener
@@ -214,10 +244,11 @@ class HostingView @JvmOverloads constructor(
         fun onEventDispatched(
                 h: HostingView,
                 source: View,
-                vararg values: Any?
+                values: Array<out Any?>
         )
 
         fun onPageChanged(
+                h: HostingView,
                 page: Page,
                 data: Any?
         )

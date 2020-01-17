@@ -47,7 +47,7 @@ public class OverviewActivity
         public void onEventDispatched(
                 @NotNull HostingView h,
                 @NotNull View source,
-                @Nullable Object... values) {
+                @Nullable Object[] values) {
             if (values != null) {
                 handleEvent((String) values[0]);
             }

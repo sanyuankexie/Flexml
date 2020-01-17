@@ -7,7 +7,7 @@ import java.lang.ref.WeakReference
 
 abstract class HostingContext {
 
-    abstract fun send(source: View, vararg values: Any?)
+    abstract fun send(source: View, values: Array<out Any?>)
 
     abstract fun http(source: View): HttpTransaction?
 
@@ -20,19 +20,19 @@ abstract class HostingContext {
 
 class PageContext(
         private val source: View,
-        private val hosting: HostingContext
+        private val host: HostingContext
 ) {
 
     fun send(vararg values: Any?) {
-        hosting.send(source, values)
+        host.send(source, values)
     }
 
     fun http(): HttpTransaction? {
-        return hosting.http(source)
+        return host.http(source)
     }
 
     fun refresh(): RefreshTransaction? {
-        return hosting.refresh(source)
+        return host.refresh(source)
     }
 }
 
@@ -48,7 +48,7 @@ internal class ForwardContext : HostingContext() {
             return _target?.get()
         }
 
-    override fun send(source: View, vararg values: Any?) {
+    override fun send(source: View, values: Array<out Any?>) {
         target?.send(source, values)
     }
 

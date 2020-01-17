@@ -1,17 +1,14 @@
 package com.guet.flexbox.build
 
-import android.view.View
-
 interface EventHandlerFactory {
 
-    fun create(a: (View, Array<out Any?>) -> Unit): Any
+    fun create(a: EventHandler): Any
 
     companion object {
 
-        private const val default = "com.guet.flexbox.litho.LithoEventHandler"
+        private const val default = "com.guet.flexbox.litho.LithoEventHandlerFactory"
 
-        fun create(a: (View, Array<out Any?>) -> Unit): Any {
-
+        fun create(a: EventHandler): Any {
             val factory = Class.forName(
                     System.getProperty(
                             EventHandlerFactory::class.java.name,

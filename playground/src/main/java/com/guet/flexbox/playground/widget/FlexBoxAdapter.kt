@@ -19,24 +19,37 @@ class FlexBoxAdapter(
         lithoView?.unmountAllItems()
     }
 
+    private inner class HandleClickWithUpdater(
+            private val old: Page
+    ) : PageEventAdapter() {
+
+        override fun onEventDispatched(
+                h: HostingView,
+                source: View,
+                vararg values: Any?
+        ) {
+            val url = values[0] as? String
+            if (url != null) {
+                onClick(source, url)
+            }
+        }
+
+        override fun onPageChanged(
+                h: HostingView,
+                page: Page,
+                data: Any?
+        ) {
+            val index = getData().indexOf(old)
+            if (index != -1) {
+                getData()[index] = page
+                h.setPageEventListener(HandleClickWithUpdater(page))
+            }
+        }
+    }
+
     override fun convert(helper: BaseViewHolder, item: Page) {
         val lithoView = helper.getView<HostingView>(R.id.litho)
-        lithoView.setPageEventListener(object : PageEventAdapter() {
-            override fun onEventDispatched(
-                    h: HostingView,
-                    source: View,
-                    vararg values: Any?
-            ) {
-                val url = values[0] as? String
-                if (url != null) {
-                    onClick(source, url)
-                }
-            }
-
-            override fun onPageChanged(page: Page, data: Any?) {
-                getData()[getData().indexOf(item)] = page
-            }
-        })
+        lithoView.setPageEventListener(HandleClickWithUpdater(item))
         lithoView.setContentAsync(item)
     }
 }

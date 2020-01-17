@@ -12,7 +12,7 @@ abstract class PageEventAdapter : HostingView.PageEventListener {
 
     }
 
-    override fun onPageChanged(page: Page, data: Any?) {
+    override fun onPageChanged(h: HostingView, page: Page, data: Any?) {
 
     }
 }

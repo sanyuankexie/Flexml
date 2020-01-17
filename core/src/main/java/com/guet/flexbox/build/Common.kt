@@ -48,7 +48,7 @@ object Common : Declaration() {
             val url = props.tryGetValue<String>(raw)
             url?.let {
                 EventHandlerFactory.create { v, _ ->
-                    pageContext.send(v, url)
+                    pageContext.send(v, arrayOf(url))
                 }
             }
         }
