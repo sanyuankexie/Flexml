@@ -62,18 +62,23 @@ class HostingView @JvmOverloads constructor(
                     actions.forEach {
                         it.invoke(elContext)
                     }
-                    setContentAsyncInternal(node, elContext) {
+                    setContentAsyncInternal(
+                            node,
+                            elContext
+                    ) {
                         post {
-                            val newPage = Page(
-                                    node,
-                                    it,
-                                    ForwardContext().apply {
-                                        target = pageContext
-                                    }
+                            this@HostingView.performIncrementalMount(
+                                    Rect(0, 0, measuredWidth, measuredHeight), false
                             )
                             _pageEventListener?.onPageChanged(
                                     this@HostingView,
-                                    newPage,
+                                    Page(
+                                            node,
+                                            it,
+                                            ForwardContext().apply {
+                                                target = pageContext
+                                            }
+                                    ),
                                     elContext.data
                             )
                         }
