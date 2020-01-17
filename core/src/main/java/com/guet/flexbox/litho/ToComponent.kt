@@ -40,7 +40,7 @@ abstract class ToComponent<C : Component.Builder<*>>(
     override fun invoke(
             visibility: Boolean,
             attrs: AttributeSet,
-            children: List<Child<Any>>,
+            children: List<Child>,
             other: Any
     ): Any = toComponent(
             other as ComponentContext,

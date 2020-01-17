@@ -1,15 +1,12 @@
 package com.guet.flexbox.build
 
-import com.facebook.litho.ClickEvent
 import com.facebook.yoga.YogaAlign
-import com.guet.flexbox.PageContext
+import com.guet.flexbox.HostingContext
 import com.guet.flexbox.TemplateNode
 import com.guet.flexbox.Visibility
 import com.guet.flexbox.el.LambdaExpression
 import com.guet.flexbox.el.PropsELContext
 import com.guet.flexbox.el.scope
-import com.guet.flexbox.litho.LithoEventHandler
-import com.guet.flexbox.withView
 import java.util.*
 
 object Common : Declaration() {
@@ -50,16 +47,16 @@ object Common : Declaration() {
         typed("clickUrl") { pageContext, props, raw ->
             val url = props.tryGetValue<String>(raw)
             url?.let {
-                LithoEventHandler.create<ClickEvent> {
-                    pageContext.send(url, it.view)
+                EventHandlerFactory.create { v, _ ->
+                    pageContext.send(v, url)
                 }
             }
         }
         typed("onClick") { pageContext, elContext, raw ->
             elContext.tryGetValue<LambdaExpression>(raw)?.let { executable ->
-                LithoEventHandler.create<ClickEvent> { event ->
+                EventHandlerFactory.create { view, _ ->
                     elContext.scope(Collections.singletonMap(
-                            "pageContext", pageContext.withView(event.view)
+                            "pageContext", pageContext.withView(view)
                     )) {
                         executable.exec(elContext)
                     }
@@ -73,7 +70,7 @@ object Common : Declaration() {
             attrs: AttributeSet,
             children: List<TemplateNode>,
             factory: Factory?,
-            pageContext: PageContext,
+            pageContext: HostingContext,
             data: PropsELContext,
             upperVisibility: Boolean,
             other: Any

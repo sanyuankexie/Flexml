@@ -27,7 +27,7 @@ internal object ToStack : ToComponent<Stack.Builder>(Common) {
             return
         }
         owner.children(children.map {
-            it.widget
+            it
         })
     }
 }

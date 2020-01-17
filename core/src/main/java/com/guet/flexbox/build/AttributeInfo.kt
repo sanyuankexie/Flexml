@@ -1,6 +1,6 @@
 package com.guet.flexbox.build
 
-import com.guet.flexbox.PageContext
+import com.guet.flexbox.HostingContext
 import com.guet.flexbox.el.PropsELContext
 
 internal abstract class AttributeInfo<T : Any>(
@@ -8,7 +8,7 @@ internal abstract class AttributeInfo<T : Any>(
         protected val fallback: T? = null
 ) {
     abstract fun cast(
-            pageContext: PageContext,
+            pageContext: HostingContext,
             props: PropsELContext,
             raw: String
     ): T?

@@ -51,9 +51,9 @@ internal object ToScroller : ToComponent<Component.Builder<*>>(Common) {
             return
         }
         if (owner is HorizontalScroll.Builder) {
-            owner.contentProps(children.single().widget)
+            owner.contentProps(children.single())
         } else if (owner is VerticalScroll.Builder) {
-            owner.childComponent(children.single().widget)
+            owner.childComponent(children.single())
         }
     }
 }

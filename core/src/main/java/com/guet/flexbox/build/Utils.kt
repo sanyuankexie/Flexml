@@ -2,7 +2,8 @@ package com.guet.flexbox.build
 
 import android.graphics.Color
 import android.util.ArrayMap
-import com.guet.flexbox.PageContext
+import android.view.View
+import com.guet.flexbox.HostingContext
 import com.guet.flexbox.TemplateNode
 import com.guet.flexbox.el.LambdaExpression
 import com.guet.flexbox.el.PropsELContext
@@ -67,10 +68,10 @@ internal class Registry {
             name: String,
             scope: (Map<String, T>) = emptyMap(),
             fallback: T? = null,
-            crossinline action: (PageContext, PropsELContext, String) -> T?
+            crossinline action: (HostingContext, PropsELContext, String) -> T?
     ) {
         _value[name] = object : AttributeInfo<T>(scope, fallback) {
-            override fun cast(pageContext: PageContext, props: PropsELContext, raw: String): T? {
+            override fun cast(pageContext: HostingContext, props: PropsELContext, raw: String): T? {
                 return action(pageContext, props, raw)
             }
         }
@@ -94,7 +95,7 @@ typealias ToWidget = Pair<Declaration, Factory?>
 internal fun ToWidget.toWidget(
         bindings: BuildUtils,
         template: TemplateNode,
-        pageContext: PageContext,
+        pageContext: HostingContext,
         data: PropsELContext,
         upperVisibility: Boolean,
         other: Any
@@ -111,14 +112,14 @@ internal fun ToWidget.toWidget(
     )
 }
 
-@Suppress("UNCHECKED_CAST")
 internal fun LambdaExpression.exec(
         elContext: PropsELContext,
         vararg values: Any?
 ) {
+    @Suppress("UNCHECKED_CAST")
     this.invoke(elContext, values)?.run {
         this as? Set<(PropsELContext) -> Unit>
     }?.firstOrNull()?.invoke(elContext)
 }
 
-typealias EventHandler<T> = (T) -> Unit
+typealias EventHandler = (View, Array<out Any?>) -> Unit

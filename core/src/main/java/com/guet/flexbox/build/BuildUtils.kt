@@ -1,6 +1,6 @@
 package com.guet.flexbox.build
 
-import com.guet.flexbox.PageContext
+import com.guet.flexbox.HostingContext
 import com.guet.flexbox.TemplateNode
 import com.guet.flexbox.el.PropsELContext
 
@@ -8,13 +8,13 @@ abstract class BuildUtils {
 
     fun bindNode(
             templateNode: TemplateNode,
-            pageContext: PageContext,
+            pageContext: HostingContext,
             data: PropsELContext,
             upperVisibility: Boolean = true,
             c: Any
     ): List<Child> {
         val type = templateNode.type
-        val toWidget: ToWidget = toWidgetTable[type] ?: default
+        val toWidget: ToWidget = widgets[type] ?: default
         return toWidget.toWidget(
                 this,
                 templateNode,
@@ -25,7 +25,7 @@ abstract class BuildUtils {
         )
     }
 
-    protected abstract val toWidgetTable: Map<String, ToWidget>
+    protected abstract val widgets: Map<String, ToWidget>
 
     companion object {
         private val default: ToWidget = Common to null

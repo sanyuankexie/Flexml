@@ -9,7 +9,6 @@ import android.text.TextUtils
 import android.util.ArrayMap
 import com.facebook.litho.Component
 import com.facebook.litho.drawable.ComparableGradientDrawable
-import com.guet.flexbox.build.Child
 
 internal typealias AttributeAssignSet<C> = Map<String, Assignment<C, *>>
 
@@ -25,7 +24,7 @@ inline fun <T : Component.Builder<*>> create(crossinline action: Registry<T>.() 
     }
 }
 
-internal typealias ChildComponent = Child<Component>
+internal typealias ChildComponent = Component
 
 class Registry<C : Component.Builder<*>> {
 

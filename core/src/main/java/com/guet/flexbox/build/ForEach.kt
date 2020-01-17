@@ -1,6 +1,6 @@
 package com.guet.flexbox.build
 
-import com.guet.flexbox.PageContext
+import com.guet.flexbox.HostingContext
 import com.guet.flexbox.TemplateNode
 import com.guet.flexbox.el.PropsELContext
 import com.guet.flexbox.el.scope
@@ -19,7 +19,7 @@ object ForEach : Declaration() {
             attrs: AttributeSet,
             children: List<TemplateNode>,
             factory: Factory?,
-            pageContext: PageContext,
+            pageContext: HostingContext,
             data: PropsELContext,
             upperVisibility: Boolean,
             other: Any

@@ -1,7 +1,7 @@
 package com.guet.flexbox.build
 
 import android.util.ArrayMap
-import com.guet.flexbox.PageContext
+import com.guet.flexbox.HostingContext
 import com.guet.flexbox.TemplateNode
 import com.guet.flexbox.el.PropsELContext
 
@@ -24,7 +24,7 @@ abstract class Declaration(
 
     open fun onBind(
             rawAttrs: Map<String, String>?,
-            pageContext: PageContext,
+            pageContext: HostingContext,
             data: PropsELContext
     ): AttributeSet {
         return if (rawAttrs.isNullOrEmpty()) {
@@ -46,7 +46,7 @@ abstract class Declaration(
             attrs: AttributeSet,
             children: List<TemplateNode>,
             factory: Factory?,
-            pageContext: PageContext,
+            pageContext: HostingContext,
             data: PropsELContext,
             upperVisibility: Boolean,
             other: Any
@@ -68,7 +68,7 @@ abstract class Declaration(
             rawAttrs: Map<String, String>,
             children: List<TemplateNode>,
             factory: Factory?,
-            pageContext: PageContext,
+            pageContext: HostingContext,
             data: PropsELContext,
             upperVisibility: Boolean,
             other: Any

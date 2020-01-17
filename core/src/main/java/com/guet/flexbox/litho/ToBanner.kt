@@ -1,5 +1,6 @@
 package com.guet.flexbox.litho
 
+import com.facebook.litho.Component
 import com.facebook.litho.ComponentContext
 import com.guet.flexbox.build.AttributeSet
 import com.guet.flexbox.litho.widget.Banner
@@ -29,7 +30,7 @@ internal object ToBanner : ToComponent<Banner.Builder>(Common) {
             children: List<ChildComponent>
     ) {
         owner.children(children.map {
-            it.widget
+            it
         })
     }
 }

@@ -9,9 +9,9 @@ import android.view.View
 import androidx.annotation.MainThread
 import com.facebook.litho.*
 import com.facebook.litho.config.ComponentsConfiguration
-import com.guet.flexbox.EventBridge
+import com.guet.flexbox.ForwardContext
+import com.guet.flexbox.HostingContext
 import com.guet.flexbox.HttpClient
-import com.guet.flexbox.PageContext
 import com.guet.flexbox.TemplateNode
 import com.guet.flexbox.el.PropsELContext
 import com.guet.flexbox.transaction.HttpTransaction
@@ -21,31 +21,29 @@ class HostingView @JvmOverloads constructor(
         context: Context, attrs: AttributeSet? = null
 ) : LithoView(context, attrs) {
 
-    private val pageContext = HostingContext()
+    private val pageContext = HostingContextImpl()
 
-    private inner class HostingContext : PageContext() {
+    private inner class HostingContextImpl : HostingContext() {
 
-        override fun send(vararg values: Any?) {
-            _pageEventListener?.onEventDispatched(
-                    this@HostingView
-                    , values[0] as View
-                    , values.copyOfRange(1, values.size)
-            )
+        override fun send(source: View, vararg values: Any?) {
+            TODO()
         }
 
-        override fun http(): HttpTransaction? {
-            return HostingHttpTransaction()
+        override fun http(source: View): HttpTransaction? {
+            TODO()
         }
 
-        override fun refresh(): RefreshTransaction? {
-            return HostingRefreshTransaction()
+        override fun refresh(source: View): RefreshTransaction? {
+            TODO()
         }
+
     }
 
     private inner class HostingRefreshTransaction : RefreshTransaction() {
         override fun commit(): (PropsELContext) -> Unit {
             return { elContext ->
                 val node = template
+
                 if (node != null) {
                     actions.forEach {
                         it.invoke(elContext)
@@ -55,7 +53,7 @@ class HostingView @JvmOverloads constructor(
                             val newPage = Page(
                                     node,
                                     it,
-                                    EventBridge().apply {
+                                    ForwardContext().apply {
                                         target = pageContext
                                     }
                             )

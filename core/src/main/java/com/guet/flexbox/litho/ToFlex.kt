@@ -59,7 +59,7 @@ internal object ToFlex : ToComponent<Component.ContainerBuilder<*>>(Common) {
             children: List<ChildComponent>
     ) {
         children.forEach {
-            owner.child(it.widget)
+            owner.child(it)
         }
     }
 }

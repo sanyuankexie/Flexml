@@ -5,7 +5,7 @@ import android.util.ArrayMap
 import androidx.annotation.WorkerThread
 import com.facebook.litho.Component
 import com.facebook.litho.ComponentContext
-import com.guet.flexbox.EventBridge
+import com.guet.flexbox.ForwardContext
 import com.guet.flexbox.TemplateNode
 import com.guet.flexbox.build.*
 import com.guet.flexbox.build.Common
@@ -22,7 +22,7 @@ object LithoBuildUtils : BuildUtils() {
             data: Any? = null
     ): Page {
         val componentContext = ComponentContext(c)
-        val eventBridge = EventBridge()
+        val eventBridge = ForwardContext()
         val elContext = PropsELContext(data)
         val com = bindNode(
                 templateNode,
@@ -34,7 +34,7 @@ object LithoBuildUtils : BuildUtils() {
         return Page(templateNode, com, eventBridge)
     }
 
-    private val widgets by lazy {
+    private val myWidgets by lazy {
         val arr = arrayOf(
                 "Empty" to (Empty to ToEmpty),
                 "Flex" to (Flex to ToFlex),
@@ -52,5 +52,5 @@ object LithoBuildUtils : BuildUtils() {
         arr.toMap(ArrayMap<String, ToWidget>(arr.size))
     }
 
-    override val toWidgetTable: Map<String, ToWidget> = widgets
+    override val widgets: Map<String, ToWidget> = myWidgets
 }
