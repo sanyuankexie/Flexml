@@ -59,24 +59,50 @@ class HostingView @JvmOverloads constructor(
                         )
                     }
                 }
+                actions.forEach {
+                    it.invoke(elContext)
+                }
                 val node = template
-                if (node != null) {
-                    actions.forEach {
-                        it.invoke(elContext)
-                    }
+                val tree = componentTree
+                if (tree != null && node != null) {
                     val c = componentContext
-                    setContentAsyncInternal(node, elContext) { component ->
-                        _pageEventListener?.onPageChanged(
-                                this@HostingView,
-                                Page(
-                                        node,
-                                        component,
-                                        ForwardContext().apply {
-                                            target = pageContext
-                                        }
-                                ),
-                                elContext.data
-                        )
+                    val height = layoutParams?.width ?: 0
+                    val mH = measuredHeight
+                    val mW = measuredWidth
+                    Asynchronous.post {
+                        val context = ForwardContext()
+                                .apply {
+                                    target = pageContext
+                                }
+                        val component = LithoBuildUtils.bindNode(
+                                node,
+                                context,
+                                elContext,
+                                true,
+                                c
+                        ).single() as Component
+                        tree.setRootAndSizeSpec(
+                                component,
+                                SizeSpec.makeSizeSpec(mW, SizeSpec.EXACTLY),
+                                when (height) {
+                                    LayoutParams.WRAP_CONTENT ->
+                                        SizeSpec.makeSizeSpec(
+                                                0,
+                                                SizeSpec.UNSPECIFIED
+                                        )
+                                    else ->
+                                        SizeSpec.makeSizeSpec(
+                                                mH,
+                                                SizeSpec.EXACTLY
+                                        )
+                                })
+                        UiThread.runOnUiThread {
+                            _pageEventListener?.onPageChanged(
+                                    this@HostingView,
+                                    Page(node, component, context),
+                                    elContext.data
+                            )
+                        }
                     }
                 }
             }
@@ -202,8 +228,7 @@ class HostingView @JvmOverloads constructor(
 
     private fun setContentAsyncInternal(
             node: TemplateNode,
-            elContext: PropsELContext,
-            callback: ((Component) -> Unit)? = null
+            elContext: PropsELContext
     ) {
         val tree = componentTree
         if (tree != null) {
@@ -218,9 +243,9 @@ class HostingView @JvmOverloads constructor(
                         elContext,
                         true,
                         c
-                ).single()
+                ).single() as Component
                 tree.setRootAndSizeSpec(
-                        component as Component,
+                        component,
                         SizeSpec.makeSizeSpec(mW, SizeSpec.EXACTLY),
                         when (height) {
                             LayoutParams.WRAP_CONTENT ->
@@ -234,7 +259,6 @@ class HostingView @JvmOverloads constructor(
                                         SizeSpec.EXACTLY
                                 )
                         })
-                callback?.invoke(component)
             }
         }
     }

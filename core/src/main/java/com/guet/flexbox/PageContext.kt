@@ -38,11 +38,15 @@ class PageContext(
 
 internal class ForwardContext : HostingContext() {
 
-    private var _target: WeakReference<HostingContext?>? = null
+    private var _target: WeakReference<HostingContext>? = null
 
     var target: HostingContext?
         set(value) {
-            _target = WeakReference(value)
+            _target = if (value != null) {
+                WeakReference(value)
+            } else {
+                null
+            }
         }
         get() {
             return _target?.get()
