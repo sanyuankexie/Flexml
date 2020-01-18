@@ -231,14 +231,14 @@ class PropsELContext(
 
         private fun resUri(
                 type: String,
-                map: (Map<String, String>) = emptyMap()
+                map: (List<Pair<String, String>>) = emptyList()
         ): String {
             return Uri.Builder()
                     .scheme("res")
                     .authority(type)
                     .apply {
                         map.forEach {
-                            appendQueryParameter(it.key, it.value)
+                            appendQueryParameter(it.first, it.second)
                         }
                     }
                     .build()
@@ -250,9 +250,9 @@ class PropsELContext(
         @JvmStatic
         fun gradient(orientation: String, vararg colors: String): String {
             return resUri("gradient",
-                    mutableMapOf("orientation" to orientation)
+                    mutableListOf("orientation" to orientation)
                             .apply {
-                                putAll(colors.map {
+                                addAll(colors.map {
                                     "color" to it
                                 })
                             }
@@ -263,7 +263,7 @@ class PropsELContext(
         @JvmName("drawable")
         @JvmStatic
         fun drawable(name: String): String {
-            return resUri("drawable", mapOf("name" to name))
+            return resUri("drawable", listOf("name" to name))
         }
 
         @Prefix("dimen")
