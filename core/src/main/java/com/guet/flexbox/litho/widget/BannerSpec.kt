@@ -84,19 +84,6 @@ object BannerSpec {
         view.viewPager.adapter = null
     }
 
-    private fun createComponentTrees(
-            c: ComponentContext,
-            children: List<Component>
-    ): List<ComponentTree> {
-        return children.map {
-            ComponentTree.create(c)
-                    .withRoot(it)
-                    .isReconciliationEnabled(false)
-                    .layoutThreadHandler(LayoutThreadHandler)
-                    .build()
-        }
-    }
-
     @OnBind
     fun onBind(
             c: ComponentContext,
