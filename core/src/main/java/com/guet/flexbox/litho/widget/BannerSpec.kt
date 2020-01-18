@@ -62,10 +62,7 @@ object BannerSpec {
             view.viewPager.adapter = BannerAdapter(
                     c,
                     isCircular,
-                    createComponentTrees(
-                            c,
-                            children
-                    )
+                    children
             )
             view.viewPager.currentItem = children.size * 100
         }
@@ -108,14 +105,7 @@ object BannerSpec {
             @Prop(optional = true, varArg = "child") children: List<Component>?
     ) {
         val rect = Rect(0, 0, host.measuredWidth, host.measuredWidth)
-        mutableListOf(host.indicators).apply {
-            addAll((0 until host.viewPager.childCount).mapNotNull {
-                host.viewPager.getChildAt(it) as? LithoView
-            })
-        }.forEach {
-            it.performIncrementalMount(rect, false)
-        }
-
+        host.indicators.performIncrementalMount(rect, false)
         if (timeSpan > 0) {
             val token = CarouselRunnable(
                     host.viewPager,
@@ -157,24 +147,28 @@ private class LithoViewHolder(
         val c: ComponentContext,
         val lithoView: LithoView = LithoView(c).apply {
             layoutParams = ViewGroup.LayoutParams(-1, -1)
+            componentTree = ComponentTree.create(c)
+                    .layoutThreadHandler(LayoutThreadHandler)
+                    .isReconciliationEnabled(false)
+                    .build()
         }
 ) : RecyclerView.ViewHolder(lithoView)
 
 private class BannerAdapter(
         private val c: ComponentContext,
         private val isCircular: Boolean,
-        private val componentTrees: List<ComponentTree>
+        private val components: List<Component>
 ) : RecyclerView.Adapter<LithoViewHolder>() {
 
     fun getNormalizedPosition(position: Int): Int {
         return if (isCircular)
-            position % componentTrees.size
+            position % components.size
         else
             position
     }
 
     val realCount: Int
-        get() = componentTrees.size
+        get() = components.size
 
     override fun onCreateViewHolder(
             parent: ViewGroup,
@@ -187,7 +181,7 @@ private class BannerAdapter(
         return if (isCircular) {
             Int.MAX_VALUE
         } else {
-            componentTrees.size
+            components.size
         }
     }
 
@@ -198,7 +192,7 @@ private class BannerAdapter(
 
     override fun onBindViewHolder(holder: LithoViewHolder, position: Int) {
         val p = getNormalizedPosition(position)
-        holder.lithoView.componentTree = componentTrees[p]
+        holder.lithoView.setComponentAsync(components[p])
     }
 }
 
