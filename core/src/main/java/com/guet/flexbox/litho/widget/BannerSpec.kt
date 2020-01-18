@@ -29,6 +29,15 @@ object BannerSpec {
     @PropDefault
     val isCircular: Boolean = true
 
+    @PropDefault
+    val indicatorsHeightPx: Int = 5.toPx()
+
+    @PropDefault
+    val indicatorSelectedColor: Int = Color.WHITE
+
+    @PropDefault
+    val indicatorUnselectedColor: Int = Color.GRAY
+
     @OnCreateMountContent
     fun onCreateMountContent(c: Context): BannerView {
         return BannerView(c)
@@ -39,10 +48,13 @@ object BannerSpec {
             c: ComponentContext,
             view: BannerView,
             @Prop(optional = true) isCircular: Boolean,
+            @Prop(optional = true) indicatorsHeightPx: Int,
+            @Prop(optional = true) indicatorSelectedColor: Int,
+            @Prop(optional = true) indicatorUnselectedColor: Int,
             @Prop(optional = true, varArg = "child") children: List<Component>?
     ) {
         if (!children.isNullOrEmpty()) {
-            view.viewPager.adapter = InternalAdapter(
+            view.viewPager.adapter = BannerAdapter(
                     c,
                     isCircular,
                     createComponentTrees(
@@ -50,6 +62,9 @@ object BannerSpec {
                             children
                     )
             )
+            view.indicatorsHeightPx = indicatorsHeightPx
+            view.indicatorSelectedColor = indicatorSelectedColor
+            view.indicatorUnselectedColor = indicatorUnselectedColor
             view.viewPager.currentItem = children.size * 100
         }
     }
@@ -92,10 +107,12 @@ object BannerSpec {
         if (timeSpan <= 100) {
             return
         }
+        val token = host.tag ?: Any()
+        host.tag = token
         HandlerCompat.postDelayed(
                 ConcurrentUtils.mainThreadHandler,
                 CarouselRunnable(host.viewPager, timeSpan),
-                host.viewPager,
+                token,
                 timeSpan
         )
 
@@ -106,8 +123,10 @@ object BannerSpec {
             c: ComponentContext,
             host: BannerView
     ) {
-        ConcurrentUtils.mainThreadHandler
-                .removeCallbacksAndMessages(host.viewPager)
+        host.tag?.let {
+            ConcurrentUtils.mainThreadHandler
+                    .removeCallbacksAndMessages(it)
+        }
     }
 
 }
@@ -129,18 +148,18 @@ private class CarouselRunnable(
 
 }
 
-private class InternalViewHolder(
+private class LithoViewHolder(
         val c: ComponentContext,
         val lithoView: LithoView = LithoView(c).apply {
             layoutParams = ViewGroup.LayoutParams(-1, -1)
         }
 ) : RecyclerView.ViewHolder(lithoView)
 
-private class InternalAdapter(
+private class BannerAdapter(
         private val c: ComponentContext,
         private val isCircular: Boolean,
         private val componentTrees: List<ComponentTree>
-) : RecyclerView.Adapter<InternalViewHolder>() {
+) : RecyclerView.Adapter<LithoViewHolder>() {
 
     fun getNormalizedPosition(position: Int): Int {
         return if (isCircular)
@@ -155,8 +174,8 @@ private class InternalAdapter(
     override fun onCreateViewHolder(
             parent: ViewGroup,
             viewType: Int
-    ): InternalViewHolder {
-        return InternalViewHolder(c)
+    ): LithoViewHolder {
+        return LithoViewHolder(c)
     }
 
     override fun getItemCount(): Int {
@@ -167,12 +186,12 @@ private class InternalAdapter(
         }
     }
 
-    override fun onViewRecycled(holder: InternalViewHolder) {
+    override fun onViewRecycled(holder: LithoViewHolder) {
         holder.lithoView.unmountAllItems()
         holder.lithoView.componentTree = null
     }
 
-    override fun onBindViewHolder(holder: InternalViewHolder, position: Int) {
+    override fun onBindViewHolder(holder: LithoViewHolder, position: Int) {
         val p = getNormalizedPosition(position)
         holder.lithoView.componentTree = componentTrees[p]
     }
@@ -184,30 +203,34 @@ class BannerView(context: Context) : FrameLayout(context), HasLithoViewChildren 
 
     val indicators = LithoView(context)
 
+    var indicatorsHeightPx: Int = BannerSpec.indicatorsHeightPx
+
+    var indicatorSelectedColor: Int = BannerSpec.indicatorSelectedColor
+
+    var indicatorUnselectedColor: Int = BannerSpec.indicatorUnselectedColor
+
     private val callback = object : ViewPager2.OnPageChangeCallback() {
         override fun onPageSelected(position: Int) {
             val adapter = viewPager.adapter
-            if (adapter !is InternalAdapter) {
+            if (adapter !is BannerAdapter) {
                 return
             }
             val realPosition = adapter.getNormalizedPosition(position)
+            val indicatorPx = 5.toPx()
             val c = indicators.componentContext
-            val r = 1.5
-            val px = r.toPx()
-            val px2 = (r * 4).toPx()
-            val outline = CornerOutlineProvider(px2)
+            val outline = CornerOutlineProvider(indicatorPx)
             indicators.setComponentAsync(Row.create(c)
                     .justifyContent(YogaJustify.CENTER)
                     .alignItems(YogaAlign.FLEX_END)
                     .child(Row.create(c)
-                            .marginPx(YogaEdge.BOTTOM, px2)
+                            .marginPx(YogaEdge.BOTTOM, indicatorsHeightPx)
                             .apply {
                                 (0 until adapter.realCount).forEach { index ->
                                     child(Row.create(c)
-                                            .widthPx(px2)
-                                            .heightPx(px2)
-                                            .marginPx(YogaEdge.LEFT, px)
-                                            .marginPx(YogaEdge.RIGHT, px)
+                                            .widthPx(indicatorPx)
+                                            .heightPx(indicatorPx)
+                                            .marginPx(YogaEdge.LEFT, indicatorPx / 2)
+                                            .marginPx(YogaEdge.RIGHT, indicatorPx / 2)
                                             .outlineProvider(outline)
                                             .clipToOutline(true)
                                             .apply {

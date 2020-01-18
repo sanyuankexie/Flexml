@@ -1,8 +1,18 @@
 package com.guet.flexbox.build
 
+import android.graphics.Color
+import com.guet.flexbox.Orientation
+
 object Banner : Declaration(Common) {
     override val attributeInfoSet: AttributeInfoSet by create {
         bool("isCircular")
-        value("timeSpan")
+        value("timeSpan", fallback = 3000.0)
+        enum("orientation", mapOf(
+                "vertical" to Orientation.VERTICAL,
+                "horizontal" to Orientation.HORIZONTAL
+        ))
+        value("indicatorsHeight", fallback = 5.0)
+        color("indicatorSelectedColor", fallback = Color.WHITE)
+        color("indicatorUnselectedColor", fallback = Color.GRAY)
     }
 }
