@@ -5,7 +5,7 @@ import android.os.HandlerThread
 import com.facebook.litho.LithoHandler
 
 internal object AsyncThread : Handler({
-    val thread = HandlerThread("GlobalAsyncThread")
+    val thread = HandlerThread("Gbox:AsyncThread")
     thread.start()
     thread.looper
 }()), LithoHandler {
