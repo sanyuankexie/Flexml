@@ -84,19 +84,6 @@ object BannerSpec {
         view.viewPager.adapter = null
     }
 
-    private fun createComponentTrees(
-            c: ComponentContext,
-            children: List<Component>
-    ): List<ComponentTree> {
-        return children.map {
-            ComponentTree.create(c)
-                    .withRoot(it)
-                    .isReconciliationEnabled(false)
-                    .layoutThreadHandler(LayoutThreadHandler)
-                    .build()
-        }
-    }
-
     @OnBind
     fun onBind(
             c: ComponentContext,
@@ -236,9 +223,9 @@ class BannerView(context: Context) : FrameLayout(context), HasLithoViewChildren 
                                             .clipToOutline(true)
                                             .apply {
                                                 if (index == realPosition) {
-                                                    backgroundColor(Color.WHITE)
+                                                    backgroundColor(indicatorSelectedColor)
                                                 } else {
-                                                    backgroundColor(Color.GRAY)
+                                                    backgroundColor(indicatorUnselectedColor)
                                                 }
                                             }
                                     )
