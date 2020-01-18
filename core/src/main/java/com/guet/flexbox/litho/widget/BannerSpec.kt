@@ -20,7 +20,7 @@ object BannerSpec {
     @PropDefault
     val isCircular: Boolean = true
 
-    private val needRecreated by lazy<RecyclerBinder.() -> Boolean> {
+    private val needNewInstance by lazy<RecyclerBinder.() -> Boolean> {
         val isCircularField = RecyclerBinder::class.java
                 .getDeclaredField("mIsCircular")
                 .apply {
@@ -32,12 +32,12 @@ object BannerSpec {
                     isAccessible = true
                 }
         return@lazy {
-            val oldIsCircular = isCircularField.getBoolean(this)
-            val count = componentTreeHoldersField.get(this)
+            val isCircular = isCircularField.getBoolean(this)
+            val isEmpty = componentTreeHoldersField.get(this)
                     .run {
                         this as? List<*>
-                    }?.size ?: 0
-            oldIsCircular && count != 0
+                    }.isNullOrEmpty()
+            isCircular && !isEmpty
         }
     }
 
@@ -77,7 +77,7 @@ object BannerSpec {
         if (children.isNullOrEmpty()) {
             return null
         }
-        val target = if (binder.needRecreated()) {
+        val target = if (binder.needNewInstance()) {
             val out = StateValue<RecyclerBinder>()
             onCreateInitialState(c, isCircular, out)
             out.get()!!.apply {
