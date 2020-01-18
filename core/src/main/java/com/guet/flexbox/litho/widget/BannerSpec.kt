@@ -104,7 +104,8 @@ object BannerSpec {
     fun onBind(
             c: ComponentContext,
             host: BannerView,
-            @Prop(optional = true) timeSpan: Long
+            @Prop(optional = true) timeSpan: Long,
+            @Prop(optional = true, varArg = "child") children: List<Component>?
     ) {
         val rect = Rect(0, 0, host.measuredWidth, host.measuredWidth)
         mutableListOf(host.indicators).apply {
@@ -114,16 +115,16 @@ object BannerSpec {
         }.forEach {
             it.performIncrementalMount(rect, false)
         }
-        if (timeSpan <= 100) {
-            return
+
+        if (timeSpan > 0) {
+            val token = CarouselRunnable(
+                    host.viewPager,
+                    timeSpan
+            )
+            host.token = token
+            ConcurrentUtils.mainThreadHandler
+                    .postDelayed(token, timeSpan)
         }
-        val token = Carouseler(
-                host.viewPager,
-                timeSpan
-        )
-        host.tag = token
-        ConcurrentUtils.mainThreadHandler
-                .postDelayed(token, timeSpan)
     }
 
     @OnUnbind
@@ -131,15 +132,15 @@ object BannerSpec {
             c: ComponentContext,
             host: BannerView
     ) {
-        host.tag?.let {
+        host.token?.let {
             ConcurrentUtils.mainThreadHandler
-                    .removeCallbacks(it as Runnable)
+                    .removeCallbacks(it)
         }
     }
 
 }
 
-private class Carouseler(
+class CarouselRunnable(
         host: ViewPager2,
         private val timeSpan: Long
 ) : WeakReference<ViewPager2>(host), Runnable {
@@ -204,6 +205,8 @@ private class BannerAdapter(
 class BannerView(context: Context) : FrameLayout(context), HasLithoViewChildren {
 
     val viewPager: ViewPager2 = ViewPager2(context)
+
+    var token: CarouselRunnable? = null
 
     val indicators = LithoView(context)
 
