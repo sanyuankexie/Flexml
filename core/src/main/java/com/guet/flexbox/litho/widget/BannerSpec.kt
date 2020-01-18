@@ -1,115 +1,137 @@
-package com.guet.flexbox.litho.widget
-
-import androidx.recyclerview.widget.PagerSnapHelper
-import androidx.recyclerview.widget.RecyclerView
-import com.facebook.litho.Component
-import com.facebook.litho.ComponentContext
-import com.facebook.litho.StateValue
-import com.facebook.litho.annotations.*
-import com.facebook.litho.widget.*
-import com.guet.flexbox.litho.LayoutThreadHandler
-
-
-@LayoutSpec
-object BannerSpec {
-
-    @PropDefault
-    val timeSpan = 3000L
-
-    @get:JvmName(name = "getIsCircular")
-    @PropDefault
-    val isCircular: Boolean = true
-
-    private val needNewInstance by lazy<RecyclerBinder.() -> Boolean> {
-        val isCircularField = RecyclerBinder::class.java
-                .getDeclaredField("mIsCircular")
-                .apply {
-                    isAccessible = true
-                }
-        val componentTreeHoldersField = RecyclerBinder::class.java
-                .getDeclaredField("mComponentTreeHolders")
-                .apply {
-                    isAccessible = true
-                }
-        return@lazy {
-            val isCircular = isCircularField.getBoolean(this)
-            val isEmpty = componentTreeHoldersField.get(this)
-                    .run {
-                        this as? List<*>
-                    }.isNullOrEmpty()
-            isCircular && !isEmpty
-        }
-    }
-
-    private val emptyCallback = object : ChangeSetCompleteCallback {
-        override fun onDataBound() {
-
-        }
-
-        override fun onDataRendered(isMounted: Boolean, uptimeMillis: Long) {
-        }
-    }
-
-    @OnCreateInitialState
-    fun onCreateInitialState(
-            c: ComponentContext,
-            @Prop(optional = true) isCircular: Boolean,
-            binder: StateValue<RecyclerBinder>) {
-        binder.set(RecyclerBinder.Builder()
-                .isCircular(isCircular)
-                .layoutInfo(LinearLayoutInfo(
-                        c,
-                        RecyclerView.HORIZONTAL,
-                        false
-                ))
-                .asyncInsertLayoutHandler(LayoutThreadHandler)
-                .build(c))
-    }
-
-    @OnCreateLayout
-    fun onCreateLayout(
-            c: ComponentContext,
-            @State(canUpdateLazily = true) binder: RecyclerBinder,
-            @Prop(optional = true) timeSpan: Long,
-            @Prop(optional = true) isCircular: Boolean,
-            @Prop(optional = true, varArg = "child") children: List<Component>?
-    ): Component? {
-        if (children.isNullOrEmpty()) {
-            return null
-        }
-        val target = if (binder.needNewInstance()) {
-            val out = StateValue<RecyclerBinder>()
-            onCreateInitialState(c, isCircular, out)
-            out.get()!!.apply {
-                Banner.replaceRecyclerBinder(c, this)
-            }
-        } else {
-            binder
-        }
-        target.clearAsync()
-        target.insertRangeAtAsync(
-                0,
-                children.map {
-                    ComponentRenderInfo.create()
-                            .component(it)
-                            .build()
-                }
-        )
-        target.notifyChangeSetCompleteAsync(
-                true,
-                emptyCallback
-        )
-        return Recycler.create(c)
-                .binder(target)
-                .snapHelper(PagerSnapHelper())
-                .build()
-    }
-
-    @OnUpdateState
-    fun replaceRecyclerBinder(
-            @Param newBinder: RecyclerBinder,
-            binder: StateValue<RecyclerBinder>
-    ) {
-        binder.set(newBinder)
-    }
-}
+//package com.guet.flexbox.litho.widget
+//
+//import androidx.recyclerview.widget.PagerSnapHelper
+//import androidx.recyclerview.widget.RecyclerView
+//import com.facebook.litho.Component
+//import com.facebook.litho.ComponentContext
+//import com.facebook.litho.StateValue
+//import com.facebook.litho.annotations.*
+//import com.facebook.litho.widget.*
+//import com.guet.flexbox.ConcurrentUtils
+//import com.guet.flexbox.litho.LayoutThreadHandler
+//
+//
+//@LayoutSpec
+//object BannerSpec {
+//
+//    @PropDefault
+//    val timeSpan = 3000L
+//
+//    @get:JvmName(name = "getIsCircular")
+//    @PropDefault
+//    val isCircular: Boolean = true
+//
+//    private val needNewInstance by lazy<RecyclerBinder.() -> Boolean> {
+//        val isCircularField = RecyclerBinder::class.java
+//                .getDeclaredField("mIsCircular")
+//                .apply {
+//                    isAccessible = true
+//                }
+//        val componentTreeHoldersField = RecyclerBinder::class.java
+//                .getDeclaredField("mComponentTreeHolders")
+//                .apply {
+//                    isAccessible = true
+//                }
+//        return@lazy {
+//            val isCircular = isCircularField.getBoolean(this)
+//            val isEmpty = componentTreeHoldersField.get(this)
+//                    .run {
+//                        this as? List<*>
+//                    }.isNullOrEmpty()
+//            isCircular && !isEmpty
+//        }
+//    }
+//
+//    private val emptyCallback = object : ChangeSetCompleteCallback {
+//        override fun onDataBound() {
+//
+//        }
+//
+//        override fun onDataRendered(isMounted: Boolean, uptimeMillis: Long) {
+//        }
+//    }
+//
+//    @OnCreateInitialState
+//    fun onCreateInitialState(
+//            c: ComponentContext,
+//            @Prop(optional = true) isCircular: Boolean,
+//            binder: StateValue<RecyclerBinder>
+//    ) {
+//        binder.set(RecyclerBinder.Builder()
+//                .isCircular(isCircular)
+//                .layoutInfo(LinearLayoutInfo(
+//                        c,
+//                        RecyclerView.HORIZONTAL,
+//                        false
+//                ))
+//                .asyncInsertLayoutHandler(LayoutThreadHandler)
+//                .build(c))
+//    }
+//
+//    @OnCreateLayout
+//    fun onCreateLayout(
+//            c: ComponentContext,
+//            @State(canUpdateLazily = true) binder: RecyclerBinder,
+//            @Prop(optional = true) timeSpan: Long,
+//            @Prop(optional = true) isCircular: Boolean,
+//            @Prop(optional = true, varArg = "child") children: List<Component>?
+//    ): Component? {
+//        if (children.isNullOrEmpty()) {
+//            return null
+//        }
+//        val target = if (binder.needNewInstance()) {
+//            val out = StateValue<RecyclerBinder>()
+//            onCreateInitialState(c, isCircular, out)
+//            out.get()!!.apply {
+//                Banner.replaceRecyclerBinder(c, this)
+//            }
+//        } else {
+//            binder
+//        }
+//        target.clearAsync()
+//        target.insertRangeAtAsync(
+//                0,
+//                children.map {
+//                    ComponentRenderInfo.create()
+//                            .component(it)
+//                            .build()
+//                }
+//        )
+//        target.notifyChangeSetCompleteAsync(
+//                true,
+//                emptyCallback
+//        )
+//        return Recycler.create(c)
+//                .binder(target)
+//                .snapHelper(PagerSnapHelper())
+//                .build()
+//    }
+//
+//    @OnUpdateState
+//    fun replaceRecyclerBinder(
+//            @Param newBinder: RecyclerBinder,
+//            binder: StateValue<RecyclerBinder>
+//    ) {
+//        binder.set(newBinder)
+//    }
+//
+//    private class InternalRecyclerBinder(
+//            private val timeSpan: Long,
+//            private val target: Binder<RecyclerView>
+//    ) : Binder<RecyclerView> by target, Runnable {
+//
+//        override fun bind(view: RecyclerView) {
+//            target.bind(view)
+//
+//        }
+//
+//        override fun unbind(view: RecyclerView) {
+//            ConcurrentUtils.mainThreadHandler.removeCallbacks(this)
+//            target.unbind(view)
+//        }
+//
+//        override fun run() {
+//
+//        }
+//    }
+//}
