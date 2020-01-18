@@ -6,7 +6,7 @@ import com.guet.flexbox.el.PropsELContext
 import com.guet.flexbox.el.scope
 import java.util.*
 
-object TextInput : Declaration(AbstractText) {
+object TextInput : Declaration(AbsText) {
     override val attributeInfoSet: AttributeInfoSet by create {
         typed("onTextChanged") { pageContext: HostingContext,
                                  elContext: PropsELContext,

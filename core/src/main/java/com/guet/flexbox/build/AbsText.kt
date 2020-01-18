@@ -5,7 +5,7 @@ import android.text.Layout
 import android.text.TextUtils
 import com.facebook.litho.widget.VerticalGravity
 
-object AbstractText : Declaration(Common) {
+internal object AbsText : Declaration(Common) {
 
     override val attributeInfoSet: AttributeInfoSet by create {
         enum("verticalGravity", mapOf(
