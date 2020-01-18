@@ -6,7 +6,6 @@ import android.graphics.Rect
 import android.view.View
 import android.view.ViewGroup
 import android.widget.FrameLayout
-import androidx.core.os.HandlerCompat
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager2.widget.ViewPager2
 import com.facebook.litho.*
@@ -18,6 +17,7 @@ import com.guet.flexbox.ConcurrentUtils
 import com.guet.flexbox.Orientation
 import com.guet.flexbox.litho.LayoutThreadHandler
 import com.guet.flexbox.litho.toPx
+import java.lang.ref.WeakReference
 
 
 @MountSpec(isPureRender = true, hasChildLithoViews = true)
@@ -117,19 +117,13 @@ object BannerSpec {
         if (timeSpan <= 100) {
             return
         }
-        val token = host.tag ?: Any()
-        host.tag = token
-        HandlerCompat.postDelayed(
-                ConcurrentUtils.mainThreadHandler,
-                Carouseler(
-                        host.viewPager,
-                        token,
-                        timeSpan
-                ),
-                token,
+        val token = Carouseler(
+                host.viewPager,
                 timeSpan
         )
-
+        host.tag = token
+        ConcurrentUtils.mainThreadHandler
+                .postDelayed(token, timeSpan)
     }
 
     @OnUnbind
@@ -139,28 +133,23 @@ object BannerSpec {
     ) {
         host.tag?.let {
             ConcurrentUtils.mainThreadHandler
-                    .removeCallbacksAndMessages(it)
+                    .removeCallbacks(it as Runnable)
         }
     }
 
 }
 
 private class Carouseler(
-        private val host: ViewPager2,
-        private val token: Any,
+        host: ViewPager2,
         private val timeSpan: Long
-) : Runnable {
-
+) : WeakReference<ViewPager2>(host), Runnable {
     override fun run() {
-        host.setCurrentItem(host.currentItem + 1, true)
-        HandlerCompat.postDelayed(
-                ConcurrentUtils.mainThreadHandler,
-                this,
-                token,
-                timeSpan
-        )
+        get()?.let {
+            it.setCurrentItem(it.currentItem + 1, true)
+            ConcurrentUtils.mainThreadHandler
+                    .postDelayed(this, timeSpan)
+        }
     }
-
 }
 
 private class LithoViewHolder(
