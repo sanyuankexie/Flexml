@@ -53,8 +53,6 @@ class CodeActivity : AppCompatActivity() {
         }
         scroll.outlineProvider = outline
         scroll.clipToOutline = true
-        codeView.outlineProvider = outline
-        codeView.clipToOutline = true
         loadData()
     }
 

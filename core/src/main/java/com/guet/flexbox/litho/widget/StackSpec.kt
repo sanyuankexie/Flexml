@@ -2,7 +2,6 @@ package com.guet.flexbox.litho.widget
 
 import android.view.ViewGroup.LayoutParams
 import android.view.ViewGroup.getChildMeasureSpec
-import androidx.core.math.MathUtils
 import com.facebook.litho.Component
 import com.facebook.litho.ComponentContext
 import com.facebook.litho.Row
@@ -12,20 +11,12 @@ import com.facebook.litho.annotations.OnCreateLayoutWithSizeSpec
 import com.facebook.litho.annotations.Prop
 import com.facebook.yoga.YogaEdge
 import com.facebook.yoga.YogaPositionType
-import java.util.concurrent.Executors
+import com.guet.flexbox.ConcurrentUtils
 import java.util.concurrent.Future
-import java.util.concurrent.atomic.AtomicInteger
 import kotlin.math.max
 
 @LayoutSpec
 object StackSpec {
-
-    private val count = AtomicInteger(0)
-
-    private val measureThreadPool = Executors.newFixedThreadPool(
-            MathUtils.clamp(Runtime.getRuntime().availableProcessors(), 2, 4)) {
-        Thread(it, "frame_thread${count.getAndIncrement()}")
-    }
 
     @OnCreateLayoutWithSizeSpec
     fun onCreateLayoutWithSizeSpec(
@@ -66,7 +57,7 @@ object StackSpec {
             parentWidthMeasureSpec: Int,
             parentHeightMeasureSpec: Int
     ): Future<Size> {
-        return measureThreadPool.submit<Size> {
+        return ConcurrentUtils.threadPool.submit<Size> {
             val size = Size()
             val childWidthMeasureSpec = getChildMeasureSpec(
                     parentWidthMeasureSpec,

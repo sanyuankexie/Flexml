@@ -10,7 +10,7 @@ abstract class BuildUtils {
             templateNode: TemplateNode,
             pageContext: HostingContext,
             data: PropsELContext,
-            upperVisibility: Boolean = true,
+            upperVisibility: Boolean,
             c: Any
     ): List<Child> {
         val type = templateNode.type

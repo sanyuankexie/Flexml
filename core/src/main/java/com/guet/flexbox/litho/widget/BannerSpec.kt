@@ -7,7 +7,7 @@ import com.facebook.litho.ComponentContext
 import com.facebook.litho.StateValue
 import com.facebook.litho.annotations.*
 import com.facebook.litho.widget.*
-import com.guet.flexbox.litho.concurrent.AsyncThread
+import com.guet.flexbox.litho.LayoutThreadHandler
 
 
 @LayoutSpec
@@ -62,7 +62,7 @@ object BannerSpec {
                         RecyclerView.HORIZONTAL,
                         false
                 ))
-                .asyncInsertLayoutHandler(AsyncThread)
+                .asyncInsertLayoutHandler(LayoutThreadHandler)
                 .build(c))
     }
 

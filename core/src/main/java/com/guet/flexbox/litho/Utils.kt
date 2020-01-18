@@ -8,7 +8,9 @@ import android.net.Uri
 import android.text.TextUtils
 import android.util.ArrayMap
 import com.facebook.litho.Component
+import com.facebook.litho.LithoHandler
 import com.facebook.litho.drawable.ComparableGradientDrawable
+import com.guet.flexbox.ConcurrentUtils
 
 internal typealias AttributeAssignSet<C> = Map<String, Assignment<C, *>>
 
@@ -100,5 +102,22 @@ internal fun parseUrl(c: Context, url: CharSequence): Any? {
         else -> {
             return url
         }
+    }
+}
+
+internal object LayoutThreadHandler: LithoHandler {
+
+    override fun post(runnable: Runnable, tag: String?) {
+        ConcurrentUtils.threadPool.execute(runnable)
+    }
+
+    override fun postAtFront(runnable: Runnable, tag: String?) {
+        throw UnsupportedOperationException()
+    }
+
+    override fun isTracing(): Boolean = true
+
+    override fun remove(runnable: Runnable) {
+        ConcurrentUtils.threadPool.remove(runnable)
     }
 }

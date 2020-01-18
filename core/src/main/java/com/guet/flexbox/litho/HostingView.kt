@@ -6,13 +6,8 @@ import android.util.AttributeSet
 import android.view.View
 import androidx.annotation.MainThread
 import com.facebook.litho.*
-import com.guet.flexbox.ForwardContext
-import com.guet.flexbox.HostingContext
-import com.guet.flexbox.HttpClient
-import com.guet.flexbox.TemplateNode
+import com.guet.flexbox.*
 import com.guet.flexbox.el.PropsELContext
-import com.guet.flexbox.litho.concurrent.AsyncThread
-import com.guet.flexbox.litho.concurrent.UiThread
 import com.guet.flexbox.transaction.HttpTransaction
 import com.guet.flexbox.transaction.RefreshTransaction
 
@@ -66,7 +61,7 @@ class HostingView @JvmOverloads constructor(
                     val height = layoutParams?.width ?: 0
                     val mH = measuredHeight
                     val mW = measuredWidth
-                    AsyncThread.post {
+                    ConcurrentUtils.runOnAsyncThread {
                         val context = ForwardContext()
                                 .apply {
                                     target = pageContext
@@ -93,7 +88,7 @@ class HostingView @JvmOverloads constructor(
                                                 SizeSpec.EXACTLY
                                         )
                                 })
-                        UiThread.runOnUiThread {
+                        ConcurrentUtils.runOnUiThread {
                             _pageEventListener?.onPageChanged(
                                     this@HostingView,
                                     Page(node, component, context),
@@ -130,7 +125,7 @@ class HostingView @JvmOverloads constructor(
                         && url != null && method != null) {
                     val onSuccess: ((Any) -> Unit)? = if (success != null) {
                         {
-                            UiThread.runOnUiThread {
+                            ConcurrentUtils.runOnUiThread {
                                 success.invoke(
                                         elContext,
                                         pageContext.withView(source),
@@ -143,7 +138,7 @@ class HostingView @JvmOverloads constructor(
                     }
                     val onError: (() -> Unit)? = if (error != null) {
                         {
-                            UiThread.runOnUiThread {
+                            ConcurrentUtils.runOnUiThread {
                                 error.invoke(elContext,
                                         pageContext.withView(source)
                                 )
@@ -175,7 +170,7 @@ class HostingView @JvmOverloads constructor(
     init {
         componentTree = ComponentTree.create(componentContext)
                 .isReconciliationEnabled(false)
-                .layoutThreadHandler(AsyncThread)
+                .layoutThreadHandler(LayoutThreadHandler)
                 .build()
         super.setOnDirtyMountListener { view ->
             this.performIncrementalMount(
@@ -233,7 +228,7 @@ class HostingView @JvmOverloads constructor(
             val height = layoutParams?.width ?: 0
             val mH = measuredHeight
             val mW = measuredWidth
-            AsyncThread.post {
+            ConcurrentUtils.runOnAsyncThread {
                 val component = LithoBuildUtils.bindNode(
                         node,
                         pageContext,
