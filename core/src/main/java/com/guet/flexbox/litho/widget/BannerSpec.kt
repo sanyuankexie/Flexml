@@ -223,9 +223,9 @@ class BannerView(context: Context) : FrameLayout(context), HasLithoViewChildren 
                                             .clipToOutline(true)
                                             .apply {
                                                 if (index == realPosition) {
-                                                    backgroundColor(Color.WHITE)
+                                                    backgroundColor(indicatorSelectedColor)
                                                 } else {
-                                                    backgroundColor(Color.GRAY)
+                                                    backgroundColor(indicatorUnselectedColor)
                                                 }
                                             }
                                     )
