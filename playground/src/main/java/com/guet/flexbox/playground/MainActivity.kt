@@ -61,6 +61,7 @@ class MainActivity : AppCompatActivity() {
         fQrCode.setOnClickListener(handleToQr)
         qrCode.setOnClickListener(handleToQr)
         banner = headerView.findViewById(R.id.banner)
+        banner.setPageEventListener(handler)
         val fSearch = findViewById<View>(R.id.search)
         val search = headerView.findViewById<View>(R.id.search)
         val handleToSearch = View.OnClickListener {
