@@ -2,12 +2,13 @@ package com.guet.flexbox.litho.widget
 
 import android.content.Context
 import android.graphics.Color
+import android.graphics.Rect
 import android.view.View
 import android.view.ViewGroup
 import android.widget.FrameLayout
 import androidx.core.os.HandlerCompat
-import androidx.viewpager.widget.PagerAdapter
-import androidx.viewpager.widget.ViewPager
+import androidx.recyclerview.widget.RecyclerView
+import androidx.viewpager2.widget.ViewPager2
 import com.facebook.litho.*
 import com.facebook.litho.annotations.*
 import com.facebook.yoga.YogaAlign
@@ -16,8 +17,6 @@ import com.facebook.yoga.YogaJustify
 import com.guet.flexbox.ConcurrentUtils
 import com.guet.flexbox.litho.LayoutThreadHandler
 import com.guet.flexbox.litho.toPx
-import java.util.*
-import kotlin.collections.ArrayList
 
 
 @MountSpec(isPureRender = true, hasChildLithoViews = true)
@@ -39,7 +38,6 @@ object BannerSpec {
     fun mount(
             c: ComponentContext,
             view: BannerView,
-            @Prop(optional = true) timeSpan: Long,
             @Prop(optional = true) isCircular: Boolean,
             @Prop(optional = true, varArg = "child") children: List<Component>?
     ) {
@@ -47,15 +45,12 @@ object BannerSpec {
             view.viewPager.adapter = InternalAdapter(
                     c,
                     isCircular,
-                    children.size,
                     createComponentTrees(
                             c,
-                            isCircular,
                             children
                     )
             )
             view.viewPager.currentItem = children.size * 100
-            mountCarouselRunnable(view.viewPager, timeSpan)
         }
     }
 
@@ -65,20 +60,13 @@ object BannerSpec {
             view: BannerView
     ) {
         view.viewPager.adapter = null
-        unmountCarouselRunnable(view.viewPager)
     }
 
     private fun createComponentTrees(
             c: ComponentContext,
-            isCircular: Boolean,
             children: List<Component>
     ): List<ComponentTree> {
-        val list = if (isCircular) {
-            ensureCircularCount(children)
-        } else {
-            children
-        }
-        return list.map {
+        return children.map {
             ComponentTree.create(c)
                     .withRoot(it)
                     .isReconciliationEnabled(false)
@@ -87,48 +75,45 @@ object BannerSpec {
         }
     }
 
-    private fun ensureCircularCount(
-            children: List<Component>
-    ): List<Component> {
-        return if (children.size < 4 && isCircular) {
-            val newList = ArrayList<Component>(4)
-            do {
-                newList.addAll(children)
-            } while (newList.size < 4)
-            newList
-        } else {
-            children
-        }
-    }
-
-    private fun mountCarouselRunnable(
-            host: ViewPager,
-            timeSpan: Long
+    @OnBind
+    fun onBind(
+            c: ComponentContext,
+            host: BannerView,
+            @Prop(optional = true) timeSpan: Long
     ) {
-        val ts = if (timeSpan <= 100) {
-            100
-        } else {
-            timeSpan
+        val rect = Rect(0, 0, host.measuredWidth, host.measuredWidth)
+        mutableListOf(host.indicators).apply {
+            addAll((0 until host.viewPager.childCount).mapNotNull {
+                host.viewPager.getChildAt(it) as? LithoView
+            })
+        }.forEach {
+            it.performIncrementalMount(rect, false)
+        }
+        if (timeSpan <= 100) {
+            return
         }
         HandlerCompat.postDelayed(
                 ConcurrentUtils.mainThreadHandler,
-                CarouselRunnable(host, ts),
-                host,
-                ts
+                CarouselRunnable(host.viewPager, timeSpan),
+                host.viewPager,
+                timeSpan
         )
+
     }
 
-    private fun unmountCarouselRunnable(
-            host: ViewPager
+    @OnUnbind
+    fun onUnbind(
+            c: ComponentContext,
+            host: BannerView
     ) {
         ConcurrentUtils.mainThreadHandler
-                .removeCallbacksAndMessages(host)
+                .removeCallbacksAndMessages(host.viewPager)
     }
 
 }
 
 private class CarouselRunnable(
-        private val host: ViewPager,
+        private val host: ViewPager2,
         private val timeSpan: Long
 ) : Runnable {
 
@@ -138,44 +123,43 @@ private class CarouselRunnable(
                 ConcurrentUtils.mainThreadHandler,
                 this,
                 host,
-                timeSpan)
+                timeSpan
+        )
     }
 
 }
 
+private class InternalViewHolder(
+        val c: ComponentContext,
+        val lithoView: LithoView = LithoView(c).apply {
+            layoutParams = ViewGroup.LayoutParams(-1, -1)
+        }
+) : RecyclerView.ViewHolder(lithoView)
+
 private class InternalAdapter(
         private val c: ComponentContext,
-        val isCircular: Boolean,
-        val realCount: Int,
+        private val isCircular: Boolean,
         private val componentTrees: List<ComponentTree>
-) : PagerAdapter() {
+) : RecyclerView.Adapter<InternalViewHolder>() {
 
-    override fun destroyItem(
-            container: ViewGroup,
-            position: Int,
-            `object`: Any
-    ) {
-        val lithoView = `object` as LithoView
-        lithoView.unmountAllItems()
-        lithoView.componentTree = null
-        lithoView.setInvalidStateLogParamsList(null)
-        lithoView.resetMountStartupLoggingInfo()
-        container.removeView(lithoView)
-        container.recycleLithoView(lithoView)
-    }
-
-    private fun getNormalizedPosition(position: Int): Int {
+    fun getNormalizedPosition(position: Int): Int {
         return if (isCircular)
             position % componentTrees.size
         else
             position
     }
 
-    override fun isViewFromObject(view: View, `object`: Any): Boolean {
-        return view === `object`
+    val realCount: Int
+        get() = componentTrees.size
+
+    override fun onCreateViewHolder(
+            parent: ViewGroup,
+            viewType: Int
+    ): InternalViewHolder {
+        return InternalViewHolder(c)
     }
 
-    override fun getCount(): Int {
+    override fun getItemCount(): Int {
         return if (isCircular) {
             Int.MAX_VALUE
         } else {
@@ -183,93 +167,67 @@ private class InternalAdapter(
         }
     }
 
-    override fun instantiateItem(container: ViewGroup, position: Int): Any {
-        val v = container.obtainLithoView(c)
-        container.addView(v)
-        v.componentTree = componentTrees[getNormalizedPosition(position)]
-        return v
+    override fun onViewRecycled(holder: InternalViewHolder) {
+        holder.lithoView.unmountAllItems()
+        holder.lithoView.componentTree = null
     }
 
-    companion object {
-
-        private fun View.recycleLithoView(
-                v: LithoView) {
-            val cache = this.cache
-            cache.push(v)
-        }
-
-        private fun View.obtainLithoView(
-                c: ComponentContext
-        ): LithoView {
-            val cache = this.cache
-            return if (cache.isEmpty()) {
-                LithoView(c)
-            } else {
-                cache.pop()
-            }
-        }
-
-        private val View.cache: LinkedList<LithoView>
-            get() {
-                @Suppress("UNCHECKED_CAST")
-                var cache = this.tag as? LinkedList<LithoView>
-                if (cache == null) {
-                    cache = LinkedList()
-                    this.tag = cache
-                }
-                return cache
-            }
+    override fun onBindViewHolder(holder: InternalViewHolder, position: Int) {
+        val p = getNormalizedPosition(position)
+        holder.lithoView.componentTree = componentTrees[p]
     }
 }
 
 class BannerView(context: Context) : FrameLayout(context), HasLithoViewChildren {
 
-    val viewPager: ViewPager = ViewPager(context)
+    val viewPager: ViewPager2 = ViewPager2(context)
 
-    private val indicators = LithoView(context)
+    val indicators = LithoView(context)
+
+    private val callback = object : ViewPager2.OnPageChangeCallback() {
+        override fun onPageSelected(position: Int) {
+            val adapter = viewPager.adapter
+            if (adapter !is InternalAdapter) {
+                return
+            }
+            val realPosition = adapter.getNormalizedPosition(position)
+            val c = indicators.componentContext
+            val r = 1.5
+            val px = r.toPx()
+            val px2 = (r * 4).toPx()
+            val outline = CornerOutlineProvider(px2)
+            indicators.setComponentAsync(Row.create(c)
+                    .justifyContent(YogaJustify.CENTER)
+                    .alignItems(YogaAlign.FLEX_END)
+                    .child(Row.create(c)
+                            .marginPx(YogaEdge.BOTTOM, px2)
+                            .apply {
+                                (0 until adapter.realCount).forEach { index ->
+                                    child(Row.create(c)
+                                            .widthPx(px2)
+                                            .heightPx(px2)
+                                            .marginPx(YogaEdge.LEFT, px)
+                                            .marginPx(YogaEdge.RIGHT, px)
+                                            .outlineProvider(outline)
+                                            .clipToOutline(true)
+                                            .apply {
+                                                if (index == realPosition) {
+                                                    backgroundColor(Color.WHITE)
+                                                } else {
+                                                    backgroundColor(Color.GRAY)
+                                                }
+                                            }
+                                    )
+                                }
+                            })
+                    .build())
+        }
+    }
 
     init {
         addView(viewPager, LayoutParams(-1, -1))
         addView(indicators, LayoutParams(-1, -1))
-        viewPager.addOnPageChangeListener(object : ViewPager.SimpleOnPageChangeListener() {
-            override fun onPageSelected(position: Int) {
-                val adapter = viewPager.adapter
-                if (adapter !is InternalAdapter) {
-                    return
-                }
-                val realPosition = position % adapter.realCount
-                val c = indicators.componentContext
-                val r = 1.5
-                val px = r.toPx()
-                val px2 = (r * 4).toPx()
-                val outline = CornerOutlineProvider(px2)
-                indicators.setComponentAsync(Row.create(c)
-                        .justifyContent(YogaJustify.CENTER)
-                        .alignItems(YogaAlign.FLEX_END)
-                        .child(Row.create(c)
-                                .marginPx(YogaEdge.BOTTOM, px2)
-                                .apply {
-                                    (0 until adapter.realCount).forEach { index ->
-                                        child(Row.create(c)
-                                                .widthPx(px2)
-                                                .heightPx(px2)
-                                                .marginPx(YogaEdge.LEFT, px)
-                                                .marginPx(YogaEdge.RIGHT, px)
-                                                .outlineProvider(outline)
-                                                .clipToOutline(true)
-                                                .apply {
-                                                    if (index == realPosition) {
-                                                        backgroundColor(Color.WHITE)
-                                                    } else {
-                                                        backgroundColor(Color.GRAY)
-                                                    }
-                                                }
-                                        )
-                                    }
-                                })
-                        .build())
-            }
-        })
+        viewPager.registerOnPageChangeCallback(callback)
     }
 
     override fun obtainLithoViewChildren(lithoViews: MutableList<LithoView>) {
