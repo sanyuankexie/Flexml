@@ -4,7 +4,6 @@
     justifyContent="center"
     width="360">
     <Banner
-        timeSpan="300"
         borderRadius="12"
         height="150"
         width="340">
