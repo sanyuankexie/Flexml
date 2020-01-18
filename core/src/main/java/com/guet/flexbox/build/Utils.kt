@@ -29,7 +29,7 @@ internal class Registry {
             scope: (Map<String, String>) = emptyMap(),
             fallback: String = ""
     ) {
-        _value[name] = TextAttribute(scope, fallback)
+        _value[name] = TextAttributeInfo(scope, fallback)
     }
 
     fun bool(
@@ -37,7 +37,7 @@ internal class Registry {
             scope: Map<String, Boolean> = emptyMap(),
             fallback: Boolean = false
     ) {
-        _value[name] = BoolAttribute(scope, fallback)
+        _value[name] = BoolAttributeInfo(scope, fallback)
     }
 
     fun value(
@@ -45,7 +45,7 @@ internal class Registry {
             scope: Map<String, Double> = emptyMap(),
             fallback: Double = 0.0
     ) {
-        _value[name] = ValueAttribute(scope, fallback)
+        _value[name] = ValueAttributeInfo(scope, fallback)
     }
 
     fun color(
@@ -53,7 +53,7 @@ internal class Registry {
             scope: Map<String, Int> = emptyMap(),
             fallback: Int = Color.TRANSPARENT
     ) {
-        _value[name] = ColorAttribute(scope, fallback)
+        _value[name] = ColorAttributeInfo(scope, fallback)
     }
 
     inline fun <reified V : Enum<V>> enum(
@@ -61,7 +61,7 @@ internal class Registry {
             scope: Map<String, V>,
             fallback: V = enumValues<V>().first()
     ) {
-        _value[name] = EnumAttribute(scope, fallback)
+        _value[name] = EnumAttributeInfo(scope, fallback)
     }
 
     inline fun <T : Any> typed(

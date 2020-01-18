@@ -45,12 +45,13 @@ class CodeActivity : AppCompatActivity() {
         title.text = this.intent.getStringExtra("url")
         codeView = findViewById(R.id.code)
         codeView.setTheme(CodeViewTheme.ANDROIDSTUDIO).fillColor()
-        scroll.outlineProvider = object : ViewOutlineProvider() {
+        val outline = object : ViewOutlineProvider() {
             override fun getOutline(view: View, outline: Outline) {
                 outline.setRoundRect(0, 0, view.width, view.height,
                         UIUtils.dp2px(this@CodeActivity, 15f).toFloat())
             }
         }
+        scroll.outlineProvider = outline
         scroll.clipToOutline = true
         loadData()
     }

@@ -1,7 +1,7 @@
 package com.guet.flexbox.litho
 
-import com.facebook.litho.Component
 import com.facebook.litho.ComponentContext
+import com.guet.flexbox.Orientation
 import com.guet.flexbox.build.AttributeSet
 import com.guet.flexbox.litho.widget.Banner
 
@@ -12,6 +12,18 @@ internal object ToBanner : ToComponent<Banner.Builder>(Common) {
         }
         register("timeSpan") { _, _, value: Double ->
             timeSpan(value.toLong())
+        }
+        register("orientation") { _, _, value: Orientation ->
+            orientation(value)
+        }
+        register("indicatorsHeight") { _, _, value: Double ->
+            indicatorsHeightPx(value.toPx())
+        }
+        register("indicatorSelectedColor") { _, _, value: Int ->
+            indicatorSelectedColor(value)
+        }
+        register("indicatorUnselectedColor") { _, _, value: Int ->
+            indicatorUnselectedColor(value)
         }
     }
 

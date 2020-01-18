@@ -4,16 +4,19 @@ import com.guet.flexbox.HostingContext
 import com.guet.flexbox.el.PropsELContext
 import com.guet.flexbox.el.scope
 
-internal class ValueAttribute(scope: Map<String, Double>, fallback: Double?)
-    : AttributeInfo<Double>(scope, fallback) {
-    override fun cast(pageContext: HostingContext, props: PropsELContext, raw: String): Double? {
+internal class BoolAttributeInfo(scope: Map<String, Boolean>, fallback: Boolean?) : AttributeInfo<Boolean>(scope, fallback) {
+    override fun cast(
+            pageContext: HostingContext,
+            props: PropsELContext,
+            raw: String
+    ): Boolean? {
         return if (raw.isExpr) {
             props.scope(scope){
                 props.tryGetValue(raw, fallback)
             }
         } else {
-            scope[raw] ?: try {
-                raw.toDouble()
+            try {
+                raw.toBoolean()
             } catch (e: Exception) {
                 fallback
             }

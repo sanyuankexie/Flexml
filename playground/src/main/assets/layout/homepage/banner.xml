@@ -5,11 +5,11 @@
     width="360">
     <Banner
         borderRadius="12"
-        clickUrl="${url}"
         height="150"
         width="340">
         <for var="index" from="0" to="${urls.size()-1}">
             <Image
+                clickUrl="${url}"
                 width="340"
                 flexGrow="1"
                 scaleType="centerCrop"

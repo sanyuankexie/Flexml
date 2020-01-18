@@ -1,23 +1,27 @@
 package com.guet.flexbox.litho.widget
 
-import android.os.Handler
-import android.os.Looper
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.PagerSnapHelper
+import android.content.Context
+import android.graphics.Color
+import android.graphics.Rect
+import android.view.View
+import android.view.ViewGroup
+import android.widget.FrameLayout
 import androidx.recyclerview.widget.RecyclerView
-import com.facebook.litho.Component
-import com.facebook.litho.ComponentContext
-import com.facebook.litho.Row
-import com.facebook.litho.annotations.LayoutSpec
-import com.facebook.litho.annotations.OnCreateLayout
-import com.facebook.litho.annotations.Prop
-import com.facebook.litho.annotations.PropDefault
-import com.facebook.litho.widget.*
+import androidx.viewpager2.widget.ViewPager2
+import com.facebook.litho.*
+import com.facebook.litho.annotations.*
+import com.facebook.yoga.YogaAlign
+import com.facebook.yoga.YogaEdge
+import com.facebook.yoga.YogaJustify
+import com.guet.flexbox.ConcurrentUtils
+import com.guet.flexbox.Orientation
+import com.guet.flexbox.litho.LayoutThreadHandler
+import com.guet.flexbox.litho.toPx
+import java.lang.ref.WeakReference
 
 
-@LayoutSpec
+@MountSpec(isPureRender = true, hasChildLithoViews = true)
 object BannerSpec {
-
 
     @PropDefault
     val timeSpan = 3000L
@@ -26,91 +30,238 @@ object BannerSpec {
     @PropDefault
     val isCircular: Boolean = true
 
-    private val mainThread = Handler(Looper.getMainLooper())
+    @PropDefault
+    val indicatorsHeightPx: Int = 5.toPx()
 
-    private val emptyCallback = object : ChangeSetCompleteCallback {
+    @PropDefault
+    val orientation = Orientation.HORIZONTAL
 
-        override fun onDataBound() {
+    @PropDefault
+    val indicatorSelectedColor: Int = Color.WHITE
 
-        }
+    @PropDefault
+    val indicatorUnselectedColor: Int = Color.GRAY
 
-        override fun onDataRendered(
-                isMounted: Boolean,
-                uptimeMillis: Long
-        ) {
-
-        }
+    @OnCreateMountContent
+    fun onCreateMountContent(c: Context): BannerView {
+        return BannerView(c)
     }
 
-    @OnCreateLayout
-    fun onCreateLayout(
+    @OnMount
+    fun mount(
             c: ComponentContext,
-            @Prop(optional = true) timeSpan: Long,
+            view: BannerView,
+            @Prop(optional = true) orientation: Orientation,
             @Prop(optional = true) isCircular: Boolean,
-            @Prop(optional = true) wrapContent: Boolean,
+            @Prop(optional = true) indicatorsHeightPx: Int,
+            @Prop(optional = true) indicatorSelectedColor: Int,
+            @Prop(optional = true) indicatorUnselectedColor: Int,
             @Prop(optional = true, varArg = "child") children: List<Component>?
-    ): Component {
-        if (children.isNullOrEmpty()) {
-            return EmptyComponent.create(c).build()
+    ) {
+        if (!children.isNullOrEmpty()) {
+            view.viewPager.adapter = BannerAdapter(
+                    c,
+                    isCircular,
+                    children
+            )
+            view.viewPager.currentItem = children.size * 100
         }
-        val target = RecyclerBinder.Builder()
-                .layoutInfo(LinearLayoutInfo(
-                        c,
-                        LinearLayoutManager.HORIZONTAL,
-                        false
-                ))
-                .wrapContent(wrapContent)
-                .isCircular(isCircular)
-                .build(c)
-        val cc = children.map {
-            ComponentRenderInfo.create()
-                    .component(Row.create(c)
-                            .flexGrow(1f)
-                            .child(it)
-                    ).build()
+        if (orientation == Orientation.HORIZONTAL) {
+            view.viewPager.orientation = ViewPager2.ORIENTATION_HORIZONTAL
+        } else {
+            view.viewPager.orientation = ViewPager2.ORIENTATION_VERTICAL
         }
-        target.insertRangeAtAsync(0, cc)
-        target.notifyChangeSetCompleteAsync(
-                true,
-                emptyCallback
-        )
-        return Recycler.create(c)
-                .binder(when {
-                    timeSpan > 0 -> BinderWrapper(target, timeSpan)
-                    else -> target
-                })
-                .snapHelper(PagerSnapHelper())
-                .build()
+        view.indicatorsHeightPx = indicatorsHeightPx
+        view.indicatorSelectedColor = indicatorSelectedColor
+        view.indicatorUnselectedColor = indicatorUnselectedColor
     }
 
-    class BinderWrapper(
-            private val target: RecyclerBinder,
-            private val timeSpan: Long
-    ) : Binder<RecyclerView> by target, Runnable {
+    @OnUnmount
+    fun unmount(
+            c: ComponentContext,
+            view: BannerView
+    ) {
+        view.viewPager.adapter = null
+    }
 
-        override fun run() {
-            var pos = target.findFirstFullyVisibleItemPosition()
-            if (pos == RecyclerView.NO_POSITION) {
-                pos = target.findFirstVisibleItemPosition()
-            }
-            if (pos != RecyclerView.NO_POSITION) {
-                target.scrollSmoothToPosition(
-                        pos,
-                        1,
-                        SmoothScrollAlignmentType.SNAP_TO_CENTER
-                )
-            }
-            mainThread.postDelayed(this, timeSpan)
-        }
-
-        override fun mount(view: RecyclerView) {
-            target.mount(view)
-            mainThread.postDelayed(this, timeSpan)
-        }
-
-        override fun unmount(view: RecyclerView) {
-            target.unmount(view)
-            mainThread.removeCallbacks(this)
+    private fun createComponentTrees(
+            c: ComponentContext,
+            children: List<Component>
+    ): List<ComponentTree> {
+        return children.map {
+            ComponentTree.create(c)
+                    .withRoot(it)
+                    .isReconciliationEnabled(false)
+                    .layoutThreadHandler(LayoutThreadHandler)
+                    .build()
         }
     }
+
+    @OnBind
+    fun onBind(
+            c: ComponentContext,
+            host: BannerView,
+            @Prop(optional = true) timeSpan: Long,
+            @Prop(optional = true, varArg = "child") children: List<Component>?
+    ) {
+        val rect = Rect(0, 0, host.measuredWidth, host.measuredWidth)
+        host.indicators.performIncrementalMount(rect, false)
+        if (timeSpan > 0) {
+            val token = CarouselRunnable(
+                    host.viewPager,
+                    timeSpan
+            )
+            host.token = token
+            ConcurrentUtils.mainThreadHandler
+                    .postDelayed(token, timeSpan)
+        }
+    }
+
+    @OnUnbind
+    fun onUnbind(
+            c: ComponentContext,
+            host: BannerView
+    ) {
+        host.token?.let {
+            ConcurrentUtils.mainThreadHandler
+                    .removeCallbacks(it)
+        }
+    }
+
+}
+
+class CarouselRunnable(
+        host: ViewPager2,
+        private val timeSpan: Long
+) : WeakReference<ViewPager2>(host), Runnable {
+    override fun run() {
+        get()?.let {
+            it.setCurrentItem(it.currentItem + 1, true)
+            ConcurrentUtils.mainThreadHandler
+                    .postDelayed(this, timeSpan)
+        }
+    }
+}
+
+private class LithoViewHolder(
+        val c: ComponentContext,
+        val lithoView: LithoView = LithoView(c).apply {
+            layoutParams = ViewGroup.LayoutParams(-1, -1)
+            componentTree = ComponentTree.create(c)
+                    .layoutThreadHandler(LayoutThreadHandler)
+                    .isReconciliationEnabled(false)
+                    .build()
+        }
+) : RecyclerView.ViewHolder(lithoView)
+
+private class BannerAdapter(
+        private val c: ComponentContext,
+        private val isCircular: Boolean,
+        private val components: List<Component>
+) : RecyclerView.Adapter<LithoViewHolder>() {
+
+    fun getNormalizedPosition(position: Int): Int {
+        return if (isCircular)
+            position % components.size
+        else
+            position
+    }
+
+    val realCount: Int
+        get() = components.size
+
+    override fun onCreateViewHolder(
+            parent: ViewGroup,
+            viewType: Int
+    ): LithoViewHolder {
+        return LithoViewHolder(c)
+    }
+
+    override fun getItemCount(): Int {
+        return if (isCircular) {
+            Int.MAX_VALUE
+        } else {
+            components.size
+        }
+    }
+
+    override fun onViewRecycled(holder: LithoViewHolder) {
+        holder.lithoView.unmountAllItems()
+        holder.lithoView.componentTree = null
+    }
+
+    override fun onBindViewHolder(holder: LithoViewHolder, position: Int) {
+        val p = getNormalizedPosition(position)
+        holder.lithoView.setComponentAsync(components[p])
+    }
+}
+
+class BannerView(context: Context) : FrameLayout(context), HasLithoViewChildren {
+
+    val viewPager: ViewPager2 = ViewPager2(context)
+
+    var token: CarouselRunnable? = null
+
+    val indicators = LithoView(context)
+
+    var indicatorsHeightPx: Int = BannerSpec.indicatorsHeightPx
+
+    var indicatorSelectedColor: Int = BannerSpec.indicatorSelectedColor
+
+    var indicatorUnselectedColor: Int = BannerSpec.indicatorUnselectedColor
+
+    private val callback = object : ViewPager2.OnPageChangeCallback() {
+        override fun onPageSelected(position: Int) {
+            val adapter = viewPager.adapter
+            if (adapter !is BannerAdapter) {
+                return
+            }
+            val realPosition = adapter.getNormalizedPosition(position)
+            val indicatorPx = 5.toPx()
+            val c = indicators.componentContext
+            val outline = CornerOutlineProvider(indicatorPx)
+            indicators.setComponentAsync(Row.create(c)
+                    .justifyContent(YogaJustify.CENTER)
+                    .alignItems(YogaAlign.FLEX_END)
+                    .child(Row.create(c)
+                            .marginPx(YogaEdge.BOTTOM, indicatorsHeightPx)
+                            .apply {
+                                (0 until adapter.realCount).forEach { index ->
+                                    child(Row.create(c)
+                                            .widthPx(indicatorPx)
+                                            .heightPx(indicatorPx)
+                                            .marginPx(YogaEdge.LEFT, indicatorPx / 2)
+                                            .marginPx(YogaEdge.RIGHT, indicatorPx / 2)
+                                            .outlineProvider(outline)
+                                            .clipToOutline(true)
+                                            .apply {
+                                                if (index == realPosition) {
+                                                    backgroundColor(Color.WHITE)
+                                                } else {
+                                                    backgroundColor(Color.GRAY)
+                                                }
+                                            }
+                                    )
+                                }
+                            })
+                    .build())
+        }
+    }
+
+    init {
+        addView(viewPager, LayoutParams(-1, -1))
+        addView(indicators, LayoutParams(-1, -1))
+        viewPager.registerOnPageChangeCallback(callback)
+    }
+
+    override fun obtainLithoViewChildren(lithoViews: MutableList<LithoView>) {
+        lithoViews.add(indicators)
+        for (i in 0..viewPager.childCount) {
+            val child: View = viewPager.getChildAt(i)
+            if (child is LithoView) {
+                lithoViews.add(child)
+            }
+        }
+    }
+
 }

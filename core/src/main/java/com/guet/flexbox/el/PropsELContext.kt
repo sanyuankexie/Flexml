@@ -218,43 +218,52 @@ class PropsELContext(
             }
         }
 
+        @Prefix("utils")
+        @JvmName("flags")
+        @JvmStatic
+        fun flags(vararg value: Int): Int {
+            var flags = 0
+            value.forEach {
+                flags = flags or it
+            }
+            return flags
+        }
+
+        private fun resUri(
+                type: String,
+                map: (List<Pair<String, String>>) = emptyList()
+        ): String {
+            return Uri.Builder()
+                    .scheme("res")
+                    .authority(type)
+                    .apply {
+                        map.forEach {
+                            appendQueryParameter(it.first, it.second)
+                        }
+                    }
+                    .build()
+                    .toString()
+        }
+
         @Prefix("res")
         @JvmName("gradient")
         @JvmStatic
         fun gradient(orientation: String, vararg colors: String): String {
-            return Uri.Builder()
-                    .scheme("res")
-                    .authority("gradient")
-                    .appendQueryParameter("orientation", orientation)
-                    .apply {
-                        colors.forEach {
-                            appendQueryParameter("color", it)
-                        }
-                    }.build()
-                    .toString()
-        }
-
-        private fun buildResUri(type: String, name: String): String {
-            return Uri.Builder()
-                    .scheme("res")
-                    .authority(type)
-                    .appendQueryParameter("name", name)
-                    .build()
-                    .toString()
+            return resUri("gradient",
+                    mutableListOf("orientation" to orientation)
+                            .apply {
+                                addAll(colors.map {
+                                    "color" to it
+                                })
+                            }
+            )
         }
 
         @Prefix("res")
         @JvmName("drawable")
         @JvmStatic
         fun drawable(name: String): String {
-            return buildResUri("drawable", name)
-        }
-
-        @Prefix("res")
-        @JvmName("array")
-        @JvmStatic
-        fun array(name: String): String {
-            return buildResUri("array", name)
+            return resUri("drawable", listOf("name" to name))
         }
 
         @Prefix("dimen")

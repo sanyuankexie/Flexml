@@ -4,7 +4,7 @@ import com.guet.flexbox.HostingContext
 import com.guet.flexbox.el.PropsELContext
 import com.guet.flexbox.el.scope
 
-internal class EnumAttribute<V : Enum<V>>(
+internal class EnumAttributeInfo<V : Enum<V>>(
         scope: Map<String, Enum<V>>,
         fallback: Enum<V>?
 ) : AttributeInfo<Enum<V>>(scope, fallback) {

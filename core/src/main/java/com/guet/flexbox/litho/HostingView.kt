@@ -2,20 +2,12 @@ package com.guet.flexbox.litho
 
 import android.content.Context
 import android.graphics.Rect
-import android.os.Handler
-import android.os.HandlerThread
-import android.os.Looper
 import android.util.AttributeSet
 import android.view.View
 import androidx.annotation.MainThread
 import com.facebook.litho.*
-import com.facebook.litho.config.ComponentsConfiguration
-import com.guet.flexbox.ForwardContext
-import com.guet.flexbox.HostingContext
-import com.guet.flexbox.HttpClient
-import com.guet.flexbox.TemplateNode
+import com.guet.flexbox.*
 import com.guet.flexbox.el.PropsELContext
-import com.guet.flexbox.litho.HostingView.UiThread.post
 import com.guet.flexbox.transaction.HttpTransaction
 import com.guet.flexbox.transaction.RefreshTransaction
 
@@ -69,7 +61,7 @@ class HostingView @JvmOverloads constructor(
                     val height = layoutParams?.width ?: 0
                     val mH = measuredHeight
                     val mW = measuredWidth
-                    Asynchronous.post {
+                    ConcurrentUtils.runOnAsyncThread {
                         val context = ForwardContext()
                                 .apply {
                                     target = pageContext
@@ -96,7 +88,7 @@ class HostingView @JvmOverloads constructor(
                                                 SizeSpec.EXACTLY
                                         )
                                 })
-                        UiThread.runOnUiThread {
+                        ConcurrentUtils.runOnUiThread {
                             _pageEventListener?.onPageChanged(
                                     this@HostingView,
                                     Page(node, component, context),
@@ -133,7 +125,7 @@ class HostingView @JvmOverloads constructor(
                         && url != null && method != null) {
                     val onSuccess: ((Any) -> Unit)? = if (success != null) {
                         {
-                            UiThread.runOnUiThread {
+                            ConcurrentUtils.runOnUiThread {
                                 success.invoke(
                                         elContext,
                                         pageContext.withView(source),
@@ -146,7 +138,7 @@ class HostingView @JvmOverloads constructor(
                     }
                     val onError: (() -> Unit)? = if (error != null) {
                         {
-                            UiThread.runOnUiThread {
+                            ConcurrentUtils.runOnUiThread {
                                 error.invoke(elContext,
                                         pageContext.withView(source)
                                 )
@@ -178,7 +170,7 @@ class HostingView @JvmOverloads constructor(
     init {
         componentTree = ComponentTree.create(componentContext)
                 .isReconciliationEnabled(false)
-                .layoutThreadHandler(Asynchronous)
+                .layoutThreadHandler(LayoutThreadHandler)
                 .build()
         super.setOnDirtyMountListener { view ->
             this.performIncrementalMount(
@@ -236,7 +228,7 @@ class HostingView @JvmOverloads constructor(
             val height = layoutParams?.width ?: 0
             val mH = measuredHeight
             val mW = measuredWidth
-            Asynchronous.post {
+            ConcurrentUtils.runOnAsyncThread {
                 val component = LithoBuildUtils.bindNode(
                         node,
                         pageContext,
@@ -276,41 +268,6 @@ class HostingView @JvmOverloads constructor(
                 page: Page,
                 data: Any?
         )
-    }
-
-    private object UiThread : Handler(Looper.getMainLooper()) {
-        fun runOnUiThread(run: () -> Unit) {
-            if (Looper.getMainLooper().thread == Thread.currentThread()) {
-                run()
-            } else {
-                post(run)
-            }
-        }
-    }
-
-    private object Asynchronous : Handler({
-        val thread = HandlerThread("WorkerThread")
-        thread.start()
-        thread.looper
-    }()), LithoHandler {
-
-        init {
-            ComponentsConfiguration.incrementalMountWhenNotVisible = true
-        }
-
-        override fun post(runnable: Runnable, tag: String?) {
-            post(runnable)
-        }
-
-        override fun postAtFront(runnable: Runnable, tag: String?) {
-            postAtFrontOfQueue(runnable)
-        }
-
-        override fun isTracing(): Boolean = true
-
-        override fun remove(runnable: Runnable) {
-            removeCallbacks(runnable)
-        }
     }
 
 }
