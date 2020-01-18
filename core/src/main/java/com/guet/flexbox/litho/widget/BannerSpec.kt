@@ -15,6 +15,7 @@ import com.facebook.yoga.YogaAlign
 import com.facebook.yoga.YogaEdge
 import com.facebook.yoga.YogaJustify
 import com.guet.flexbox.ConcurrentUtils
+import com.guet.flexbox.Orientation
 import com.guet.flexbox.litho.LayoutThreadHandler
 import com.guet.flexbox.litho.toPx
 
@@ -33,6 +34,9 @@ object BannerSpec {
     val indicatorsHeightPx: Int = 5.toPx()
 
     @PropDefault
+    val orientation = Orientation.HORIZONTAL
+
+    @PropDefault
     val indicatorSelectedColor: Int = Color.WHITE
 
     @PropDefault
@@ -47,6 +51,7 @@ object BannerSpec {
     fun mount(
             c: ComponentContext,
             view: BannerView,
+            @Prop(optional = true) orientation: Orientation,
             @Prop(optional = true) isCircular: Boolean,
             @Prop(optional = true) indicatorsHeightPx: Int,
             @Prop(optional = true) indicatorSelectedColor: Int,
@@ -62,11 +67,16 @@ object BannerSpec {
                             children
                     )
             )
-            view.indicatorsHeightPx = indicatorsHeightPx
-            view.indicatorSelectedColor = indicatorSelectedColor
-            view.indicatorUnselectedColor = indicatorUnselectedColor
             view.viewPager.currentItem = children.size * 100
         }
+        if (orientation == Orientation.HORIZONTAL) {
+            view.viewPager.orientation = ViewPager2.ORIENTATION_HORIZONTAL
+        } else {
+            view.viewPager.orientation = ViewPager2.ORIENTATION_VERTICAL
+        }
+        view.indicatorsHeightPx = indicatorsHeightPx
+        view.indicatorSelectedColor = indicatorSelectedColor
+        view.indicatorUnselectedColor = indicatorUnselectedColor
     }
 
     @OnUnmount
@@ -111,7 +121,11 @@ object BannerSpec {
         host.tag = token
         HandlerCompat.postDelayed(
                 ConcurrentUtils.mainThreadHandler,
-                CarouselRunnable(host.viewPager, timeSpan),
+                Carouseler(
+                        host.viewPager,
+                        token,
+                        timeSpan
+                ),
                 token,
                 timeSpan
         )
@@ -131,8 +145,9 @@ object BannerSpec {
 
 }
 
-private class CarouselRunnable(
+private class Carouseler(
         private val host: ViewPager2,
+        private val token: Any,
         private val timeSpan: Long
 ) : Runnable {
 
@@ -141,7 +156,7 @@ private class CarouselRunnable(
         HandlerCompat.postDelayed(
                 ConcurrentUtils.mainThreadHandler,
                 this,
-                host,
+                token,
                 timeSpan
         )
     }
