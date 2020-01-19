@@ -3,8 +3,6 @@ package com.guet.flexbox.playground
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
-import android.os.SystemClock
-import android.util.Log
 import android.view.View
 import android.widget.LinearLayout
 import android.widget.Toast
@@ -109,9 +107,7 @@ class MainActivity : AppCompatActivity() {
                         return
                     }
                     ConcurrentUtils.threadPool.execute {
-                        val start = SystemClock.uptimeMillis()
                         val pages = AppBundle.loadMoreFeedItem(application, 10)
-                        Log.d("AppBundle", "load time:" + (SystemClock.uptimeMillis() - start))
                         runOnUiThread {
                             v.finish(Runnable {
                                 feedAdapter.addData(pages)

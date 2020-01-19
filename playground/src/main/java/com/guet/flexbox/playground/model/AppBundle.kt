@@ -58,7 +58,8 @@ object AppBundle {
         }
         val res = c.resources
         val feedUrls = res.getStringArray(R.array.feed_paths)
-        return (1..count).map {
+        val pageStart = SystemClock.uptimeMillis()
+        val result = (1..count).map {
             val start = SystemClock.uptimeMillis()
             val type = Default.nextInt(0, feedUrls.size)
             val url = feedUrls[type]
@@ -94,6 +95,8 @@ object AppBundle {
             Log.d("AppBundle", "load single page time:" + (SystemClock.uptimeMillis() - start))
             return@map page
         }
+        Log.d("AppBundle", "load more page time:" + (SystemClock.uptimeMillis() - pageStart))
+        return result
     }
 
     @WorkerThread
