@@ -1,0 +1,12 @@
+{
+  "name": "for",
+  "attrs": {
+    "var": null,
+    "from": {
+      "required": true
+    },
+    "to": {
+      "required": true
+    }
+  }
+}

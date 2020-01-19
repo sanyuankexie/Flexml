@@ -1,0 +1,72 @@
+<idea-plugin>
+    <id>com.guet.flexbox.handshake</id>
+    <name>handshake</name>
+    <version>1.0.5</version>
+    <vendor email="imlkluo@qq.com" url="https://github.com/sanyuankexie/Gbox">sanyuankexie</vendor>
+
+    <description><![CDATA[
+      🚀Android high performance dynamic business container based on litho solves the pain point of dynamic homepage. Released under the Apache 2.0 open source protocol, it is an open source software based on open source software.
+    ]]></description>
+
+    <change-notes><![CDATA[
+      🚀Android high performance dynamic business container based on litho solves the pain point of dynamic homepage. Released under the Apache 2.0 open source protocol, it is an open source software based on open source software.
+    ]]>
+    </change-notes>
+
+    <!-- please see http://www.jetbrains.org/intellij/sdk/docs/basics/getting_started/build_number_ranges.html for description -->
+    <idea-version since-build="183.2940.10"/>
+
+    <!-- please see http://www.jetbrains.org/intellij/sdk/docs/basics/getting_started/plugin_compatibility.html
+         on how to target different products -->
+    <!-- uncomment to enable plugin in all products
+    <depends>com.intellij.modules.lang</depends>
+    -->
+
+    <extensions defaultExtensionNs="com.intellij">
+        <!-- Add your extensions here -->
+    </extensions>
+
+    <actions>
+        <!-- Add your actions here -->
+        <action id="com.guet.flexbox.handshake.new.flexml"
+                class="com.guet.flexbox.handshake.lang.NewFlexmlAction"
+                text="Flexml File"
+                description="New flexml dsl file">
+            <add-to-group group-id="NewGroup" anchor="before" relative-to-action="NewFile"/>
+        </action>
+        <action id="com.guet.flexbox.handshake.new.package"
+                class="com.guet.flexbox.handshake.lang.NewPackageAction"
+                text="Flexml Mock Package"
+                description="New Flexml mock package json file">
+            <add-to-group group-id="NewGroup" anchor="before" relative-to-action="NewFile"/>
+        </action>
+    </actions>
+
+    <depends>com.intellij.modules.xml</depends>
+    <depends>com.intellij.modules.lang</depends>
+    <depends>com.intellij.modules.json</depends>
+
+    <extensions defaultExtensionNs="com.intellij">
+        <configurationType implementation="com.guet.flexbox.handshake.compile.FlexmlCompileConfigurationType"/>
+        <configurationType implementation="com.guet.flexbox.handshake.mock.FlexmlMockConfigurationType"/>
+        <runConfigurationProducer
+                implementation="com.guet.flexbox.handshake.compile.FlexmlCompileRunConfigurationProducer"/>
+        <runConfigurationProducer
+                implementation="com.guet.flexbox.handshake.mock.FlexmlMockRunConfigurationProducer"/>
+        <runLineMarkerContributor
+                language="JSON"
+                order="after applicationRunLineMarkerProvider"
+                implementationClass="com.guet.flexbox.handshake.mock.FlexmlMockRunLineMarkerContributor"/>
+        <runLineMarkerContributor
+                language="XML"
+                order="after applicationRunLineMarkerProvider"
+                implementationClass="com.guet.flexbox.handshake.compile.FlexmlCompileRunLineMarkerContributor"/>
+        <internalFileTemplate name="package"/>
+        <internalFileTemplate name="flexml_file"/>
+        <completion.contributor
+                language="XML"
+                implementationClass="com.guet.flexbox.handshake.lang.FlexmlCompletionContributor"/>
+        <fileTypeFactory implementation="com.guet.flexbox.handshake.lang.FlexmlFileTypeFactory"/>
+        <xml.tagNameProvider implementation="com.guet.flexbox.handshake.lang.FlexmlTagNameProvider"/>
+    </extensions>
+</idea-plugin>

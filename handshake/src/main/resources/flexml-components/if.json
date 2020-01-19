@@ -1,0 +1,8 @@
+{
+  "name": "if",
+  "attrs": {
+    "test": {
+      "required": true
+    }
+  }
+}

@@ -1,0 +1,65 @@
+{
+  "parent": "Common",
+  "name": "Flex",
+  "attrs": {
+    "flexWrap": {
+      "support": [
+        "values"
+      ],
+      "values": [
+        "wrap",
+        "noWrap",
+        "wrapReverse"
+      ]
+    },
+    "justifyContent": {
+      "support": [
+        "values"
+      ],
+      "values": [
+        "flexStart",
+        "flexEnd",
+        "center",
+        "spaceBetween",
+        "spaceAround"
+      ]
+    },
+    "alignItems": {
+      "support": [
+        "values"
+      ],
+      "values": [
+        "auto",
+        "flexStart",
+        "flexEnd",
+        "center",
+        "baseline",
+        "stretch"
+      ]
+    },
+    "alignContent": {
+      "support": [
+        "values"
+      ],
+      "values": [
+        "auto",
+        "flexStart",
+        "flexEnd",
+        "center",
+        "baseline",
+        "stretch"
+      ]
+    },
+    "flexDirection": {
+      "support": [
+        "values"
+      ],
+      "values": [
+        "row",
+        "column",
+        "rowReverse",
+        "columnReverse"
+      ]
+    }
+  }
+}
