@@ -92,7 +92,14 @@ object BannerSpec {
             @Prop(optional = true, varArg = "child") children: List<Component>?
     ) {
         val rect = Rect(0, 0, host.measuredWidth, host.measuredWidth)
-        host.indicators.performIncrementalMount(rect, false)
+        listOf(
+                listOf(host.indicators),
+                (0 until host.viewPager.childCount).mapNotNull {
+                    host.viewPager.getChildAt(it) as? LithoView
+                }
+        ).flatten().forEach {
+            it.performIncrementalMount(rect, false)
+        }
         if (timeSpan > 0) {
             val token = CarouselRunnable(
                     host.viewPager,
