@@ -10,7 +10,7 @@ internal class ValueAttributeInfo(scope: Map<String, Double>, fallback: Double?)
     override fun cast(pageContext: HostingContext, props: ELContext, raw: String): Double? {
         return if (raw.isExpr) {
             props.scope(scope){
-                props.tryGetValue(raw, fallback)
+                tryGetValue(raw, fallback)
             }
         } else {
             scope[raw] ?: try {

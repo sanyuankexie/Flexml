@@ -16,7 +16,7 @@ internal class EnumAttributeInfo<V : Enum<V>>(
     ): Enum<V>? {
         return if (raw.isExpr) {
             props.scope(scope) {
-                props.tryGetValue(raw, fallback)
+                tryGetValue(raw, fallback)
             }
         } else {
             scope[raw] ?: fallback

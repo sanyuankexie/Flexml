@@ -31,7 +31,7 @@ object For : Declaration() {
                     bindings.bindNode(
                             it,
                             pageContext,
-                            data,
+                            this,
                             upperVisibility,
                             other
                     )

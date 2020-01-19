@@ -13,7 +13,10 @@ internal val colorMap = Collections.unmodifiableMap(
 
 internal val expressionFactory = ELManager.getExpressionFactory()
 
-internal inline fun <T> ELContext.scope(scope: Map<String, Any>, action: () -> T): T {
+internal inline fun <T> ELContext.scope(
+        scope: Map<String, Any>,
+        action: ELContext.() -> T
+): T {
     enterLambdaScope(scope)
     try {
         return action()
@@ -23,12 +26,12 @@ internal inline fun <T> ELContext.scope(scope: Map<String, Any>, action: () -> T
 }
 
 @Throws(ELException::class)
-fun ELContext.getValue(expr: String, type: Class<*>): Any {
+internal fun ELContext.getValue(expr: String, type: Class<*>): Any {
     return expressionFactory.createValueExpression(
-                    this,
-                    expr,
-                    type
-            ).getValue(this)
+            this,
+            expr,
+            type
+    ).getValue(this)
             ?: throw ELException("$expr out null")
 }
 
@@ -39,7 +42,7 @@ internal inline fun <reified T> ELContext.getValue(expr: String): T {
 
 @ColorInt
 @Throws(ELException::class)
-fun ELContext.getColor(expr: String): Int {
+internal fun ELContext.getColor(expr: String): Int {
     return try {
         Color.parseColor(expr)
     } catch (e: IllegalArgumentException) {

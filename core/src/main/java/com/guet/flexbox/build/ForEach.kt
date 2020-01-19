@@ -2,7 +2,9 @@ package com.guet.flexbox.build
 
 import com.guet.flexbox.HostingContext
 import com.guet.flexbox.TemplateNode
-import com.guet.flexbox.el.*
+import com.guet.flexbox.el.ELContext
+import com.guet.flexbox.el.scope
+import com.guet.flexbox.el.tryGetValue
 
 object ForEach : Declaration() {
 
@@ -32,7 +34,7 @@ object ForEach : Declaration() {
                     bindings.bindNode(
                             it,
                             pageContext,
-                            data,
+                            this,
                             upperVisibility,
                             other
                     )

@@ -4,9 +4,10 @@ import com.facebook.yoga.YogaAlign
 import com.guet.flexbox.HostingContext
 import com.guet.flexbox.TemplateNode
 import com.guet.flexbox.Visibility
+import com.guet.flexbox.el.ELContext
 import com.guet.flexbox.el.LambdaExpression
-import com.guet.flexbox.el.*
-import java.util.*
+import com.guet.flexbox.el.scope
+import com.guet.flexbox.el.tryGetValue
 
 internal object Common : Declaration() {
 
@@ -54,8 +55,8 @@ internal object Common : Declaration() {
         typed("onClick") { pageContext, elContext, raw ->
             elContext.tryGetValue<LambdaExpression>(raw)?.let { executable ->
                 EventHandlerFactory.create { view, _ ->
-                    elContext.scope(Collections.singletonMap(
-                            "pageContext", pageContext.withView(view)
+                    elContext.scope(mapOf(
+                            "pageContext" to pageContext.withView(view)
                     )) {
                         executable.exec(elContext)
                     }

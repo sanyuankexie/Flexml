@@ -13,7 +13,7 @@ internal class BoolAttributeInfo(scope: Map<String, Boolean>, fallback: Boolean?
     ): Boolean? {
         return if (raw.isExpr) {
             props.scope(scope){
-                props.tryGetValue(raw, fallback)
+                tryGetValue(raw, fallback)
             }
         } else {
             try {

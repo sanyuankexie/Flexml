@@ -17,7 +17,7 @@ object TextInput : Declaration(AbsText) {
                     elContext.scope(Collections.singletonMap(
                             "pageContext", pageContext.withView(view)
                     )) {
-                        executable.exec(elContext, args[0])
+                        executable.exec(this, args[0])
                     }
                 }
             }
