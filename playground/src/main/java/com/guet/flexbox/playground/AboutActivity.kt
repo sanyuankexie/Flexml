@@ -1,10 +1,10 @@
 package com.guet.flexbox.playground
 
-import android.os.AsyncTask
 import android.os.Bundle
 import android.widget.ImageView
 import androidx.appcompat.app.AppCompatActivity
 import com.bumptech.glide.Glide
+import com.guet.flexbox.ConcurrentUtils
 import com.vansuita.materialabout.builder.AboutBuilder
 import com.vansuita.materialabout.views.AboutView
 
@@ -25,7 +25,7 @@ class AboutActivity : AppCompatActivity() {
                 .asBitmap()
                 .load(R.drawable.ic_launcher)
                 .submit()
-        AsyncTask.THREAD_POOL_EXECUTOR.execute {
+        ConcurrentUtils.threadPool.execute {
             val v1 = background.get()
             val v2 = photo.get()
             val v3 = icon.get()

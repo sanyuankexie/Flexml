@@ -4,7 +4,6 @@ import android.content.ClipboardManager
 import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
-import android.os.AsyncTask
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextUtils
@@ -18,6 +17,7 @@ import android.widget.FrameLayout
 import android.widget.PopupWindow
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
+import com.guet.flexbox.ConcurrentUtils
 import com.guet.flexbox.litho.HostingView
 import com.guet.flexbox.litho.LithoBuildUtils
 import com.guet.flexbox.litho.PageEventAdapter
@@ -118,7 +118,7 @@ class SearchActivity : AppCompatActivity() {
     }
 
     private fun loadHistory() {
-        AsyncTask.THREAD_POOL_EXECUTOR.execute {
+        ConcurrentUtils.threadPool.execute {
             val input = resources
                     .assets
                     .open("layout/search/history_list.xml")
