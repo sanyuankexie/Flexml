@@ -2,7 +2,7 @@ package com.guet.flexbox.build
 
 import com.guet.flexbox.HostingContext
 import com.guet.flexbox.TemplateNode
-import com.guet.flexbox.el.PropsELContext
+import com.guet.flexbox.el.ELContext
 import com.guet.flexbox.el.scope
 
 object For : Declaration() {
@@ -18,7 +18,7 @@ object For : Declaration() {
             children: List<TemplateNode>,
             factory: Factory?,
             pageContext: HostingContext,
-            data: PropsELContext,
+            data: ELContext,
             upperVisibility: Boolean,
             other: Any
     ): List<Child> {

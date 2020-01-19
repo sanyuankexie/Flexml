@@ -5,8 +5,8 @@ import android.util.ArrayMap
 import android.view.View
 import com.guet.flexbox.HostingContext
 import com.guet.flexbox.TemplateNode
+import com.guet.flexbox.el.ELContext
 import com.guet.flexbox.el.LambdaExpression
-import com.guet.flexbox.el.PropsELContext
 
 internal inline val CharSequence.isExpr: Boolean
     get() = length > 3 && startsWith("\${") && endsWith('}')
@@ -66,10 +66,14 @@ internal class Registry {
 
     inline fun <T : Any> typed(
             name: String,
-            crossinline action: (HostingContext, PropsELContext, String) -> T?
+            crossinline action: Converter<T>
     ) {
         _value[name] = object : AttributeInfo<T>() {
-            override fun cast(pageContext: HostingContext, props: PropsELContext, raw: String): T? {
+            override fun cast(
+                    pageContext: HostingContext,
+                    props: ELContext,
+                    raw: String
+            ): T? {
                 return action(pageContext, props, raw)
             }
         }
@@ -78,6 +82,8 @@ internal class Registry {
     val value: AttributeInfoSet
         get() = _value
 }
+
+private typealias Converter<T> = (HostingContext, ELContext, String) -> T?
 
 typealias Factory = (
         visibility: Boolean,
@@ -94,7 +100,7 @@ internal fun ToWidget.toWidget(
         bindings: BuildUtils,
         template: TemplateNode,
         pageContext: HostingContext,
-        data: PropsELContext,
+        data: ELContext,
         upperVisibility: Boolean,
         other: Any
 ): List<Child> {
@@ -110,13 +116,15 @@ internal fun ToWidget.toWidget(
     )
 }
 
+private typealias Result = Set<(ELContext) -> Unit>
+
 internal fun LambdaExpression.exec(
-        elContext: PropsELContext,
+        elContext: ELContext,
         vararg values: Any?
 ) {
     @Suppress("UNCHECKED_CAST")
     this.invoke(elContext, values)?.run {
-        this as? Set<(PropsELContext) -> Unit>
+        this as? Result
     }?.firstOrNull()?.invoke(elContext)
 }
 

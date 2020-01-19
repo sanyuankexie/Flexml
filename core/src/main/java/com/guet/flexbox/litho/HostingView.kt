@@ -7,6 +7,7 @@ import android.view.View
 import androidx.annotation.MainThread
 import com.facebook.litho.*
 import com.guet.flexbox.*
+import com.guet.flexbox.el.ELContext
 import com.guet.flexbox.el.PropsELContext
 import com.guet.flexbox.transaction.HttpTransaction
 import com.guet.flexbox.transaction.RefreshTransaction
@@ -40,7 +41,7 @@ class HostingView @JvmOverloads constructor(
     private inner class RefreshTransactionImpl(
             private val source: View
     ) : RefreshTransaction() {
-        override fun commit(): (PropsELContext) -> Unit {
+        override fun commit(): (ELContext) -> Unit {
             return { elContext ->
                 _pageEventListener?.run {
                     sends.forEach {
@@ -91,8 +92,7 @@ class HostingView @JvmOverloads constructor(
                         ConcurrentUtils.runOnUiThread {
                             _pageEventListener?.onPageChanged(
                                     this@HostingView,
-                                    Page(node, component, context),
-                                    elContext.data
+                                    Page(node, component, context)
                             )
                         }
                     }
@@ -104,7 +104,7 @@ class HostingView @JvmOverloads constructor(
     private inner class HttpTransactionImpl(
             private val source: View
     ) : HttpTransaction() {
-        override fun commit(): (PropsELContext) -> Unit {
+        override fun commit(): (ELContext) -> Unit {
             return { elContext ->
                 _pageEventListener?.run {
                     sends.forEach {
@@ -265,8 +265,7 @@ class HostingView @JvmOverloads constructor(
 
         fun onPageChanged(
                 h: HostingView,
-                page: Page,
-                data: Any?
+                page: Page
         )
     }
 

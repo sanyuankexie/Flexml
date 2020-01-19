@@ -5,8 +5,7 @@ import com.guet.flexbox.HostingContext
 import com.guet.flexbox.TemplateNode
 import com.guet.flexbox.Visibility
 import com.guet.flexbox.el.LambdaExpression
-import com.guet.flexbox.el.PropsELContext
-import com.guet.flexbox.el.scope
+import com.guet.flexbox.el.*
 import java.util.*
 
 internal object Common : Declaration() {
@@ -71,7 +70,7 @@ internal object Common : Declaration() {
             children: List<TemplateNode>,
             factory: Factory?,
             pageContext: HostingContext,
-            data: PropsELContext,
+            data: ELContext,
             upperVisibility: Boolean,
             other: Any
     ): List<Child> {

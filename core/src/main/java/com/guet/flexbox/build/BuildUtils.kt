@@ -2,14 +2,14 @@ package com.guet.flexbox.build
 
 import com.guet.flexbox.HostingContext
 import com.guet.flexbox.TemplateNode
-import com.guet.flexbox.el.PropsELContext
+import com.guet.flexbox.el.ELContext
 
 abstract class BuildUtils {
 
     fun bindNode(
             templateNode: TemplateNode,
             pageContext: HostingContext,
-            data: PropsELContext,
+            data: ELContext,
             upperVisibility: Boolean,
             c: Any
     ): List<Child> {

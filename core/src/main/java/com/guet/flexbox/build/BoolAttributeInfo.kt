@@ -1,13 +1,14 @@
 package com.guet.flexbox.build
 
 import com.guet.flexbox.HostingContext
-import com.guet.flexbox.el.PropsELContext
+import com.guet.flexbox.el.ELContext
 import com.guet.flexbox.el.scope
+import com.guet.flexbox.el.tryGetValue
 
 internal class BoolAttributeInfo(scope: Map<String, Boolean>, fallback: Boolean?) : AttributeInfo<Boolean>(scope, fallback) {
     override fun cast(
             pageContext: HostingContext,
-            props: PropsELContext,
+            props: ELContext,
             raw: String
     ): Boolean? {
         return if (raw.isExpr) {

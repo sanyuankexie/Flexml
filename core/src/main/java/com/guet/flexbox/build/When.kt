@@ -2,7 +2,7 @@ package com.guet.flexbox.build
 
 import com.guet.flexbox.HostingContext
 import com.guet.flexbox.TemplateNode
-import com.guet.flexbox.el.PropsELContext
+import com.guet.flexbox.el.ELContext
 
 object When : Declaration() {
 
@@ -15,7 +15,7 @@ object When : Declaration() {
             children: List<TemplateNode>,
             factory: Factory?,
             pageContext: HostingContext,
-            data: PropsELContext,
+            data: ELContext,
             upperVisibility: Boolean,
             other: Any
     ): List<Child> {
