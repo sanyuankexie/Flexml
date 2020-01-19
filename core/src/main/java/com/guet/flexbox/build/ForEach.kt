@@ -2,8 +2,9 @@ package com.guet.flexbox.build
 
 import com.guet.flexbox.HostingContext
 import com.guet.flexbox.TemplateNode
-import com.guet.flexbox.el.PropsELContext
+import com.guet.flexbox.el.ELContext
 import com.guet.flexbox.el.scope
+import com.guet.flexbox.el.tryGetValue
 
 object ForEach : Declaration() {
 
@@ -20,7 +21,7 @@ object ForEach : Declaration() {
             children: List<TemplateNode>,
             factory: Factory?,
             pageContext: HostingContext,
-            data: PropsELContext,
+            data: ELContext,
             upperVisibility: Boolean,
             other: Any
     ): List<Child> {
@@ -30,10 +31,10 @@ object ForEach : Declaration() {
         return items.map {
             data.scope(mapOf(name to items)) {
                 children.map {
-                    bindings.bindNode(
+                    bindings.build(
                             it,
                             pageContext,
-                            data,
+                            this,
                             upperVisibility,
                             other
                     )

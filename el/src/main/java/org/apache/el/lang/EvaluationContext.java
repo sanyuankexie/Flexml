@@ -17,16 +17,16 @@
 
 package org.apache.el.lang;
 
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-
 import com.guet.flexbox.el.ELContext;
 import com.guet.flexbox.el.ELResolver;
 import com.guet.flexbox.el.EvaluationListener;
 import com.guet.flexbox.el.FunctionMapper;
 import com.guet.flexbox.el.ImportHandler;
 import com.guet.flexbox.el.VariableMapper;
+
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
 
 public final class EvaluationContext extends ELContext {
 
@@ -88,7 +88,7 @@ public final class EvaluationContext extends ELContext {
     @Override
     public Locale getLocale() {
         return elContext.getLocale();
-        }
+    }
 
     @Override
     public void setLocale(Locale locale) {

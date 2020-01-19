@@ -24,7 +24,7 @@ object LithoBuildUtils : BuildUtils() {
         val componentContext = ComponentContext(c)
         val eventBridge = ForwardContext()
         val elContext = PropsELContext(data)
-        val com = bindNode(
+        val com = build(
                 templateNode,
                 eventBridge,
                 elContext,
@@ -44,7 +44,6 @@ object LithoBuildUtils : BuildUtils() {
                 "TextInput" to (TextInput to ToTextInput),
                 "Text" to (Text to ToText),
                 "Stack" to (Common to ToStack),
-                "Video" to (Video to ToVideo),
                 "for" to (For to null),
                 "foreach" to (ForEach to null),
                 "when" to (When to null),

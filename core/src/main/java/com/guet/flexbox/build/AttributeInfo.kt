@@ -1,7 +1,7 @@
 package com.guet.flexbox.build
 
 import com.guet.flexbox.HostingContext
-import com.guet.flexbox.el.PropsELContext
+import com.guet.flexbox.el.ELContext
 
 internal abstract class AttributeInfo<T : Any>(
         protected val scope: (Map<String, T>) = emptyMap(),
@@ -9,7 +9,7 @@ internal abstract class AttributeInfo<T : Any>(
 ) {
     abstract fun cast(
             pageContext: HostingContext,
-            props: PropsELContext,
+            props: ELContext,
             raw: String
     ): T?
 }

@@ -30,18 +30,17 @@ class FlexBoxAdapter(
         ) {
             val url = values[0] as? String
             if (url != null) {
-                onClick(source, url)
+                onClick(h, url)
             }
         }
 
         override fun onPageChanged(
                 h: HostingView,
-                page: Page,
-                data: Any?
+                page: Page
         ) {
-            val index = getData().indexOf(old)
+            val index = data.indexOf(old)
             if (index != -1) {
-                getData()[index] = page
+                data[index] = page
                 h.setPageEventListener(HandleClickWithUpdater(page))
             }
         }

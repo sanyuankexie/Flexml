@@ -43,7 +43,7 @@ dependencies {
 
     implementation 'com.github.bumptech.glide:glide:4.10.0'
 
-    implementation 'com.yqritc:android-scalablevideoview:1.0.4'
+    //implementation 'com.yqritc:android-scalablevideoview:1.0.4'
 
     api 'com.facebook.yoga:yoga:1.16.0'
     api 'com.facebook.yoga:proguard-annotations:1.16.0'

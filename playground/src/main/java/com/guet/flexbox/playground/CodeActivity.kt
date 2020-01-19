@@ -1,7 +1,6 @@
 package com.guet.flexbox.playground
 
 import android.graphics.Outline
-import android.os.AsyncTask
 import android.os.Bundle
 import android.view.View
 import android.view.ViewOutlineProvider
@@ -11,6 +10,7 @@ import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.widget.NestedScrollView
 import com.didichuxing.doraemonkit.util.UIUtils
 import com.google.android.material.appbar.AppBarLayout
+import com.guet.flexbox.ConcurrentUtils
 import com.guet.flexbox.litho.HostingView
 import com.guet.flexbox.playground.model.AppBundle
 import thereisnospon.codeview.CodeView
@@ -58,7 +58,7 @@ class CodeActivity : AppCompatActivity() {
 
     private fun loadData() {
         val url = this.intent.getStringExtra("url")
-        AsyncTask.THREAD_POOL_EXECUTOR.execute {
+        ConcurrentUtils.threadPool.execute {
             val page = AppBundle.loadPage(application, url)
             val code = AppBundle.loadTemplateSource(application, url)
             runOnUiThread {

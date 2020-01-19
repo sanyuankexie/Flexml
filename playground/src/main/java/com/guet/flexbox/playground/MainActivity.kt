@@ -2,7 +2,6 @@ package com.guet.flexbox.playground
 
 import android.app.Activity
 import android.content.Intent
-import android.os.AsyncTask
 import android.os.Bundle
 import android.view.View
 import android.widget.LinearLayout
@@ -11,6 +10,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityOptionsCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.blankj.utilcode.util.NetworkUtils
+import com.guet.flexbox.ConcurrentUtils
 import com.guet.flexbox.litho.HostingView
 import com.guet.flexbox.litho.PageEventAdapter
 import com.guet.flexbox.playground.model.AppBundle
@@ -33,7 +33,7 @@ class MainActivity : AppCompatActivity() {
         ) {
             val url = values[0] as? String
             if (url != null) {
-                handleEvent(source, url)
+                handleEvent(h, url)
             }
         }
     }
@@ -106,7 +106,7 @@ class MainActivity : AppCompatActivity() {
                         v.finish()
                         return
                     }
-                    AsyncTask.THREAD_POOL_EXECUTOR.execute {
+                    ConcurrentUtils.threadPool.execute {
                         val pages = AppBundle.loadMoreFeedItem(application, 10)
                         runOnUiThread {
                             v.finish(Runnable {

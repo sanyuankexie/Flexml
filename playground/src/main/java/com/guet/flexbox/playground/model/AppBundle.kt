@@ -1,9 +1,11 @@
 package com.guet.flexbox.playground.model
 
 import android.content.Context
-import android.os.AsyncTask
+import android.os.SystemClock
+import android.util.Log
 import androidx.annotation.WorkerThread
 import com.google.gson.Gson
+import com.guet.flexbox.ConcurrentUtils
 import com.guet.flexbox.TemplateNode
 import com.guet.flexbox.litho.LithoBuildUtils
 import com.guet.flexbox.litho.Page
@@ -22,8 +24,9 @@ object AppBundle {
 
     fun init(ctx: Context, callback: () -> Unit) {
         val c = ctx.applicationContext
-        AsyncTask.THREAD_POOL_EXECUTOR.execute {
+        ConcurrentUtils.threadPool.execute {
             synchronized(this) {
+                val start = SystemClock.uptimeMillis()
                 val res = c.resources
                 randomImageUrls.addAll(res.getStringArray(R.array.images))
                 //头部轮播图
@@ -31,27 +34,33 @@ object AppBundle {
                 //功能区
                 val function = loadPage(c, res.getString(R.string.function_path))
                 //Feed流
-                val feed = loadMoreFeedItem(c, 10)
+                val feed = loadMoreFeedItem(c, 10, false)
                 homepageCache = Homepage(banner, function, feed)
+                Log.d("AppBundle", "load time:" + (SystemClock.uptimeMillis() - start))
                 callback()
             }
         }
     }
 
-
     @WorkerThread
-    fun loadMoreFeedItem(c: Context, count: Int): List<Page> {
-        try {
-            val url = ImageService.random.get().execute().body()?.imgurl
-            if (!url.isNullOrEmpty()) {
-                randomImageUrls.add(url)
+    fun loadMoreFeedItem(c: Context, count: Int, needNewImage: Boolean = true): List<Page> {
+        if (needNewImage) {
+            try {
+                val start = SystemClock.uptimeMillis()
+                val url = ImageService.random.get().execute().body()?.imgurl
+                if (!url.isNullOrEmpty()) {
+                    randomImageUrls.add(url)
+                }
+                Log.d("AppBundle", "request new image time:" + (SystemClock.uptimeMillis() - start))
+            } catch (e: Exception) {
+                e.printStackTrace()
             }
-        } catch (e: Exception) {
-            e.printStackTrace()
         }
         val res = c.resources
         val feedUrls = res.getStringArray(R.array.feed_paths)
-        return (1..count).map {
+        val pageStart = SystemClock.uptimeMillis()
+        val result = (1..count).map {
+            val start = SystemClock.uptimeMillis()
             val type = Default.nextInt(0, feedUrls.size)
             val url = feedUrls[type]
             val data = if (type == 1) {
@@ -82,8 +91,12 @@ object AppBundle {
                     }
                 }
             }
-            loadPage(c, url, data)
+            val page = loadPage(c, url, data)
+            Log.d("AppBundle", "load single page time:" + (SystemClock.uptimeMillis() - start))
+            return@map page
         }
+        Log.d("AppBundle", "load more page time:" + (SystemClock.uptimeMillis() - pageStart))
+        return result
     }
 
     @WorkerThread
