@@ -3,17 +3,15 @@ package com.guet.flexbox.litho.widget
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.facebook.litho.Component
-import com.facebook.litho.ComponentContext
 
 internal class BannerAdapter(
-        private val c: ComponentContext,
-        private val isCircular: Boolean,
+        val isCircular: Boolean,
         private val components: List<Component>
 ) : RecyclerView.Adapter<LithoViewHolder>() {
 
     fun getNormalizedPosition(position: Int): Int {
         return if (isCircular)
-            position % components.size
+            position % realCount
         else
             position
     }
@@ -25,7 +23,7 @@ internal class BannerAdapter(
             parent: ViewGroup,
             viewType: Int
     ): LithoViewHolder {
-        return LithoViewHolder(c)
+        return LithoViewHolder(parent.context)
     }
 
     override fun getItemCount(): Int {

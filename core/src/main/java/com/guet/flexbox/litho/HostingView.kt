@@ -1,7 +1,6 @@
 package com.guet.flexbox.litho
 
 import android.content.Context
-import android.graphics.Rect
 import android.util.AttributeSet
 import android.view.View
 import androidx.annotation.MainThread
@@ -22,8 +21,6 @@ class HostingView @JvmOverloads constructor(
 
     internal var httpClient: HttpClient? = null
 
-    private var onDirtyMountListener: OnDirtyMountListener? = null
-
     internal var pageEventListener: PageEventListener? = null
 
     init {
@@ -31,12 +28,6 @@ class HostingView @JvmOverloads constructor(
                 .isReconciliationEnabled(false)
                 .layoutThreadHandler(LayoutThreadHandler)
                 .build()
-        super.setOnDirtyMountListener { view ->
-            this.performIncrementalMount(
-                    Rect(0, 0, measuredWidth, measuredHeight), false
-            )
-            onDirtyMountListener?.onDirtyMount(view)
-        }
     }
 
     fun setPageEventListener(pageEventListener: PageEventListener?) {
@@ -45,10 +36,6 @@ class HostingView @JvmOverloads constructor(
 
     fun setHttpClient(httpClient: HttpClient?) {
         this.httpClient = httpClient
-    }
-
-    override fun setOnDirtyMountListener(onDirtyMountListener: OnDirtyMountListener?) {
-        this.onDirtyMountListener = onDirtyMountListener
     }
 
     override fun setLayoutParams(params: LayoutParams?) {

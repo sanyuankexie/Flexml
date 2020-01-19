@@ -93,10 +93,22 @@ class LithoBannerView(context: Context) : FrameLayout(context), HasLithoViewChil
         }
         token = object : WeakReference<ViewPager2>(viewPager), Runnable {
             override fun run() {
-                get()?.let {
-                    it.setCurrentItem(it.currentItem + 1, true)
-                    ConcurrentUtils.mainThreadHandler
-                            .postDelayed(this, timeSpan)
+                get()?.let { viewPager ->
+                    val adapter = viewPager.adapter
+                    val current = viewPager.currentItem
+                    if (adapter is BannerAdapter) {
+                        val next = if (adapter.isCircular) {
+                            current + 1
+                        } else {
+                            current + 1 % adapter.realCount
+                        }
+                        viewPager.setCurrentItem(
+                                next,
+                                true
+                        )
+                        ConcurrentUtils.mainThreadHandler
+                                .postDelayed(this, timeSpan)
+                    }
                 }
             }
         }
@@ -109,6 +121,7 @@ class LithoBannerView(context: Context) : FrameLayout(context), HasLithoViewChil
         if (token != null) {
             ConcurrentUtils.mainThreadHandler
                     .removeCallbacks(token)
+            this.token = null
         }
     }
 

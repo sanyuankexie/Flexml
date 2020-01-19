@@ -1,19 +1,15 @@
 package com.guet.flexbox.litho.widget
 
-import android.view.ViewGroup
-import androidx.recyclerview.widget.RecyclerView
-import com.facebook.litho.ComponentContext
-import com.facebook.litho.ComponentTree
+import android.content.Context
+import androidx.recyclerview.widget.RecyclerView.LayoutParams
+import androidx.recyclerview.widget.RecyclerView.ViewHolder
 import com.facebook.litho.LithoView
-import com.guet.flexbox.litho.LayoutThreadHandler
 
 internal class LithoViewHolder(
-        c: ComponentContext,
-        val lithoView: LithoView = LithoView(c).apply {
-            layoutParams = ViewGroup.LayoutParams(-1, -1)
-            componentTree = ComponentTree.create(c)
-                    .layoutThreadHandler(LayoutThreadHandler)
-                    .isReconciliationEnabled(false)
-                    .build()
-        }
-) : RecyclerView.ViewHolder(lithoView)
+        c: Context
+) : ViewHolder(LithoView(c).apply {
+    layoutParams = LayoutParams(-1, -1)
+}) {
+    val lithoView: LithoView
+        get() = itemView as LithoView
+}

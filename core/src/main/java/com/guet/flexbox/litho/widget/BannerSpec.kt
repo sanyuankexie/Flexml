@@ -14,7 +14,7 @@ import com.guet.flexbox.litho.toPx
 object BannerSpec {
 
     @PropDefault
-    val timeSpan = 3000L
+    val timeSpan = 500L
 
     @get:JvmName(name = "getIsCircular")
     @PropDefault
@@ -54,11 +54,12 @@ object BannerSpec {
     ) {
         if (!children.isNullOrEmpty()) {
             view.viewPager.adapter = BannerAdapter(
-                    c,
                     isCircular,
                     children
             )
-            view.viewPager.currentItem = children.size * 100
+            if (isCircular) {
+                view.viewPager.currentItem = children.size * 100
+            }
         }
         if (orientation == Orientation.HORIZONTAL) {
             view.viewPager.orientation = ViewPager2.ORIENTATION_HORIZONTAL
@@ -83,7 +84,8 @@ object BannerSpec {
     fun onBind(
             c: ComponentContext,
             host: LithoBannerView,
-            @Prop(optional = true) timeSpan: Long
+            @Prop(optional = true) timeSpan: Long,
+            @Prop(optional = true, varArg = "child") children: List<Component>?
     ) {
         host.bind(timeSpan)
     }
