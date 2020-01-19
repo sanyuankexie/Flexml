@@ -32,7 +32,7 @@ object When : Declaration() {
                                 data
                         )["test"] == true) {
                     return item.children?.map {
-                        bindings.bindNode(
+                        bindings.build(
                                 it,
                                 pageContext,
                                 data,
@@ -46,7 +46,7 @@ object When : Declaration() {
             }
         }
         return elseItem?.children?.map {
-            bindings.bindNode(
+            bindings.build(
                     it,
                     pageContext,
                     data,

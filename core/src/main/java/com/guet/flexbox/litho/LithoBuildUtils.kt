@@ -24,7 +24,7 @@ object LithoBuildUtils : BuildUtils() {
         val componentContext = ComponentContext(c)
         val eventBridge = ForwardContext()
         val elContext = PropsELContext(data)
-        val com = bindNode(
+        val com = build(
                 templateNode,
                 eventBridge,
                 elContext,

@@ -67,7 +67,7 @@ class HostingView @JvmOverloads constructor(
                                 .apply {
                                     target = pageContext
                                 }
-                        val component = LithoBuildUtils.bindNode(
+                        val component = LithoBuildUtils.build(
                                 node,
                                 context,
                                 elContext,
@@ -229,7 +229,7 @@ class HostingView @JvmOverloads constructor(
             val mH = measuredHeight
             val mW = measuredWidth
             ConcurrentUtils.runOnAsyncThread {
-                val component = LithoBuildUtils.bindNode(
+                val component = LithoBuildUtils.build(
                         node,
                         pageContext,
                         elContext,

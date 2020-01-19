@@ -28,7 +28,7 @@ object For : Declaration() {
         return (from..end).map { index ->
             data.scope(mapOf(name to index)) {
                 children.map {
-                    bindings.bindNode(
+                    bindings.build(
                             it,
                             pageContext,
                             this,

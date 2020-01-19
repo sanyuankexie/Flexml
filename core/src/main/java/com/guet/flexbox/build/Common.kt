@@ -87,7 +87,7 @@ internal object Common : Declaration() {
             emptyList()
         } else {
             children.map {
-                bindings.bindNode(
+                bindings.build(
                         it,
                         pageContext,
                         data,

@@ -31,7 +31,7 @@ object ForEach : Declaration() {
         return items.map {
             data.scope(mapOf(name to items)) {
                 children.map {
-                    bindings.bindNode(
+                    bindings.build(
                             it,
                             pageContext,
                             this,

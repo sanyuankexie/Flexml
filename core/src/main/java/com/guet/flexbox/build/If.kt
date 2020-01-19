@@ -22,7 +22,7 @@ object If : Declaration() {
     ): List<Child> {
         if (attrs.getValue("test") as Boolean) {
             return children.map {
-                bindings.bindNode(
+                bindings.build(
                         it,
                         pageContext,
                         data,
