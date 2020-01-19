@@ -17,13 +17,16 @@ internal object ToBanner : ToComponent<Banner.Builder>(Common) {
             orientation(value)
         }
         register("indicatorsHeight") { _, _, value: Double ->
-            indicatorsHeightPx(value.toPx())
+            indicatorHeightPx(value.toPx())
         }
         register("indicatorSelectedColor") { _, _, value: Int ->
             indicatorSelectedColor(value)
         }
         register("indicatorUnselectedColor") { _, _, value: Int ->
             indicatorUnselectedColor(value)
+        }
+        register("indicatorEnable") { _, _, value: Boolean ->
+            indicatorEnable(value)
         }
     }
 

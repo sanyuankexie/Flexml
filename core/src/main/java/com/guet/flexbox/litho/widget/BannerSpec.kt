@@ -31,7 +31,7 @@ object BannerSpec {
     val isCircular: Boolean = true
 
     @PropDefault
-    val indicatorsHeightPx: Int = 5.toPx()
+    val indicatorHeightPx: Int = 5.toPx()
 
     @PropDefault
     val orientation = Orientation.HORIZONTAL
@@ -42,20 +42,24 @@ object BannerSpec {
     @PropDefault
     val indicatorUnselectedColor: Int = Color.GRAY
 
+    @PropDefault
+    val indicatorEnable: Boolean = true
+
     @OnCreateMountContent
-    fun onCreateMountContent(c: Context): BannerView {
-        return BannerView(c)
+    fun onCreateMountContent(c: Context): LithoBannerView {
+        return LithoBannerView(c)
     }
 
     @OnMount
     fun onMount(
             c: ComponentContext,
-            view: BannerView,
+            view: LithoBannerView,
             @Prop(optional = true) orientation: Orientation,
             @Prop(optional = true) isCircular: Boolean,
-            @Prop(optional = true) indicatorsHeightPx: Int,
+            @Prop(optional = true) indicatorHeightPx: Int,
             @Prop(optional = true) indicatorSelectedColor: Int,
             @Prop(optional = true) indicatorUnselectedColor: Int,
+            @Prop(optional = true) indicatorEnable: Boolean,
             @Prop(optional = true, varArg = "child") children: List<Component>?
     ) {
         if (!children.isNullOrEmpty()) {
@@ -71,7 +75,8 @@ object BannerSpec {
         } else {
             view.viewPager.orientation = ViewPager2.ORIENTATION_VERTICAL
         }
-        view.indicatorsHeightPx = indicatorsHeightPx
+        view.indicatorEnable = indicatorEnable
+        view.indicatorHeightPx = indicatorHeightPx
         view.indicatorSelectedColor = indicatorSelectedColor
         view.indicatorUnselectedColor = indicatorUnselectedColor
     }
@@ -79,7 +84,7 @@ object BannerSpec {
     @OnUnmount
     fun onUnmount(
             c: ComponentContext,
-            view: BannerView
+            view: LithoBannerView
     ) {
         view.viewPager.adapter = null
     }
@@ -87,7 +92,7 @@ object BannerSpec {
     @OnBind
     fun onBind(
             c: ComponentContext,
-            host: BannerView,
+            host: LithoBannerView,
             @Prop(optional = true) timeSpan: Long,
             @Prop(optional = true, varArg = "child") children: List<Component>?
     ) {
@@ -114,7 +119,7 @@ object BannerSpec {
     @OnUnbind
     fun onUnbind(
             c: ComponentContext,
-            host: BannerView
+            host: LithoBannerView
     ) {
         host.token?.let {
             ConcurrentUtils.mainThreadHandler
@@ -138,7 +143,7 @@ class CarouselRunnable(
 }
 
 private class LithoViewHolder(
-        val c: ComponentContext,
+        c: ComponentContext,
         val lithoView: LithoView = LithoView(c).apply {
             layoutParams = ViewGroup.LayoutParams(-1, -1)
             componentTree = ComponentTree.create(c)
@@ -190,7 +195,7 @@ private class BannerAdapter(
     }
 }
 
-class BannerView(context: Context) : FrameLayout(context), HasLithoViewChildren {
+class LithoBannerView(context: Context) : FrameLayout(context), HasLithoViewChildren {
 
     val viewPager: ViewPager2 = ViewPager2(context)
 
@@ -198,11 +203,13 @@ class BannerView(context: Context) : FrameLayout(context), HasLithoViewChildren 
 
     val indicators = LithoView(context)
 
-    var indicatorsHeightPx: Int = BannerSpec.indicatorsHeightPx
+    var indicatorHeightPx: Int = BannerSpec.indicatorHeightPx
 
     var indicatorSelectedColor: Int = BannerSpec.indicatorSelectedColor
 
     var indicatorUnselectedColor: Int = BannerSpec.indicatorUnselectedColor
+
+    var indicatorEnable: Boolean = BannerSpec.indicatorEnable
 
     private val callback = object : ViewPager2.OnPageChangeCallback() {
         override fun onPageSelected(position: Int) {
@@ -218,7 +225,7 @@ class BannerView(context: Context) : FrameLayout(context), HasLithoViewChildren 
                     .justifyContent(YogaJustify.CENTER)
                     .alignItems(YogaAlign.FLEX_END)
                     .child(Row.create(c)
-                            .marginPx(YogaEdge.BOTTOM, indicatorsHeightPx)
+                            .marginPx(YogaEdge.BOTTOM, indicatorHeightPx)
                             .apply {
                                 (0 until adapter.realCount).forEach { index ->
                                     child(Row.create(c)

@@ -11,7 +11,8 @@ object Banner : Declaration(Common) {
                 "vertical" to Orientation.VERTICAL,
                 "horizontal" to Orientation.HORIZONTAL
         ))
-        value("indicatorsHeight", fallback = 5.0)
+        bool("indicatorEnable")
+        value("indicatorHeight", fallback = 5.0)
         color("indicatorSelectedColor", fallback = Color.WHITE)
         color("indicatorUnselectedColor", fallback = Color.GRAY)
     }
