@@ -1,0 +1,26 @@
+{
+  "parent": "Common",
+  "name": "Image",
+  "attrs": {
+    "scaleType": {
+      "support": [
+        "values"
+      ],
+      "values": [
+        "center",
+        "fitCenter",
+        "fitXY",
+        "fitStart",
+        "fitEnd",
+        "centerInside",
+        "centerCrop"
+      ]
+    },
+    "blurRadius": null,
+    "blurSampling": null,
+    "url": {
+      "required": true
+    },
+    "aspectRatio": null
+  }
+}

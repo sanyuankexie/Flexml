@@ -1,0 +1,19 @@
+{
+  "parent": "Common",
+  "name": "Scroller",
+  "attrs": {
+    "scrollBarEnable": {
+      "support": ["bool"]
+    },
+    "orientation": {
+      "support": ["values"],
+      "values": [
+        "vertical",
+        "horizontal"
+      ]
+    },
+    "fillViewport": {
+      "support": ["bool"]
+    }
+  }
+}

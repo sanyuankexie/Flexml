@@ -48,7 +48,7 @@ object BannerSpec {
     }
 
     @OnMount
-    fun mount(
+    fun onMount(
             c: ComponentContext,
             view: BannerView,
             @Prop(optional = true) orientation: Orientation,
@@ -77,7 +77,7 @@ object BannerSpec {
     }
 
     @OnUnmount
-    fun unmount(
+    fun onUnmount(
             c: ComponentContext,
             view: BannerView
     ) {

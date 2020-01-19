@@ -1,0 +1,67 @@
+{
+  "abstract": true,
+  "name": "Common",
+  "attrs": {
+    "visibility": {
+      "support": [
+        "values"
+      ],
+      "values": [
+        "visible",
+        "invisible",
+        "gone"
+      ]
+    },
+    "width": null,
+    "height": null,
+    "minWidth": null,
+    "maxWidth": null,
+    "minHeight": null,
+    "maxHeight": null,
+    "flexGrow": null,
+    "flexShrink": null,
+    "alignSelf": {
+      "support": [
+        "values"
+      ],
+      "values": [
+        "auto",
+        "flexStart",
+        "flexEnd",
+        "center",
+        "baseline",
+        "stretch"
+      ]
+    },
+    "margin": null,
+    "marginTop": null,
+    "marginLeft": null,
+    "marginRight": null,
+    "marginBottom": null,
+    "padding": null,
+    "paddingTop": null,
+    "paddingLeft": null,
+    "paddingRight": null,
+    "paddingBottom": null,
+    "borderColor": {
+      "support": [
+        "colors"
+      ]
+    },
+    "borderRadius": null,
+    "borderWidth": null,
+    "background": {
+      "support": [
+        "colors",
+        "url"
+      ]
+    },
+    "clickUrl": {
+      "support": [
+        "url"
+      ]
+    },
+    "onClick": null,
+    "onView": null
+  }
+}

@@ -1,0 +1,49 @@
+{
+  "abstract": true,
+  "parent": "Common",
+  "name": "AbstractText",
+  "attrs": {
+    "verticalGravity": {
+      "support": [
+        "values"
+      ],
+      "values": [
+        "top",
+        "bottom",
+        "center"
+      ]
+    },
+    "horizontalGravity": {
+      "support": [
+        "values"
+      ],
+      "values": [
+        "left",
+        "right",
+        "center"
+      ]
+    },
+    "ellipsize": {
+      "support": [
+        "values"
+      ],
+      "values": [
+        "start",
+        "end",
+        "middle",
+        "marquee"
+      ]
+    },
+    "maxLines": null,
+    "minLines": null,
+    "textStyle": {
+      "support": [
+        "values"
+      ],
+      "values": [
+        "normal",
+        "bold"
+      ]
+    }
+  }
+}

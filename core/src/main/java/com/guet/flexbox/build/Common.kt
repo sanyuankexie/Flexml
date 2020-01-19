@@ -9,7 +9,7 @@ import com.guet.flexbox.el.PropsELContext
 import com.guet.flexbox.el.scope
 import java.util.*
 
-object Common : Declaration() {
+internal object Common : Declaration() {
 
     override val attributeInfoSet: AttributeInfoSet by create {
         enum("visibility", mapOf(

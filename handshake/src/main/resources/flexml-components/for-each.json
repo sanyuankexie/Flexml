@@ -1,0 +1,9 @@
+{
+  "name": "foreach",
+  "attrs": {
+    "var": null,
+    "items": {
+      "required": true
+    }
+  }
+}

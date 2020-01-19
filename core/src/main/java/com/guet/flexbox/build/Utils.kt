@@ -66,11 +66,9 @@ internal class Registry {
 
     inline fun <T : Any> typed(
             name: String,
-            scope: (Map<String, T>) = emptyMap(),
-            fallback: T? = null,
             crossinline action: (HostingContext, PropsELContext, String) -> T?
     ) {
-        _value[name] = object : AttributeInfo<T>(scope, fallback) {
+        _value[name] = object : AttributeInfo<T>() {
             override fun cast(pageContext: HostingContext, props: PropsELContext, raw: String): T? {
                 return action(pageContext, props, raw)
             }
