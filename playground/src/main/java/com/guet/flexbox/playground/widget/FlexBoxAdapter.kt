@@ -30,7 +30,7 @@ class FlexBoxAdapter(
         ) {
             val url = values[0] as? String
             if (url != null) {
-                onClick(source, url)
+                onClick(h, url)
             }
         }
 

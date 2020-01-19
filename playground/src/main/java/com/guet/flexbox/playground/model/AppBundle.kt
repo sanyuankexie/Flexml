@@ -41,7 +41,7 @@ object AppBundle {
             }
         }
     }
-    
+
     @WorkerThread
     fun loadMoreFeedItem(c: Context, count: Int, needNewImage: Boolean = true): List<Page> {
         if (needNewImage) {
