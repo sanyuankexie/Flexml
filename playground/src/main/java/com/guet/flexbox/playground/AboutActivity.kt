@@ -39,7 +39,7 @@ class AboutActivity : AppCompatActivity() {
                         .setAppIcon(v3)
                         .addEmailLink("imlkluo@qq.com")
                         .setAppName(R.string.app_name)
-                        .addGitHubLink("https://github.com/LukeXeon")
+                        .addGitHubLink("LukeXeon")
                         .addFiveStarsAction()
                         .setVersionNameAsAppSubTitle()
                         .addShareAction(R.string.app_name)
