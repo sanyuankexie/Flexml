@@ -38,11 +38,6 @@ class LithoBannerView(context: Context) : FrameLayout(context), HasLithoViewChil
         viewPager2.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
             override fun onPageSelected(position: Int) {
                 indicators.setComponentAsync(renderIndicators(position))
-                (0 until internalHost.childCount).mapNotNull {
-                    internalHost.getChildAt(it) as? LithoView
-                }.forEach {
-                    it.performIncrementalMount(rect, false)
-                }
             }
         })
         viewPager2.adapter = adapter
