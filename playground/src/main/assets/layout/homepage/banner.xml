@@ -8,12 +8,13 @@
         height="150"
         width="340">
         <for var="index" from="0" to="${urls.size()-1}">
-            <Image
-                clickUrl="${url}"
-                width="340"
-                flexGrow="1"
-                scaleType="centerCrop"
-                url="${urls[index]}" />
+            <Flex
+                clickUrl="${url}">
+                <Image
+                    flexGrow="1"
+                    scaleType="centerCrop"
+                    url="${urls[index]}" />
+            </Flex>
         </for>
     </Banner>
 </Flex>
