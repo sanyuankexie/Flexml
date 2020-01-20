@@ -52,7 +52,6 @@ object BannerSpec {
             @Prop(optional = true, varArg = "child") children: List<Component>?
     ) {
         view.mount(
-                c,
                 orientation,
                 isCircular,
                 indicatorHeightPx,

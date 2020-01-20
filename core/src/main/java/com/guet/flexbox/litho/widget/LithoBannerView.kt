@@ -6,7 +6,10 @@ import android.view.ViewGroup
 import android.widget.FrameLayout
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager2.widget.ViewPager2
-import com.facebook.litho.*
+import com.facebook.litho.Component
+import com.facebook.litho.HasLithoViewChildren
+import com.facebook.litho.LithoView
+import com.facebook.litho.Row
 import com.facebook.yoga.YogaAlign
 import com.facebook.yoga.YogaEdge
 import com.facebook.yoga.YogaJustify
@@ -15,7 +18,7 @@ import com.guet.flexbox.Orientation
 import com.guet.flexbox.litho.toPx
 import java.lang.ref.WeakReference
 
-class LithoBannerView(context: Context) : FrameLayout(context),HasLithoViewChildren {
+class LithoBannerView(context: Context) : FrameLayout(context), HasLithoViewChildren {
     private val adapter = InternalAdapter()
     private val viewPager2: ViewPager2 = ViewPager2(context)
     private val internalHost = viewPager2.getChildAt(0) as ViewGroup
@@ -80,7 +83,6 @@ class LithoBannerView(context: Context) : FrameLayout(context),HasLithoViewChild
     }
 
     fun mount(
-            c: ComponentContext,
             orientation: Orientation,
             isCircular: Boolean,
             indicatorHeightPx: Int,
@@ -108,7 +110,7 @@ class LithoBannerView(context: Context) : FrameLayout(context),HasLithoViewChild
             }, false)
             adapter.notifyDataSetChanged()
         }
-        indicators.performIncrementalMount(rect, false)
+        indicators.setComponent(renderIndicators(0))
     }
 
     override fun obtainLithoViewChildren(lithoViews: MutableList<LithoView>) {
@@ -166,7 +168,6 @@ class LithoBannerView(context: Context) : FrameLayout(context),HasLithoViewChild
     }
 
     companion object {
-
         private val rect = Rect(0, 0, Int.MAX_VALUE, Int.MAX_VALUE)
     }
 
@@ -189,6 +190,8 @@ class LithoBannerView(context: Context) : FrameLayout(context),HasLithoViewChild
         }
 
         override fun getItemCount(): Int {
+            if (components.isEmpty())
+                return 0
             return if (isCircular) {
                 Int.MAX_VALUE
             } else {
