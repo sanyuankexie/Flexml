@@ -5,7 +5,7 @@ import org.dom4j.Element
 import org.dom4j.io.SAXReader
 import java.io.StringReader
 
-object Compiler {
+object JitCompiler {
 
     private val sax = SAXReader()
 

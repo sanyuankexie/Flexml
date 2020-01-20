@@ -112,7 +112,7 @@ object AppBundle {
     fun loadTemplateNode(c: Context, url: String): TemplateNode {
         return templateCache.getOrPut(url) {
             val source = loadTemplateSource(c, url)
-            Compiler.compile(source)
+            JitCompiler.compile(source)
         }
     }
 

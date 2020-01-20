@@ -21,7 +21,7 @@ import com.guet.flexbox.ConcurrentUtils
 import com.guet.flexbox.litho.HostingView
 import com.guet.flexbox.litho.LithoBuildUtils
 import com.guet.flexbox.litho.PageEventAdapter
-import com.guet.flexbox.playground.model.Compiler
+import com.guet.flexbox.playground.model.JitCompiler
 import java.util.*
 import kotlin.collections.HashSet
 
@@ -125,7 +125,7 @@ class SearchActivity : AppCompatActivity() {
                     .use {
                         it.reader().readText()
                     }
-            val template = Compiler.compile(input)
+            val template = JitCompiler.compile(input)
             val rawData = sharedPreferences.getStringSet(
                     "history_list",
                     null
