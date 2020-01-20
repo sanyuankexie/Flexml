@@ -2,7 +2,6 @@ package com.guet.flexbox.litho.widget
 
 import android.content.Context
 import android.graphics.Color
-import androidx.viewpager2.widget.ViewPager2
 import com.facebook.litho.Component
 import com.facebook.litho.ComponentContext
 import com.facebook.litho.annotations.*
@@ -14,7 +13,7 @@ import com.guet.flexbox.litho.toPx
 object BannerSpec {
 
     @PropDefault
-    val timeSpan = 500L
+    val timeSpan = 3000L
 
     @get:JvmName(name = "getIsCircular")
     @PropDefault
@@ -52,24 +51,16 @@ object BannerSpec {
             @Prop(optional = true) indicatorEnable: Boolean,
             @Prop(optional = true, varArg = "child") children: List<Component>?
     ) {
-        if (!children.isNullOrEmpty()) {
-            view.viewPager.adapter = BannerAdapter(
-                    isCircular,
-                    children
-            )
-            if (isCircular) {
-                view.viewPager.currentItem = children.size * 100
-            }
-        }
-        if (orientation == Orientation.HORIZONTAL) {
-            view.viewPager.orientation = ViewPager2.ORIENTATION_HORIZONTAL
-        } else {
-            view.viewPager.orientation = ViewPager2.ORIENTATION_VERTICAL
-        }
-        view.indicatorEnable = indicatorEnable
-        view.indicatorHeightPx = indicatorHeightPx
-        view.indicatorSelectedColor = indicatorSelectedColor
-        view.indicatorUnselectedColor = indicatorUnselectedColor
+        view.mount(
+                c,
+                orientation,
+                isCircular,
+                indicatorHeightPx,
+                indicatorSelectedColor,
+                indicatorUnselectedColor,
+                indicatorEnable,
+                children
+        )
     }
 
     @OnUnmount
@@ -77,25 +68,24 @@ object BannerSpec {
             c: ComponentContext,
             view: LithoBannerView
     ) {
-        view.viewPager.adapter = null
+        view.unmount()
     }
 
     @OnBind
     fun onBind(
             c: ComponentContext,
-            host: LithoBannerView,
-            @Prop(optional = true) timeSpan: Long,
-            @Prop(optional = true, varArg = "child") children: List<Component>?
+            view: LithoBannerView,
+            @Prop(optional = true) timeSpan: Long
     ) {
-        host.bind(timeSpan)
+        view.bind(timeSpan)
     }
 
     @OnUnbind
     fun onUnbind(
             c: ComponentContext,
-            host: LithoBannerView
+            view: LithoBannerView
     ) {
-        host.unbind()
+        view.unbind()
     }
 
 }
