@@ -2,7 +2,6 @@ package com.guet.flexbox.litho.widget
 
 import android.content.Context
 import android.graphics.Rect
-import android.view.View
 import android.view.ViewGroup
 import android.widget.FrameLayout
 import androidx.recyclerview.widget.RecyclerView
@@ -13,7 +12,6 @@ import com.facebook.yoga.YogaEdge
 import com.facebook.yoga.YogaJustify
 import com.guet.flexbox.ConcurrentUtils
 import com.guet.flexbox.Orientation
-import com.guet.flexbox.litho.LayoutThreadHandler
 import com.guet.flexbox.litho.toPx
 import java.lang.ref.WeakReference
 
@@ -28,11 +26,8 @@ class LithoBannerView(context: Context) : FrameLayout(context),HasLithoViewChild
     private var indicatorUnselectedColor: Int = BannerSpec.indicatorUnselectedColor
     private var indicatorEnable: Boolean = BannerSpec.indicatorEnable
     private var isCircular: Boolean = BannerSpec.isCircular
-    private val componentTrees = ArrayList<ComponentTree>()
+    private val components = ArrayList<Component>()
     private var token: Runnable? = null
-
-    val view: View
-        get() = viewPager2
 
     init {
         addView(viewPager2, ViewGroup.LayoutParams(-1, -1))
@@ -55,7 +50,7 @@ class LithoBannerView(context: Context) : FrameLayout(context),HasLithoViewChild
         val indicatorPx = 5.toPx()
         val outline = CornerOutlineProvider(indicatorPx)
         val c = indicators.componentContext
-        val cc = (componentTrees.indices).map { index ->
+        val cc = (components.indices).map { index ->
             Row.create(c)
                     .widthPx(indicatorPx)
                     .heightPx(indicatorPx)
@@ -105,14 +100,7 @@ class LithoBannerView(context: Context) : FrameLayout(context),HasLithoViewChild
         this.indicatorEnable = indicatorEnable
         viewPager2.setCurrentItem(0, false)
         if (!children.isNullOrEmpty()) {
-            children.forEach {
-                componentTrees.add(ComponentTree.create(c)
-                        .withRoot(it)
-                        .isReconciliationEnabled(true)
-                        .layoutThreadHandler(LayoutThreadHandler)
-                        .build()
-                )
-            }
+            this.components.addAll(children)
             viewPager2.setCurrentItem(if (isCircular) {
                 children.size * 100
             } else {
@@ -120,7 +108,7 @@ class LithoBannerView(context: Context) : FrameLayout(context),HasLithoViewChild
             }, false)
             adapter.notifyDataSetChanged()
         }
-
+        indicators.performIncrementalMount(rect, false)
     }
 
     override fun obtainLithoViewChildren(lithoViews: MutableList<LithoView>) {
@@ -132,17 +120,12 @@ class LithoBannerView(context: Context) : FrameLayout(context),HasLithoViewChild
     }
 
     fun unmount() {
-        componentTrees.clear()
+        components.clear()
         adapter.notifyDataSetChanged()
     }
 
     fun bind(timeSpan: Long) {
         indicators.performIncrementalMount(rect, false)
-        (0 until internalHost.childCount).mapNotNull {
-            internalHost.getChildAt(it) as? LithoView
-        }.forEach {
-            it.performIncrementalMount(rect, false)
-        }
         if (timeSpan <= 0) {
             return
         }
@@ -175,9 +158,9 @@ class LithoBannerView(context: Context) : FrameLayout(context),HasLithoViewChild
     }
 
     private fun getNormalizedPosition(position: Int): Int {
-        if (componentTrees.isEmpty()) return 0
+        if (components.isEmpty()) return 0
         return if (isCircular)
-            position % componentTrees.size
+            position % components.size
         else
             position
     }
@@ -209,19 +192,20 @@ class LithoBannerView(context: Context) : FrameLayout(context),HasLithoViewChild
             return if (isCircular) {
                 Int.MAX_VALUE
             } else {
-                componentTrees.size
+                components.size
             }
         }
 
         override fun onViewRecycled(holder: LithoViewHolder) {
-
             holder.lithoView.unmountAllItems()
-            holder.lithoView.componentTree = null
-            holder.lithoView.resetMountStartupLoggingInfo()
+            holder.lithoView.setVisibilityHint(false)
         }
 
+
         override fun onBindViewHolder(holder: LithoViewHolder, position: Int) {
-            holder.lithoView.componentTree = componentTrees[getNormalizedPosition(position)]
+            val pos = getNormalizedPosition(position)
+            holder.lithoView.setComponent(components[pos])
+            holder.lithoView.setVisibilityHint(true)
         }
     }
 
