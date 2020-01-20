@@ -38,11 +38,6 @@ class LithoBannerView(context: Context) : FrameLayout(context), HasLithoViewChil
         viewPager2.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
             override fun onPageSelected(position: Int) {
                 indicators.setComponentAsync(renderIndicators(position))
-                (0 until internalHost.childCount).mapNotNull {
-                    internalHost.getChildAt(it) as? LithoView
-                }.forEach {
-                    it.performIncrementalMount(rect, false)
-                }
             }
         })
         viewPager2.adapter = adapter
@@ -127,7 +122,8 @@ class LithoBannerView(context: Context) : FrameLayout(context), HasLithoViewChil
     }
 
     fun bind(timeSpan: Long) {
-        indicators.performIncrementalMount(rect, false)
+        indicators.performIncrementalMount(rect,false)
+        indicators.setVisibilityHint(true)
         if (timeSpan <= 0) {
             return
         }
@@ -151,6 +147,7 @@ class LithoBannerView(context: Context) : FrameLayout(context), HasLithoViewChil
     }
 
     fun unbind() {
+        indicators.setVisibilityHint(false)
         val token = token
         if (token != null) {
             ConcurrentUtils.mainThreadHandler
@@ -168,7 +165,12 @@ class LithoBannerView(context: Context) : FrameLayout(context), HasLithoViewChil
     }
 
     companion object {
-        private val rect = Rect(0, 0, Int.MAX_VALUE, Int.MAX_VALUE)
+        private val rect = Rect(
+                Int.MIN_VALUE,
+                Int.MIN_VALUE,
+                Int.MAX_VALUE,
+                Int.MAX_VALUE
+        )
     }
 
     private class LithoViewHolder(

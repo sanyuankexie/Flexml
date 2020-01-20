@@ -20,7 +20,7 @@
             alignItems="flexStart"
             justifyContent="flexStart"
             width="340">
-            <for var="i" from="0" to="${list.size()}">
+            <for var="i" from="0" to="${list.size()-1}">
                 <Flex
                     margin="2"
                     borderRadius="10"

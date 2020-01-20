@@ -16,6 +16,7 @@
         android:theme="@style/AppTheme"
         tools:ignore="AllowBackup,GoogleAppIndexingWarning,UnusedAttribute">
         <activity
+            android:screenOrientation="portrait"
             android:name=".StartupActivity"
             android:configChanges="orientation|screenSize"
             android:icon="@drawable/ic_launcher"
@@ -27,6 +28,7 @@
             </intent-filter>
         </activity>
         <activity
+            android:screenOrientation="portrait"
             android:name=".FastStartupActivity"
             android:configChanges="orientation|screenSize"
             android:icon="@drawable/ic_qrcode"
@@ -38,21 +40,27 @@
             </intent-filter>
         </activity>
         <activity
+            android:screenOrientation="portrait"
             android:name=".AboutActivity"
             android:configChanges="orientation|screenSize" />
         <activity
+            android:screenOrientation="portrait"
             android:name=".CodeActivity"
             android:configChanges="orientation|screenSize" />
         <activity
+            android:screenOrientation="portrait"
             android:name=".SearchActivity"
             android:configChanges="orientation|screenSize" />
         <activity
+            android:screenOrientation="portrait"
             android:name=".MainActivity"
             android:configChanges="orientation|screenSize" />
         <activity
+            android:screenOrientation="portrait"
             android:name=".OverviewActivity"
             android:configChanges="orientation|screenSize" />
         <activity
+            android:screenOrientation="portrait"
             android:name=".test.TestActivity"
             android:configChanges="orientation|screenSize"
             android:exported="true" />
