@@ -7,7 +7,6 @@ group='com.guet.flexbox'
 android {
     compileSdkVersion 28
 
-
     defaultConfig {
         minSdkVersion 19
         targetSdkVersion 28
