@@ -34,8 +34,6 @@ android {
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
 
-    implementation 'androidx.core:core:1.1.0'
-
     implementation 'org.jetbrains.kotlin:kotlin-stdlib-jdk7:1.3.61'
 
     api 'androidx.annotation:annotation:1.1.0'
