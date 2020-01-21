@@ -127,7 +127,7 @@ class LithoBannerView(context: Context) : FrameLayout(context), HasLithoViewChil
         if (timeSpan <= 0) {
             return
         }
-        token = object : WeakReference<ViewPager2>(viewPager2), Runnable {
+        val token = object : WeakReference<ViewPager2>(viewPager2), Runnable {
             override fun run() {
                 get()?.let { viewPager ->
                     viewPager.currentItem = if (isCircular) {
@@ -142,6 +142,7 @@ class LithoBannerView(context: Context) : FrameLayout(context), HasLithoViewChil
                 }
             }
         }
+        this.token = token
         ConcurrentUtils.mainThreadHandler
                 .postDelayed(token, timeSpan)
     }
