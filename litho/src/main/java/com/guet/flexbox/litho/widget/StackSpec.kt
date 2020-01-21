@@ -11,8 +11,6 @@ import com.facebook.litho.annotations.OnCreateLayoutWithSizeSpec
 import com.facebook.litho.annotations.Prop
 import com.facebook.yoga.YogaEdge
 import com.facebook.yoga.YogaPositionType
-import com.guet.flexbox.ConcurrentUtils
-import java.util.concurrent.Future
 import kotlin.math.max
 
 @LayoutSpec
@@ -31,8 +29,6 @@ object StackSpec {
         }
         val sizes = children.map {
             measureChild(c, it, widthSpec, heightSpec)
-        }.map {
-            it.get()
         }
         var maxHeight = 0
         var maxWidth = 0
@@ -56,21 +52,19 @@ object StackSpec {
             child: Component,
             parentWidthMeasureSpec: Int,
             parentHeightMeasureSpec: Int
-    ): Future<Size> {
-        return ConcurrentUtils.threadPool.submit<Size> {
-            val size = Size()
-            val childWidthMeasureSpec = getChildMeasureSpec(
-                    parentWidthMeasureSpec,
-                    0,
-                    LayoutParams.WRAP_CONTENT
-            )
-            val childHeightMeasureSpec = getChildMeasureSpec(
-                    parentHeightMeasureSpec,
-                    0,
-                    LayoutParams.WRAP_CONTENT
-            )
-            child.measure(c, childWidthMeasureSpec, childHeightMeasureSpec, size)
-            return@submit size
-        }
+    ): Size {
+        val size = Size()
+        val childWidthMeasureSpec = getChildMeasureSpec(
+                parentWidthMeasureSpec,
+                0,
+                LayoutParams.WRAP_CONTENT
+        )
+        val childHeightMeasureSpec = getChildMeasureSpec(
+                parentHeightMeasureSpec,
+                0,
+                LayoutParams.WRAP_CONTENT
+        )
+        child.measure(c, childWidthMeasureSpec, childHeightMeasureSpec, size)
+        return size
     }
 }
