@@ -122,7 +122,7 @@ class LithoBannerView(context: Context) : FrameLayout(context), HasLithoViewChil
     }
 
     fun bind(timeSpan: Long) {
-        indicators.performIncrementalMount(rect,false)
+        indicators.performIncrementalMount(rect, false)
         indicators.setVisibilityHint(true)
         if (timeSpan <= 0) {
             return
@@ -212,6 +212,7 @@ class LithoBannerView(context: Context) : FrameLayout(context), HasLithoViewChil
             val pos = getNormalizedPosition(position)
             holder.lithoView.setComponent(components[pos])
             holder.lithoView.setVisibilityHint(true)
+            holder.lithoView.performIncrementalMount(rect, false)
         }
     }
 
