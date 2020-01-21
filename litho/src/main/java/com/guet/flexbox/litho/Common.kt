@@ -3,10 +3,10 @@ package com.guet.flexbox.litho
 import com.facebook.litho.ClickEvent
 import com.facebook.litho.Component
 import com.facebook.litho.ComponentContext
-import com.facebook.litho.EventHandler
-import com.facebook.yoga.YogaAlign
 import com.facebook.yoga.YogaEdge
+import com.guet.flexbox.FlexAlign
 import com.guet.flexbox.build.AttributeSet
+import com.guet.flexbox.build.EventHandler
 import java.util.*
 
 internal object Common : ToComponent<Component.Builder<*>>() {
@@ -36,8 +36,8 @@ internal object Common : ToComponent<Component.Builder<*>>() {
         register("flexShrink") { _, _, value: Double ->
             flexShrink(value.toFloat())
         }
-        register("alignSelf") { _, _, value: YogaAlign ->
-            alignSelf(value)
+        register("alignSelf") { _, _, value: FlexAlign ->
+            alignSelf(value.mapValue())
         }
         register("margin") { _, _, value: Double ->
             marginPx(YogaEdge.ALL, value.toPx())
@@ -55,13 +55,13 @@ internal object Common : ToComponent<Component.Builder<*>>() {
                 paddingPx(edge.second, value.toPx())
             }
         }
-        register("clickUrl") { _, other, value: EventHandler<ClickEvent> ->
+        register("clickUrl") { _, other, value: EventHandler ->
             if (!other.containsKey("onClick")) {
-                clickHandler(value)
+                clickHandler(EventHandlerWrapper<ClickEvent>(value))
             }
         }
-        register("onClick") { _, _, value: EventHandler<ClickEvent> ->
-            clickHandler(value)
+        register("onClick") { _, _, value: EventHandler ->
+            clickHandler(EventHandlerWrapper<ClickEvent>(value))
         }
         register("shadowElevation") { _, _, value: Double ->
             shadowElevationPx(value.toPx().toFloat())

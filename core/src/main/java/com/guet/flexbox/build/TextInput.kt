@@ -9,11 +9,11 @@ import java.util.*
 
 object TextInput : Declaration(AbsText) {
     override val attributeInfoSet: AttributeInfoSet by create {
-        typed("onTextChanged") { pageContext: HostingContext,
+        event("onTextChanged") { pageContext: HostingContext,
                                  elContext: ELContext,
                                  raw: String ->
             elContext.tryGetValue<LambdaExpression>(raw)?.let { executable ->
-                EventHandlerFactory.create { view, args ->
+                { view, args ->
                     elContext.scope(Collections.singletonMap(
                             "pageContext", pageContext.withView(view)
                     )) {

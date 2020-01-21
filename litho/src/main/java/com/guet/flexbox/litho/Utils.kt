@@ -3,14 +3,22 @@ package com.guet.flexbox.litho
 import android.content.Context
 import android.content.res.Resources
 import android.graphics.Color
+import android.graphics.Typeface
 import android.graphics.drawable.GradientDrawable
 import android.net.Uri
+import android.text.Layout.Alignment
 import android.text.TextUtils
 import android.util.ArrayMap
+import android.widget.ImageView
 import com.facebook.litho.Component
 import com.facebook.litho.LithoHandler
 import com.facebook.litho.drawable.ComparableGradientDrawable
-import com.guet.flexbox.ConcurrentUtils
+import com.facebook.yoga.YogaAlign
+import com.facebook.yoga.YogaJustify
+import com.facebook.yoga.YogaWrap
+import com.guet.flexbox.*
+import java.util.*
+import com.facebook.litho.widget.VerticalGravity as LithoVerticalGravity
 
 internal typealias AttributeAssignSet<C> = Map<String, Assignment<C, *>>
 
@@ -105,7 +113,7 @@ internal fun parseUrl(c: Context, url: CharSequence): Any? {
     }
 }
 
-internal object LayoutThreadHandler: LithoHandler {
+internal object LayoutThreadHandler : LithoHandler {
 
     override fun post(runnable: Runnable, tag: String?) {
         ConcurrentUtils.threadPool.execute(runnable)
@@ -121,3 +129,55 @@ internal object LayoutThreadHandler: LithoHandler {
         ConcurrentUtils.threadPool.remove(runnable)
     }
 }
+
+private val mappings = ArrayMap<Class<*>, Map<*, Any>>()
+        .apply {
+            register<FlexAlign> {
+                for (value in enumValues<FlexAlign>()) {
+                    it[value] = YogaAlign.valueOf(value.name)
+                }
+            }
+            register<FlexJustify> {
+                for (value in enumValues<FlexJustify>()) {
+                    it[value] = YogaJustify.valueOf(value.name)
+                }
+            }
+            register<FlexWrap> {
+                for (value in enumValues<FlexWrap>()) {
+                    it[value] = YogaWrap.valueOf(value.name)
+                }
+            }
+            register<HorizontalGravity> {
+                it[HorizontalGravity.CENTER] = Alignment.ALIGN_CENTER
+                it[HorizontalGravity.LEFT] = Alignment.valueOf("ALIGN_LEFT")
+                it[HorizontalGravity.RIGHT] = Alignment.valueOf("ALIGN_RIGHT")
+            }
+            register<ScaleType> {
+                for (value in enumValues<ScaleType>()) {
+                    it[value] = ImageView.ScaleType.valueOf(value.name)
+                }
+            }
+            register<TextStyle> {
+                it[TextStyle.BOLD] = Typeface.BOLD
+                it[TextStyle.NORMAL] = Typeface.NORMAL
+            }
+            register<VerticalGravity> {
+                for (value in enumValues<VerticalGravity>()) {
+                    it[value] = LithoVerticalGravity.valueOf(value.name)
+                }
+            }
+        }
+
+private inline fun <reified T : Enum<T>>
+        ArrayMap<Class<*>, Map<*, Any>>.register(
+        action: (EnumMap<T, Any>) -> Unit
+) {
+    val map = EnumMap<T, Any>(T::class.java)
+    action(map)
+    this[T::class.java] = map
+}
+
+internal inline fun <reified T> Enum<*>.mapValue(): T {
+    return mappings.getValue(this.javaClass)[this] as T
+}
+

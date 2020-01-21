@@ -1,45 +1,45 @@
 package com.guet.flexbox.build
 
-import com.facebook.yoga.YogaAlign
-import com.facebook.yoga.YogaFlexDirection
-import com.facebook.yoga.YogaJustify
-import com.facebook.yoga.YogaWrap
+import com.guet.flexbox.FlexAlign
+import com.guet.flexbox.FlexDirection
+import com.guet.flexbox.FlexJustify
+import com.guet.flexbox.FlexWrap
 
 object Flex : Declaration(Common) {
     override val attributeInfoSet: AttributeInfoSet by create {
         enum("flexWrap", mapOf(
-                "wrap" to YogaWrap.WRAP,
-                "noWrap" to YogaWrap.NO_WRAP,
-                "wrapReverse" to YogaWrap.WRAP_REVERSE
+                "wrap" to FlexWrap.WRAP,
+                "noWrap" to FlexWrap.NO_WRAP,
+                "wrapReverse" to FlexWrap.WRAP_REVERSE
         ))
         enum("justifyContent", mapOf(
-                "flexStart" to YogaJustify.FLEX_START,
-                "flexEnd" to YogaJustify.FLEX_END,
-                "center" to YogaJustify.CENTER,
-                "spaceBetween" to YogaJustify.SPACE_BETWEEN,
-                "spaceAround" to YogaJustify.SPACE_AROUND
+                "flexStart" to FlexJustify.FLEX_START,
+                "flexEnd" to FlexJustify.FLEX_END,
+                "center" to FlexJustify.CENTER,
+                "spaceBetween" to FlexJustify.SPACE_BETWEEN,
+                "spaceAround" to FlexJustify.SPACE_AROUND
         ))
         enum("alignItems", mapOf(
-                "auto" to YogaAlign.AUTO,
-                "flexStart" to YogaAlign.FLEX_START,
-                "flexEnd" to YogaAlign.FLEX_END,
-                "center" to YogaAlign.CENTER,
-                "baseline" to YogaAlign.BASELINE,
-                "stretch" to YogaAlign.STRETCH
+                "auto" to FlexAlign.AUTO,
+                "flexStart" to FlexAlign.FLEX_START,
+                "flexEnd" to FlexAlign.FLEX_END,
+                "center" to FlexAlign.CENTER,
+                "baseline" to FlexAlign.BASELINE,
+                "stretch" to FlexAlign.STRETCH
         ))
         enum("alignContent", mapOf(
-                "auto" to YogaAlign.AUTO,
-                "flexStart" to YogaAlign.FLEX_START,
-                "flexEnd" to YogaAlign.FLEX_END,
-                "center" to YogaAlign.CENTER,
-                "baseline" to YogaAlign.BASELINE,
-                "stretch" to YogaAlign.STRETCH
+                "auto" to FlexAlign.AUTO,
+                "flexStart" to FlexAlign.FLEX_START,
+                "flexEnd" to FlexAlign.FLEX_END,
+                "center" to FlexAlign.CENTER,
+                "baseline" to FlexAlign.BASELINE,
+                "stretch" to FlexAlign.STRETCH
         ))
         enum("flexDirection", mapOf(
-                "row" to YogaFlexDirection.ROW,
-                "column" to YogaFlexDirection.COLUMN,
-                "rowReverse" to YogaFlexDirection.ROW_REVERSE,
-                "columnReverse" to YogaFlexDirection.COLUMN_REVERSE
+                "row" to FlexDirection.ROW,
+                "column" to FlexDirection.COLUMN,
+                "rowReverse" to FlexDirection.ROW_REVERSE,
+                "columnReverse" to FlexDirection.COLUMN_REVERSE
         ))
     }
 }

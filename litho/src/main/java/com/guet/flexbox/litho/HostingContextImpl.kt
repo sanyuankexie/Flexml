@@ -1,8 +1,9 @@
-package com.guet.flexbox.litho.transaction
+package com.guet.flexbox.litho
 
 import android.view.View
 import com.guet.flexbox.HostingContext
-import com.guet.flexbox.litho.HostingView
+import com.guet.flexbox.litho.transaction.HttpTransactionImpl
+import com.guet.flexbox.litho.transaction.RefreshTransactionImpl
 import com.guet.flexbox.transaction.HttpTransaction
 import com.guet.flexbox.transaction.RefreshTransaction
 

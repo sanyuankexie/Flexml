@@ -7,11 +7,11 @@ import com.facebook.litho.widget.TextChangedEvent
 import com.guet.flexbox.build.EventHandler
 import com.facebook.litho.EventHandler as BaseEventHandler
 
-class LithoEventHandler(
+internal class EventHandlerWrapper<T>(
         private val target: EventHandler
-) : BaseEventHandler<Any>(LithoEventHandler, 0) {
+) : BaseEventHandler<T>(EventHandlerWrapper, 0) {
 
-    override fun dispatchEvent(event: Any) {
+    override fun dispatchEvent(event: T) {
         when (event) {
             is ClickEvent -> {
                 target.invoke(event.view, emptyArray())
@@ -23,7 +23,7 @@ class LithoEventHandler(
     }
 
     override fun isEquivalentTo(other: BaseEventHandler<*>?): Boolean {
-        return other is LithoEventHandler && target == other.target
+        return other is EventHandlerWrapper && target == other.target
     }
 
     private companion object : HasEventDispatcher,

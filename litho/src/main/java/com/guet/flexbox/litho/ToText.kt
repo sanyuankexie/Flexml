@@ -3,11 +3,12 @@ package com.guet.flexbox.litho
 import android.content.res.ColorStateList
 import android.graphics.Color
 import android.graphics.Typeface
-import android.text.Layout.Alignment
 import android.text.TextUtils.TruncateAt
 import com.facebook.litho.ComponentContext
 import com.facebook.litho.widget.Text
-import com.facebook.litho.widget.VerticalGravity
+import com.guet.flexbox.HorizontalGravity
+import com.guet.flexbox.TextStyle
+import com.guet.flexbox.VerticalGravity
 import com.guet.flexbox.build.AttributeSet
 
 
@@ -17,10 +18,10 @@ internal object ToText : ToComponent<Text.Builder>(Common) {
 
     override val attributeAssignSet: AttributeAssignSet<Text.Builder> by create {
         register("verticalGravity") { _, _, value: VerticalGravity ->
-            verticalGravity(value)
+            verticalGravity(value.mapValue())
         }
-        register("horizontalGravity") { _, _, value: Alignment ->
-            textAlignment(value)
+        register("horizontalGravity") { _, _, value: HorizontalGravity ->
+            textAlignment(value.mapValue())
         }
         register("text") { display, _, value: String ->
             text(value)
@@ -41,8 +42,8 @@ internal object ToText : ToComponent<Text.Builder>(Common) {
         register("textSize") { _, _, value: Double ->
             textSizePx(value.toPx())
         }
-        register("textStyle") { _, _, value: Int ->
-            typeface(Typeface.defaultFromStyle(value))
+        register("textStyle") { _, _, value: TextStyle ->
+            typeface(Typeface.defaultFromStyle(value.mapValue()))
         }
         register("ellipsize") { _, _, value: TruncateAt ->
             ellipsize(value)

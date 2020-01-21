@@ -1,6 +1,5 @@
 package com.guet.flexbox.litho
 
-import android.widget.ImageView.ScaleType
 import com.facebook.litho.ComponentContext
 import com.guet.flexbox.build.AttributeSet
 import com.guet.flexbox.litho.widget.NetworkImage
@@ -8,8 +7,8 @@ import com.guet.flexbox.litho.widget.NetworkImage
 internal object ToImage : ToComponent<NetworkImage.Builder>(Common) {
 
     override val attributeAssignSet: AttributeAssignSet<NetworkImage.Builder> by create {
-        register("scaleType") { _, _, value: ScaleType ->
-            scaleType(value)
+        register("scaleType") { _, _, value: com.guet.flexbox.ScaleType ->
+            scaleType(value.mapValue())
         }
         register("blurRadius") { _, _, value: Double ->
             blurRadius(value.toFloat())

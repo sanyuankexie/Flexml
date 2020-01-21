@@ -9,7 +9,6 @@ import com.guet.flexbox.ConcurrentUtils
 import com.guet.flexbox.HttpClient
 import com.guet.flexbox.TemplateNode
 import com.guet.flexbox.el.PropsELContext
-import com.guet.flexbox.litho.transaction.HostingContextImpl
 
 class HostingView @JvmOverloads constructor(
         context: Context, attrs: AttributeSet? = null

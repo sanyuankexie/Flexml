@@ -64,6 +64,13 @@ internal class Registry {
         _value[name] = EnumAttributeInfo(scope, fallback)
     }
 
+    inline fun event(
+            name: String,
+            crossinline action: Converter<EventHandler>
+    ) {
+        return typed(name, action)
+    }
+
     inline fun <T : Any> typed(
             name: String,
             crossinline action: Converter<T>

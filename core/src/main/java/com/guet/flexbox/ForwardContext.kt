@@ -5,7 +5,7 @@ import com.guet.flexbox.transaction.HttpTransaction
 import com.guet.flexbox.transaction.RefreshTransaction
 import java.lang.ref.WeakReference
 
-internal class ForwardContext : HostingContext() {
+class ForwardContext : HostingContext() {
 
     private var targetImpl: WeakReference<HostingContext>? = null
 
