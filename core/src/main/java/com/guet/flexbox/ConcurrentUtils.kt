@@ -11,22 +11,21 @@ import java.util.concurrent.atomic.AtomicInteger
 
 object ConcurrentUtils {
 
-    private val count = AtomicInteger(0)
-
     private val mainThreadLooper = Looper.getMainLooper()
 
     val mainThreadHandler = Handler(mainThreadLooper)
 
-    private fun clamp(value: Int, min: Int, max: Int): Int {
-        if (value < min) {
-            return min
-        } else if (value > max) {
-            return max
-        }
-        return value
-    }
-
     val threadPool = kotlin.run {
+        fun clamp(value: Int, min: Int, max: Int): Int {
+            if (value < min) {
+                return min
+            } else if (value > max) {
+                return max
+            }
+            return value
+        }
+
+        val count = AtomicInteger(0)
         val nThreads = clamp(
                 Runtime.getRuntime().availableProcessors(),
                 1, 1
