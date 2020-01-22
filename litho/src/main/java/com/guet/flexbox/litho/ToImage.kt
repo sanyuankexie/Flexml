@@ -1,5 +1,6 @@
 package com.guet.flexbox.litho
 
+import com.bumptech.glide.Glide
 import com.facebook.litho.ComponentContext
 import com.guet.flexbox.build.AttributeSet
 import com.guet.flexbox.litho.widget.NetworkImage
@@ -21,6 +22,9 @@ internal object ToImage : ToComponent<NetworkImage.Builder>(Common) {
         }
         register("url") { display, _, value: String ->
             if (display) {
+                Glide.with(context!!.androidContext)
+                        .load(value)
+                        .preload()
                 url(value)
             } else {
                 url("")
