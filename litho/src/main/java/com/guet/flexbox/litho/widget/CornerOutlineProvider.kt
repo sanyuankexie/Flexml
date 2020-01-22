@@ -6,7 +6,9 @@ import android.view.ViewOutlineProvider
 import androidx.annotation.Px
 import kotlin.math.max
 
-internal class CornerOutlineProvider(@Px private val borderRadius: Int) : ViewOutlineProvider() {
+class CornerOutlineProvider(
+        @Px private val borderRadius: Int
+) : ViewOutlineProvider() {
     override fun getOutline(view: View, outline: Outline) {
         if (borderRadius >= max(view.width, view.height)) {
             outline.setOval(

@@ -6,7 +6,7 @@ import android.graphics.drawable.Drawable
 import androidx.core.graphics.drawable.DrawableCompat
 
 
-internal open class DrawableWrapper<T : Drawable>(
+open class DrawableWrapper<T : Drawable>(
         drawable: T
 ) : Drawable(), Drawable.Callback {
 

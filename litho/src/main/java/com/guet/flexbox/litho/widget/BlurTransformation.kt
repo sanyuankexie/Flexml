@@ -19,7 +19,7 @@ import java.nio.ByteBuffer
 import java.security.MessageDigest
 import kotlin.math.max
 
-internal class BlurTransformation(
+class BlurTransformation(
         private val radius: Float,
         private val sampling: Float
 ) : Transformation<Bitmap> {
