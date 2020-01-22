@@ -6,7 +6,7 @@ import com.guet.flexbox.transaction.RefreshTransaction
 
 class PageContext(
         private val source: View,
-        private val host: HostingContext
+        private val host: HostContext
 ) {
 
     fun send(vararg values: Any?) {

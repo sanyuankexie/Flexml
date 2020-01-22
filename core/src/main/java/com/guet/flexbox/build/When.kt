@@ -1,6 +1,6 @@
 package com.guet.flexbox.build
 
-import com.guet.flexbox.HostingContext
+import com.guet.flexbox.HostContext
 import com.guet.flexbox.TemplateNode
 import com.guet.flexbox.el.ELContext
 
@@ -10,11 +10,11 @@ object When : Declaration() {
         get() = emptyMap()
 
     override fun onBuild(
-            bindings: BuildUtils,
+            buildTool: BuildTool,
             attrs: AttributeSet,
             children: List<TemplateNode>,
-            factory: Factory?,
-            pageContext: HostingContext,
+            factory: OutputFactory?,
+            hostContext: HostContext,
             data: ELContext,
             upperVisibility: Boolean,
             other: Any
@@ -28,13 +28,13 @@ object When : Declaration() {
                 val itemAttrs = item.attrs
                 if (itemAttrs != null && If.onBind(
                                 itemAttrs,
-                                pageContext,
+                                hostContext,
                                 data
                         )["test"] == true) {
                     return item.children?.map {
-                        bindings.build(
+                        buildTool.build(
                                 it,
-                                pageContext,
+                                hostContext,
                                 data,
                                 upperVisibility,
                                 other
@@ -46,9 +46,9 @@ object When : Declaration() {
             }
         }
         return elseItem?.children?.map {
-            bindings.build(
+            buildTool.build(
                     it,
-                    pageContext,
+                    hostContext,
                     data,
                     upperVisibility,
                     other

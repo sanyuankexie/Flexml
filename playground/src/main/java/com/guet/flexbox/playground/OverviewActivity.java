@@ -18,7 +18,7 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import com.google.android.material.appbar.AppBarLayout;
 import com.guet.flexbox.TemplateNode;
 import com.guet.flexbox.litho.HostingView;
-import com.guet.flexbox.litho.LithoBuildUtils;
+import com.guet.flexbox.litho.LithoBuildTool;
 import com.guet.flexbox.litho.Page;
 import com.guet.flexbox.litho.PageEventAdapter;
 import com.guet.flexbox.playground.model.MockService;
@@ -46,7 +46,7 @@ public class OverviewActivity
         @Override
         public void onEventDispatched(
                 @NotNull HostingView h,
-                @NotNull View source,
+                @Nullable View source,
                 @Nullable Object[] values) {
             if (values != null) {
                 handleEvent((String) values[0]);
@@ -84,7 +84,7 @@ public class OverviewActivity
                 Response<TemplateNode> layout = mMockService.layout().execute();
                 Map<String, Object> dataBody = dataResponse.body();
                 TemplateNode layoutBody = layout.body();
-                mLayout = LithoBuildUtils.preload(
+                mLayout = LithoBuildTool.preload(
                         getApplicationContext(),
                         Objects.requireNonNull(layoutBody),
                         dataBody

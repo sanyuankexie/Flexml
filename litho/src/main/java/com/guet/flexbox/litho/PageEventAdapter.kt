@@ -6,8 +6,8 @@ abstract class PageEventAdapter : HostingView.PageEventListener {
 
     override fun onEventDispatched(
             h: HostingView,
-            source: View,
-            vararg values: Any?
+            source: View?,
+            values: Array<out Any?>?
     ) {
 
     }

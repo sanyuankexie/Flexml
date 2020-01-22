@@ -2,21 +2,23 @@ package com.guet.flexbox.litho
 
 import android.graphics.Color
 import android.graphics.drawable.Drawable
+import android.util.Log
 import com.facebook.litho.Border
 import com.facebook.litho.Component
 import com.facebook.litho.ComponentContext
+import com.facebook.litho.VisibleEvent
 import com.facebook.litho.drawable.ComparableColorDrawable
 import com.facebook.yoga.YogaEdge
 import com.guet.flexbox.build.AttributeSet
 import com.guet.flexbox.build.Child
-import com.guet.flexbox.build.Factory
+import com.guet.flexbox.build.OutputFactory
 import com.guet.flexbox.litho.widget.AsyncLazyDrawable
 import com.guet.flexbox.litho.widget.CornerOutlineProvider
 import com.guet.flexbox.litho.widget.NoOpDrawable
 
 abstract class ToComponent<C : Component.Builder<*>>(
         private val parent: ToComponent<in C>? = null
-) : Factory {
+) : OutputFactory {
 
     protected abstract val attributeAssignSet: AttributeAssignSet<C>
 
@@ -59,6 +61,9 @@ abstract class ToComponent<C : Component.Builder<*>>(
         for ((key, value) in attrs) {
             assign(com, key, value, visibility, attrs)
         }
+        com.visibleHandler(EventHandlerWrapper<VisibleEvent> { v, args ->
+            Log.d("visible", "visible:$com")
+        })
         createBorder(com, attrs)
         createBackground(com, attrs)
         onInstallChildren(com, visibility, attrs, children)

@@ -3,7 +3,7 @@ package com.guet.flexbox.build
 import android.graphics.Color
 import android.util.ArrayMap
 import android.view.View
-import com.guet.flexbox.HostingContext
+import com.guet.flexbox.HostContext
 import com.guet.flexbox.TemplateNode
 import com.guet.flexbox.el.ELContext
 import com.guet.flexbox.el.LambdaExpression
@@ -77,11 +77,11 @@ internal class Registry {
     ) {
         _value[name] = object : AttributeInfo<T>() {
             override fun cast(
-                    pageContext: HostingContext,
+                    hostContext: HostContext,
                     props: ELContext,
                     raw: String
             ): T? {
-                return action(pageContext, props, raw)
+                return action(hostContext, props, raw)
             }
         }
     }
@@ -90,9 +90,9 @@ internal class Registry {
         get() = _value
 }
 
-private typealias Converter<T> = (HostingContext, ELContext, String) -> T?
+private typealias Converter<T> = (HostContext, ELContext, String) -> T?
 
-typealias Factory = (
+typealias OutputFactory = (
         visibility: Boolean,
         attrs: AttributeSet,
         children: List<Child>,
@@ -101,12 +101,12 @@ typealias Factory = (
 
 typealias Child = Any
 
-typealias ToWidget = Pair<Declaration, Factory?>
+typealias ToWidget = Pair<Declaration, OutputFactory?>
 
 internal fun ToWidget.toWidget(
-        bindings: BuildUtils,
+        bindings: BuildTool,
         template: TemplateNode,
-        pageContext: HostingContext,
+        pageContext: HostContext,
         data: ELContext,
         upperVisibility: Boolean,
         other: Any
@@ -123,16 +123,14 @@ internal fun ToWidget.toWidget(
     )
 }
 
-private typealias Result = Set<(ELContext) -> Unit>
-
-internal fun LambdaExpression.exec(
+internal fun LambdaExpression.execute(
         elContext: ELContext,
         vararg values: Any?
 ) {
     @Suppress("UNCHECKED_CAST")
     this.invoke(elContext, values)?.run {
-        this as? Result
+        this as? Set<(ELContext) -> Unit>
     }?.firstOrNull()?.invoke(elContext)
 }
 
-typealias EventHandler = (View, Array<out Any?>) -> Unit
+typealias EventHandler = (View?, Array<out Any?>?) -> Unit

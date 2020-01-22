@@ -3,6 +3,7 @@ package com.guet.flexbox.litho
 import com.facebook.litho.ClickEvent
 import com.facebook.litho.EventDispatcher
 import com.facebook.litho.HasEventDispatcher
+import com.facebook.litho.VisibleEvent
 import com.facebook.litho.widget.TextChangedEvent
 import com.guet.flexbox.build.EventHandler
 import com.facebook.litho.EventHandler as BaseEventHandler
@@ -18,6 +19,9 @@ internal class EventHandlerWrapper<T>(
             }
             is TextChangedEvent -> {
                 target.invoke(event.view, arrayOf(event.text))
+            }
+            is VisibleEvent -> {
+                target.invoke(null, null)
             }
         }
     }

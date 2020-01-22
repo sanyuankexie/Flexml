@@ -1,7 +1,7 @@
 package com.guet.flexbox.build
 
 import com.guet.flexbox.FlexAlign
-import com.guet.flexbox.HostingContext
+import com.guet.flexbox.HostContext
 import com.guet.flexbox.TemplateNode
 import com.guet.flexbox.Visibility
 import com.guet.flexbox.el.ELContext
@@ -56,9 +56,9 @@ object Common : Declaration() {
             elContext.tryGetValue<LambdaExpression>(raw)?.let { executable ->
                 { view, _ ->
                     elContext.scope(mapOf(
-                            "pageContext" to pageContext.withView(view)
+                            "pageContext" to pageContext.createPageContext(view!!)
                     )) {
-                        executable.exec(elContext)
+                        executable.execute(elContext)
                     }
                 }
             }
@@ -66,11 +66,11 @@ object Common : Declaration() {
     }
 
     override fun onBuild(
-            bindings: BuildUtils,
+            buildTool: BuildTool,
             attrs: AttributeSet,
             children: List<TemplateNode>,
-            factory: Factory?,
-            pageContext: HostingContext,
+            factory: OutputFactory?,
+            hostContext: HostContext,
             data: ELContext,
             upperVisibility: Boolean,
             other: Any
@@ -87,9 +87,9 @@ object Common : Declaration() {
             emptyList()
         } else {
             children.map {
-                bindings.build(
+                buildTool.build(
                         it,
-                        pageContext,
+                        hostContext,
                         data,
                         visibility,
                         other

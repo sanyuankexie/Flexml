@@ -11,7 +11,7 @@ import com.guet.flexbox.build.*
 import com.guet.flexbox.build.Common
 import com.guet.flexbox.el.PropsELContext
 
-object LithoBuildUtils : BuildUtils() {
+object LithoBuildTool : BuildTool() {
 
     @JvmStatic
     @JvmOverloads

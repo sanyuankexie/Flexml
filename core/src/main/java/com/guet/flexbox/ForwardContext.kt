@@ -5,11 +5,11 @@ import com.guet.flexbox.transaction.HttpTransaction
 import com.guet.flexbox.transaction.RefreshTransaction
 import java.lang.ref.WeakReference
 
-class ForwardContext : HostingContext() {
+class ForwardContext : HostContext() {
 
-    private var targetImpl: WeakReference<HostingContext>? = null
+    private var targetImpl: WeakReference<HostContext>? = null
 
-    var target: HostingContext?
+    var target: HostContext?
         set(value) {
             targetImpl = if (value != null) {
                 WeakReference(value)
@@ -21,7 +21,7 @@ class ForwardContext : HostingContext() {
             return targetImpl?.get()
         }
 
-    override fun send(source: View, values: Array<out Any?>) {
+    override fun send(source: View?, values: Array<out Any?>?) {
         target?.send(source, values)
     }
 

@@ -14,7 +14,7 @@ class HostingView @JvmOverloads constructor(
         context: Context, attrs: AttributeSet? = null
 ) : LithoView(context, attrs) {
 
-    internal val pageContext = HostingContextImpl(this)
+    internal val pageContext = HostContextImpl(this)
 
     internal var template: TemplateNode? = null
 
@@ -46,7 +46,7 @@ class HostingView @JvmOverloads constructor(
     fun setContentAsync(page: Page) {
         ThreadUtils.assertMainThread()
         template = page.template
-        page.eventBridge.target = pageContext
+        page.forward.target = pageContext
         componentTree?.setRootAndSizeSpecAsync(page.component,
                 SizeSpec.makeSizeSpec(measuredWidth, SizeSpec.EXACTLY),
                 when (layoutParams?.height) {
@@ -74,7 +74,7 @@ class HostingView @JvmOverloads constructor(
             val mH = measuredHeight
             val mW = measuredWidth
             ConcurrentUtils.runOnAsyncThread {
-                val component = LithoBuildUtils.build(
+                val component = LithoBuildTool.build(
                         node,
                         pageContext,
                         elContext,
@@ -104,8 +104,8 @@ class HostingView @JvmOverloads constructor(
 
         fun onEventDispatched(
                 h: HostingView,
-                source: View,
-                values: Array<out Any?>
+                source: View?,
+                values: Array<out Any?>?
         )
 
         fun onPageChanged(

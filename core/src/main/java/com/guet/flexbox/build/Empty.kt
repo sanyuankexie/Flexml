@@ -1,6 +1,6 @@
 package com.guet.flexbox.build
 
-import com.guet.flexbox.HostingContext
+import com.guet.flexbox.HostContext
 import com.guet.flexbox.TemplateNode
 import com.guet.flexbox.el.ELContext
 
@@ -9,21 +9,21 @@ object Empty : Declaration(Common) {
         get() = emptyMap()
 
     override fun onBuild(
-            bindings: BuildUtils,
+            buildTool: BuildTool,
             attrs: AttributeSet,
             children: List<TemplateNode>,
-            factory: Factory?,
-            pageContext: HostingContext,
+            factory: OutputFactory?,
+            hostContext: HostContext,
             data: ELContext,
             upperVisibility: Boolean,
             other: Any
     ): List<Child> {
         return super.onBuild(
-                bindings,
+                buildTool,
                 attrs,
                 children,
                 factory,
-                pageContext,
+                hostContext,
                 data,
                 false,
                 other

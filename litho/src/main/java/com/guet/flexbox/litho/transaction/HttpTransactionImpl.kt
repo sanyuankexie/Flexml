@@ -34,7 +34,7 @@ internal class HttpTransactionImpl(
                         ConcurrentUtils.runOnUiThread {
                             success.invoke(
                                     elContext,
-                                    host.pageContext.withView(source),
+                                    host.pageContext.createPageContext(source),
                                     it
                             )
                         }
@@ -46,7 +46,7 @@ internal class HttpTransactionImpl(
                     {
                         ConcurrentUtils.runOnUiThread {
                             error.invoke(elContext,
-                                    host.pageContext.withView(source)
+                                    host.pageContext.createPageContext(source)
                             )
                         }
                     }

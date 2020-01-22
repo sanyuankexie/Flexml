@@ -1,17 +1,17 @@
 package com.guet.flexbox.litho
 
 import android.view.View
-import com.guet.flexbox.HostingContext
+import com.guet.flexbox.HostContext
 import com.guet.flexbox.litho.transaction.HttpTransactionImpl
 import com.guet.flexbox.litho.transaction.RefreshTransactionImpl
 import com.guet.flexbox.transaction.HttpTransaction
 import com.guet.flexbox.transaction.RefreshTransaction
 
-internal class HostingContextImpl(
+internal class HostContextImpl(
         private val host: HostingView
-) : HostingContext() {
+) : HostContext() {
 
-    override fun send(source: View, values: Array<out Any?>) {
+    override fun send(source: View?, values: Array<out Any?>?) {
         host.pageEventListener?.onEventDispatched(
                 host,
                 source,

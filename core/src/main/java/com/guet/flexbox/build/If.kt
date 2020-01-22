@@ -1,6 +1,6 @@
 package com.guet.flexbox.build
 
-import com.guet.flexbox.HostingContext
+import com.guet.flexbox.HostContext
 import com.guet.flexbox.TemplateNode
 import com.guet.flexbox.el.ELContext
 
@@ -11,20 +11,20 @@ object If : Declaration() {
     }
 
     override fun onBuild(
-            bindings: BuildUtils,
+            buildTool: BuildTool,
             attrs: AttributeSet,
             children: List<TemplateNode>,
-            factory: Factory?,
-            pageContext: HostingContext,
+            factory: OutputFactory?,
+            hostContext: HostContext,
             data: ELContext,
             upperVisibility: Boolean,
             other: Any
     ): List<Child> {
         if (attrs.getValue("test") as Boolean) {
             return children.map {
-                bindings.build(
+                buildTool.build(
                         it,
-                        pageContext,
+                        hostContext,
                         data,
                         upperVisibility,
                         other
