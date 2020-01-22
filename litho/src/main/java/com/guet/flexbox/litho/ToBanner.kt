@@ -1,7 +1,7 @@
 package com.guet.flexbox.litho
 
 import com.facebook.litho.ComponentContext
-import com.guet.flexbox.Orientation
+import com.guet.flexbox.enums.Orientation
 import com.guet.flexbox.build.AttributeSet
 import com.guet.flexbox.litho.widget.Banner
 

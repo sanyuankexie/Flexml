@@ -1,6 +1,7 @@
-package com.guet.flexbox.build
+package com.guet.flexbox.build.attrsinfo
 
 import com.guet.flexbox.HostContext
+import com.guet.flexbox.build.isExpr
 import com.guet.flexbox.el.ELContext
 import com.guet.flexbox.el.scope
 import com.guet.flexbox.el.tryGetValue

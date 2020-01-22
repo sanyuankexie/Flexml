@@ -1,9 +1,9 @@
 package com.guet.flexbox.build
 
-import com.guet.flexbox.FlexAlign
-import com.guet.flexbox.FlexDirection
-import com.guet.flexbox.FlexJustify
-import com.guet.flexbox.FlexWrap
+import com.guet.flexbox.enums.FlexAlign
+import com.guet.flexbox.enums.FlexDirection
+import com.guet.flexbox.enums.FlexJustify
+import com.guet.flexbox.enums.FlexWrap
 
 object Flex : Declaration(Common) {
     override val attributeInfoSet: AttributeInfoSet by create {

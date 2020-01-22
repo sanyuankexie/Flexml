@@ -1,4 +1,4 @@
-package com.guet.flexbox.build
+package com.guet.flexbox.build.attrsinfo
 
 import com.guet.flexbox.HostContext
 import com.guet.flexbox.el.ELContext

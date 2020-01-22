@@ -1,9 +1,9 @@
 package com.guet.flexbox.build
 
-import com.guet.flexbox.FlexAlign
+import com.guet.flexbox.enums.FlexAlign
 import com.guet.flexbox.HostContext
 import com.guet.flexbox.TemplateNode
-import com.guet.flexbox.Visibility
+import com.guet.flexbox.enums.Visibility
 import com.guet.flexbox.el.ELContext
 import com.guet.flexbox.el.LambdaExpression
 import com.guet.flexbox.el.scope

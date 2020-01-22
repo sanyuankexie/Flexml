@@ -5,7 +5,7 @@ import android.graphics.Color
 import com.facebook.litho.Component
 import com.facebook.litho.ComponentContext
 import com.facebook.litho.annotations.*
-import com.guet.flexbox.Orientation
+import com.guet.flexbox.enums.Orientation
 import com.guet.flexbox.litho.toPx
 
 

@@ -5,9 +5,9 @@ import com.facebook.litho.Component
 import com.facebook.litho.ComponentContext
 import com.facebook.litho.VisibleEvent
 import com.facebook.yoga.YogaEdge
-import com.guet.flexbox.FlexAlign
 import com.guet.flexbox.build.AttributeSet
 import com.guet.flexbox.build.EventHandler
+import com.guet.flexbox.enums.FlexAlign
 import java.util.*
 
 internal object Common : ToComponent<Component.Builder<*>>() {
@@ -38,7 +38,7 @@ internal object Common : ToComponent<Component.Builder<*>>() {
             flexShrink(value.toFloat())
         }
         register("alignSelf") { _, _, value: FlexAlign ->
-            alignSelf(value.mapValue())
+            alignSelf(value.mapToLithoValue())
         }
         register("margin") { _, _, value: Double ->
             marginPx(YogaEdge.ALL, value.toPx())

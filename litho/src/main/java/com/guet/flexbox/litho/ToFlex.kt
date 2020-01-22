@@ -4,26 +4,26 @@ import com.facebook.litho.Column
 import com.facebook.litho.Component
 import com.facebook.litho.ComponentContext
 import com.facebook.litho.Row
-import com.guet.flexbox.FlexAlign
-import com.guet.flexbox.FlexDirection
-import com.guet.flexbox.FlexJustify
-import com.guet.flexbox.FlexWrap
+import com.guet.flexbox.enums.FlexAlign
+import com.guet.flexbox.enums.FlexDirection
+import com.guet.flexbox.enums.FlexJustify
+import com.guet.flexbox.enums.FlexWrap
 import com.guet.flexbox.build.AttributeSet
 
 internal object ToFlex : ToComponent<Component.ContainerBuilder<*>>(Common) {
 
     override val attributeAssignSet: AttributeAssignSet<Component.ContainerBuilder<*>> by create {
         register("flexWrap") { _, _, value: FlexWrap ->
-            wrap(value.mapValue())
+            wrap(value.mapToLithoValue())
         }
         register("justifyContent") { _, _, value: FlexJustify ->
-            justifyContent(value.mapValue())
+            justifyContent(value.mapToLithoValue())
         }
         register("alignItems") { _, _, value: FlexAlign ->
-            alignItems(value.mapValue())
+            alignItems(value.mapToLithoValue())
         }
         register("alignContent") { _, _, value: FlexAlign ->
-            alignContent(value.mapValue())
+            alignContent(value.mapToLithoValue())
         }
     }
 

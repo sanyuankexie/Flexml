@@ -5,7 +5,7 @@ import com.guet.flexbox.transaction.HttpTransaction
 import com.guet.flexbox.transaction.RefreshTransaction
 
 class PageContext(
-        private val source: View,
+        private val source: View?,
         private val host: HostContext
 ) {
 

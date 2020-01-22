@@ -19,11 +19,11 @@ internal class HostContextImpl(
         )
     }
 
-    override fun http(source: View): HttpTransaction? {
+    override fun http(source: View?): HttpTransaction? {
         return HttpTransactionImpl(host, source)
     }
 
-    override fun refresh(source: View): RefreshTransaction? {
+    override fun refresh(source: View?): RefreshTransaction? {
         return RefreshTransactionImpl(host, source)
     }
 

@@ -4,7 +4,7 @@ import com.facebook.litho.Component
 import com.facebook.litho.ComponentContext
 import com.facebook.litho.widget.HorizontalScroll
 import com.facebook.litho.widget.VerticalScroll
-import com.guet.flexbox.Orientation
+import com.guet.flexbox.enums.Orientation
 import com.guet.flexbox.build.AttributeSet
 
 internal object ToScroller : ToComponent<Component.Builder<*>>(Common) {

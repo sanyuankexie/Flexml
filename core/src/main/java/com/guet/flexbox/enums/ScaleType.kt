@@ -1,4 +1,4 @@
-package com.guet.flexbox
+package com.guet.flexbox.enums
 
 enum class ScaleType {
     FIT_XY,

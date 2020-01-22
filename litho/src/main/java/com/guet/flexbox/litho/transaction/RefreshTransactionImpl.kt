@@ -14,7 +14,7 @@ import com.guet.flexbox.transaction.RefreshTransaction
 
 internal class RefreshTransactionImpl(
         private val host: HostingView,
-        private val source: View
+        private val source: View?
 ) : RefreshTransaction() {
     override fun commit(): (ELContext) -> Unit {
         return { elContext ->

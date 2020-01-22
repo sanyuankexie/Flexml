@@ -11,14 +11,13 @@ import android.text.TextUtils
 import android.util.ArrayMap
 import android.widget.ImageView
 import com.facebook.litho.Component
-import com.facebook.litho.LithoHandler
 import com.facebook.litho.drawable.ComparableGradientDrawable
+import com.facebook.litho.widget.VerticalGravity
 import com.facebook.yoga.YogaAlign
 import com.facebook.yoga.YogaJustify
 import com.facebook.yoga.YogaWrap
-import com.guet.flexbox.*
+import com.guet.flexbox.enums.*
 import java.util.*
-import com.facebook.litho.widget.VerticalGravity as LithoVerticalGravity
 
 internal typealias AttributeAssignSet<C> = Map<String, Assignment<C, *>>
 
@@ -28,28 +27,15 @@ fun <T : Number> T.toPx(): Int {
     return (this.toDouble() * pt).toInt()
 }
 
-inline fun <T : Component.Builder<*>> create(crossinline action: Registry<T>.() -> Unit): Lazy<AttributeAssignSet<T>> {
+internal inline fun <T : Component.Builder<*>> create(
+        crossinline action: AttrsAssignRegistry<T>.() -> Unit
+): Lazy<AttributeAssignSet<T>> {
     return lazy {
-        Registry<T>().apply(action).value
+        AttrsAssignRegistry<T>().apply(action).value
     }
 }
 
 internal typealias ChildComponent = Component
-
-class Registry<C : Component.Builder<*>> {
-
-    private val _value = ArrayMap<String, Assignment<C, *>>()
-
-    fun <T> register(
-            name: String,
-            assignment: Assignment<C, T>
-    ) {
-        _value[name] = assignment
-    }
-
-    val value: AttributeAssignSet<C>
-        get() = _value
-}
 
 typealias Assignment<C, V> = C.(display: Boolean, other: Map<String, Any>, value: V) -> Unit
 
@@ -113,63 +99,46 @@ internal fun parseUrl(c: Context, url: CharSequence): Any? {
     }
 }
 
-internal object LayoutThreadHandler : LithoHandler {
-
-    override fun post(runnable: Runnable, tag: String?) {
-        ConcurrentUtils.threadPool.execute(runnable)
-    }
-
-    override fun postAtFront(runnable: Runnable, tag: String?) {
-        throw UnsupportedOperationException()
-    }
-
-    override fun isTracing(): Boolean = true
-
-    override fun remove(runnable: Runnable) {
-        ConcurrentUtils.threadPool.remove(runnable)
-    }
-}
-
-private val mappings = ArrayMap<Class<*>, Map<*, Any>>()
+private val mapToLithoValues = ArrayMap<Class<*>, Map<*, Any>>()
         .apply {
-            register<FlexAlign> {
+            registerToLitho<FlexAlign> {
                 for (value in enumValues<FlexAlign>()) {
                     it[value] = YogaAlign.valueOf(value.name)
                 }
             }
-            register<FlexJustify> {
+            registerToLitho<FlexJustify> {
                 for (value in enumValues<FlexJustify>()) {
                     it[value] = YogaJustify.valueOf(value.name)
                 }
             }
-            register<FlexWrap> {
+            registerToLitho<FlexWrap> {
                 for (value in enumValues<FlexWrap>()) {
                     it[value] = YogaWrap.valueOf(value.name)
                 }
             }
-            register<HorizontalGravity> {
-                it[HorizontalGravity.CENTER] = Alignment.ALIGN_CENTER
-                it[HorizontalGravity.LEFT] = Alignment.valueOf("ALIGN_LEFT")
-                it[HorizontalGravity.RIGHT] = Alignment.valueOf("ALIGN_RIGHT")
+            registerToLitho<Horizontal> {
+                it[Horizontal.CENTER] = Alignment.ALIGN_CENTER
+                it[Horizontal.LEFT] = Alignment.valueOf("ALIGN_LEFT")
+                it[Horizontal.RIGHT] = Alignment.valueOf("ALIGN_RIGHT")
             }
-            register<ScaleType> {
+            registerToLitho<ScaleType> {
                 for (value in enumValues<ScaleType>()) {
                     it[value] = ImageView.ScaleType.valueOf(value.name)
                 }
             }
-            register<TextStyle> {
+            registerToLitho<TextStyle> {
                 it[TextStyle.BOLD] = Typeface.BOLD
                 it[TextStyle.NORMAL] = Typeface.NORMAL
             }
-            register<VerticalGravity> {
-                for (value in enumValues<VerticalGravity>()) {
-                    it[value] = LithoVerticalGravity.valueOf(value.name)
+            registerToLitho<Vertical> {
+                for (value in enumValues<Vertical>()) {
+                    it[value] = VerticalGravity.valueOf(value.name)
                 }
             }
         }
 
 private inline fun <reified T : Enum<T>>
-        ArrayMap<Class<*>, Map<*, Any>>.register(
+        ArrayMap<Class<*>, Map<*, Any>>.registerToLitho(
         action: (EnumMap<T, Any>) -> Unit
 ) {
     val map = EnumMap<T, Any>(T::class.java)
@@ -177,7 +146,7 @@ private inline fun <reified T : Enum<T>>
     this[T::class.java] = map
 }
 
-internal inline fun <reified T> Enum<*>.mapValue(): T {
-    return mappings.getValue(this.javaClass)[this] as T
+internal inline fun <reified T> Enum<*>.mapToLithoValue(): T {
+    return mapToLithoValues.getValue(this.javaClass)[this] as T
 }
 

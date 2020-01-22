@@ -3,6 +3,7 @@ package com.guet.flexbox.build
 import android.util.ArrayMap
 import com.guet.flexbox.HostContext
 import com.guet.flexbox.TemplateNode
+import com.guet.flexbox.build.attrsinfo.AttributeInfo
 import com.guet.flexbox.el.ELContext
 
 abstract class Declaration(

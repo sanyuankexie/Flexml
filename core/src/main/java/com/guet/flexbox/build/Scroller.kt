@@ -1,6 +1,6 @@
 package com.guet.flexbox.build
 
-import com.guet.flexbox.Orientation
+import com.guet.flexbox.enums.Orientation
 
 object Scroller : Declaration(Common) {
     override val attributeInfoSet: AttributeInfoSet by create {

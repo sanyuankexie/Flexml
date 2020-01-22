@@ -1,10 +1,10 @@
 package com.guet.flexbox.build
 
-import android.graphics.Color
-import android.util.ArrayMap
 import android.view.View
 import com.guet.flexbox.HostContext
 import com.guet.flexbox.TemplateNode
+import com.guet.flexbox.build.attrsinfo.AttributeInfo
+import com.guet.flexbox.build.attrsinfo.AttrsInfoRegistry
 import com.guet.flexbox.el.ELContext
 import com.guet.flexbox.el.LambdaExpression
 
@@ -13,84 +13,15 @@ internal inline val CharSequence.isExpr: Boolean
 
 internal typealias AttributeInfoSet = Map<String, AttributeInfo<*>>
 
-internal inline fun create(crossinline action: Registry.() -> Unit): Lazy<AttributeInfoSet> {
+internal inline fun create(crossinline action: AttrsInfoRegistry.() -> Unit): Lazy<AttributeInfoSet> {
     return lazy {
-        Registry().apply(action).value
+        AttrsInfoRegistry().apply(action).value
     }
 }
 
 typealias AttributeSet = Map<String, Any>
 
-internal class Registry {
-    private val _value = ArrayMap<String, AttributeInfo<*>>()
-
-    fun text(
-            name: String,
-            scope: (Map<String, String>) = emptyMap(),
-            fallback: String = ""
-    ) {
-        _value[name] = TextAttributeInfo(scope, fallback)
-    }
-
-    fun bool(
-            name: String,
-            scope: Map<String, Boolean> = emptyMap(),
-            fallback: Boolean = false
-    ) {
-        _value[name] = BoolAttributeInfo(scope, fallback)
-    }
-
-    fun value(
-            name: String,
-            scope: Map<String, Double> = emptyMap(),
-            fallback: Double = 0.0
-    ) {
-        _value[name] = ValueAttributeInfo(scope, fallback)
-    }
-
-    fun color(
-            name: String,
-            scope: Map<String, Int> = emptyMap(),
-            fallback: Int = Color.TRANSPARENT
-    ) {
-        _value[name] = ColorAttributeInfo(scope, fallback)
-    }
-
-    inline fun <reified V : Enum<V>> enum(
-            name: String,
-            scope: Map<String, V>,
-            fallback: V = enumValues<V>().first()
-    ) {
-        _value[name] = EnumAttributeInfo(scope, fallback)
-    }
-
-    inline fun event(
-            name: String,
-            crossinline action: Converter<EventHandler>
-    ) {
-        return typed(name, action)
-    }
-
-    inline fun <T : Any> typed(
-            name: String,
-            crossinline action: Converter<T>
-    ) {
-        _value[name] = object : AttributeInfo<T>() {
-            override fun cast(
-                    hostContext: HostContext,
-                    props: ELContext,
-                    raw: String
-            ): T? {
-                return action(hostContext, props, raw)
-            }
-        }
-    }
-
-    val value: AttributeInfoSet
-        get() = _value
-}
-
-private typealias Converter<T> = (HostContext, ELContext, String) -> T?
+internal typealias Converter<T> = (HostContext, ELContext, String) -> T?
 
 typealias OutputFactory = (
         visibility: Boolean,

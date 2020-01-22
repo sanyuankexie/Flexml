@@ -14,7 +14,7 @@ import com.facebook.yoga.YogaAlign
 import com.facebook.yoga.YogaEdge
 import com.facebook.yoga.YogaJustify
 import com.guet.flexbox.ConcurrentUtils
-import com.guet.flexbox.Orientation
+import com.guet.flexbox.enums.Orientation
 import com.guet.flexbox.litho.toPx
 import java.lang.ref.WeakReference
 

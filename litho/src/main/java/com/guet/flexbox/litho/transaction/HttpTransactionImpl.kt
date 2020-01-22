@@ -8,7 +8,7 @@ import com.guet.flexbox.transaction.HttpTransaction
 
 internal class HttpTransactionImpl(
         private val host: HostingView,
-        private val source: View
+        private val source: View?
 ) : HttpTransaction() {
     override fun commit(): (ELContext) -> Unit {
         return { elContext ->

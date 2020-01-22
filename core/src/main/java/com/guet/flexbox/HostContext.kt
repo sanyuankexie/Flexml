@@ -8,11 +8,11 @@ abstract class HostContext {
 
     abstract fun send(source: View?, values: Array<out Any?>?)
 
-    abstract fun http(source: View): HttpTransaction?
+    abstract fun http(source: View?): HttpTransaction?
 
-    abstract fun refresh(source: View): RefreshTransaction?
+    abstract fun refresh(source: View?): RefreshTransaction?
 
-    fun createPageContext(source: View): PageContext {
+    fun createPageContext(source: View?): PageContext {
         return PageContext(source, this)
     }
 }
