@@ -3,6 +3,7 @@ package com.guet.flexbox.litho
 import com.facebook.litho.ClickEvent
 import com.facebook.litho.Component
 import com.facebook.litho.ComponentContext
+import com.facebook.litho.VisibleEvent
 import com.facebook.yoga.YogaEdge
 import com.guet.flexbox.FlexAlign
 import com.guet.flexbox.build.AttributeSet
@@ -62,6 +63,9 @@ internal object Common : ToComponent<Component.Builder<*>>() {
         }
         register("onClick") { _, _, value: EventHandler ->
             clickHandler(EventHandlerWrapper<ClickEvent>(value))
+        }
+        register("onVisible") { _, _, value: EventHandler ->
+            visibleHandler(EventHandlerWrapper<VisibleEvent>(value))
         }
         register("shadowElevation") { _, _, value: Double ->
             shadowElevationPx(value.toPx().toFloat())
