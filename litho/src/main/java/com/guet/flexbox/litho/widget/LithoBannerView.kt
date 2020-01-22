@@ -212,7 +212,6 @@ class LithoBannerView(context: Context) : FrameLayout(context), HasLithoViewChil
             val pos = getNormalizedPosition(position)
             holder.lithoView.setComponent(components[pos])
             holder.lithoView.setVisibilityHint(true)
-            holder.lithoView.performIncrementalMount(rect, false)
         }
     }
 
