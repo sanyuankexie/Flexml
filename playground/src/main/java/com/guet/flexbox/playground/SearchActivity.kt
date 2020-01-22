@@ -19,9 +19,9 @@ import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import com.guet.flexbox.ConcurrentUtils
 import com.guet.flexbox.litho.HostingView
-import com.guet.flexbox.litho.LithoBuildUtils
+import com.guet.flexbox.litho.LithoBuildTool
 import com.guet.flexbox.litho.PageEventAdapter
-import com.guet.flexbox.playground.model.Compiler
+import com.guet.flexbox.playground.model.JitCompiler
 import java.util.*
 import kotlin.collections.HashSet
 
@@ -30,10 +30,10 @@ class SearchActivity : AppCompatActivity() {
     private val handler = object : PageEventAdapter() {
         override fun onEventDispatched(
                 h: HostingView,
-                source: View,
-                vararg values: Any?
+                source: View?,
+                values: Array<out Any?>?
         ) {
-            val url = values[0] as? String
+            val url = values!![0] as? String
             if (url != null) {
                 handleEvent(url)
             }
@@ -125,7 +125,7 @@ class SearchActivity : AppCompatActivity() {
                     .use {
                         it.reader().readText()
                     }
-            val template = Compiler.compile(input)
+            val template = JitCompiler.compile(input)
             val rawData = sharedPreferences.getStringSet(
                     "history_list",
                     null
@@ -139,7 +139,7 @@ class SearchActivity : AppCompatActivity() {
                     "list",
                     listData
             )
-            val content = LithoBuildUtils.preload(this, template, data)
+            val content = LithoBuildTool.preload(this, template, data)
             runOnUiThread {
                 list.setContentAsync(content)
             }

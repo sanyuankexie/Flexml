@@ -25,10 +25,10 @@ class FlexBoxAdapter(
 
         override fun onEventDispatched(
                 h: HostingView,
-                source: View,
-                vararg values: Any?
+                source: View?,
+                values: Array<out Any?>?
         ) {
-            val url = values[0] as? String
+            val url = values!![0] as? String
             if (url != null) {
                 onClick(h, url)
             }

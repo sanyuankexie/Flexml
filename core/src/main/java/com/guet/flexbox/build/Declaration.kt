@@ -1,7 +1,7 @@
 package com.guet.flexbox.build
 
 import android.util.ArrayMap
-import com.guet.flexbox.HostingContext
+import com.guet.flexbox.HostContext
 import com.guet.flexbox.TemplateNode
 import com.guet.flexbox.el.ELContext
 
@@ -24,7 +24,7 @@ abstract class Declaration(
 
     open fun onBind(
             rawAttrs: Map<String, String>?,
-            pageContext: HostingContext,
+            hostContext: HostContext,
             data: ELContext
     ): AttributeSet {
         return if (rawAttrs.isNullOrEmpty()) {
@@ -32,7 +32,7 @@ abstract class Declaration(
         } else {
             ArrayMap<String, Any>(rawAttrs.size).also {
                 for ((key, raw) in rawAttrs) {
-                    val result = this[key]?.cast(pageContext, data, raw)
+                    val result = this[key]?.cast(hostContext, data, raw)
                     if (result != null) {
                         it[key] = result
                     }
@@ -42,21 +42,21 @@ abstract class Declaration(
     }
 
     open fun onBuild(
-            bindings: BuildUtils,
+            buildTool: BuildTool,
             attrs: AttributeSet,
             children: List<TemplateNode>,
-            factory: Factory?,
-            pageContext: HostingContext,
+            factory: OutputFactory?,
+            hostContext: HostContext,
             data: ELContext,
             upperVisibility: Boolean,
             other: Any
     ): List<Child> {
         return parent?.onBuild(
-                bindings,
+                buildTool,
                 attrs,
                 children,
                 factory,
-                pageContext,
+                hostContext,
                 data,
                 upperVisibility,
                 other
@@ -64,18 +64,18 @@ abstract class Declaration(
     }
 
     fun transform(
-            bindings: BuildUtils,
+            bindings: BuildTool,
             rawAttrs: Map<String, String>,
             children: List<TemplateNode>,
-            factory: Factory?,
-            pageContext: HostingContext,
+            factory: OutputFactory?,
+            hostContext: HostContext,
             data: ELContext,
             upperVisibility: Boolean,
             other: Any
     ): List<Child> {
         val attrs = onBind(
                 rawAttrs,
-                pageContext,
+                hostContext,
                 data
         )
         return onBuild(
@@ -83,7 +83,7 @@ abstract class Declaration(
                 attrs,
                 children,
                 factory,
-                pageContext,
+                hostContext,
                 data,
                 upperVisibility,
                 other

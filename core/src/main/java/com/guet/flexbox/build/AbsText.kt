@@ -1,9 +1,9 @@
 package com.guet.flexbox.build
 
-import android.graphics.Typeface
-import android.text.Layout
 import android.text.TextUtils
-import com.facebook.litho.widget.VerticalGravity
+import com.guet.flexbox.HorizontalGravity
+import com.guet.flexbox.TextStyle
+import com.guet.flexbox.VerticalGravity
 
 internal object AbsText : Declaration(Common) {
 
@@ -15,9 +15,9 @@ internal object AbsText : Declaration(Common) {
         ))
         @Suppress("NewApi")
         enum("horizontalGravity", mapOf(
-                "left" to Layout.Alignment.ALIGN_LEFT,
-                "right" to Layout.Alignment.ALIGN_LEFT,
-                "center" to Layout.Alignment.ALIGN_CENTER
+                "left" to HorizontalGravity.LEFT,
+                "right" to HorizontalGravity.RIGHT,
+                "center" to HorizontalGravity.CENTER
         ))
         enum("ellipsize", mapOf(
                 "start" to TextUtils.TruncateAt.START,
@@ -28,14 +28,9 @@ internal object AbsText : Declaration(Common) {
         value("maxLines", fallback = Int.MAX_VALUE.toDouble())
         value("minLines", fallback = Int.MIN_VALUE.toDouble())
         value("textSize", fallback = 13.0)
-        val scope = mapOf(
-                "normal" to Typeface.NORMAL,
-                "bold" to Typeface.BOLD
-        )
-        typed("textStyle") { _,
-                             _,
-                             raw: String ->
-            scope[raw]
-        }
+        enum("textStyle", mapOf(
+                "normal" to TextStyle.NORMAL,
+                "bold" to TextStyle.BOLD
+        ))
     }
 }

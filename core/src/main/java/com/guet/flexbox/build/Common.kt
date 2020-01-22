@@ -1,7 +1,7 @@
 package com.guet.flexbox.build
 
-import com.facebook.yoga.YogaAlign
-import com.guet.flexbox.HostingContext
+import com.guet.flexbox.FlexAlign
+import com.guet.flexbox.HostContext
 import com.guet.flexbox.TemplateNode
 import com.guet.flexbox.Visibility
 import com.guet.flexbox.el.ELContext
@@ -9,7 +9,7 @@ import com.guet.flexbox.el.LambdaExpression
 import com.guet.flexbox.el.scope
 import com.guet.flexbox.el.tryGetValue
 
-internal object Common : Declaration() {
+object Common : Declaration() {
 
     override val attributeInfoSet: AttributeInfoSet by create {
         enum("visibility", mapOf(
@@ -26,12 +26,12 @@ internal object Common : Declaration() {
         value("minHeight")
         value("maxHeight")
         enum("alignSelf", mapOf(
-                "auto" to YogaAlign.AUTO,
-                "flexStart" to YogaAlign.FLEX_START,
-                "flexEnd" to YogaAlign.FLEX_END,
-                "center" to YogaAlign.CENTER,
-                "baseline" to YogaAlign.BASELINE,
-                "stretch" to YogaAlign.STRETCH
+                "auto" to FlexAlign.AUTO,
+                "flexStart" to FlexAlign.FLEX_START,
+                "flexEnd" to FlexAlign.FLEX_END,
+                "center" to FlexAlign.CENTER,
+                "baseline" to FlexAlign.BASELINE,
+                "stretch" to FlexAlign.STRETCH
         ))
         value("margin")
         value("padding")
@@ -44,21 +44,21 @@ internal object Common : Declaration() {
             value("margin$edge")
             value("padding$edge")
         }
-        typed("clickUrl") { pageContext, props, raw ->
+        event("clickUrl") { pageContext, props, raw ->
             val url = props.tryGetValue<String>(raw)
             url?.let {
-                EventHandlerFactory.create { v, _ ->
+                { v, _ ->
                     pageContext.send(v, arrayOf(url))
                 }
             }
         }
-        typed("onClick") { pageContext, elContext, raw ->
+        event("onClick") { pageContext, elContext, raw ->
             elContext.tryGetValue<LambdaExpression>(raw)?.let { executable ->
-                EventHandlerFactory.create { view, _ ->
+                { view, _ ->
                     elContext.scope(mapOf(
-                            "pageContext" to pageContext.withView(view)
+                            "pageContext" to pageContext.createPageContext(view!!)
                     )) {
-                        executable.exec(elContext)
+                        executable.execute(elContext)
                     }
                 }
             }
@@ -66,11 +66,11 @@ internal object Common : Declaration() {
     }
 
     override fun onBuild(
-            bindings: BuildUtils,
+            buildTool: BuildTool,
             attrs: AttributeSet,
             children: List<TemplateNode>,
-            factory: Factory?,
-            pageContext: HostingContext,
+            factory: OutputFactory?,
+            hostContext: HostContext,
             data: ELContext,
             upperVisibility: Boolean,
             other: Any
@@ -87,9 +87,9 @@ internal object Common : Declaration() {
             emptyList()
         } else {
             children.map {
-                bindings.build(
+                buildTool.build(
                         it,
-                        pageContext,
+                        hostContext,
                         data,
                         visibility,
                         other

@@ -26,12 +26,8 @@ import java.util.concurrent.atomic.AtomicBoolean
 class MainActivity : AppCompatActivity() {
 
     private val handler = object : PageEventAdapter() {
-        override fun onEventDispatched(
-                h: HostingView,
-                source: View,
-                vararg values: Any?
-        ) {
-            val url = values[0] as? String
+        override fun onEventDispatched(h: HostingView, source: View?, values: Array<out Any?>?) {
+            val url = values!![0] as? String
             if (url != null) {
                 handleEvent(h, url)
             }

@@ -1,6 +1,6 @@
 package com.guet.flexbox.build
 
-import android.widget.ImageView.ScaleType
+import com.guet.flexbox.ScaleType
 
 internal object Graphic : Declaration(Common) {
     override val attributeInfoSet: AttributeInfoSet by create {

@@ -61,7 +61,7 @@ dependencies {
 
     implementation 'ch.ielse:switchbutton:1.0.1'
 
-    implementation project(':core')
+    implementation project(':litho')
 
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'androidx.test:runner:1.2.0'

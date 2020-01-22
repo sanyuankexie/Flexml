@@ -7,7 +7,7 @@ import androidx.annotation.WorkerThread
 import com.google.gson.Gson
 import com.guet.flexbox.ConcurrentUtils
 import com.guet.flexbox.TemplateNode
-import com.guet.flexbox.litho.LithoBuildUtils
+import com.guet.flexbox.litho.LithoBuildTool
 import com.guet.flexbox.litho.Page
 import com.guet.flexbox.playground.R
 import java.io.FileNotFoundException
@@ -112,7 +112,7 @@ object AppBundle {
     fun loadTemplateNode(c: Context, url: String): TemplateNode {
         return templateCache.getOrPut(url) {
             val source = loadTemplateSource(c, url)
-            Compiler.compile(source)
+            JitCompiler.compile(source)
         }
     }
 
@@ -135,7 +135,7 @@ object AppBundle {
     fun loadPage(c: Context, url: String, data: (Map<String, Any>) = emptyMap()): Page {
         val template = loadTemplateNode(c, url)
         val dataSource = loadDataSource(c, url)
-        return LithoBuildUtils.preload(c, template, HashMap(dataSource).apply {
+        return LithoBuildTool.preload(c, template, HashMap(dataSource).apply {
             put("url", url)
             putAll(data)
         })
