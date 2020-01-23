@@ -1,4 +1,4 @@
-package com.guet.flexbox.litho
+package com.guet.flexbox.litho.factories
 
 import android.graphics.Color
 import android.graphics.drawable.Drawable
@@ -9,14 +9,17 @@ import com.facebook.litho.drawable.ComparableColorDrawable
 import com.facebook.yoga.YogaEdge
 import com.guet.flexbox.build.AttributeSet
 import com.guet.flexbox.build.Child
-import com.guet.flexbox.build.OutputFactory
+import com.guet.flexbox.build.VDomFactory
+import com.guet.flexbox.litho.ChildComponent
+import com.guet.flexbox.litho.parseUrl
+import com.guet.flexbox.litho.toPx
 import com.guet.flexbox.litho.widget.AsyncLazyDrawable
 import com.guet.flexbox.litho.widget.CornerOutlineProvider
 import com.guet.flexbox.litho.widget.NoOpDrawable
 
 abstract class ToComponent<C : Component.Builder<*>>(
         private val parent: ToComponent<in C>? = null
-) : OutputFactory {
+) : VDomFactory {
 
     protected abstract val attributeAssignSet: AttributeAssignSet<C>
 

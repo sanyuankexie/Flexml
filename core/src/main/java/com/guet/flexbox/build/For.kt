@@ -16,7 +16,7 @@ object For : Declaration() {
             buildTool: BuildTool,
             attrs: AttributeSet,
             children: List<TemplateNode>,
-            factory: OutputFactory?,
+            factory: VDomFactory?,
             hostContext: HostContext,
             data: ELContext,
             upperVisibility: Boolean,

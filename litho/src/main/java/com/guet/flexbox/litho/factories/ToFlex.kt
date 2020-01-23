@@ -1,14 +1,15 @@
-package com.guet.flexbox.litho
+package com.guet.flexbox.litho.factories
 
 import com.facebook.litho.Column
 import com.facebook.litho.Component
 import com.facebook.litho.ComponentContext
 import com.facebook.litho.Row
+import com.guet.flexbox.build.AttributeSet
 import com.guet.flexbox.enums.FlexAlign
 import com.guet.flexbox.enums.FlexDirection
 import com.guet.flexbox.enums.FlexJustify
 import com.guet.flexbox.enums.FlexWrap
-import com.guet.flexbox.build.AttributeSet
+import com.guet.flexbox.litho.ChildComponent
 
 internal object ToFlex : ToComponent<Component.ContainerBuilder<*>>(Common) {
 

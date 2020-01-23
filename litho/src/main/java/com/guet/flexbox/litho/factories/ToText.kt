@@ -1,4 +1,4 @@
-package com.guet.flexbox.litho
+package com.guet.flexbox.litho.factories
 
 import android.content.res.ColorStateList
 import android.graphics.Color
@@ -10,6 +10,7 @@ import com.guet.flexbox.build.AttributeSet
 import com.guet.flexbox.enums.Horizontal
 import com.guet.flexbox.enums.TextStyle
 import com.guet.flexbox.enums.Vertical
+import com.guet.flexbox.litho.toPx
 
 
 internal object ToText : ToComponent<Text.Builder>(Common) {

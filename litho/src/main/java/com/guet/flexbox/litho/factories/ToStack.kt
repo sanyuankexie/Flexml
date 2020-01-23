@@ -1,7 +1,8 @@
-package com.guet.flexbox.litho
+package com.guet.flexbox.litho.factories
 
 import com.facebook.litho.ComponentContext
 import com.guet.flexbox.build.AttributeSet
+import com.guet.flexbox.litho.ChildComponent
 import com.guet.flexbox.litho.widget.Stack
 
 internal object ToStack : ToComponent<Stack.Builder>(Common) {

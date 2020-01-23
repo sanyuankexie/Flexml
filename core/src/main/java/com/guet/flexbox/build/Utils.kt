@@ -23,7 +23,7 @@ typealias AttributeSet = Map<String, Any>
 
 internal typealias Converter<T> = (HostContext, ELContext, String) -> T?
 
-typealias OutputFactory = (
+typealias VDomFactory = (
         visibility: Boolean,
         attrs: AttributeSet,
         children: List<Child>,
@@ -32,7 +32,7 @@ typealias OutputFactory = (
 
 typealias Child = Any
 
-typealias ToWidget = Pair<Declaration, OutputFactory?>
+typealias ToWidget = Pair<Declaration, VDomFactory?>
 
 internal fun ToWidget.toWidget(
         bindings: BuildTool,

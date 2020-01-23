@@ -1,13 +1,13 @@
 package com.guet.flexbox.build
 
-import com.guet.flexbox.enums.FlexAlign
 import com.guet.flexbox.HostContext
 import com.guet.flexbox.TemplateNode
-import com.guet.flexbox.enums.Visibility
 import com.guet.flexbox.el.ELContext
 import com.guet.flexbox.el.LambdaExpression
 import com.guet.flexbox.el.scope
 import com.guet.flexbox.el.tryGetValue
+import com.guet.flexbox.enums.FlexAlign
+import com.guet.flexbox.enums.Visibility
 
 object Common : Declaration() {
 
@@ -69,7 +69,7 @@ object Common : Declaration() {
             buildTool: BuildTool,
             attrs: AttributeSet,
             children: List<TemplateNode>,
-            factory: OutputFactory?,
+            factory: VDomFactory?,
             hostContext: HostContext,
             data: ELContext,
             upperVisibility: Boolean,

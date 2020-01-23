@@ -1,4 +1,4 @@
-package com.guet.flexbox.litho
+package com.guet.flexbox.litho.factories
 
 import com.facebook.litho.ComponentContext
 import com.facebook.litho.widget.EmptyComponent

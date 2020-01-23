@@ -1,11 +1,12 @@
-package com.guet.flexbox.litho
+package com.guet.flexbox.litho.factories
 
 import com.facebook.litho.Component
 import com.facebook.litho.ComponentContext
 import com.facebook.litho.widget.HorizontalScroll
 import com.facebook.litho.widget.VerticalScroll
-import com.guet.flexbox.enums.Orientation
 import com.guet.flexbox.build.AttributeSet
+import com.guet.flexbox.enums.Orientation
+import com.guet.flexbox.litho.ChildComponent
 
 internal object ToScroller : ToComponent<Component.Builder<*>>(Common) {
 
