@@ -2,7 +2,6 @@ package com.guet.flexbox.playground.model
 
 import android.content.Context
 import android.os.SystemClock
-import android.util.Log
 import androidx.annotation.WorkerThread
 import com.google.gson.Gson
 import com.guet.flexbox.ConcurrentUtils
@@ -10,7 +9,9 @@ import com.guet.flexbox.TemplateNode
 import com.guet.flexbox.litho.LithoBuildTool
 import com.guet.flexbox.litho.Page
 import com.guet.flexbox.playground.R
+import com.orhanobut.logger.Logger
 import java.io.FileNotFoundException
+import java.util.concurrent.Callable
 import kotlin.random.Random.Default
 
 object AppBundle {
@@ -36,7 +37,7 @@ object AppBundle {
                 //Feed流
                 val feed = loadMoreFeedItem(c, 10, false)
                 homepageCache = Homepage(banner, function, feed)
-                Log.d("AppBundle", "load time:" + (SystemClock.uptimeMillis() - start))
+                Logger.d("AppBundle: load time:" + (SystemClock.uptimeMillis() - start))
                 callback()
             }
         }
@@ -51,7 +52,7 @@ object AppBundle {
                 if (!url.isNullOrEmpty()) {
                     randomImageUrls.add(url)
                 }
-                Log.d("AppBundle", "request new image time:" + (SystemClock.uptimeMillis() - start))
+                Logger.d("AppBundle: request new image time:" + (SystemClock.uptimeMillis() - start))
             } catch (e: Exception) {
                 e.printStackTrace()
             }
@@ -59,74 +60,87 @@ object AppBundle {
         val res = c.resources
         val feedUrls = res.getStringArray(R.array.feed_paths)
         val pageStart = SystemClock.uptimeMillis()
-        val result = (1..count).map {
-            val start = SystemClock.uptimeMillis()
-            val type = Default.nextInt(0, feedUrls.size)
-            val url = feedUrls[type]
-            val data = if (type == 1) {
-                HashMap<String, Any>().apply {
-                    val sum = Default.nextInt(50, 80)
-                    val text = TextProvider.generation("好评", sum)
-                    put("text", text)
-                    if (randomImageUrls.isNotEmpty()) {
-                        val rowCount = Default.nextInt(1, 5)
-                        val images = (1..rowCount).map {
-                            (1..3).map {
+        val tasks = (1..count).map {
+            Callable<Page> {
+                val start = SystemClock.uptimeMillis()
+                val type = Default.nextInt(0, feedUrls.size)
+                val url = feedUrls[type]
+                val data = if (type == 1) {
+                    HashMap<String, Any>().apply {
+                        val sum = Default.nextInt(50, 80)
+                        val text = TextProvider.generation("好评", sum)
+                        put("text", text)
+                        if (randomImageUrls.isNotEmpty()) {
+                            val rowCount = Default.nextInt(1, 5)
+                            val images = (1..rowCount).map {
+                                (1..3).map {
+                                    val imageIndex = Default.nextInt(0, randomImageUrls.size)
+                                    randomImageUrls[imageIndex]
+                                }
+                            }.flatten()
+                            put("images", images)
+                        }
+                        put("clicked", false)
+                    }
+                } else {
+                    HashMap<String, Any>().apply {
+                        if (randomImageUrls.isNotEmpty()) {
+                            val images = (1..3).map {
                                 val imageIndex = Default.nextInt(0, randomImageUrls.size)
                                 randomImageUrls[imageIndex]
                             }
-                        }.flatten()
-                        put("images", images)
-                    }
-                    put("clicked", false)
-                }
-            } else {
-                HashMap<String, Any>().apply {
-                    if (randomImageUrls.isNotEmpty()) {
-                        val images = (1..3).map {
-                            val imageIndex = Default.nextInt(0, randomImageUrls.size)
-                            randomImageUrls[imageIndex]
+                            put("images", images)
                         }
-                        put("images", images)
                     }
                 }
+                val page = loadPage(c, url, data)
+                Logger.d("AppBundle: load single page time:" + (SystemClock.uptimeMillis() - start))
+                return@Callable page
             }
-            val page = loadPage(c, url, data)
-            Log.d("AppBundle", "load single page time:" + (SystemClock.uptimeMillis() - start))
-            return@map page
         }
-        Log.d("AppBundle", "load more page time:" + (SystemClock.uptimeMillis() - pageStart))
+        val result = ConcurrentUtils.threadPool
+                .invokeAll(tasks)
+                .map {
+                    it.get()
+                }
+        Logger.d("AppBundle: load more page time:" + (SystemClock.uptimeMillis() - pageStart))
         return result
     }
 
     @WorkerThread
     fun loadTemplateSource(c: Context, url: String): String {
-        return templateSource.getOrPut(url) {
-            c.assets.open("$url.xml").use {
-                it.reader().readText()
+        synchronized(templateSource) {
+            return templateSource.getOrPut(url) {
+                c.assets.open("$url.xml").use {
+                    it.reader().readText()
+                }
             }
         }
     }
 
     @WorkerThread
     fun loadTemplateNode(c: Context, url: String): TemplateNode {
-        return templateCache.getOrPut(url) {
-            val source = loadTemplateSource(c, url)
-            JitCompiler.compile(source)
+        synchronized(templateCache) {
+            return templateCache.getOrPut(url) {
+                val source = loadTemplateSource(c, url)
+                JitCompiler.compile(source)
+            }
         }
     }
 
     @WorkerThread
     fun loadDataSource(c: Context, url: String): Map<String, Any> {
-        return dataSourceCache.getOrPut(url) {
-            val jsonUrl = "$url.json"
-            try {
-                c.assets.open(jsonUrl).use {
-                    @Suppress("UNCHECKED_CAST")
-                    gson.fromJson(it.reader(), Map::class.java) as Map<String, Any>
+        synchronized(dataSourceCache) {
+            return dataSourceCache.getOrPut(url) {
+                val jsonUrl = "$url.json"
+                try {
+                    c.assets.open(jsonUrl).use {
+                        @Suppress("UNCHECKED_CAST")
+                        gson.fromJson(it.reader(), Map::class.java) as Map<String, Any>
+                    }
+                } catch (e: FileNotFoundException) {
+                    emptyMap()
                 }
-            } catch (e: FileNotFoundException) {
-                emptyMap()
             }
         }
     }

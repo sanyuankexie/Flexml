@@ -45,6 +45,8 @@ dependencies {
     implementation 'com.github.GrenderG:Toasty:1.4.2'
     implementation 'com.github.CymChad:BaseRecyclerViewAdapterHelper:2.9.47'
 
+    implementation 'com.orhanobut:logger:2.2.0'
+
     implementation 'com.squareup.retrofit2:retrofit:2.6.2'
     implementation 'com.squareup.retrofit2:converter-gson:2.6.2'
 

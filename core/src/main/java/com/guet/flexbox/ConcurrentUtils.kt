@@ -8,43 +8,35 @@ import java.util.concurrent.ForkJoinPool
 import java.util.concurrent.ForkJoinPool.ForkJoinWorkerThreadFactory
 import java.util.concurrent.ForkJoinWorkerThread
 import java.util.concurrent.atomic.AtomicInteger
+import kotlin.math.max
 
 object ConcurrentUtils {
 
     private val mainThreadLooper = Looper.getMainLooper()
 
-    private fun clamp(value: Int, min: Int, max: Int): Int {
-        if (value < min) {
-            return min
-        } else if (value > max) {
-            return max
-        }
-        return value
-    }
-
     internal val forkJoinPool: ForkJoinPool
 
     init {
         val count = AtomicInteger(0)
-        val nThreads = clamp(
+        val nThreads = max(
                 Runtime.getRuntime().availableProcessors(),
-                2, 4
+                4
         )
         forkJoinPool = ForkJoinPool(nThreads,
                 ForkJoinWorkerThreadFactory {
-            object : ForkJoinWorkerThread(it) {
-                init {
-                    name = "flexbox-pool-${count.getAndIncrement()}"
-                }
+                    object : ForkJoinWorkerThread(it) {
+                        init {
+                            name = "flexbox-pool-${count.getAndIncrement()}"
+                        }
 
-                override fun run() {
-                    Process.setThreadPriority(
-                            Process.THREAD_PRIORITY_DEFAULT
-                    )
-                    super.run()
-                }
-            }
-        }, null, false)
+                        override fun run() {
+                            Process.setThreadPriority(
+                                    Process.THREAD_PRIORITY_DEFAULT
+                            )
+                            super.run()
+                        }
+                    }
+                }, null, true)
     }
 
     val mainThreadHandler = Handler(mainThreadLooper)
