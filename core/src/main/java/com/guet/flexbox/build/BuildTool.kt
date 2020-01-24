@@ -79,7 +79,8 @@ abstract class BuildTool {
             hostContext: HostContext,
             data: ELContext,
             upperVisibility: Boolean,
-            other: Any
+            other: Any,
+            scope: Map<String, Any>? = null
     ): List<Child> {
         if (templates.isEmpty()) {
             return emptyList()
@@ -90,7 +91,8 @@ abstract class BuildTool {
                         hostContext,
                         data,
                         upperVisibility,
-                        other
+                        other,
+                        scope
                 )
         )
     }
