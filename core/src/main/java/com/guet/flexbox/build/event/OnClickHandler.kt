@@ -15,7 +15,7 @@ internal class OnClickHandler(
 ) : EventHandler(elContext, hostContext) {
     override fun handleEvent(v: View?, args: Array<out Any?>?) {
         elContext.scope(mapOf(
-                "pageContext" to hostContext.createPageContext(v!!)
+                "pageContext" to hostContext.toPageContext(v!!)
         )) {
             executable.execute(this)
         }

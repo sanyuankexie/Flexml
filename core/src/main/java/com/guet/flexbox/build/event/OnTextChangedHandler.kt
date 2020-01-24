@@ -14,7 +14,7 @@ internal class OnTextChangedHandler(
         private val executable: LambdaExpression
 ) : EventHandler(elContext, hostContext) {
     override fun handleEvent(v: View?, args: Array<out Any?>?) {
-        elContext.scope(mapOf("pageContext" to hostContext.createPageContext(v!!))) {
+        elContext.scope(mapOf("pageContext" to hostContext.toPageContext(v!!))) {
             executable.execute(this, args!![0])
         }
     }

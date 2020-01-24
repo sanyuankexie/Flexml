@@ -1,9 +1,5 @@
 package com.guet.flexbox
 
-import android.view.View
-import com.guet.flexbox.HostContext
-import com.guet.flexbox.transaction.HttpTransaction
-import com.guet.flexbox.transaction.RefreshTransaction
 import java.lang.ref.WeakReference
 
 class ForwardContext : HostContext() {
@@ -22,15 +18,7 @@ class ForwardContext : HostContext() {
             return targetImpl?.get()
         }
 
-    override fun send(source: View?, values: Array<out Any?>?) {
-        target?.send(source, values)
-    }
-
-    override fun refresh(source: View?): RefreshTransaction? {
-        return target?.refresh(source)
-    }
-
-    override fun http(source: View?): HttpTransaction? {
-        return target?.http(source)
+    override fun dispatchEvent(key: ActionKey, vararg args: Any?): Any? {
+        return target?.dispatchEvent(key, *args)
     }
 }
