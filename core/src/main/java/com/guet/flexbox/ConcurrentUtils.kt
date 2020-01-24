@@ -22,7 +22,8 @@ object ConcurrentUtils {
                 Runtime.getRuntime().availableProcessors(),
                 4
         )
-        forkJoinPool = ForkJoinPool(nThreads,
+        forkJoinPool = ForkJoinPool(
+                nThreads,
                 ForkJoinWorkerThreadFactory {
                     object : ForkJoinWorkerThread(it) {
                         init {
@@ -36,7 +37,10 @@ object ConcurrentUtils {
                             super.run()
                         }
                     }
-                }, null, true)
+                },
+                null,
+                true
+        )
     }
 
     val mainThreadHandler = Handler(mainThreadLooper)
