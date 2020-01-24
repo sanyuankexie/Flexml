@@ -3,7 +3,6 @@ package com.guet.flexbox.build
 import com.guet.flexbox.HostContext
 import com.guet.flexbox.TemplateNode
 import com.guet.flexbox.el.ELContext
-import com.guet.flexbox.el.scope
 
 object For : Declaration() {
     override val attributeInfoSet: AttributeInfoSet by create {
@@ -16,7 +15,7 @@ object For : Declaration() {
             buildTool: BuildTool,
             attrs: AttributeSet,
             children: List<TemplateNode>,
-            factory: VDomFactory?,
+            factory: ViewFactory?,
             hostContext: HostContext,
             data: ELContext,
             upperVisibility: Boolean,
@@ -25,18 +24,15 @@ object For : Declaration() {
         val name = attrs.getValue("var") as String
         val from = (attrs.getValue("from") as Double).toInt()
         val end = (attrs.getValue("to") as Double).toInt()
-        return (from..end).map { index ->
-            data.scope(mapOf(name to index)) {
-                children.map {
-                    buildTool.build(
-                            it,
-                            hostContext,
-                            this,
-                            upperVisibility,
-                            other
-                    )
-                }
-            }.flatten()
-        }.flatten()
+        return buildTool.invokeAllTasks((from..end).map { index ->
+            buildTool.createBuildTasks(
+                    children,
+                    hostContext,
+                    data,
+                    upperVisibility,
+                    other,
+                    mapOf(name to index)
+            )
+        }.flatten())
     }
 }

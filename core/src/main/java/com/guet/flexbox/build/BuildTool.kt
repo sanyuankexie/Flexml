@@ -1,35 +1,118 @@
 package com.guet.flexbox.build
 
+import com.guet.flexbox.ConcurrentUtils
 import com.guet.flexbox.HostContext
 import com.guet.flexbox.TemplateNode
 import com.guet.flexbox.el.ELContext
+import com.guet.flexbox.el.ScopeELContext
+import java.util.concurrent.Callable
+import java.util.concurrent.ForkJoinTask
 
-// 并发优化这条路线已经尝试过，效果不好（forkJoin）
-// 数据绑定属于计算密集型任务，线程切换的的代价远远大于计算单个节点的代价
 abstract class BuildTool {
-
-    fun build(
-            templateNode: TemplateNode,
-            pageContext: HostContext,
-            data: ELContext,
-            upperVisibility: Boolean,
-            c: Any
-    ): List<Child> {
-        val type = templateNode.type
-        val toWidget: ToWidget = widgets[type] ?: default
-        return toWidget.toWidget(
-                this,
-                templateNode,
-                pageContext,
-                data,
-                upperVisibility,
-                c
-        )
-    }
 
     protected abstract val widgets: Map<String, ToWidget>
 
     companion object {
         private val default: ToWidget = Common to null
+    }
+
+    fun build(
+            templateNode: TemplateNode,
+            hostContext: HostContext,
+            data: ELContext,
+            c: Any
+    ): Child {
+        return ConcurrentUtils.forkJoinPool
+                .invoke(ForkJoinTask.adapt(
+                        BuildTask(
+                                templateNode,
+                                hostContext,
+                                data,
+                                true,
+                                c
+                        ))).single()
+    }
+
+    internal fun createBuildTasks(
+            templates: List<TemplateNode>,
+            hostContext: HostContext,
+            data: ELContext,
+            upperVisibility: Boolean,
+            other: Any,
+            scope: Map<String, Any>? = null
+    ): List<Callable<List<Child>>> {
+        return if (templates.isEmpty()) {
+            emptyList()
+        } else {
+            templates.map {
+                BuildTask(
+                        it,
+                        hostContext,
+                        data,
+                        upperVisibility,
+                        other
+                ).apply {
+                    if (scope != null) {
+                        enterLambdaScope(scope)
+                    }
+                }
+            }
+        }
+    }
+
+    internal fun invokeAllTasks(
+            tasks: List<Callable<List<Child>>>
+    ): List<Child> {
+        if (tasks.isEmpty()) {
+            return emptyList()
+        }
+        val futures = ConcurrentUtils
+                .forkJoinPool
+                .invokeAll(tasks)
+        return futures.map {
+            it.get()
+        }.flatten()
+    }
+
+    internal fun buildAll(
+            templates: List<TemplateNode>,
+            hostContext: HostContext,
+            data: ELContext,
+            upperVisibility: Boolean,
+            other: Any
+    ): List<Child> {
+        if (templates.isEmpty()) {
+            return emptyList()
+        }
+        return invokeAllTasks(
+                createBuildTasks(
+                        templates,
+                        hostContext,
+                        data,
+                        upperVisibility,
+                        other
+                )
+        )
+    }
+
+    private inner class BuildTask(
+            private val templateNode: TemplateNode,
+            private val hostContext: HostContext,
+            target: ELContext,
+            private val upperVisibility: Boolean,
+            private val other: Any
+    ) : ScopeELContext(target), Callable<List<Child>> {
+        override fun call(): List<Child> {
+            val type = templateNode.type
+            val toWidget: ToWidget = widgets[type] ?: default
+            return toWidget.toWidget(
+                    this@BuildTool,
+                    templateNode,
+                    hostContext,
+                    this,
+                    upperVisibility,
+                    other
+            )
+        }
     }
 }

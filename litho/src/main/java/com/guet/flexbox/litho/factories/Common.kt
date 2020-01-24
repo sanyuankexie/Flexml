@@ -6,7 +6,7 @@ import com.facebook.litho.ComponentContext
 import com.facebook.litho.VisibleEvent
 import com.facebook.yoga.YogaEdge
 import com.guet.flexbox.build.AttributeSet
-import com.guet.flexbox.build.EventHandler
+import com.guet.flexbox.EventHandler
 import com.guet.flexbox.enums.FlexAlign
 import com.guet.flexbox.litho.EventHandlerWrapper
 import com.guet.flexbox.litho.toPx

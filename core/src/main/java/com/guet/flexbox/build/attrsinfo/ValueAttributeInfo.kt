@@ -8,9 +8,9 @@ import com.guet.flexbox.el.tryGetValue
 
 internal class ValueAttributeInfo(scope: Map<String, Double>, fallback: Double?)
     : AttributeInfo<Double>(scope, fallback) {
-    override fun cast(hostContext: HostContext, props: ELContext, raw: String): Double? {
+    override fun cast(hostContext: HostContext, data: ELContext, raw: String): Double? {
         return if (raw.isExpr) {
-            props.scope(scope){
+            data.scope(scope){
                 tryGetValue(raw, fallback)
             }
         } else {

@@ -2,10 +2,10 @@ package com.guet.flexbox.build.attrsinfo
 
 import android.graphics.Color
 import android.util.ArrayMap
+import com.guet.flexbox.EventHandler
 import com.guet.flexbox.HostContext
 import com.guet.flexbox.build.AttributeInfoSet
 import com.guet.flexbox.build.Converter
-import com.guet.flexbox.build.EventHandler
 import com.guet.flexbox.el.ELContext
 
 internal class AttrsInfoRegistry {
@@ -55,7 +55,7 @@ internal class AttrsInfoRegistry {
             name: String,
             crossinline action: Converter<EventHandler>
     ) {
-        return typed(name, action)
+        typed(name, action)
     }
 
     inline fun <T : Any> typed(
@@ -65,10 +65,10 @@ internal class AttrsInfoRegistry {
         _value[name] = object : AttributeInfo<T>() {
             override fun cast(
                     hostContext: HostContext,
-                    props: ELContext,
+                    data: ELContext,
                     raw: String
             ): T? {
-                return action(hostContext, props, raw)
+                return action(hostContext, data, raw)
             }
         }
     }

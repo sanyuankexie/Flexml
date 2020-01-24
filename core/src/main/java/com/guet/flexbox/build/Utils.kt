@@ -1,6 +1,5 @@
 package com.guet.flexbox.build
 
-import android.view.View
 import com.guet.flexbox.HostContext
 import com.guet.flexbox.TemplateNode
 import com.guet.flexbox.build.attrsinfo.AttributeInfo
@@ -23,7 +22,7 @@ typealias AttributeSet = Map<String, Any>
 
 internal typealias Converter<T> = (HostContext, ELContext, String) -> T?
 
-typealias VDomFactory = (
+typealias ViewFactory = (
         visibility: Boolean,
         attrs: AttributeSet,
         children: List<Child>,
@@ -32,7 +31,7 @@ typealias VDomFactory = (
 
 typealias Child = Any
 
-typealias ToWidget = Pair<Declaration, VDomFactory?>
+typealias ToWidget = Pair<Declaration, ViewFactory?>
 
 internal fun ToWidget.toWidget(
         bindings: BuildTool,
@@ -60,8 +59,8 @@ internal fun LambdaExpression.execute(
 ) {
     @Suppress("UNCHECKED_CAST")
     this.invoke(elContext, values)?.run {
-        this as? Set<(ELContext) -> Unit>
-    }?.firstOrNull()?.invoke(elContext)
+        this as? Set<*>
+    }?.firstOrNull()?.run { this as? (ELContext) -> Unit }
+            ?.invoke(elContext)
 }
 
-typealias EventHandler = (View?, Array<out Any?>?) -> Unit

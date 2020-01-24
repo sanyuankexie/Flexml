@@ -9,7 +9,7 @@ internal abstract class AttributeInfo<T : Any>(
 ) {
     abstract fun cast(
             hostContext: HostContext,
-            props: ELContext,
+            data: ELContext,
             raw: String
     ): T?
 }

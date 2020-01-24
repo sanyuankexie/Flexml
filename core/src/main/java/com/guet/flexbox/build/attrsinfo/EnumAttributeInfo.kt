@@ -12,11 +12,11 @@ internal class EnumAttributeInfo<V : Enum<V>>(
 ) : AttributeInfo<Enum<V>>(scope, fallback) {
     override fun cast(
             hostContext: HostContext,
-            props: ELContext,
+            data: ELContext,
             raw: String
     ): Enum<V>? {
         return if (raw.isExpr) {
-            props.scope(scope) {
+            data.scope(scope) {
                 tryGetValue(raw, fallback)
             }
         } else {

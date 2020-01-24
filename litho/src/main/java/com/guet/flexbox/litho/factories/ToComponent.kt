@@ -9,7 +9,7 @@ import com.facebook.litho.drawable.ComparableColorDrawable
 import com.facebook.yoga.YogaEdge
 import com.guet.flexbox.build.AttributeSet
 import com.guet.flexbox.build.Child
-import com.guet.flexbox.build.VDomFactory
+import com.guet.flexbox.build.ViewFactory
 import com.guet.flexbox.litho.ChildComponent
 import com.guet.flexbox.litho.parseUrl
 import com.guet.flexbox.litho.toPx
@@ -19,7 +19,7 @@ import com.guet.flexbox.litho.widget.NoOpDrawable
 
 abstract class ToComponent<C : Component.Builder<*>>(
         private val parent: ToComponent<in C>? = null
-) : VDomFactory {
+) : ViewFactory {
 
     protected abstract val attributeAssignSet: AttributeAssignSet<C>
 

@@ -43,9 +43,8 @@ internal class RefreshTransactionImpl(
                             node,
                             context,
                             elContext,
-                            true,
                             c
-                    ).single() as Component
+                    ) as Component
                     tree.setRootAndSizeSpec(
                             component,
                             SizeSpec.makeSizeSpec(mW, SizeSpec.EXACTLY),

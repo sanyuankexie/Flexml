@@ -1,21 +1,26 @@
 package com.guet.flexbox.litho
 
+import android.os.Handler
+import android.os.HandlerThread
 import com.facebook.litho.LithoHandler
-import com.guet.flexbox.ConcurrentUtils
 
-internal object LayoutThreadHandler : LithoHandler {
+internal object LayoutThreadHandler : Handler(
+        HandlerThread("flexbox-layout").apply {
+            start()
+        }.looper
+), LithoHandler {
 
     override fun post(runnable: Runnable, tag: String?) {
-        ConcurrentUtils.threadPool.execute(runnable)
+        post(runnable)
     }
 
     override fun postAtFront(runnable: Runnable, tag: String?) {
-        throw UnsupportedOperationException()
+        postAtFrontOfQueue(runnable)
     }
 
     override fun isTracing(): Boolean = true
 
     override fun remove(runnable: Runnable) {
-        ConcurrentUtils.threadPool.remove(runnable)
+        removeCallbacks(runnable)
     }
 }

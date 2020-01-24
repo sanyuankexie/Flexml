@@ -14,23 +14,22 @@ object If : Declaration() {
             buildTool: BuildTool,
             attrs: AttributeSet,
             children: List<TemplateNode>,
-            factory: VDomFactory?,
+            factory: ViewFactory?,
             hostContext: HostContext,
             data: ELContext,
             upperVisibility: Boolean,
             other: Any
     ): List<Child> {
-        if (attrs.getValue("test") as Boolean) {
-            return children.map {
-                buildTool.build(
-                        it,
-                        hostContext,
-                        data,
-                        upperVisibility,
-                        other
-                )
-            }.flatten()
+        return if (attrs.getValue("test") as? Boolean != true) {
+            emptyList()
+        } else {
+            buildTool.buildAll(
+                    children,
+                    hostContext,
+                    data,
+                    upperVisibility,
+                    other
+            )
         }
-        return emptyList()
     }
 }

@@ -29,9 +29,8 @@ object LithoBuildTool : BuildTool() {
                 templateNode,
                 eventBridge,
                 elContext,
-                true,
                 componentContext
-        ).single() as Component
+        ) as Component
         return Page(templateNode, com, eventBridge)
     }
 

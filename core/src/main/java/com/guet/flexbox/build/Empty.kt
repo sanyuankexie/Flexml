@@ -12,7 +12,7 @@ object Empty : Declaration(Common) {
             buildTool: BuildTool,
             attrs: AttributeSet,
             children: List<TemplateNode>,
-            factory: VDomFactory?,
+            factory: ViewFactory?,
             hostContext: HostContext,
             data: ELContext,
             upperVisibility: Boolean,

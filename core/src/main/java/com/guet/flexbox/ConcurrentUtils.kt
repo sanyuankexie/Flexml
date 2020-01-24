@@ -3,47 +3,54 @@ package com.guet.flexbox
 import android.os.Handler
 import android.os.Looper
 import android.os.Process
-import java.util.concurrent.LinkedBlockingQueue
-import java.util.concurrent.ThreadFactory
-import java.util.concurrent.ThreadPoolExecutor
-import java.util.concurrent.TimeUnit
+import java.util.concurrent.ExecutorService
+import java.util.concurrent.ForkJoinPool
+import java.util.concurrent.ForkJoinPool.ForkJoinWorkerThreadFactory
+import java.util.concurrent.ForkJoinWorkerThread
 import java.util.concurrent.atomic.AtomicInteger
 
 object ConcurrentUtils {
 
     private val mainThreadLooper = Looper.getMainLooper()
 
-    val mainThreadHandler = Handler(mainThreadLooper)
-
-    val threadPool = kotlin.run {
-        fun clamp(value: Int, min: Int, max: Int): Int {
-            if (value < min) {
-                return min
-            } else if (value > max) {
-                return max
-            }
-            return value
+    private fun clamp(value: Int, min: Int, max: Int): Int {
+        if (value < min) {
+            return min
+        } else if (value > max) {
+            return max
         }
+        return value
+    }
 
+    internal val forkJoinPool: ForkJoinPool
+
+    init {
         val count = AtomicInteger(0)
         val nThreads = clamp(
                 Runtime.getRuntime().availableProcessors(),
-                1, 1
+                2, 4
         )
-        ThreadPoolExecutor(nThreads, nThreads,
-                0L, TimeUnit.MILLISECONDS,
-                LinkedBlockingQueue(),
-                ThreadFactory {
-                    Thread {
-                        Thread.currentThread().name = "flexbox-${count.getAndIncrement()}"
-                        Process.setThreadPriority(
-                                Process.THREAD_PRIORITY_DEFAULT
-                        )
-                        it.run()
-                    }
+        forkJoinPool = ForkJoinPool(nThreads,
+                ForkJoinWorkerThreadFactory {
+            object : ForkJoinWorkerThread(it) {
+                init {
+                    name = "flexbox-pool-${count.getAndIncrement()}"
                 }
-        )
+
+                override fun run() {
+                    Process.setThreadPriority(
+                            Process.THREAD_PRIORITY_DEFAULT
+                    )
+                    super.run()
+                }
+            }
+        }, null, false)
     }
+
+    val mainThreadHandler = Handler(mainThreadLooper)
+
+    val threadPool: ExecutorService
+        get() = forkJoinPool
 
     fun runOnUiThread(run: () -> Unit) {
         if (Looper.myLooper() == mainThreadLooper) {

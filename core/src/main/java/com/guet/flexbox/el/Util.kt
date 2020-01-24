@@ -31,8 +31,7 @@ internal fun ELContext.getValue(expr: String, type: Class<*>): Any {
             this,
             expr,
             type
-    ).getValue(this)
-            ?: throw ELException("$expr out null")
+    ).getValue(this) ?: throw ELException("$expr out null")
 }
 
 @Throws(ELException::class)
@@ -81,4 +80,12 @@ internal fun ELContext.tryGetColor(expr: String?, @ColorInt fallback: Int?): Int
     } catch (e: ELException) {
         fallback
     }
+}
+
+internal fun ELContext.unWrap(): ELContext {
+    var ctx = this
+    while (ctx is ScopeELContext) {
+        ctx = ctx.target
+    }
+    return ctx as PropsELContext
 }
