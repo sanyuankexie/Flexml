@@ -17,7 +17,8 @@ class BlurLayout @JvmOverloads constructor(
         context: Context,
         attrs: AttributeSet? = null,
         defStyleAttr: Int = 0
-) : FrameLayout(context, attrs, defStyleAttr), ViewTreeObserver.OnPreDrawListener {
+) : FrameLayout(context, attrs, defStyleAttr),
+        ViewTreeObserver.OnPreDrawListener {
 
     private val rect = Rect()
 
@@ -53,6 +54,16 @@ class BlurLayout @JvmOverloads constructor(
         return input
     }
 
+    private fun replace(newBitmap: Bitmap?) {
+        val oldBitmap = bitmap
+        bitmap = newBitmap
+        val bitmapPool = Glide.get(context).bitmapPool
+        if (oldBitmap != null) {
+            bitmapPool.put(oldBitmap)
+        }
+        invalidate()
+    }
+
     override fun onPreDraw(): Boolean {
         if (canNewFrame) {
             canNewFrame = false
@@ -72,38 +83,32 @@ class BlurLayout @JvmOverloads constructor(
     }
 
     override fun onDraw(canvas: Canvas) {
-        val bitmap = bitmap
-        if (this.canvas !== canvas && bitmap != null) {
+        val myBitmap = bitmap
+        if (this.canvas !== canvas && myBitmap != null) {
             rect.set(0, 0, width, height)
-            canvas.drawBitmap(bitmap, null, rect, null)
+            canvas.drawBitmap(myBitmap, null, rect, null)
         }
     }
 
     private inner class MyTarget : CustomTarget<Bitmap>() {
 
         override fun onStart() {
-            Glide.with(this@BlurLayout).clear(this)
             canNewFrame = true
-            this@BlurLayout.bitmap = null
-            invalidate()
+            replace(null)
+
         }
 
         override fun onStop() {
             canNewFrame = false
+            replace(null)
         }
 
         override fun onResourceReady(
                 resource: Bitmap,
                 transition: Transition<in Bitmap>?
         ) {
-            val oldBitmap = bitmap
-            bitmap = resource
-            invalidate()
-            val bitmapPool = Glide.get(context).bitmapPool
-            if (oldBitmap != null) {
-                bitmapPool.put(oldBitmap)
-            }
             canNewFrame = true
+            replace(resource)
         }
 
         override fun onLoadCleared(placeholder: Drawable?) {
@@ -114,6 +119,5 @@ class BlurLayout @JvmOverloads constructor(
             canNewFrame = true
         }
     }
-
 }
 
