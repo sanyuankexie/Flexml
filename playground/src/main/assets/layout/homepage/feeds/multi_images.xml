@@ -103,6 +103,13 @@
             <Flex
                 alignItems="center"
                 flexDirection="row">
+                <Text
+                    horizontalGravity="center"
+                    verticalGravity="center"
+                    textSize="12"
+                    marginRight="2.5"
+                    text="试试点赞👉">
+                </Text>
                 <Flex
                     alignItems="center"
                     justifyContent="center"

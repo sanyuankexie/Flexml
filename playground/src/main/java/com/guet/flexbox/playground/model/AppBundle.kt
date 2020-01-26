@@ -67,8 +67,8 @@ object AppBundle {
                 val url = feedUrls[type]
                 val data = if (type == 1) {
                     HashMap<String, Any>().apply {
-                        val sum = Default.nextInt(50, 80)
-                        val text = TextProvider.generation("好评", sum)
+                        val sum = Default.nextInt(50, 100)
+                        val text = TextProvider.generation("这段文字是用随机生成的", sum)
                         put("text", text)
                         if (randomImageUrls.isNotEmpty()) {
                             val rowCount = Default.nextInt(1, 5)
