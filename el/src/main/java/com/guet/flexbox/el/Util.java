@@ -16,8 +16,6 @@
  */
 package com.guet.flexbox.el;
 
-import android.os.Build;
-
 import java.lang.reflect.Array;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
@@ -80,9 +78,6 @@ class Util {
 
 
     static <K, V> V putIfAbsent(Map<K, V> map, K key, V value) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-            return map.putIfAbsent(key, value);
-        }
         V v = map.get(key);
         if (v == null) {
             v = map.put(key, value);
