@@ -1,5 +1,6 @@
 package com.guet.flexbox.litho.factories
 
+import android.graphics.drawable.Drawable
 import com.bumptech.glide.Glide
 import com.facebook.litho.ComponentContext
 import com.guet.flexbox.build.AttributeSet
@@ -21,16 +22,6 @@ internal object ToImage : ToComponent<NetworkImage.Builder>(Common) {
         register("aspectRatio") { _, _, value: Double ->
             imageAspectRatio(value.toFloat())
         }
-        register("url") { display, _, value: String ->
-            if (display) {
-                Glide.with(context!!.androidContext)
-                        .load(value)
-                        .preload()
-                url(value)
-            } else {
-                url("")
-            }
-        }
     }
 
     override fun create(
@@ -38,6 +29,33 @@ internal object ToImage : ToComponent<NetworkImage.Builder>(Common) {
             visibility: Boolean,
             attrs: AttributeSet
     ): NetworkImage.Builder {
-        return NetworkImage.create(c)
+        val image = NetworkImage.create(c)
+        val url = attrs["url"]
+        val ctx = c.androidContext
+        if (visibility && url is CharSequence) {
+            when (val model = parseUrl(ctx, url)) {
+                is CharSequence -> {
+                    Glide.with(ctx)
+                            .load(model)
+                            .preload()
+                    image.url(model)
+                }
+                is Int -> {
+                    Glide.with(ctx)
+                            .load(model)
+                            .preload()
+                    image.resId(model)
+                }
+                is Drawable -> {
+                    image.drawable(model)
+                }
+                else -> {
+                    image.url("")
+                }
+            }
+        } else {
+            image.url("")
+        }
+        return image
     }
 }

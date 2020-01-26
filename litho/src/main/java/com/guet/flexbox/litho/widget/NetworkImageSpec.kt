@@ -1,6 +1,7 @@
 package com.guet.flexbox.litho.widget
 
 import android.content.Context
+import android.graphics.drawable.Drawable
 import android.text.TextUtils
 import android.widget.ImageView.ScaleType
 import com.facebook.litho.*
@@ -47,21 +48,47 @@ internal object NetworkImageSpec {
 
     @OnMount
     fun onMount(c: ComponentContext,
-                drawable: NetworkMatrixDrawable,
-                @Prop url: CharSequence,
+                image: NetworkMatrixDrawable,
+                @Prop(optional = true) resId: Int,
+                @Prop(optional = true) drawable: Drawable?,
+                @Prop(optional = true) url: CharSequence?,
                 @Prop(optional = true) blurRadius: Float,
                 @Prop(optional = true) blurSampling: Float,
                 @Prop(optional = true) scaleType: ScaleType,
                 @FromBoundsDefined width: Int,
                 @FromBoundsDefined height: Int) {
-        drawable.mount(
-                url,
-                width,
-                height,
-                blurRadius,
-                blurSampling,
-                scaleType
-        )
+        when {
+            resId != 0 -> {
+                image.mount(
+                        resId,
+                        width,
+                        height,
+                        blurRadius,
+                        blurSampling,
+                        scaleType
+                )
+            }
+            drawable != null -> {
+                image.mount(
+                        drawable,
+                        width,
+                        height,
+                        blurRadius,
+                        blurSampling,
+                        scaleType
+                )
+            }
+            else -> {
+                image.mount(
+                        url ?: "",
+                        width,
+                        height,
+                        blurRadius,
+                        blurSampling,
+                        scaleType
+                )
+            }
+        }
     }
 
     @OnUnmount
@@ -72,13 +99,17 @@ internal object NetworkImageSpec {
 
     @ShouldUpdate(onMount = true)
     fun shouldUpdate(
+            @Prop(optional = true) resId: Diff<Int>,
             @Prop(optional = true) blurSampling: Diff<Float>,
             @Prop(optional = true) blurRadius: Diff<Float>,
             @Prop(optional = true) scaleType: Diff<ScaleType>,
-            @Prop url: Diff<CharSequence>): Boolean {
+            @Prop(optional = true) url: Diff<CharSequence?>,
+            @Prop(optional = true) drawable: Diff<Drawable?>): Boolean {
         return !TextUtils.equals(url.next, url.previous)
                 || scaleType.next != scaleType.previous
                 || blurRadius.next != blurRadius.previous
                 || blurSampling.next != blurSampling.previous
+                || drawable.next != drawable.previous
+                || resId.next != resId.previous
     }
 }

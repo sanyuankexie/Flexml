@@ -11,7 +11,6 @@ import com.guet.flexbox.build.AttributeSet
 import com.guet.flexbox.build.Child
 import com.guet.flexbox.build.RenderNodeFactory
 import com.guet.flexbox.litho.ChildComponent
-import com.guet.flexbox.litho.parseUrl
 import com.guet.flexbox.litho.toPx
 import com.guet.flexbox.litho.widget.AsyncLazyDrawable
 import com.guet.flexbox.litho.widget.CornerOutlineProvider
