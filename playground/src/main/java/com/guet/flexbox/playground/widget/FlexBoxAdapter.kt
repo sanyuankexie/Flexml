@@ -5,7 +5,6 @@ import com.chad.library.adapter.base.BaseQuickAdapter
 import com.chad.library.adapter.base.BaseViewHolder
 import com.guet.flexbox.litho.HostingView
 import com.guet.flexbox.litho.Page
-import com.guet.flexbox.litho.PageEventAdapter
 import com.guet.flexbox.playground.R
 
 
@@ -21,7 +20,7 @@ class FlexBoxAdapter(
 
     private inner class HandleClickWithUpdater(
             private val old: Page
-    ) : PageEventAdapter() {
+    ) : HostingView.PageEventListener {
 
         override fun onEventDispatched(
                 h: HostingView,
@@ -31,17 +30,6 @@ class FlexBoxAdapter(
             val url = values!![0] as? String
             if (url != null) {
                 onClick(h, url)
-            }
-        }
-
-        override fun onPageChanged(
-                h: HostingView,
-                page: Page
-        ) {
-            val index = data.indexOf(old)
-            if (index != -1) {
-                data[index] = page
-                h.setPageEventListener(HandleClickWithUpdater(page))
             }
         }
     }

@@ -22,7 +22,7 @@ typealias AttributeSet = Map<String, Any>
 
 internal typealias Converter<T> = (HostContext, ELContext, String) -> T?
 
-typealias ViewFactory = (
+typealias RenderNodeFactory = (
         visibility: Boolean,
         attrs: AttributeSet,
         children: List<Child>,
@@ -31,7 +31,7 @@ typealias ViewFactory = (
 
 typealias Child = Any
 
-typealias ToWidget = Pair<Declaration, ViewFactory?>
+typealias ToWidget = Pair<Declaration, RenderNodeFactory?>
 
 internal fun ToWidget.toWidget(
         bindings: BuildTool,

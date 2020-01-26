@@ -149,7 +149,7 @@ object AppBundle {
     fun loadPage(c: Context, url: String, data: (Map<String, Any>) = emptyMap()): Page {
         val template = loadTemplateNode(c, url)
         val dataSource = loadDataSource(c, url)
-        return LithoBuildTool.preload(c, template, HashMap(dataSource).apply {
+        return LithoBuildTool.build(c, template, HashMap(dataSource).apply {
             put("url", url)
             putAll(data)
         })

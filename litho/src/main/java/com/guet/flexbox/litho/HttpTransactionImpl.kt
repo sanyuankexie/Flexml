@@ -10,7 +10,7 @@ internal class HttpTransactionImpl(
         private val source: View?
 ) : HttpTransaction() {
     override fun commit(): (ELContext) -> Unit {
-        return { elContext ->
+        return create { elContext ->
             host.pageEventListener?.run {
                 sends.forEach {
                     onEventDispatched(
@@ -20,46 +20,42 @@ internal class HttpTransactionImpl(
                     )
                 }
             }
-            val node = host.template
-            val http = host.httpClient
+            val url = url ?: return@create
+            val method = method ?: return@create
+            val http = host.httpClient ?: return@create
             val success = success
             val error = error
-            val url = url
-            val method = method
-            if (node != null && http != null
-                    && url != null && method != null) {
-                val onSuccess: ((Any) -> Unit)? = if (success != null) {
-                    {
-                        ConcurrentUtils.runOnUiThread {
-                            success.invoke(
-                                    elContext,
-                                    host.pageContext.toPageContext(source),
-                                    it
-                            )
-                        }
+            val onSuccess: ((Any) -> Unit)? = if (success != null) {
+                {
+                    ConcurrentUtils.runOnUiThread {
+                        success.invoke(
+                                elContext,
+                                host.pageContext.toPageContext(source),
+                                it
+                        )
                     }
-                } else {
-                    null
                 }
-                val onError: (() -> Unit)? = if (error != null) {
-                    {
-                        ConcurrentUtils.runOnUiThread {
-                            error.invoke(elContext,
-                                    host.pageContext.toPageContext(source)
-                            )
-                        }
-                    }
-                } else {
-                    null
-                }
-                http.enqueue(
-                        url,
-                        method,
-                        prams,
-                        onSuccess,
-                        onError
-                )
+            } else {
+                null
             }
+            val onError: (() -> Unit)? = if (error != null) {
+                {
+                    ConcurrentUtils.runOnUiThread {
+                        error.invoke(elContext,
+                                host.pageContext.toPageContext(source)
+                        )
+                    }
+                }
+            } else {
+                null
+            }
+            http.enqueue(
+                    url,
+                    method,
+                    prams,
+                    onSuccess,
+                    onError
+            )
         }
     }
 }

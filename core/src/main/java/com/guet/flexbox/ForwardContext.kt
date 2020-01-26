@@ -18,7 +18,7 @@ class ForwardContext : HostContext() {
             return targetImpl?.get()
         }
 
-    override fun dispatchEvent(key: ActionKey, vararg args: Any?): Any? {
-        return target?.dispatchEvent(key, *args)
+    override fun dispatchEvent(key: ActionKey, args: List<Any?>?): Any? {
+        return target?.dispatchEvent(key, args)
     }
 }

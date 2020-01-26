@@ -6,6 +6,6 @@ import com.guet.flexbox.TemplateNode
 
 class Page internal constructor(
         internal val template: TemplateNode,
-        internal val component: Component,
+        internal var display: Component,
         internal val forward: ForwardContext
 )

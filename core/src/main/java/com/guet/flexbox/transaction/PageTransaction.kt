@@ -12,4 +12,11 @@ abstract class PageTransaction {
         sends.add(values)
         return this
     }
+
+    companion object {
+        @JvmStatic
+        fun create(action: (ELContext) -> Unit): (ELContext) -> Unit {
+            return action
+        }
+    }
 }

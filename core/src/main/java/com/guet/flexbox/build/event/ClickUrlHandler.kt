@@ -11,6 +11,6 @@ internal class ClickUrlHandler(
         private val url: String
 ) : EventHandler(elContext, hostContext) {
     override fun handleEvent(v: View?, args: Array<out Any?>?) {
-        hostContext.toPageContext(v).send(args)
+        hostContext.toPageContext(v).send(url)
     }
 }

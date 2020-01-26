@@ -5,30 +5,30 @@ import com.guet.flexbox.transaction.HttpTransaction
 import com.guet.flexbox.transaction.RefreshTransaction
 
 class PageContext(
-        view: View?,
+        private val view: View?,
         private val host: HostContext
 ) {
-
-    private val source = arrayOf(view)
 
     fun send(vararg values: Any?) {
         host.dispatchEvent(
                 HostContext.ActionKey.SendObjects,
-                source.zip(values)
+                mutableListOf<Any?>(view).apply {
+                    addAll(values)
+                }
         )
     }
 
     fun http(): HttpTransaction? {
         return host.dispatchEvent(
                 HostContext.ActionKey.HttpRequest,
-                source
+                listOf(view)
         ) as? HttpTransaction
     }
 
     fun refresh(): RefreshTransaction? {
         return host.dispatchEvent(
                 HostContext.ActionKey.RefreshPage,
-                source
+                listOf(view)
         ) as? RefreshTransaction
     }
 }

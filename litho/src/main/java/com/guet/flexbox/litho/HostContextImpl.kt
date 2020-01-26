@@ -8,22 +8,22 @@ internal class HostContextImpl(
         private val host: HostingView
 ) : HostContext() {
 
-    override fun dispatchEvent(key: ActionKey, vararg args: Any?): Any? {
+    override fun dispatchEvent(key: ActionKey, args: List<Any?>?): Any? {
         return when (key) {
             SendObjects -> {
                 host.pageEventListener?.onEventDispatched(
                         host,
-                        args[0] as? View,
-                        args.copyOfRange(1, args.size)
+                        args?.get(0) as? View,
+                        args?.let { it.subList(1,it.size).toTypedArray() }
                 )
             }
-            RefreshPage -> HttpTransactionImpl(
+            RefreshPage -> RefreshTransactionImpl(
                     host,
-                    args[0] as? View
+                    args?.get(0) as? View
             )
-            HttpRequest -> RefreshTransactionImpl(
+            HttpRequest -> HttpTransactionImpl(
                     host,
-                    args[0] as? View
+                    args?.get(0) as? View
             )
         }
     }

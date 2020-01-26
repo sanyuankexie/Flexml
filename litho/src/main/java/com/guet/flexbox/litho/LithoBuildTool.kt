@@ -17,21 +17,21 @@ object LithoBuildTool : BuildTool() {
     @JvmStatic
     @JvmOverloads
     @WorkerThread
-    fun preload(
+    fun build(
             c: Context,
-            templateNode: TemplateNode,
+            template: TemplateNode,
             data: Any? = null
     ): Page {
         val componentContext = ComponentContext(c)
         val eventBridge = ForwardContext()
         val elContext = PropsELContext(data)
         val com = build(
-                templateNode,
+                template,
                 eventBridge,
                 elContext,
                 componentContext
         ) as Component
-        return Page(templateNode, com, eventBridge)
+        return Page(template, com, eventBridge)
     }
 
     private val myWidgets by lazy {

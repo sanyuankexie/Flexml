@@ -4,14 +4,19 @@ import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.graphics.Rect
-import android.graphics.drawable.Drawable
+import android.os.Handler
+import android.os.HandlerThread
+import android.renderscript.Allocation
+import android.renderscript.Element
+import android.renderscript.RenderScript
+import android.renderscript.ScriptIntrinsicBlur
 import android.util.AttributeSet
 import android.view.ViewTreeObserver
 import android.widget.FrameLayout
 import com.bumptech.glide.Glide
-import com.bumptech.glide.request.target.CustomTarget
-import com.bumptech.glide.request.transition.Transition
-import com.guet.flexbox.litho.widget.BlurTransformation
+import java.util.concurrent.atomic.AtomicBoolean
+import kotlin.math.max
+import kotlin.math.min
 
 class BlurLayout @JvmOverloads constructor(
         context: Context,
@@ -24,23 +29,29 @@ class BlurLayout @JvmOverloads constructor(
 
     private val canvas = Canvas()
 
-    private var bitmap: Bitmap? = null
+    private val inBlur = AtomicBoolean(false)
 
-    private var canNewFrame = true
+    private var buffer: Bitmap? = null
 
     init {
         setWillNotDraw(false)
         viewTreeObserver.addOnPreDrawListener(this)
     }
 
-    private fun createNewFrame(): Bitmap {
-        val input = Glide.get(context).bitmapPool[
-                width,
-                height,
+    private fun blurTheFrame() {
+        getGlobalVisibleRect(rect)
+        if (rect.width() * rect.height() == 0) {
+            inBlur.set(false)
+            return
+        }
+        val context = context.applicationContext
+        val bitmapPool = Glide.get(context).bitmapPool
+        val myBuffer = bitmapPool[
+                rect.width(),
+                rect.height(),
                 Bitmap.Config.ARGB_8888
         ]
-        canvas.setBitmap(input)
-        getGlobalVisibleRect(rect)
+        canvas.setBitmap(myBuffer)
         canvas.translate(
                 -rect.left.toFloat(),
                 -rect.top.toFloat()
@@ -51,27 +62,27 @@ class BlurLayout @JvmOverloads constructor(
                 rect.top.toFloat()
         )
         canvas.setBitmap(null)
-        return input
+        blurThread.post {
+            postToDraw(blurBuffer(context, myBuffer))
+        }
     }
 
-    private fun replace(newBitmap: Bitmap?) {
-        val oldBitmap = bitmap
-        bitmap = newBitmap
-        val bitmapPool = Glide.get(context).bitmapPool
-        if (oldBitmap != null) {
-            bitmapPool.put(oldBitmap)
+    private fun postToDraw(bitmap: Bitmap) {
+        post {
+            val oldBuffer = buffer
+            buffer = bitmap
+            val bitmapPool = Glide.get(context).bitmapPool
+            if (oldBuffer != null) {
+                bitmapPool.put(oldBuffer)
+            }
+            invalidate()
+            inBlur.set(false)
         }
-        invalidate()
     }
 
     override fun onPreDraw(): Boolean {
-        if (canNewFrame) {
-            canNewFrame = false
-            Glide.with(this)
-                    .asBitmap()
-                    .load(createNewFrame())
-                    .transform(BlurTransformation(15f, 0.5f))
-                    .into(MyTarget())
+        if (inBlur.compareAndSet(false, true)) {
+            blurTheFrame()
         }
         return true
     }
@@ -83,40 +94,48 @@ class BlurLayout @JvmOverloads constructor(
     }
 
     override fun onDraw(canvas: Canvas) {
-        val myBitmap = bitmap
-        if (this.canvas !== canvas && myBitmap != null) {
+        val myBuffer = buffer ?: return
+        if (this.canvas !== canvas) {
             rect.set(0, 0, width, height)
-            canvas.drawBitmap(myBitmap, null, rect, null)
+            canvas.drawBitmap(myBuffer, null, rect, null)
         }
     }
 
-    private inner class MyTarget : CustomTarget<Bitmap>() {
+    private companion object {
 
-        override fun onStart() {
-            canNewFrame = true
-            replace(null)
+        private val blurThread = Handler(HandlerThread("blurThread")
+                .apply {
+                    start()
+                }.looper)
 
-        }
+        private fun blurBuffer(
+                context: Context,
+                bitmap: Bitmap
+        ): Bitmap {
+            val radius = max(0f, min(15f, 25f))
+            var rs: RenderScript? = null
+            var input: Allocation? = null
+            var output: Allocation? = null
+            var blur: ScriptIntrinsicBlur? = null
+            try {
+                rs = RenderScript.create(context)
+                rs.messageHandler = RenderScript.RSMessageHandler()
+                input = Allocation.createFromBitmap(rs, bitmap, Allocation.MipmapControl.MIPMAP_NONE,
+                        Allocation.USAGE_SCRIPT)
+                output = Allocation.createTyped(rs, input.type)
+                blur = ScriptIntrinsicBlur.create(rs, Element.U8_4(rs))
 
-        override fun onStop() {
-            canNewFrame = false
-            replace(null)
-        }
-
-        override fun onResourceReady(
-                resource: Bitmap,
-                transition: Transition<in Bitmap>?
-        ) {
-            canNewFrame = true
-            replace(resource)
-        }
-
-        override fun onLoadCleared(placeholder: Drawable?) {
-            onLoadFailed(null)
-        }
-
-        override fun onLoadFailed(errorDrawable: Drawable?) {
-            canNewFrame = true
+                blur.setInput(input)
+                blur.setRadius(radius)
+                blur.forEach(output)
+                output.copyTo(bitmap)
+            } finally {
+                rs?.destroy()
+                input?.destroy()
+                output?.destroy()
+                blur?.destroy()
+            }
+            return bitmap
         }
     }
 }

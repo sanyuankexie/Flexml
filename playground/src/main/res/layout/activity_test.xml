@@ -11,7 +11,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
     </com.facebook.litho.LithoView>
-    <com.guet.flexbox.playground.widget.BlurLayout
+    <com.guet.blurlayout.BlurLayout
         android:layout_gravity="bottom"
         android:layout_width="match_parent"
         android:layout_height="100dp" />

@@ -1,18 +1,29 @@
 package com.guet.flexbox.playground
 
 import android.os.Bundle
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import android.widget.FrameLayout
 import android.widget.ImageView
-import androidx.appcompat.app.AppCompatActivity
+import androidx.fragment.app.Fragment
 import com.bumptech.glide.Glide
 import com.guet.flexbox.ConcurrentUtils
 import com.vansuita.materialabout.builder.AboutBuilder
 import com.vansuita.materialabout.views.AboutView
 
 
-class AboutActivity : AppCompatActivity() {
+class AboutFragment : Fragment() {
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
+    override fun onCreateView(
+            inflater: LayoutInflater,
+            container: ViewGroup?,
+            savedInstanceState: Bundle?
+    ): View? {
+        return FrameLayout(inflater.context)
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         val background = Glide.with(this)
                 .asBitmap()
                 .load(R.mipmap.profile_cover)
@@ -29,8 +40,8 @@ class AboutActivity : AppCompatActivity() {
             val v1 = background.get()
             val v2 = photo.get()
             val v3 = icon.get()
-            runOnUiThread {
-                val view = AboutBuilder.with(this)
+            requireActivity().runOnUiThread {
+                val aboutView = AboutBuilder.with(requireContext())
                         .setPhoto(v2)
                         .setCover(v1)
                         .setName("Luke")
@@ -51,9 +62,11 @@ class AboutActivity : AppCompatActivity() {
                         .getDeclaredField("ivAppIcon")
                         .apply {
                             isAccessible = true
-                        }.get(view) as ImageView
+                        }.get(aboutView) as ImageView
                 iconView.scaleType = ImageView.ScaleType.FIT_XY
-                setContentView(view)
+                if (view is FrameLayout) {
+                    view.addView(aboutView)
+                }
             }
         }
     }
