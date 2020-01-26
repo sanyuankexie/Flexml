@@ -1,5 +1,6 @@
 package com.guet.flexbox.playground
 
+import android.content.Context
 import android.graphics.drawable.GradientDrawable
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -14,12 +15,11 @@ import com.vansuita.materialabout.views.AboutView
 
 class AboutFragment : Fragment() {
 
-    override fun onCreateView(
-            inflater: LayoutInflater,
-            container: ViewGroup?,
-            savedInstanceState: Bundle?
-    ): View? {
-        val aboutView = AboutBuilder.with(requireContext())
+    private lateinit var aboutView: AboutView
+
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        aboutView = AboutBuilder.with(context)
                 .setPhoto(R.drawable.ic_photo2)
                 .setCover(R.mipmap.profile_cover)
                 .setName("Luke")
@@ -48,6 +48,13 @@ class AboutFragment : Fragment() {
                     isAccessible = true
                 }.get(aboutView) as ImageView
         iconView.scaleType = ImageView.ScaleType.FIT_XY
+    }
+
+    override fun onCreateView(
+            inflater: LayoutInflater,
+            container: ViewGroup?,
+            savedInstanceState: Bundle?
+    ): View? {
         return FrameLayout(inflater.context).apply {
             background = GradientDrawable(GradientDrawable.Orientation.TOP_BOTTOM,
                     intArrayOf(

@@ -36,7 +36,7 @@ object AppBundle {
                 val function = loadPage(c, res.getString(R.string.function_path))
                 //Feed流
                 val feed = loadMoreFeedItem(c, 10, false)
-                homepageCache = Homepage(banner, function, feed)
+                homepageCache = Homepage(banner, function, feed, function)
                 Logger.d("AppBundle: load time:" + (SystemClock.uptimeMillis() - start))
                 callback()
             }
