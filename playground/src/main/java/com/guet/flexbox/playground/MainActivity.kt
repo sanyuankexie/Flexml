@@ -1,6 +1,7 @@
 package com.guet.flexbox.playground
 
 import android.os.Bundle
+import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 
 class MainActivity : AppCompatActivity() {
@@ -19,5 +20,22 @@ class MainActivity : AppCompatActivity() {
                 hide(it)
             }
         }.show(fragments[0]).commit()
+        arrayOf<View>(
+                findViewById(R.id.main),
+                findViewById(R.id.introduction),
+                findViewById(R.id.about)
+        ).mapIndexed { index, view ->
+            view.setOnClickListener {
+                supportFragmentManager.beginTransaction()
+                        .apply {
+                            fragments.forEachIndexed { index1, fragment ->
+                                if (index != index1) {
+                                    hide(fragment)
+                                }
+                            }
+                        }.show(fragments[index])
+                        .commit()
+            }
+        }
     }
 }

@@ -1,5 +1,6 @@
 package com.guet.flexbox.playground
 
+import android.graphics.drawable.GradientDrawable
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -9,6 +10,7 @@ import android.widget.ImageView
 import androidx.fragment.app.Fragment
 import com.bumptech.glide.Glide
 import com.guet.flexbox.ConcurrentUtils
+import com.guet.flexbox.litho.toPx
 import com.vansuita.materialabout.builder.AboutBuilder
 import com.vansuita.materialabout.views.AboutView
 
@@ -20,7 +22,14 @@ class AboutFragment : Fragment() {
             container: ViewGroup?,
             savedInstanceState: Bundle?
     ): View? {
-        return FrameLayout(inflater.context)
+        return FrameLayout(inflater.context).apply {
+            background = GradientDrawable(GradientDrawable.Orientation.TOP_BOTTOM,
+                    intArrayOf(
+                            resources.getColor(R.color.deeppurplea200),
+                            resources.getColor(R.color.purplea700)
+                    )
+            )
+        }
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -56,8 +65,11 @@ class AboutFragment : Fragment() {
                         .addShareAction(R.string.app_name)
                         .setWrapScrollView(true)
                         .setLinksAnimated(true)
+                        .setWrapScrollView(true)
                         .setShowAsCard(true)
-                        .build()
+                        .build().apply {
+                            holder.radius = 10.toPx().toFloat()
+                        }
                 val iconView = AboutView::class.java
                         .getDeclaredField("ivAppIcon")
                         .apply {

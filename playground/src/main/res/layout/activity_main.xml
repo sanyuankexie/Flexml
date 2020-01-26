@@ -1,16 +1,42 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
     <FrameLayout
         android:id="@+id/container"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
-    </FrameLayout>
-    <LinearLayout
-        android:background="#E6F5F5F5"
-        android:layout_gravity="bottom"
+        android:layout_height="match_parent"/>
+    <FrameLayout
+        android:clickable="true"
         android:layout_width="match_parent"
-        android:layout_height="60dp">
-    </LinearLayout>
+        android:layout_height="50dp"
+        android:layout_gravity="bottom"
+        android:background="#E6F5F5F5"
+        android:orientation="horizontal">
+        <ImageView
+            android:padding="12.5dp"
+            android:src="@drawable/ic_mian"
+            android:id="@+id/main"
+            android:layout_marginLeft="30dp"
+            android:layout_gravity="center_vertical|left"
+            android:layout_width="50dp"
+            android:layout_height="50dp" />
+        <ImageView
+            android:padding="12.5dp"
+            android:src="@drawable/ic_jianjie"
+            android:id="@+id/introduction"
+            android:layout_gravity="center_vertical|center_horizontal"
+            android:layout_width="50dp"
+            android:layout_height="50dp" />
+        <ImageView
+            android:padding="12.5dp"
+            android:src="@drawable/ic_info"
+            android:id="@+id/about"
+            android:layout_marginRight="30dp"
+            android:layout_gravity="center_vertical|right"
+            android:layout_width="50dp"
+            android:layout_height="50dp" />
+    </FrameLayout>
 </FrameLayout>
