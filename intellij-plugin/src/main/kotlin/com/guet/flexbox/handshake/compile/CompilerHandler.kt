@@ -2,6 +2,7 @@ package com.guet.flexbox.handshake.compile
 
 import com.google.gson.internal.Streams
 import com.google.gson.stream.JsonWriter
+import com.guet.flexbox.compiler.JsonCompiler
 import com.guet.flexbox.handshake.util.EmbeddedHandler
 import com.intellij.execution.process.ProcessOutputTypes
 import com.intellij.util.concurrency.AppExecutorUtil
@@ -35,7 +36,7 @@ class CompilerHandler(
                 JsonWriter(file.writer().buffered()).apply {
                     isLenient = true
                 }.use { writer ->
-                    val jsonObject = Compiler.compile(template)
+                    val jsonObject = JsonCompiler.compile(template)
                     Streams.write(jsonObject, writer)
                 }
             } catch (e: Exception) {

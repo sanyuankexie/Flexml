@@ -6,25 +6,26 @@ group = 'com.guet.flexbox'
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
-    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:${kotlinVersion}"
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:${kotlinVersion}"
 
-    implementation 'org.dom4j:dom4j:2.1.1'
     implementation 'com.google.zxing:core:3.4.0'
-    implementation 'com.google.code.gson:gson:2.8.6'
+
     implementation project(':el')
+    implementation project(':compiler')
 
     testImplementation group: 'junit', name: 'junit', version: '4.12'
 }
 
-sourceCompatibility = "8"
-targetCompatibility = "8"
+sourceCompatibility = JavaVersion.VERSION_1_7
+targetCompatibility = JavaVersion.VERSION_1_7
 
 compileKotlin {
-    kotlinOptions.jvmTarget = "1.8"
+    kotlinOptions.jvmTarget = "1.7"
 }
 compileTestKotlin {
-    kotlinOptions.jvmTarget = "1.8"
+    kotlinOptions.jvmTarget = "1.7"
 }
+
 intellij {
     version '2019.3.1'
 }

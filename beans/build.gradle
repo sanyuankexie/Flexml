@@ -2,6 +2,10 @@ apply plugin: 'java'
 apply plugin: 'com.github.dcendents.android-maven'
 group='com.guet.flexbox'
 
+//don't modify for API 21
+sourceCompatibility = JavaVersion.VERSION_1_7
+targetCompatibility = JavaVersion.VERSION_1_7
+
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     testImplementation 'junit:junit:4.12'
