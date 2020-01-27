@@ -2,6 +2,7 @@ package com.guet.flexbox.handshake.mock
 
 import com.google.gson.internal.Streams
 import com.google.gson.stream.JsonWriter
+import com.guet.flexbox.compiler.JsonCompiler
 import com.guet.flexbox.handshake.util.EmbeddedHandler
 import com.guet.flexbox.handshake.util.nowTime
 import com.intellij.execution.process.ProcessOutputTypes
@@ -77,7 +78,7 @@ class MockServerHandler(
                     ).apply {
                         isLenient = true
                     }.use { writer ->
-                        val jsonObject = Compiler.compile(template)
+                        val jsonObject = JsonCompiler.compile(template)
                         Streams.write(jsonObject, writer)
                     }
 
