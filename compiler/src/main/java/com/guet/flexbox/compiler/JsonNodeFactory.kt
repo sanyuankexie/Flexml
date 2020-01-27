@@ -3,7 +3,7 @@ package com.guet.flexbox.compiler
 import com.google.gson.JsonArray
 import com.google.gson.JsonObject
 
-class JsonNodeFactory : NodeFactory<JsonObject> {
+object JsonNodeFactory : NodeFactory<JsonObject> {
     override fun createNode(
             type: String,
             attrs: Map<String, String>,

@@ -12,7 +12,6 @@ compileTestKotlin {
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
-    implementation("commons-cli:commons-cli:1.4")
     implementation('com.google.code.gson:gson:2.8.6')
     implementation('org.dom4j:dom4j:2.1.1')
     implementation('com.google.zxing:core:3.4.0')

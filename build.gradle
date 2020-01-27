@@ -28,6 +28,8 @@ buildscript {
         classpath "org.springframework.boot:spring-boot-gradle-plugin:${springIOVersion}"
 
         classpath 'org.jetbrains.intellij:org.jetbrains.intellij.gradle.plugin:0.4.15'
+
+        classpath "com.github.jengelman.gradle.plugins:shadow:5.2.0"
     }
 }
 
