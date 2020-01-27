@@ -3,17 +3,18 @@ package com.guet.flexbox.compiler
 import org.dom4j.Element
 import org.dom4j.io.SAXReader
 import java.io.File
+import java.io.StringReader
 
 open class Compiler<T>(
         private val factory: NodeFactory<T>
 ) {
 
+    fun compile(layout: File): T {
+        return transform(sax.read(layout).rootElement)
+    }
+
     fun compile(layout: String): T {
-        return transform(
-                sax.read(
-                        File(layout)
-                ).rootElement
-        )
+        return transform(sax.read(StringReader(layout)).rootElement)
     }
 
     private fun transform(element: Element): T {
@@ -26,7 +27,7 @@ open class Compiler<T>(
         })
     }
 
-    companion object{
+    companion object {
         private val sax = SAXReader()
     }
 }

@@ -36,7 +36,7 @@ class CompilerHandler(
                 JsonWriter(file.writer().buffered()).apply {
                     isLenient = true
                 }.use { writer ->
-                    val jsonObject = JsonCompiler.compile(template)
+                    val jsonObject = JsonCompiler.compile(File(template))
                     Streams.write(jsonObject, writer)
                 }
             } catch (e: Exception) {
