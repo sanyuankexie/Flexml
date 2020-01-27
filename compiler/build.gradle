@@ -12,10 +12,3 @@ dependencies {
 
 sourceCompatibility = JavaVersion.VERSION_1_7
 targetCompatibility = JavaVersion.VERSION_1_7
-
-compileKotlin {
-    kotlinOptions.jvmTarget = "1.7"
-}
-compileTestKotlin {
-    kotlinOptions.jvmTarget = "1.7"
-}
