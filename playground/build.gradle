@@ -51,6 +51,8 @@ dependencies {
         exclude group: 'com.google.zxing', module: 'core'
     }
     implementation 'ch.ielse:switchbutton:1.0.1'
+    implementation 'com.github.LukeXeon:blurlayout:0.0.1'
+
     implementation project(':litho')
     implementation project(':compiler')
     testImplementation 'junit:junit:4.12'

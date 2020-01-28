@@ -9,6 +9,12 @@ class ForwardContext : HostContext() {
     var target: HostContext?
         set(value) {
             targetImpl = if (value != null) {
+                if (targetImpl?.get() != null) {
+                    throw IllegalStateException(
+                            "This Page is set to two HostingViews. " +
+                                    "This is not allowed."
+                    )
+                }
                 WeakReference(value)
             } else {
                 null

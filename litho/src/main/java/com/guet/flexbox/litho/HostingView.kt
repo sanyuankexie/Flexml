@@ -46,6 +46,7 @@ class HostingView @JvmOverloads constructor(
     @MainThread
     fun setContentAsync(page: Page) {
         ThreadUtils.assertMainThread()
+        this.page?.forward?.target = null
         this.page = page
         page.forward.target = pageContext
         componentTree?.setRootAndSizeSpecAsync(page.display,
@@ -73,6 +74,7 @@ class HostingView @JvmOverloads constructor(
                         target = pageContext
                     })
             post {
+                this.page?.forward?.target = null
                 this.page = page
                 val tree = componentTree ?: return@post
                 tree.setRootAndSizeSpecAsync(

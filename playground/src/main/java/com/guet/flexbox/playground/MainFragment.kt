@@ -68,6 +68,8 @@ class MainFragment : Fragment() {
         qrCode.setOnClickListener(handleToQr)
         banner = headerView.findViewById(R.id.banner)
         banner.setPageEventListener(handler)
+        function = headerView.findViewById(R.id.function)
+        function.setPageEventListener(handler)
         val fSearch = view.findViewById<View>(R.id.search)
         val search = headerView.findViewById<View>(R.id.search)
         val handleToSearch = View.OnClickListener {
@@ -80,8 +82,6 @@ class MainFragment : Fragment() {
         }
         fSearch.setOnClickListener(handleToSearch)
         search.setOnClickListener(handleToSearch)
-        function = headerView.findViewById(R.id.function)
-        function.setPageEventListener(handler)
         load()
         feedAdapter.addHeaderView(headerView)
         feedAdapter.setNewData(homepageInfo.feed)

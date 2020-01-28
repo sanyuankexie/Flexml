@@ -2,41 +2,42 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical">
 
     <FrameLayout
         android:id="@+id/container"
         android:layout_width="match_parent"
         android:layout_height="match_parent"/>
-    <FrameLayout
+    <com.luke.android.blurlayout.BlurLayout
         android:clickable="true"
+        app:cornerRadius="0dp"
         android:layout_width="match_parent"
-        android:layout_height="50dp"
+        android:layout_height="55dp"
         android:layout_gravity="bottom"
-        android:background="#E6F5F5F5"
         android:orientation="horizontal">
         <ImageView
-            android:padding="12.5dp"
+            android:padding="14dp"
             android:src="@drawable/ic_mian"
             android:id="@+id/main"
             android:layout_marginLeft="30dp"
             android:layout_gravity="center_vertical|left"
-            android:layout_width="50dp"
-            android:layout_height="50dp" />
+            android:layout_width="55dp"
+            android:layout_height="55dp" />
         <ImageView
-            android:padding="12.5dp"
+            android:padding="14dp"
             android:src="@drawable/ic_jianjie"
             android:id="@+id/introduction"
             android:layout_gravity="center_vertical|center_horizontal"
-            android:layout_width="50dp"
-            android:layout_height="50dp" />
+            android:layout_width="55dp"
+            android:layout_height="55dp" />
         <ImageView
-            android:padding="12.5dp"
+            android:padding="14dp"
             android:src="@drawable/ic_info"
             android:id="@+id/about"
             android:layout_marginRight="30dp"
             android:layout_gravity="center_vertical|right"
-            android:layout_width="50dp"
-            android:layout_height="50dp" />
-    </FrameLayout>
+            android:layout_width="55dp"
+            android:layout_height="55dp" />
+    </com.luke.android.blurlayout.BlurLayout>
 </FrameLayout>

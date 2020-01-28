@@ -24,6 +24,7 @@ class IntroductionFragment : Fragment() {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        host.setContentAsync(homepageInfo.introduction)
+
+
     }
 }
