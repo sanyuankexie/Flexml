@@ -10,11 +10,11 @@ open class Compiler<T>(
 ) {
 
     fun compile(layout: File): T {
-        return transform(sax.read(layout).rootElement)
+        return transform(get().read(layout).rootElement)
     }
 
     fun compile(layout: String): T {
-        return transform(sax.read(StringReader(layout)).rootElement)
+        return transform(get().read(StringReader(layout)).rootElement)
     }
 
     private fun transform(element: Element): T {
@@ -27,7 +27,9 @@ open class Compiler<T>(
         })
     }
 
-    companion object {
-        private val sax = SAXReader()
+    private companion object SAX : ThreadLocal<SAXReader>() {
+        override fun initialValue(): SAXReader {
+            return SAXReader()
+        }
     }
 }

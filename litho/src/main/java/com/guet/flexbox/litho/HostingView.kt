@@ -5,7 +5,7 @@ import android.util.AttributeSet
 import android.view.View
 import androidx.annotation.MainThread
 import com.facebook.litho.*
-import com.guet.flexbox.ConcurrentUtils
+import com.guet.flexbox.AppExecutors
 import com.guet.flexbox.EventBridge
 import com.guet.flexbox.HttpClient
 import com.guet.flexbox.TemplateNode
@@ -65,7 +65,7 @@ class HostingView @JvmOverloads constructor(
         ThreadUtils.assertMainThread()
         val elContext = PropsELContext(data)
         val c = componentContext
-        ConcurrentUtils.runOnAsyncThread {
+        AppExecutors.runOnAsyncThread {
             val component = LithoBuildTool.build(
                     node,
                     pageContext,

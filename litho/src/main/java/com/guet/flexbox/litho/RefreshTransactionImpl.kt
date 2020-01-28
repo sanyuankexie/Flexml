@@ -4,7 +4,7 @@ import android.view.View
 import android.view.ViewGroup
 import com.facebook.litho.Component
 import com.facebook.litho.SizeSpec
-import com.guet.flexbox.ConcurrentUtils
+import com.guet.flexbox.AppExecutors
 import com.guet.flexbox.el.ELContext
 import com.guet.flexbox.transaction.RefreshTransaction
 
@@ -28,14 +28,14 @@ internal class RefreshTransactionImpl(
             }
             val page = host.hostingPage ?: return@create
             val c = host.componentContext
-            ConcurrentUtils.runOnAsyncThread {
+            AppExecutors.runOnAsyncThread {
                 val component = LithoBuildTool.build(
                         page.template,
                         page.event,
                         elContext,
                         c
                 ) as Component
-                ConcurrentUtils.runOnUiThread {
+                AppExecutors.runOnUiThread {
                     page.display = component
                     val tree = host.componentTree
                             ?: return@runOnUiThread

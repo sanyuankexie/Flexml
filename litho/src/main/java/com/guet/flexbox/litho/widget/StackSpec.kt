@@ -11,7 +11,7 @@ import com.facebook.litho.annotations.OnCreateLayoutWithSizeSpec
 import com.facebook.litho.annotations.Prop
 import com.facebook.yoga.YogaEdge
 import com.facebook.yoga.YogaPositionType
-import com.guet.flexbox.ConcurrentUtils
+import com.guet.flexbox.AppExecutors
 import java.util.concurrent.Callable
 import kotlin.math.max
 
@@ -29,7 +29,7 @@ object StackSpec {
         if (children.isNullOrEmpty()) {
             return owner.build()
         }
-        val sizes = ConcurrentUtils.threadPool.invokeAll(
+        val sizes = AppExecutors.threadPool.invokeAll(
                 children.map {
                     createMeasureTask(c, it, widthSpec, heightSpec)
                 }

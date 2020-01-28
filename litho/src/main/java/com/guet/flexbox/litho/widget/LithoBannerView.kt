@@ -13,7 +13,7 @@ import com.facebook.litho.Row
 import com.facebook.yoga.YogaAlign
 import com.facebook.yoga.YogaEdge
 import com.facebook.yoga.YogaJustify
-import com.guet.flexbox.ConcurrentUtils
+import com.guet.flexbox.AppExecutors
 import com.guet.flexbox.enums.Orientation
 import com.guet.flexbox.litho.toPx
 import java.lang.ref.WeakReference
@@ -137,13 +137,13 @@ class LithoBannerView(context: Context) : FrameLayout(context), HasLithoViewChil
                                 viewPager2.currentItem + 1
                         )
                     }
-                    ConcurrentUtils.mainThreadHandler
+                    AppExecutors.mainThreadHandler
                             .postDelayed(this, timeSpan)
                 }
             }
         }
         this.token = token
-        ConcurrentUtils.mainThreadHandler
+        AppExecutors.mainThreadHandler
                 .postDelayed(token, timeSpan)
     }
 
@@ -151,7 +151,7 @@ class LithoBannerView(context: Context) : FrameLayout(context), HasLithoViewChil
         indicators.setVisibilityHint(false)
         val token = token
         if (token != null) {
-            ConcurrentUtils.mainThreadHandler
+            AppExecutors.mainThreadHandler
                     .removeCallbacks(token)
             this.token = null
         }

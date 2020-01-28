@@ -12,9 +12,9 @@ import androidx.core.app.ActivityOptionsCompat
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.RecyclerView
 import com.blankj.utilcode.util.NetworkUtils
-import com.guet.flexbox.ConcurrentUtils
+import com.guet.flexbox.AppExecutors
 import com.guet.flexbox.litho.HostingView
-import com.guet.flexbox.playground.model.AppBundle
+import com.guet.flexbox.playground.model.AppLoader
 import com.guet.flexbox.playground.model.Homepage
 import com.guet.flexbox.playground.widget.FlexBoxAdapter
 import com.guet.flexbox.playground.widget.PullToRefreshLayout
@@ -41,7 +41,7 @@ class MainFragment : Fragment() {
     private lateinit var banner: HostingView
     private lateinit var feed: RecyclerView
     private lateinit var function: HostingView
-    private val homepageInfo: Homepage by AppBundle.waitHomepage()
+    private val homepageInfo: Homepage by AppLoader.waitHomepage()
 
     override fun onCreateView(
             inflater: LayoutInflater,
@@ -112,8 +112,8 @@ class MainFragment : Fragment() {
                         v.finish()
                         return
                     }
-                    ConcurrentUtils.threadPool.execute {
-                        val pages = AppBundle.loadMoreFeedItem(
+                    AppExecutors.threadPool.execute {
+                        val pages = AppLoader.loadMoreFeedItem(
                                 requireContext().applicationContext,
                                 10
                         )

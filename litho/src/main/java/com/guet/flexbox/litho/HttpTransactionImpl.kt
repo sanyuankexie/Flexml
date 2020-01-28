@@ -1,7 +1,7 @@
 package com.guet.flexbox.litho
 
 import android.view.View
-import com.guet.flexbox.ConcurrentUtils
+import com.guet.flexbox.AppExecutors
 import com.guet.flexbox.el.ELContext
 import com.guet.flexbox.transaction.HttpTransaction
 
@@ -27,7 +27,7 @@ internal class HttpTransactionImpl(
             val error = error
             val onSuccess: ((Any) -> Unit)? = if (success != null) {
                 {
-                    ConcurrentUtils.runOnUiThread {
+                    AppExecutors.runOnUiThread {
                         success.invoke(
                                 elContext,
                                 host.pageContext.toPageContext(source),
@@ -40,7 +40,7 @@ internal class HttpTransactionImpl(
             }
             val onError: (() -> Unit)? = if (error != null) {
                 {
-                    ConcurrentUtils.runOnUiThread {
+                    AppExecutors.runOnUiThread {
                         error.invoke(elContext,
                                 host.pageContext.toPageContext(source)
                         )

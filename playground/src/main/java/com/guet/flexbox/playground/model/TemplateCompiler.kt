@@ -5,7 +5,7 @@ import com.guet.flexbox.compiler.Compiler
 import com.guet.flexbox.compiler.NodeFactory
 import java.util.*
 
-object JitCompiler : Compiler<TemplateNode>(object : NodeFactory<TemplateNode> {
+object TemplateCompiler : Compiler<TemplateNode>(object : NodeFactory<TemplateNode> {
     override fun createNode(
             type: String,
             attrs: Map<String, String>,
