@@ -6,7 +6,6 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.LinearLayout
 import android.widget.Toast
 import androidx.core.app.ActivityOptionsCompat
 import androidx.fragment.app.Fragment
@@ -37,7 +36,7 @@ class MainFragment : Fragment() {
     private val feedAdapter = FlexBoxAdapter(this::handleEvent)
     private val loaded = AtomicBoolean(false)
     private lateinit var pullToRefresh: PullToRefreshLayout
-    private lateinit var floatToolbar: LinearLayout
+    private lateinit var floatToolbar: View
     private lateinit var banner: HostingView
     private lateinit var feed: RecyclerView
     private lateinit var function: HostingView

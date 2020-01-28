@@ -4,7 +4,6 @@
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical">
-
     <FrameLayout
         android:id="@+id/container"
         android:layout_width="match_parent"
@@ -12,10 +11,15 @@
     <com.luke.android.blurlayout.BlurLayout
         android:clickable="true"
         app:cornerRadius="0dp"
+        android:background="#80FFFFFF"
         android:layout_width="match_parent"
         android:layout_height="55dp"
         android:layout_gravity="bottom"
         android:orientation="horizontal">
+        <View
+            android:background="@android:color/darker_gray"
+            android:layout_width="match_parent"
+            android:layout_height="1px"/>
         <ImageView
             android:padding="14dp"
             android:src="@drawable/ic_mian"

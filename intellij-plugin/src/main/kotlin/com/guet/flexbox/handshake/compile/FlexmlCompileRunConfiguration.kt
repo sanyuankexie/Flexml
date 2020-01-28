@@ -15,7 +15,9 @@ class FlexmlCompileRunConfiguration(project: Project, factory: ConfigurationFact
     }
 
     override fun getState(executor: Executor, environment: ExecutionEnvironment): RunProfileState? {
-        return EmbeddedCommandLineState(environment) { CompilerHandler(this) }
+        return EmbeddedCommandLineState(environment) {
+            CompilerHandler(this)
+        }
     }
 
     override fun getOptionsClass(): Class<out RunConfigurationOptions> {
