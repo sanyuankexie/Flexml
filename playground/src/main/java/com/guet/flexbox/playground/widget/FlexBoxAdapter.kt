@@ -16,6 +16,7 @@ class FlexBoxAdapter(
     override fun onViewRecycled(holder: BaseViewHolder) {
         val lithoView = holder.getView<HostingView>(R.id.litho)
         lithoView?.unmountAllItems()
+        lithoView?.setContentAsync(null)
     }
 
     private inner class HandleClickWithUpdater(
@@ -33,6 +34,7 @@ class FlexBoxAdapter(
             }
         }
     }
+
 
     override fun convert(helper: BaseViewHolder, item: Page) {
         val lithoView = helper.getView<HostingView>(R.id.litho)

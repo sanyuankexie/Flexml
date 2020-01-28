@@ -6,7 +6,7 @@ import android.view.View
 import androidx.annotation.MainThread
 import com.facebook.litho.*
 import com.guet.flexbox.ConcurrentUtils
-import com.guet.flexbox.ForwardContext
+import com.guet.flexbox.EventBridge
 import com.guet.flexbox.HttpClient
 import com.guet.flexbox.TemplateNode
 import com.guet.flexbox.el.PropsELContext
@@ -17,7 +17,7 @@ class HostingView @JvmOverloads constructor(
 
     internal val pageContext = HostContextImpl(this)
 
-    internal var page: Page? = null
+    internal var hostingPage: Page? = null
 
     internal var httpClient: HttpClient? = null
 
@@ -44,11 +44,14 @@ class HostingView @JvmOverloads constructor(
     }
 
     @MainThread
-    fun setContentAsync(page: Page) {
+    fun setContentAsync(page: Page?) {
         ThreadUtils.assertMainThread()
-        this.page?.forward?.target = null
-        this.page = page
-        page.forward.target = pageContext
+        this.hostingPage?.event?.target = null
+        if (page == null) {
+            return
+        }
+        this.hostingPage = page
+        page.event.target = pageContext
         componentTree?.setRootAndSizeSpecAsync(page.display,
                 SizeSpec.makeSizeSpec(measuredWidth, SizeSpec.EXACTLY),
                 when (layoutParams?.height) {
@@ -70,12 +73,12 @@ class HostingView @JvmOverloads constructor(
                     c
             ) as Component
             val page = Page(node, component,
-                    ForwardContext().apply {
+                    EventBridge().apply {
                         target = pageContext
                     })
             post {
-                this.page?.forward?.target = null
-                this.page = page
+                this.hostingPage?.event?.target = null
+                this.hostingPage = page
                 val tree = componentTree ?: return@post
                 tree.setRootAndSizeSpecAsync(
                         component,

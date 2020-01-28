@@ -5,7 +5,7 @@ import android.util.ArrayMap
 import androidx.annotation.WorkerThread
 import com.facebook.litho.Component
 import com.facebook.litho.ComponentContext
-import com.guet.flexbox.ForwardContext
+import com.guet.flexbox.EventBridge
 import com.guet.flexbox.TemplateNode
 import com.guet.flexbox.build.*
 import com.guet.flexbox.build.Common
@@ -23,7 +23,7 @@ object LithoBuildTool : BuildTool() {
             data: Any? = null
     ): Page {
         val componentContext = ComponentContext(c)
-        val eventBridge = ForwardContext()
+        val eventBridge = EventBridge()
         val elContext = PropsELContext(data)
         val com = build(
                 template,

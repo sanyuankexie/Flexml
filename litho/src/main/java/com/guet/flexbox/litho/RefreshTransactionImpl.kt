@@ -26,12 +26,12 @@ internal class RefreshTransactionImpl(
             actions.forEach {
                 it.invoke(elContext)
             }
-            val page = host.page ?: return@create
+            val page = host.hostingPage ?: return@create
             val c = host.componentContext
             ConcurrentUtils.runOnAsyncThread {
                 val component = LithoBuildTool.build(
                         page.template,
-                        page.forward,
+                        page.event,
                         elContext,
                         c
                 ) as Component
