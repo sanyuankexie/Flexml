@@ -67,17 +67,18 @@ private Task findTask(String projectName, String taskName) {
             .first()
 }
 
-private Collection<File> collectOutput(String projectName, String taskName) {
-    return findTask(projectName, taskName)
-            .outputs
+private static Collection<File> collectTaskOutput(Task task) {
+    return task.outputs
             .files
             .files
 }
 
+def compilerJarTask = findTask(":compiler", "shadowJar")
+def mockJarTask = findTask(":mock-service", "bootJar")
+
 task copyJar(
         type: Copy
 ) {
-    println(buildDir)
     File dest = new File(buildDir, "/resources/main/bin")
     def old = dest.listFiles()
     if (old != null && old.size() > 0) {
@@ -87,15 +88,15 @@ task copyJar(
         })
     }
     List<File> files = new ArrayList<File>()
-    files.addAll(collectOutput(":compiler", "shadowJar"))
-    files.addAll(collectOutput(":mock-service", "bootJar"))
+    files.addAll(collectTaskOutput(compilerJarTask))
+    files.addAll(collectTaskOutput(mockJarTask))
     from(files)
     into(dest)
 }
 
 copyJar.dependsOn([
-        findTask(":compiler", "shadowJar"),
-        findTask(":mock-service", "bootJar")
+        compilerJarTask,
+        mockJarTask
 ])
 
 buildPlugin.dependsOn(copyJar)

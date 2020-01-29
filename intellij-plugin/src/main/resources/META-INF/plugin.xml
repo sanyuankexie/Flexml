@@ -58,8 +58,6 @@
             name="package"/>
         <internalFileTemplate
             name="flexml_file"/>
-        <internalFileTemplate
-            name="host"/>
         <xml.tagNameProvider
             implementation="com.guet.flexbox.handshake.completion.FlexmlComponentNameProvider"/>
         <completion.contributor language="XML"
