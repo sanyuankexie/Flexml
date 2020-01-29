@@ -39,11 +39,7 @@ group = 'com.guet.flexbox'
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:${kotlinVersion}"
-
-    implementation 'com.google.zxing:core:3.4.0'
-
     implementation project(':el')
-
     testImplementation group: 'junit', name: 'junit', version: '4.12'
 }
 
