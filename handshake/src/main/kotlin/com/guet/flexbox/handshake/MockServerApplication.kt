@@ -9,27 +9,21 @@ import org.springframework.boot.autoconfigure.SpringBootApplication
 open class MockServerApplication : ApplicationRunner {
 
     companion object {
-        @Volatile
-        var port: Int = 8080
 
         @Volatile
         var focus: String? = null
     }
 
     override fun run(args: ApplicationArguments) {
-        GuiApplication.run()
-        try {
-
-            if (args.containsOption("package.focus")) {
-                focus = args.getOptionValues("package.focus").first()
-            }
-            if (args.containsOption("server.port")) {
-                port = args.getOptionValues("server.port").first()
-                        .toIntOrNull() ?: 8080
-            }
-        } catch (e: Throwable) {
-            e.printStackTrace()
+        var port = 8080
+        if (args.containsOption("package.focus")) {
+            focus = args.getOptionValues("package.focus").first()
         }
+        if (args.containsOption("server.port")) {
+            port = args.getOptionValues("server.port").first()
+                    .toIntOrNull() ?: 8080
+        }
+        GuiApplication.run(port)
     }
 }
 

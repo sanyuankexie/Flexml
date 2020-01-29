@@ -1,6 +1,5 @@
 package com.guet.flexbox.handshake.gui
 
-import com.guet.flexbox.handshake.MockServerApplication
 import java.awt.EventQueue
 import java.awt.GraphicsEnvironment
 import java.awt.Toolkit
@@ -13,7 +12,7 @@ object GuiApplication {
 
     private const val WINDOW_SIZE: Int = 300
 
-    fun run() {
+    fun run(port: Int) {
         System.clearProperty("java.awt.headless")
         if (GraphicsEnvironment.isHeadless()) {
             return
@@ -21,7 +20,7 @@ object GuiApplication {
         EventQueue.invokeLater {
             val imageView = createImagePanel()
             NetworkWatcher.addListener {
-                val url = "http://$it:${MockServerApplication.port}"
+                val url = "http://$it:${port}"
                 val image = QrCodeImage
                         .generate(url, WINDOW_SIZE)
                 EventQueue.invokeLater {
