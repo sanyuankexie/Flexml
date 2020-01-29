@@ -1,8 +1,8 @@
 package com.guet.flexbox.handshake.configuration.type
 
+import com.guet.flexbox.handshake.bundle.Icons
 import com.guet.flexbox.handshake.configuration.MockRunConfiguration
 import com.guet.flexbox.handshake.configuration.options.MockOptions
-import com.guet.flexbox.handshake.util.fileIcon
 import com.intellij.execution.configurations.RunConfiguration
 import com.intellij.execution.configurations.SimpleConfigurationType
 import com.intellij.openapi.components.BaseState
@@ -14,7 +14,7 @@ class MockConfigurationType : SimpleConfigurationType(
         "Flexml mock",
         "begin run flexml mock task",
         NotNullLazyValue.createValue {
-            fileIcon
+            Icons.fileIcon
         }
 ) {
 

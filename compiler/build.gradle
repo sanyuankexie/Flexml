@@ -1,3 +1,18 @@
+buildscript {
+    repositories {
+        parent.repositories.forEach({ repository ->
+            if (repository instanceof MavenArtifactRepository) {
+                maven {
+                    url repository.url.toString()
+                }
+            }
+        })
+    }
+    dependencies {
+        classpath "com.github.jengelman.gradle.plugins:shadow:5.2.0"
+    }
+}
+
 apply plugin: 'com.github.johnrengelman.shadow'
 apply plugin: 'java'
 apply plugin: 'kotlin'

@@ -1,8 +1,8 @@
 package com.guet.flexbox.handshake.configuration.type
 
+import com.guet.flexbox.handshake.bundle.Icons
 import com.guet.flexbox.handshake.configuration.CompileRunConfiguration
 import com.guet.flexbox.handshake.configuration.options.CompileOptions
-import com.guet.flexbox.handshake.util.fileIcon
 import com.intellij.execution.configurations.RunConfiguration
 import com.intellij.execution.configurations.SimpleConfigurationType
 import com.intellij.openapi.components.BaseState
@@ -14,7 +14,7 @@ class CompileConfigurationType : SimpleConfigurationType(
     "Flexml compile",
     "begin run flexml compile task",
     NotNullLazyValue.createValue {
-        fileIcon
+        Icons.fileIcon
     }
 ) {
     override fun createTemplateConfiguration(

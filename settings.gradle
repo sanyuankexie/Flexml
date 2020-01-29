@@ -1,1 +1,3 @@
 include ':playground', ':core', ':el', ':beans', ':litho', ':compiler', ':mock-service'
+include ':intellij-plugin'
+project(':intellij-plugin').projectDir = new File(settingsDir,'./intellij-plugin')

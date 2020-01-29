@@ -10,6 +10,7 @@ import com.intellij.execution.configurations.ConfigurationTypeUtil
 import com.intellij.openapi.util.Ref
 import com.intellij.psi.PsiElement
 import com.intellij.psi.xml.XmlFile
+import com.intellij.util.lang.UrlClassLoader
 
 class CompileRunConfigurationProducer :
         LazyRunConfigurationProducer<CompileRunConfiguration>() {
@@ -18,6 +19,7 @@ class CompileRunConfigurationProducer :
             configuration: CompileRunConfiguration,
             context: ConfigurationContext
     ): Boolean {
+        UrlClassLoader(javaClass.classLoader).urls
         val location = context.psiLocation
         if (location?.containingFile is XmlFile
                 && context.psiLocation?.isOnFlexmlFile == true
