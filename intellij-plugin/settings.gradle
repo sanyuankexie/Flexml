@@ -1,0 +1,12 @@
+rootProject.name = "intellij-plugin"
+include ':el', ':compiler'
+
+void external(String name) {
+    String pName = ':' + name
+    include(pName)
+    project(pName).projectDir = new File(settingsDir, '../' + name)
+}
+
+external('el')
+external('compiler')
+external('beans')

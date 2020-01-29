@@ -3,8 +3,8 @@ package com.guet.flexbox.handshake.mock
 import com.google.gson.internal.Streams
 import com.google.gson.stream.JsonWriter
 import com.guet.flexbox.compiler.JsonCompiler
-import com.guet.flexbox.handshake.util.EmbeddedHandler
-import com.guet.flexbox.handshake.util.nowTime
+import com.guet.flexbox.handshake.configuration.MockRunConfiguration
+import com.guet.flexbox.handshake.nowTime
 import com.intellij.execution.process.ProcessOutputTypes
 import com.intellij.ide.fileTemplates.FileTemplateManager
 import com.intellij.util.concurrency.AppExecutorUtil
@@ -24,7 +24,7 @@ import java.nio.channels.Channels
 
 
 class MockServerHandler(
-    private val configuration: FlexmlMockRunConfiguration
+    private val configuration: MockRunConfiguration
 ) : EmbeddedHandler() {
 
     private var form: QrCodeForm? = null

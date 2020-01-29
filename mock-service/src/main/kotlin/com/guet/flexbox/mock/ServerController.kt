@@ -17,8 +17,8 @@ class ServerController {
             method = [RequestMethod.GET]
     )
     @ResponseBody
-    fun index() {
-
+    fun index(): String {
+       return "Hello world"
     }
 
     @RequestMapping(
@@ -27,7 +27,7 @@ class ServerController {
             method = [RequestMethod.GET],
             produces = ["application/json"]
     )
-    fun loadPackage(request: HttpServletRequest): ResponseEntity<String> {
+    fun loadPackage(request: HttpServletRequest): ResponseEntity<*> {
         val focus = MockServerApplication.focus
         if (focus != null) {
             val packageFile = File(focus, "package.json")
@@ -41,11 +41,10 @@ class ServerController {
                     "/template" -> {
                         val template = packageJson["template"] as? String
                         if (template != null) {
-                            val templateFile = File(template)
+                            val templateFile = File(focus, template)
                             if (templateFile.exists()) {
                                 return ResponseEntity.ok(
                                         JsonCompiler.compile(templateFile)
-                                        .toString()
                                 )
                             }
                         }
@@ -53,7 +52,7 @@ class ServerController {
                     "/datasource" -> {
                         val data = packageJson["data"] as? String
                         if (data != null) {
-                            val dataFile = File(data)
+                            val dataFile = File(focus, data)
                             if (dataFile.exists()) {
                                 return ResponseEntity.ok(dataFile.readText())
                             }
@@ -62,17 +61,14 @@ class ServerController {
                 }
             }
         }
-        return ResponseEntity.notFound().build()
+        return ResponseEntity.notFound().build<Any>()
     }
 
     @RequestMapping(
             "/focus",
             method = [RequestMethod.POST]
     )
-    fun focus(
-            request: HttpServletRequest,
-            @RequestBody current: String
-    ) {
-        MockServerApplication.focus = current
+    fun focus(@RequestParam focus: String) {
+        MockServerApplication.focus = focus
     }
 }

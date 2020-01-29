@@ -9,6 +9,11 @@ buildscript {
     }
 
     repositories {
+        // 阿里云防墙
+        maven { url "https://maven.aliyun.com/repository/google"}
+        maven { url "https://maven.aliyun.com/repository/public" }
+        maven { url "https://maven.aliyun.com/repository/jcenter" }
+        maven { url "https://maven.aliyun.com/repository/gradle-plugin" }
         google()
         jcenter()
         mavenCentral()
@@ -27,14 +32,17 @@ buildscript {
         classpath "io.spring.gradle:dependency-management-plugin:${springPluginVersion}"
         classpath "org.springframework.boot:spring-boot-gradle-plugin:${springIOVersion}"
 
-        classpath 'org.jetbrains.intellij:org.jetbrains.intellij.gradle.plugin:0.4.15'
-
         classpath "com.github.jengelman.gradle.plugins:shadow:5.2.0"
     }
 }
 
 allprojects {
     repositories {
+        // 阿里云防墙
+        maven { url "https://maven.aliyun.com/repository/google"}
+        maven { url "https://maven.aliyun.com/repository/public" }
+        maven { url "https://maven.aliyun.com/repository/jcenter" }
+        maven { url "https://maven.aliyun.com/repository/gradle-plugin" }
         google()
         jcenter()
         mavenCentral()
