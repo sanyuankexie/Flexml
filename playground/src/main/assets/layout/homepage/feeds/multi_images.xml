@@ -103,6 +103,13 @@
             <Flex
                 alignItems="center"
                 flexDirection="row">
+                <Text
+                    horizontalGravity="center"
+                    verticalGravity="center"
+                    textSize="12"
+                    marginRight="2.5"
+                    text="试试点赞👉">
+                </Text>
                 <Flex
                     alignItems="center"
                     justifyContent="center"
@@ -112,7 +119,7 @@
                     <Image
                         width="18"
                         height="18"
-                        url="${!clicked?'https://s2.ax1x.com/2019/12/29/luvy2d.png':'https://s2.ax1x.com/2020/01/17/lxWxsO.png'}">
+                        url="${!clicked?res:drawable('ic_zan_w'):res:drawable('ic_zan_black')}">
                     </Image>
                 </Flex>
                 <Text

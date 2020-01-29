@@ -1,0 +1,37 @@
+{
+  "parent": "Common",
+  "name": "Banner",
+  "attrs": {
+    "isCircular": {
+      "support": [
+        "bool"
+      ]
+    },
+    "timeSpan": null,
+    "orientation": {
+      "support": [
+        "values"
+      ],
+      "values": [
+        "vertical",
+        "horizontal"
+      ]
+    },
+    "indicatorEnable": {
+      "support": [
+        "bool"
+      ]
+    },
+    "indicatorHeight": null,
+    "indicatorSelectedColor": {
+      "support": [
+        "colors"
+      ]
+    },
+    "indicatorUnselectedColor": {
+      "support": [
+        "colors"
+      ]
+    }
+  }
+}

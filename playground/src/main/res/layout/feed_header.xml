@@ -39,7 +39,7 @@
                 android:layout_height="36dp" />
             <ImageView
                 android:id="@+id/jump"
-                android:src="@drawable/ic_dingwei"
+                android:src="@drawable/ic_about"
                 android:scaleType="fitXY"
                 android:layout_marginRight="15dp"
                 android:layout_width="25dp"

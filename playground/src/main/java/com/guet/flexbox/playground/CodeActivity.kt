@@ -10,9 +10,9 @@ import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.widget.NestedScrollView
 import com.didichuxing.doraemonkit.util.UIUtils
 import com.google.android.material.appbar.AppBarLayout
-import com.guet.flexbox.ConcurrentUtils
+import com.guet.flexbox.AppExecutors
 import com.guet.flexbox.litho.HostingView
-import com.guet.flexbox.playground.model.AppBundle
+import com.guet.flexbox.playground.model.AppLoader
 import thereisnospon.codeview.CodeView
 import thereisnospon.codeview.CodeViewTheme
 import kotlin.math.abs
@@ -58,9 +58,9 @@ class CodeActivity : AppCompatActivity() {
 
     private fun loadData() {
         val url = this.intent.getStringExtra("url")
-        ConcurrentUtils.threadPool.execute {
-            val page = AppBundle.loadPage(application, url)
-            val code = AppBundle.loadTemplateSource(application, url)
+        AppExecutors.threadPool.execute {
+            val page = AppLoader.loadPage(application, url)
+            val code = AppLoader.findSourceCode(url)
             runOnUiThread {
                 lithoView.unmountAllItems()
                 lithoView.setContentAsync(page)

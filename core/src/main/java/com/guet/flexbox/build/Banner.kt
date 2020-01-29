@@ -1,7 +1,7 @@
 package com.guet.flexbox.build
 
 import android.graphics.Color
-import com.guet.flexbox.Orientation
+import com.guet.flexbox.enums.Orientation
 
 object Banner : Declaration(Common) {
     override val attributeInfoSet: AttributeInfoSet by create {

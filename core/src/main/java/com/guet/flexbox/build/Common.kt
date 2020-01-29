@@ -1,13 +1,15 @@
 package com.guet.flexbox.build
 
-import com.guet.flexbox.FlexAlign
 import com.guet.flexbox.HostContext
 import com.guet.flexbox.TemplateNode
-import com.guet.flexbox.Visibility
+import com.guet.flexbox.build.event.ClickUrlHandler
+import com.guet.flexbox.build.event.OnClickHandler
+import com.guet.flexbox.build.event.OnVisibleHandler
 import com.guet.flexbox.el.ELContext
 import com.guet.flexbox.el.LambdaExpression
-import com.guet.flexbox.el.scope
 import com.guet.flexbox.el.tryGetValue
+import com.guet.flexbox.enums.FlexAlign
+import com.guet.flexbox.enums.Visibility
 
 object Common : Declaration() {
 
@@ -44,23 +46,20 @@ object Common : Declaration() {
             value("margin$edge")
             value("padding$edge")
         }
-        event("clickUrl") { pageContext, props, raw ->
-            val url = props.tryGetValue<String>(raw)
+        event("clickUrl") { hostContext, elContext, raw ->
+            val url = elContext.tryGetValue<String>(raw)
             url?.let {
-                { v, _ ->
-                    pageContext.send(v, arrayOf(url))
-                }
+                return@let ClickUrlHandler(elContext, hostContext, url)
             }
         }
-        event("onClick") { pageContext, elContext, raw ->
+        event("onClick") { hostContext, elContext, raw ->
             elContext.tryGetValue<LambdaExpression>(raw)?.let { executable ->
-                { view, _ ->
-                    elContext.scope(mapOf(
-                            "pageContext" to pageContext.createPageContext(view!!)
-                    )) {
-                        executable.execute(elContext)
-                    }
-                }
+                return@let OnClickHandler(elContext, hostContext, executable)
+            }
+        }
+        event("onVisible") { hostContext, elContext, raw ->
+            elContext.tryGetValue<LambdaExpression>(raw)?.let { executable ->
+                return@let OnVisibleHandler(elContext, hostContext, executable)
             }
         }
     }
@@ -69,7 +68,7 @@ object Common : Declaration() {
             buildTool: BuildTool,
             attrs: AttributeSet,
             children: List<TemplateNode>,
-            factory: OutputFactory?,
+            factory: RenderNodeFactory?,
             hostContext: HostContext,
             data: ELContext,
             upperVisibility: Boolean,
@@ -86,15 +85,13 @@ object Common : Declaration() {
         val childrenComponent = if (children.isEmpty()) {
             emptyList()
         } else {
-            children.map {
-                buildTool.build(
-                        it,
-                        hostContext,
-                        data,
-                        visibility,
-                        other
-                )
-            }.flatten()
+            buildTool.buildAll(
+                    children,
+                    hostContext,
+                    data,
+                    visibility,
+                    other
+            )
         }
         return listOf(factory.invoke(
                 visibility,

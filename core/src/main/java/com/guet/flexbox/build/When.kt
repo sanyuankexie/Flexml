@@ -13,7 +13,7 @@ object When : Declaration() {
             buildTool: BuildTool,
             attrs: AttributeSet,
             children: List<TemplateNode>,
-            factory: OutputFactory?,
+            factory: RenderNodeFactory?,
             hostContext: HostContext,
             data: ELContext,
             upperVisibility: Boolean,
@@ -31,29 +31,28 @@ object When : Declaration() {
                                 hostContext,
                                 data
                         )["test"] == true) {
-                    return item.children?.map {
-                        buildTool.build(
-                                it,
+                    return item.children?.let {
+                        buildTool.buildAll(
+                                children,
                                 hostContext,
                                 data,
                                 upperVisibility,
                                 other
                         )
-                    }?.flatten() ?: emptyList()
+                    } ?: emptyList()
                 }
             } else if (item.type == "else" && elseItem == null) {
                 elseItem = item
             }
         }
-        return elseItem?.children?.map {
-            buildTool.build(
-                    it,
+        return elseItem?.children?.let {
+            buildTool.buildAll(it,
                     hostContext,
                     data,
                     upperVisibility,
                     other
             )
-        }?.flatten() ?: emptyList()
+        } ?: emptyList()
     }
 
 }

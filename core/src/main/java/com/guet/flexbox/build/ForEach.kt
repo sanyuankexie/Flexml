@@ -19,7 +19,7 @@ object ForEach : Declaration() {
             buildTool: BuildTool,
             attrs: AttributeSet,
             children: List<TemplateNode>,
-            factory: OutputFactory?,
+            factory: RenderNodeFactory?,
             hostContext: HostContext,
             data: ELContext,
             upperVisibility: Boolean,
@@ -28,18 +28,16 @@ object ForEach : Declaration() {
         val name = attrs.getValue("var") as String
         @Suppress("UNCHECKED_CAST")
         val items = attrs.getValue("items") as List<Any>
-        return items.map {
-            data.scope(mapOf(name to items)) {
-                children.map {
-                    buildTool.build(
-                            it,
-                            hostContext,
-                            this,
-                            upperVisibility,
-                            other
-                    )
-                }
-            }.flatten()
+        return items.map { item ->
+            data.scope(mapOf(name to item)) {
+                buildTool.buildAll(
+                        children,
+                        hostContext,
+                        data,
+                        upperVisibility,
+                        other
+                )
+            }
         }.flatten()
     }
 }

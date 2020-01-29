@@ -1,0 +1,41 @@
+buildscript {
+    repositories {
+        parent.repositories.forEach({ repository ->
+            if (repository instanceof MavenArtifactRepository) {
+                maven {
+                    url repository.url.toString()
+                }
+            }
+        })
+    }
+    dependencies {
+        classpath "com.github.jengelman.gradle.plugins:shadow:5.2.0"
+    }
+}
+
+apply plugin: 'com.github.johnrengelman.shadow'
+apply plugin: 'java'
+apply plugin: 'kotlin'
+apply plugin: 'com.github.dcendents.android-maven'
+group = 'com.guet.flexbox'
+
+dependencies {
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    implementation "commons-cli:commons-cli:1.4"
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:${kotlinVersion}"
+    implementation 'org.dom4j:dom4j:2.1.1'
+    implementation 'com.google.code.gson:gson:2.8.6'
+}
+
+sourceCompatibility = JavaVersion.VERSION_1_8
+targetCompatibility = JavaVersion.VERSION_1_8
+
+shadowJar {
+    manifestContentCharset 'utf-8'
+    metadataCharset 'utf-8'
+    archiveName = 'flexmlc.jar'
+    manifest {
+        attributes "Manifest-Version": 1.0,
+                'Main-Class': 'com.guet.flexbox.compiler.Main'
+    }
+}

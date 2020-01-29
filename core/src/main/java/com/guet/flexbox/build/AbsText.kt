@@ -1,23 +1,23 @@
 package com.guet.flexbox.build
 
 import android.text.TextUtils
-import com.guet.flexbox.HorizontalGravity
-import com.guet.flexbox.TextStyle
-import com.guet.flexbox.VerticalGravity
+import com.guet.flexbox.enums.Horizontal
+import com.guet.flexbox.enums.TextStyle
+import com.guet.flexbox.enums.Vertical
 
 internal object AbsText : Declaration(Common) {
 
     override val attributeInfoSet: AttributeInfoSet by create {
         enum("verticalGravity", mapOf(
-                "top" to VerticalGravity.TOP,
-                "bottom" to VerticalGravity.BOTTOM,
-                "center" to VerticalGravity.CENTER
+                "top" to Vertical.TOP,
+                "bottom" to Vertical.BOTTOM,
+                "center" to Vertical.CENTER
         ))
         @Suppress("NewApi")
         enum("horizontalGravity", mapOf(
-                "left" to HorizontalGravity.LEFT,
-                "right" to HorizontalGravity.RIGHT,
-                "center" to HorizontalGravity.CENTER
+                "left" to Horizontal.LEFT,
+                "right" to Horizontal.RIGHT,
+                "center" to Horizontal.CENTER
         ))
         enum("ellipsize", mapOf(
                 "start" to TextUtils.TruncateAt.START,

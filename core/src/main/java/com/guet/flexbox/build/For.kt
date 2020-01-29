@@ -16,7 +16,7 @@ object For : Declaration() {
             buildTool: BuildTool,
             attrs: AttributeSet,
             children: List<TemplateNode>,
-            factory: OutputFactory?,
+            factory: RenderNodeFactory?,
             hostContext: HostContext,
             data: ELContext,
             upperVisibility: Boolean,
@@ -27,16 +27,14 @@ object For : Declaration() {
         val end = (attrs.getValue("to") as Double).toInt()
         return (from..end).map { index ->
             data.scope(mapOf(name to index)) {
-                children.map {
-                    buildTool.build(
-                            it,
-                            hostContext,
-                            this,
-                            upperVisibility,
-                            other
-                    )
-                }
-            }.flatten()
+                buildTool.buildAll(
+                        children,
+                        hostContext,
+                        data,
+                        upperVisibility,
+                        other
+                )
+            }
         }.flatten()
     }
 }

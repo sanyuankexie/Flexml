@@ -1,12 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.guet.flexbox.playground.widget.PullToRefreshLayout
+<FrameLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="com.guet.flexbox.playground.test.TestActivity">
-    <com.guet.flexbox.playground.test.TestView
-        android:layout_width="300px"
-        android:layout_height="match_parent" />
-</com.guet.flexbox.playground.widget.PullToRefreshLayout>
+    <com.facebook.litho.LithoView
+        android:id="@+id/litho"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+    </com.facebook.litho.LithoView>
+    <com.guet.blurlayout.BlurLayout
+        android:layout_gravity="bottom"
+        android:layout_width="match_parent"
+        android:layout_height="100dp" />
+</FrameLayout>

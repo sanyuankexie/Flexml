@@ -20,7 +20,6 @@ import com.guet.flexbox.TemplateNode;
 import com.guet.flexbox.litho.HostingView;
 import com.guet.flexbox.litho.LithoBuildTool;
 import com.guet.flexbox.litho.Page;
-import com.guet.flexbox.litho.PageEventAdapter;
 import com.guet.flexbox.playground.model.MockService;
 import com.guet.flexbox.playground.widget.QuickHandler;
 
@@ -42,15 +41,9 @@ public class OverviewActivity
         SwipeRefreshLayout.OnRefreshListener,
         AppBarLayout.OnOffsetChangedListener {
 
-    private PageEventAdapter handler = new PageEventAdapter(){
-        @Override
-        public void onEventDispatched(
-                @NotNull HostingView h,
-                @Nullable View source,
-                @Nullable Object[] values) {
-            if (values != null) {
-                handleEvent((String) values[0]);
-            }
+    private HostingView.PageEventListener handler = (h, source, values) -> {
+        if (values != null) {
+            handleEvent((String) values[0]);
         }
     };
     private Toast toast;
@@ -84,7 +77,7 @@ public class OverviewActivity
                 Response<TemplateNode> layout = mMockService.layout().execute();
                 Map<String, Object> dataBody = dataResponse.body();
                 TemplateNode layoutBody = layout.body();
-                mLayout = LithoBuildTool.preload(
+                mLayout = LithoBuildTool.build(
                         getApplicationContext(),
                         Objects.requireNonNull(layoutBody),
                         dataBody

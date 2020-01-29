@@ -1,6 +1,6 @@
 package com.guet.flexbox.build
 
-import com.guet.flexbox.ScaleType
+import com.guet.flexbox.enums.ScaleType
 
 internal object Graphic : Declaration(Common) {
     override val attributeInfoSet: AttributeInfoSet by create {

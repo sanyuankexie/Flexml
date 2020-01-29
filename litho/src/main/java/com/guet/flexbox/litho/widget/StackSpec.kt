@@ -11,6 +11,8 @@ import com.facebook.litho.annotations.OnCreateLayoutWithSizeSpec
 import com.facebook.litho.annotations.Prop
 import com.facebook.yoga.YogaEdge
 import com.facebook.yoga.YogaPositionType
+import com.guet.flexbox.AppExecutors
+import java.util.concurrent.Callable
 import kotlin.math.max
 
 @LayoutSpec
@@ -27,8 +29,12 @@ object StackSpec {
         if (children.isNullOrEmpty()) {
             return owner.build()
         }
-        val sizes = children.map {
-            measureChild(c, it, widthSpec, heightSpec)
+        val sizes = AppExecutors.threadPool.invokeAll(
+                children.map {
+                    createMeasureTask(c, it, widthSpec, heightSpec)
+                }
+        ).map {
+            it.get()
         }
         var maxHeight = 0
         var maxWidth = 0
@@ -47,24 +53,26 @@ object StackSpec {
                 .build()
     }
 
-    private fun measureChild(
+    private fun createMeasureTask(
             c: ComponentContext,
             child: Component,
             parentWidthMeasureSpec: Int,
             parentHeightMeasureSpec: Int
-    ): Size {
-        val size = Size()
-        val childWidthMeasureSpec = getChildMeasureSpec(
-                parentWidthMeasureSpec,
-                0,
-                LayoutParams.WRAP_CONTENT
-        )
-        val childHeightMeasureSpec = getChildMeasureSpec(
-                parentHeightMeasureSpec,
-                0,
-                LayoutParams.WRAP_CONTENT
-        )
-        child.measure(c, childWidthMeasureSpec, childHeightMeasureSpec, size)
-        return size
+    ): Callable<Size> {
+        return Callable {
+            val size = Size()
+            val childWidthMeasureSpec = getChildMeasureSpec(
+                    parentWidthMeasureSpec,
+                    0,
+                    LayoutParams.WRAP_CONTENT
+            )
+            val childHeightMeasureSpec = getChildMeasureSpec(
+                    parentHeightMeasureSpec,
+                    0,
+                    LayoutParams.WRAP_CONTENT
+            )
+            child.measure(c, childWidthMeasureSpec, childHeightMeasureSpec, size)
+            return@Callable size
+        }
     }
 }

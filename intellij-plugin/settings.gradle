@@ -1,0 +1,11 @@
+rootProject.name = "intellij-plugin"
+void external(String... names) {
+    names.toList().forEach({ name ->
+        String pName = ':' + name
+        include(pName)
+        project(pName).projectDir = new File(settingsDir, '../' + name)
+    })
+}
+
+external 'el', 'compiler', 'beans', 'handshake'
+

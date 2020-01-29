@@ -5,7 +5,8 @@ import android.util.AttributeSet
 import android.view.View
 import androidx.annotation.MainThread
 import com.facebook.litho.*
-import com.guet.flexbox.ConcurrentUtils
+import com.guet.flexbox.AppExecutors
+import com.guet.flexbox.EventBridge
 import com.guet.flexbox.HttpClient
 import com.guet.flexbox.TemplateNode
 import com.guet.flexbox.el.PropsELContext
@@ -16,7 +17,7 @@ class HostingView @JvmOverloads constructor(
 
     internal val pageContext = HostContextImpl(this)
 
-    internal var template: TemplateNode? = null
+    internal var hostingPage: Page? = null
 
     internal var httpClient: HttpClient? = null
 
@@ -43,11 +44,15 @@ class HostingView @JvmOverloads constructor(
     }
 
     @MainThread
-    fun setContentAsync(page: Page) {
+    fun setContentAsync(page: Page?) {
         ThreadUtils.assertMainThread()
-        template = page.template
-        page.forward.target = pageContext
-        componentTree?.setRootAndSizeSpecAsync(page.component,
+        this.hostingPage?.event?.target = null
+        if (page == null) {
+            return
+        }
+        this.hostingPage = page
+        page.event.target = pageContext
+        componentTree?.setRootAndSizeSpecAsync(page.display,
                 SizeSpec.makeSizeSpec(measuredWidth, SizeSpec.EXACTLY),
                 when (layoutParams?.height) {
                     LayoutParams.WRAP_CONTENT -> SizeSpec.makeSizeSpec(0, SizeSpec.UNSPECIFIED)
@@ -59,32 +64,26 @@ class HostingView @JvmOverloads constructor(
     fun setContentAsync(node: TemplateNode, data: Any?) {
         ThreadUtils.assertMainThread()
         val elContext = PropsELContext(data)
-        template = node
-        setContentAsyncInternal(node, elContext)
-    }
-
-    private fun setContentAsyncInternal(
-            node: TemplateNode,
-            elContext: PropsELContext
-    ) {
-        val tree = componentTree
-        if (tree != null) {
-            val c = componentContext
-            val height = layoutParams?.width ?: 0
-            val mH = measuredHeight
-            val mW = measuredWidth
-            ConcurrentUtils.runOnAsyncThread {
-                val component = LithoBuildTool.build(
-                        node,
-                        pageContext,
-                        elContext,
-                        true,
-                        c
-                ).single() as Component
-                tree.setRootAndSizeSpec(
+        val c = componentContext
+        AppExecutors.runOnAsyncThread {
+            val component = LithoBuildTool.build(
+                    node,
+                    pageContext,
+                    elContext,
+                    c
+            ) as Component
+            val page = Page(node, component,
+                    EventBridge().apply {
+                        target = pageContext
+                    })
+            post {
+                this.hostingPage?.event?.target = null
+                this.hostingPage = page
+                val tree = componentTree ?: return@post
+                tree.setRootAndSizeSpecAsync(
                         component,
-                        SizeSpec.makeSizeSpec(mW, SizeSpec.EXACTLY),
-                        when (height) {
+                        SizeSpec.makeSizeSpec(measuredWidth, SizeSpec.EXACTLY),
+                        when (layoutParams?.width ?: 0) {
                             LayoutParams.WRAP_CONTENT ->
                                 SizeSpec.makeSizeSpec(
                                         0,
@@ -92,7 +91,7 @@ class HostingView @JvmOverloads constructor(
                                 )
                             else ->
                                 SizeSpec.makeSizeSpec(
-                                        mH,
+                                        measuredHeight,
                                         SizeSpec.EXACTLY
                                 )
                         })
@@ -101,16 +100,10 @@ class HostingView @JvmOverloads constructor(
     }
 
     interface PageEventListener {
-
         fun onEventDispatched(
                 h: HostingView,
                 source: View?,
                 values: Array<out Any?>?
-        )
-
-        fun onPageChanged(
-                h: HostingView,
-                page: Page
         )
     }
 

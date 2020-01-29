@@ -5,7 +5,7 @@ import com.facebook.litho.EventDispatcher
 import com.facebook.litho.HasEventDispatcher
 import com.facebook.litho.VisibleEvent
 import com.facebook.litho.widget.TextChangedEvent
-import com.guet.flexbox.build.EventHandler
+import com.guet.flexbox.EventHandler
 import com.facebook.litho.EventHandler as BaseEventHandler
 
 internal class EventHandlerWrapper<T>(
@@ -15,13 +15,13 @@ internal class EventHandlerWrapper<T>(
     override fun dispatchEvent(event: T) {
         when (event) {
             is ClickEvent -> {
-                target.invoke(event.view, emptyArray())
+                target.handleEvent(event.view, emptyArray())
             }
             is TextChangedEvent -> {
-                target.invoke(event.view, arrayOf(event.text))
+                target.handleEvent(event.view, arrayOf(event.text))
             }
             is VisibleEvent -> {
-                target.invoke(null, null)
+                target.handleEvent(null, null)
             }
         }
     }

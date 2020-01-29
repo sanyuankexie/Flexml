@@ -5,17 +5,23 @@
       <GradleProjectSettings>
         <option name="distributionType" value="DEFAULT_WRAPPED" />
         <option name="externalProjectPath" value="$PROJECT_DIR$" />
+        <option name="gradleJvm" value="11" />
         <option name="modules">
           <set>
             <option value="$PROJECT_DIR$" />
             <option value="$PROJECT_DIR$/beans" />
+            <option value="$PROJECT_DIR$/compiler" />
             <option value="$PROJECT_DIR$/core" />
             <option value="$PROJECT_DIR$/el" />
+            <option value="$PROJECT_DIR$/handshake" />
+            <option value="$PROJECT_DIR$/intellij-plugin" />
             <option value="$PROJECT_DIR$/litho" />
             <option value="$PROJECT_DIR$/playground" />
           </set>
         </option>
         <option name="resolveModulePerSourceSet" value="false" />
+        <option name="testRunner" value="PLATFORM" />
+        <option name="useQualifiedModuleNames" value="true" />
       </GradleProjectSettings>
     </option>
   </component>

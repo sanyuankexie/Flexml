@@ -2,29 +2,29 @@ package com.guet.flexbox.litho
 
 import android.view.View
 import com.guet.flexbox.HostContext
-import com.guet.flexbox.litho.transaction.HttpTransactionImpl
-import com.guet.flexbox.litho.transaction.RefreshTransactionImpl
-import com.guet.flexbox.transaction.HttpTransaction
-import com.guet.flexbox.transaction.RefreshTransaction
+import com.guet.flexbox.HostContext.ActionKey.*
 
 internal class HostContextImpl(
         private val host: HostingView
 ) : HostContext() {
 
-    override fun send(source: View?, values: Array<out Any?>?) {
-        host.pageEventListener?.onEventDispatched(
-                host,
-                source,
-                values
-        )
+    override fun dispatchEvent(key: ActionKey, args: List<Any?>?): Any? {
+        return when (key) {
+            SendObjects -> {
+                host.pageEventListener?.onEventDispatched(
+                        host,
+                        args?.get(0) as? View,
+                        args?.let { it.subList(1,it.size).toTypedArray() }
+                )
+            }
+            RefreshPage -> RefreshTransactionImpl(
+                    host,
+                    args?.get(0) as? View
+            )
+            HttpRequest -> HttpTransactionImpl(
+                    host,
+                    args?.get(0) as? View
+            )
+        }
     }
-
-    override fun http(source: View): HttpTransaction? {
-        return HttpTransactionImpl(host, source)
-    }
-
-    override fun refresh(source: View): RefreshTransaction? {
-        return RefreshTransactionImpl(host, source)
-    }
-
 }

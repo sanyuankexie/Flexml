@@ -13,7 +13,6 @@ import com.bumptech.glide.request.target.Target
 import com.bumptech.glide.request.transition.Transition
 import com.facebook.litho.DrawableMatrix
 import com.facebook.litho.Touchable
-import com.guet.flexbox.litho.parseUrl
 
 internal class NetworkMatrixDrawable(
         private val c: Context
@@ -23,6 +22,53 @@ internal class NetworkMatrixDrawable(
     private var width: Int = 0
     private var height: Int = 0
     private var scaleType = ScaleType.FIT_CENTER
+
+    fun mount(
+            resId: Int,
+            width: Int,
+            height: Int,
+            blurRadius: Float,
+            blurSampling: Float,
+            scaleType: ScaleType
+    ) {
+        this.width = width
+        this.height = height
+        this.scaleType = scaleType
+        if (resId != 0) {
+            Glide.with(c).load(resId).apply {
+                if (blurRadius > 0 && blurSampling > 0) {
+                    transform(BlurTransformation(
+                            blurRadius,
+                            blurSampling
+                    ))
+                }
+            }.into(this)
+        } else {
+            wrappedDrawable.mount(NoOpDrawable(), null, 0, 0)
+        }
+    }
+
+    fun mount(drawable: Drawable,
+              width: Int,
+              height: Int,
+              blurRadius: Float,
+              blurSampling: Float,
+              scaleType: ScaleType
+    ) {
+        this.width = width
+        this.height = height
+        this.scaleType = scaleType
+        if (blurRadius > 0 && blurSampling > 0) {
+            Glide.with(c).load(drawable)
+                    .transform(BlurTransformation(
+                            blurRadius,
+                            blurSampling
+                    ))
+                    .into(this)
+        } else {
+            notifyChanged(scaleType, drawable)
+        }
+    }
 
     fun mount(
             url: CharSequence,
@@ -35,36 +81,18 @@ internal class NetworkMatrixDrawable(
         this.width = width
         this.height = height
         this.scaleType = scaleType
-        when (val model = parseUrl(c, url)) {
-            is Drawable -> {
-                notifyChanged(scaleType, model)
-            }
-            is CharSequence, is Int -> {
-                loadModel(model, blurRadius, blurSampling)
-            }
-            else -> {
-                setToEmpty()
-            }
+        if (url.isNotEmpty()) {
+            Glide.with(c).load(url).apply {
+                if (blurRadius > 0 && blurSampling > 0) {
+                    transform(BlurTransformation(
+                            blurRadius,
+                            blurSampling
+                    ))
+                }
+            }.into(this)
+        } else {
+            wrappedDrawable.mount(NoOpDrawable(), null, 0, 0)
         }
-    }
-
-    private fun setToEmpty() {
-        wrappedDrawable.mount(NoOpDrawable(), null, 0, 0)
-    }
-
-    private fun loadModel(
-            model: Any,
-            blurRadius: Float,
-            blurSampling: Float
-    ) {
-        Glide.with(c).load(model).apply {
-            if (blurRadius > 0) {
-                transform(BlurTransformation(
-                        blurRadius,
-                        blurSampling
-                ))
-            }
-        }.into(this)
     }
 
     override fun getSize(cb: SizeReadyCallback) {

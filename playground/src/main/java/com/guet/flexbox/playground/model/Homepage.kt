@@ -6,4 +6,5 @@ class Homepage(
         val banner: Page,
         val function: Page,
         val feed: List<Page>
+        //val introduction: Page
 )
