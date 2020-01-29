@@ -28,6 +28,7 @@ class ServerController {
             produces = ["application/json"]
     )
     fun loadPackage(request: HttpServletRequest): ResponseEntity<*> {
+
         val focus = MockServerApplication.focus
         if (focus != null) {
             val packageFile = File(focus)
@@ -41,10 +42,11 @@ class ServerController {
                     "/template" -> {
                         val template = packageJson["template"] as? String
                         if (template != null) {
-                            val templateFile = File(focus, template)
+                            val templateFile = File(packageFile.parentFile, template)
                             if (templateFile.exists()) {
                                 return ResponseEntity.ok(
                                         JsonCompiler.compile(templateFile)
+                                                .toString()
                                 )
                             }
                         }
@@ -52,7 +54,7 @@ class ServerController {
                     "/datasource" -> {
                         val data = packageJson["data"] as? String
                         if (data != null) {
-                            val dataFile = File(focus, data)
+                            val dataFile = File(packageFile.parentFile, data)
                             if (dataFile.exists()) {
                                 return ResponseEntity.ok(dataFile.readText())
                             }
