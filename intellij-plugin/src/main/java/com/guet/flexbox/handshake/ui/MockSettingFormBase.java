@@ -9,8 +9,7 @@ public abstract class MockSettingFormBase extends SettingsEditor<MockRunConfigur
 {
     public JPanel wrapPanel;
     public JTextField port;
-    public JTextField template;
-    public JTextField dataSource;
+    public JTextField packageJson;
 
     public MockSettingFormBase(){
         port.setInputVerifier(new InputVerifier() {

@@ -1,5 +1,6 @@
 package com.guet.flexbox.handshake.configuration
 
+import com.guet.flexbox.handshake.BinaryLoader
 import com.guet.flexbox.handshake.configuration.options.MockOptions
 import com.guet.flexbox.handshake.ui.MockSettingForm
 import com.intellij.execution.Executor
@@ -23,14 +24,16 @@ class MockRunConfiguration(project: Project, factory: ConfigurationFactory) :
             executor: Executor,
             environment: ExecutionEnvironment
     ): RunProfileState? {
+        val port = state!!.port
+        val focus = state!!.packageJson!!
         return JarApplicationCommandLineState(
                 JarApplicationConfiguration(
                         project,
                         JarApplicationConfigurationType.getInstance(),
                         "Mock this package"
                 ).apply {
-                    jarPath = ""
-
+                    jarPath = BinaryLoader.mockJarPath
+                    programParameters = "server.port=${port} package.focus=${focus}"
                 },
                 environment
         )

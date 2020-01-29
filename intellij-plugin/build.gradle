@@ -62,8 +62,40 @@ intellij {
     plugins = ['java']
 }
 
-patchPluginXml {
-    changeNotes """
-      Add change notes here.<br>
-      <em>most HTML tags may be used</em>"""
+private Task findTask(String projectName, String taskName) {
+    return project(projectName).getTasksByName(taskName, false)
+            .first()
 }
+
+private Collection<File> collectOutput(String projectName, String taskName) {
+    return findTask(projectName, taskName)
+            .outputs
+            .files
+            .files
+}
+
+task copyJar(
+        type: Copy
+) {
+    println(buildDir)
+    File dest = new File(buildDir, "/resources/main/bin")
+    def old = dest.listFiles()
+    if (old != null && old.size() > 0) {
+        Arrays.stream(old).forEach({
+            file ->
+                file.delete()
+        })
+    }
+    List<File> files = new ArrayList<File>()
+    files.addAll(collectOutput(":compiler", "shadowJar"))
+    files.addAll(collectOutput(":mock-service", "bootJar"))
+    from(files)
+    into(dest)
+}
+
+copyJar.dependsOn([
+        findTask(":compiler", "shadowJar"),
+        findTask(":mock-service", "bootJar")
+])
+
+buildPlugin.dependsOn(copyJar)

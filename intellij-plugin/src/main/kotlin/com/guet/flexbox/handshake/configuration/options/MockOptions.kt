@@ -6,7 +6,5 @@ class MockOptions : LocatableRunConfigurationOptions() {
 
     var port: Int by property(defaultValue = 8080)
 
-    var dataSource: String? by string()
-
-    var template: String? by string()
+    var packageJson: String? by string()
 }

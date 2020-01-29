@@ -7,8 +7,7 @@ class MockSettingForm : MockSettingFormBase() {
 
     override fun resetEditorFrom(s: MockRunConfiguration) {
         this.port.text = s.state?.port.toString()
-        this.dataSource.text = s.state?.dataSource
-        this.template.text = s.state?.template
+        this.packageJson.text = s.state?.packageJson
     }
 
     override fun createEditor(): JComponent {
@@ -17,7 +16,6 @@ class MockSettingForm : MockSettingFormBase() {
 
     override fun applyEditorTo(s: MockRunConfiguration) {
         s.state?.port = this.port.text.toInt()
-        s.state?.dataSource = this.dataSource.text
-        s.state?.template = this.template.text
+        s.state?.packageJson = this.packageJson.text
     }
 }

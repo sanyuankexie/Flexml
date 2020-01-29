@@ -15,6 +15,7 @@ import com.intellij.util.containers.ContainerUtil
 class MockRunLineMarkerContributor : RunLineMarkerContributor() {
 
     override fun getInfo(element: PsiElement): Info? {
+        val v = this.javaClass
         val file = element.containingFile?.let { it as? JsonFile }
         val obj = file?.topLevelValue?.let { it as? JsonObject }
         if (file?.name != "package.json") {
@@ -25,17 +26,17 @@ class MockRunLineMarkerContributor : RunLineMarkerContributor() {
             return null
         }
         if (template.value?.let { it as? JsonStringLiteral }
-                ?.value?.let { file.parent?.findFile(it) }
-                ?.isOnFlexmlFile == true) {
+                        ?.value?.let { file.parent?.findFile(it) }
+                        ?.isOnFlexmlFile == true) {
             val actions = ExecutorAction.getActions()
             return Info(
-                AllIcons.RunConfigurations.TestState.Run,
-                actions
+                    AllIcons.RunConfigurations.TestState.Run,
+                    actions
             ) { e ->
                 StringUtil.join(ContainerUtil.mapNotNull<AnAction, String>(actions) { action ->
                     getText(
-                        action,
-                        e
+                            action,
+                            e
                     )
                 }, "\n")
 

@@ -33,8 +33,7 @@ targetCompatibility = JavaVersion.VERSION_1_8
 shadowJar {
     manifestContentCharset 'utf-8'
     metadataCharset 'utf-8'
-    baseName = 'flexmlc'
-    version = '0.3.0'
+    archiveName = 'flexmlc.jar'
     manifest {
         attributes "Manifest-Version": 1.0,
                 'Main-Class': 'com.guet.flexbox.compiler.JsonCompiler'

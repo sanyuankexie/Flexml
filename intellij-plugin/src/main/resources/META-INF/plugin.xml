@@ -12,10 +12,8 @@
       🚀Android high performance dynamic business container based on litho solves the pain point of dynamic homepage. Released under the Apache 2.0 open source protocol, it is an open source software based on open source software.
     ]]>
     </change-notes>
-    <!-- please see http://www.jetbrains.org/intellij/sdk/docs/basics/getting_started/build_number_ranges.html for description -->
     <idea-version since-build="193.5662.53"/>
     <actions>
-        <!-- Add your actions here -->
         <action id="com.guet.flexbox.handshake.new.flexml"
             class="com.guet.flexbox.handshake.action.NewFlexmlAction"
             text="Flexml File"
@@ -38,6 +36,8 @@
     <depends>com.intellij.modules.lang</depends>
     <depends>com.intellij.modules.json</depends>
     <extensions defaultExtensionNs="com.intellij">
+        <backgroundPostStartupActivity
+            implementation="com.guet.flexbox.handshake.BinaryLoader"/>
         <configurationType
             implementation="com.guet.flexbox.handshake.configuration.type.CompileConfigurationType"/>
         <configurationType
@@ -46,15 +46,20 @@
             implementation="com.guet.flexbox.handshake.configuration.producer.CompileRunConfigurationProducer"/>
         <runConfigurationProducer
             implementation="com.guet.flexbox.handshake.configuration.producer.MockRunConfigurationProducer"/>
-        <runLineMarkerContributor language="JSON"
+        <runLineMarkerContributor
+            language="JSON"
             order="after applicationRunLineMarkerProvider"
             implementationClass="com.guet.flexbox.handshake.runline.MockRunLineMarkerContributor"/>
-        <runLineMarkerContributor language="XML"
+        <runLineMarkerContributor
+            language="XML"
             order="after applicationRunLineMarkerProvider"
             implementationClass="com.guet.flexbox.handshake.runline.CompileRunLineMarkerContributor"/>
-        <internalFileTemplate name="package"/>
-        <internalFileTemplate name="flexml_file"/>
-        <internalFileTemplate name="host"/>
+        <internalFileTemplate
+            name="package"/>
+        <internalFileTemplate
+            name="flexml_file"/>
+        <internalFileTemplate
+            name="host"/>
         <xml.tagNameProvider
             implementation="com.guet.flexbox.handshake.completion.FlexmlComponentNameProvider"/>
         <completion.contributor language="XML"

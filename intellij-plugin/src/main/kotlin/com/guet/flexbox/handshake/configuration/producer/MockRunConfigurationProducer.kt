@@ -27,12 +27,11 @@ class MockRunConfigurationProducer
             return false
         }
         val obj = file.topLevelValue?.let { it as? JsonObject }
+
         val template = obj?.findProperty("template") ?: return false
         val xmlName = template.value?.let { it as? JsonStringLiteral }?.value
         if (xmlName != null && file.parent?.findFile(xmlName)?.isOnFlexmlFile == true) {
-            return (configuration.state?.port ?: 8080 == getPort(obj))
-                    || (configuration.state?.template == getFilePath(obj, "template"))
-                    || (configuration.state?.dataSource == getFilePath(obj, "data"))
+
         }
         return false
     }
@@ -53,9 +52,7 @@ class MockRunConfigurationProducer
         if (xmlName != null && file.parent?.findFile(xmlName)?.isOnFlexmlFile == true) {
             configuration.name = "Mock package ${context.psiLocation?.containingFile?.parent?.name}"
             sourceElement.set(template)
-            configuration.state?.port = getPort(obj)
-            configuration.state?.template = getFilePath(obj, "template")
-            configuration.state?.dataSource = getFilePath(obj, "data")
+            configuration.state?.packageJson = file.virtualFile.path
             return true
         }
         return false

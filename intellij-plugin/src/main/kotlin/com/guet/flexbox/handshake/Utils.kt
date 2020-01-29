@@ -5,7 +5,6 @@ import com.intellij.psi.PsiElement
 import java.text.SimpleDateFormat
 import java.util.*
 import java.util.regex.Pattern
-import kotlin.collections.HashMap
 
 val PsiElement.isOnFlexmlFile: Boolean
     get() {
