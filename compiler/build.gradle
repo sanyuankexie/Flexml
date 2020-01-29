@@ -36,6 +36,6 @@ shadowJar {
     archiveName = 'flexmlc.jar'
     manifest {
         attributes "Manifest-Version": 1.0,
-                'Main-Class': 'com.guet.flexbox.compiler.JsonCompiler'
+                'Main-Class': 'com.guet.flexbox.compiler.Main'
     }
 }

@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
+  <component name="GradleMigrationSettings" migrationVersion="1" />
   <component name="GradleSettings">
     <option name="linkedExternalProjectsSettings">
       <GradleProjectSettings>
@@ -12,8 +13,8 @@
             <option value="$PROJECT_DIR$/../beans" />
             <option value="$PROJECT_DIR$/../compiler" />
             <option value="$PROJECT_DIR$/../el" />
+            <option value="$PROJECT_DIR$/../handshake" />
             <option value="$PROJECT_DIR$" />
-            <option value="$PROJECT_DIR$/../mock-service" />
           </set>
         </option>
         <option name="useQualifiedModuleNames" value="true" />

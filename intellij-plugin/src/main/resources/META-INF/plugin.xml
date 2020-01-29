@@ -1,5 +1,5 @@
 <idea-plugin>
-    <id>com.guet.flexbox.handshake</id>
+    <id>com.guet.flexbox.intellij</id>
     <name>handshake</name>
     <version>1.0.5</version>
     <vendor email="imlkluo@qq.com"
@@ -14,16 +14,16 @@
     </change-notes>
     <idea-version since-build="193.5662.53"/>
     <actions>
-        <action id="com.guet.flexbox.handshake.new.flexml"
-            class="com.guet.flexbox.handshake.action.NewFlexmlAction"
+        <action id="com.guet.flexbox.intellij.new.flexml"
+            class="com.guet.flexbox.intellij.action.NewFlexmlAction"
             text="Flexml File"
             description="New flexml dsl file">
             <add-to-group group-id="NewGroup"
                 anchor="before"
                 relative-to-action="NewFile"/>
         </action>
-        <action id="com.guet.flexbox.handshake.new.package"
-            class="com.guet.flexbox.handshake.action.NewPackageAction"
+        <action id="com.guet.flexbox.intellij.new.package"
+            class="com.guet.flexbox.intellij.action.NewPackageAction"
             text="Flexml Mock Package"
             description="New Flexml mock package json file">
             <add-to-group group-id="NewGroup"
@@ -36,34 +36,34 @@
     <depends>com.intellij.modules.lang</depends>
     <depends>com.intellij.modules.json</depends>
     <extensions defaultExtensionNs="com.intellij">
-        <backgroundPostStartupActivity
-            implementation="com.guet.flexbox.handshake.BinaryLoader"/>
+        <ApplicationLoadListener
+            implementation="com.guet.flexbox.intellij.BinaryLoader"/>
         <configurationType
-            implementation="com.guet.flexbox.handshake.configuration.type.CompileConfigurationType"/>
+            implementation="com.guet.flexbox.intellij.configuration.type.CompileConfigurationType"/>
         <configurationType
-            implementation="com.guet.flexbox.handshake.configuration.type.MockConfigurationType"/>
+            implementation="com.guet.flexbox.intellij.configuration.type.MockConfigurationType"/>
         <runConfigurationProducer
-            implementation="com.guet.flexbox.handshake.configuration.producer.CompileRunConfigurationProducer"/>
+            implementation="com.guet.flexbox.intellij.configuration.producer.CompileRunConfigurationProducer"/>
         <runConfigurationProducer
-            implementation="com.guet.flexbox.handshake.configuration.producer.MockRunConfigurationProducer"/>
+            implementation="com.guet.flexbox.intellij.configuration.producer.MockRunConfigurationProducer"/>
         <runLineMarkerContributor
             language="JSON"
             order="after applicationRunLineMarkerProvider"
-            implementationClass="com.guet.flexbox.handshake.runline.MockRunLineMarkerContributor"/>
+            implementationClass="com.guet.flexbox.intellij.runline.MockRunLineMarkerContributor"/>
         <runLineMarkerContributor
             language="XML"
             order="after applicationRunLineMarkerProvider"
-            implementationClass="com.guet.flexbox.handshake.runline.CompileRunLineMarkerContributor"/>
+            implementationClass="com.guet.flexbox.intellij.runline.CompileRunLineMarkerContributor"/>
         <internalFileTemplate
             name="package"/>
         <internalFileTemplate
-            name="flexml_file"/>
+            name="flexml-file"/>
         <xml.tagNameProvider
-            implementation="com.guet.flexbox.handshake.completion.FlexmlComponentNameProvider"/>
+            implementation="com.guet.flexbox.intellij.completion.FlexmlComponentNameProvider"/>
         <completion.contributor language="XML"
-            implementationClass="com.guet.flexbox.handshake.completion.FlexmlCompletionContributor"/>
-        <fileType name="flexml"
-            implementationClass="com.guet.flexbox.handshake.filetype.FlexmlFileType"
+            implementationClass="com.guet.flexbox.intellij.completion.FlexmlCompletionContributor"/>
+        <fileType name="flexml dsl"
+            implementationClass="com.guet.flexbox.intellij.filetype.FlexmlFileType"
             fieldName="INSTANCE"
             language="XML"
             extensions="xml;flexml"/>

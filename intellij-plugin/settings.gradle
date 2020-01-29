@@ -1,5 +1,4 @@
 rootProject.name = "intellij-plugin"
-
 void external(String... names) {
     names.toList().forEach({ name ->
         String pName = ':' + name
@@ -8,5 +7,5 @@ void external(String... names) {
     })
 }
 
-external 'el', 'compiler', 'beans', 'mock-service'
+external 'el', 'compiler', 'beans', 'handshake'
 
