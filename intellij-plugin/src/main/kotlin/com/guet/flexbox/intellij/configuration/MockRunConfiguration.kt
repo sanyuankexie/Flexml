@@ -1,6 +1,6 @@
 package com.guet.flexbox.intellij.configuration
 
-import com.guet.flexbox.intellij.BinaryLoader
+import com.guet.flexbox.intellij.SdkJarFinder
 import com.guet.flexbox.intellij.configuration.options.MockOptions
 import com.guet.flexbox.intellij.runJar
 import com.guet.flexbox.intellij.ui.MockSettingForm
@@ -24,7 +24,7 @@ class MockRunConfiguration(project: Project, factory: ConfigurationFactory) :
         return runJar(
                 project,
                 environment,
-                BinaryLoader.mockJarPath,
+                SdkJarFinder.mockPath,
                 "--server.port=$port --package.focus=$focus"
         )
     }

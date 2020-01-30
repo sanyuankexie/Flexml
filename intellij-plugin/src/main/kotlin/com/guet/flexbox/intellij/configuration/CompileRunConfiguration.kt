@@ -1,6 +1,6 @@
 package com.guet.flexbox.intellij.configuration
 
-import com.guet.flexbox.intellij.BinaryLoader
+import com.guet.flexbox.intellij.SdkJarFinder
 import com.guet.flexbox.intellij.configuration.options.CompileOptions
 import com.guet.flexbox.intellij.runJar
 import com.guet.flexbox.intellij.ui.CompileSettingForm
@@ -28,7 +28,7 @@ class CompileRunConfiguration(
         return runJar(
                 project,
                 environment,
-                BinaryLoader.compilerJarPath,
+                SdkJarFinder.compilerPath,
                 "-i $input -o $output"
         )
     }

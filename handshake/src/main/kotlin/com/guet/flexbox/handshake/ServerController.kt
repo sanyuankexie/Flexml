@@ -3,11 +3,15 @@ package com.guet.flexbox.handshake
 import com.google.gson.Gson
 import com.guet.flexbox.compiler.JsonCompiler
 import org.springframework.http.ResponseEntity
-import org.springframework.web.bind.annotation.*
+import org.springframework.stereotype.Controller
+import org.springframework.web.bind.annotation.RequestMapping
+import org.springframework.web.bind.annotation.RequestMethod
+import org.springframework.web.bind.annotation.RequestParam
+import org.springframework.web.bind.annotation.ResponseBody
 import java.io.File
 import javax.servlet.http.HttpServletRequest
 
-@RestController
+@Controller
 class ServerController {
 
     private val gson = Gson()
@@ -16,9 +20,8 @@ class ServerController {
             "/",
             method = [RequestMethod.GET]
     )
-    @ResponseBody
     fun index(): String {
-       return "Hello world"
+       return "/index"
     }
 
     @RequestMapping(
@@ -27,6 +30,7 @@ class ServerController {
             method = [RequestMethod.GET],
             produces = ["application/json"]
     )
+    @ResponseBody
     fun loadPackage(request: HttpServletRequest): ResponseEntity<String> {
         val focus = MockServerApplication.focus
         if (focus != null) {
@@ -39,12 +43,17 @@ class ServerController {
                         )
                 when (request.servletPath) {
                     "/template" -> {
-                        val template = packageJson["template"] as? String
+                        val template = packageJson["template"]
+                                as? String
                         if (template != null) {
-                            val templateFile = File(packageFile.parentFile, template)
+                            val templateFile = File(
+                                    packageFile.parentFile,
+                                    template
+                            )
                             if (templateFile.exists()) {
                                 return ResponseEntity.ok(
-                                        JsonCompiler.compile(templateFile).toString()
+                                        JsonCompiler.compile(templateFile)
+                                                .toString()
                                 )
                             }
                         }
@@ -52,9 +61,14 @@ class ServerController {
                     "/datasource" -> {
                         val data = packageJson["data"] as? String
                         if (data != null) {
-                            val dataFile = File(packageFile.parentFile, data)
+                            val dataFile = File(
+                                    packageFile.parentFile,
+                                    data
+                            )
                             if (dataFile.exists()) {
-                                return ResponseEntity.ok(dataFile.readText())
+                                return ResponseEntity.ok(
+                                        dataFile.readText()
+                                )
                             }
                         }
                     }
@@ -68,7 +82,7 @@ class ServerController {
             "/focus",
             method = [RequestMethod.POST]
     )
-    fun focus(@RequestParam focus: String) {
+    fun focus(@RequestParam("focus") focus: String) {
         MockServerApplication.focus = focus
     }
 }
