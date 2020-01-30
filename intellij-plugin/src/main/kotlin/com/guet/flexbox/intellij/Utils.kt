@@ -40,6 +40,7 @@ fun runJar(
             ).apply {
                 jarPath = jar
                 programParameters = args
+                vmParameters = "-Xmx64m -Xss256k -XX:ParallelGCThreads=1"
             },
             environment
     )

@@ -5,6 +5,7 @@ import java.awt.GraphicsEnvironment
 import java.awt.Toolkit
 import java.awt.event.WindowAdapter
 import java.awt.event.WindowEvent
+import javax.imageio.ImageIO
 import javax.swing.JFrame
 import kotlin.system.exitProcess
 
@@ -34,7 +35,13 @@ object GuiApplication {
         val imageView = ImageView()
         imageView.setSize(WINDOW_SIZE, WINDOW_SIZE)
         JFrame().apply {
-            title = "Mocking"
+            GuiApplication::class.java
+                    .classLoader
+                    .getResourceAsStream("static/icon.png")
+                    ?.use {
+                        iconImage = ImageIO.read(it)
+                    }
+            title = "Handshake"
             defaultCloseOperation = JFrame.DISPOSE_ON_CLOSE
             setSize(WINDOW_SIZE, WINDOW_SIZE)
             isResizable = false

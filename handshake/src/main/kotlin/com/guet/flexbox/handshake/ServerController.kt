@@ -27,8 +27,7 @@ class ServerController {
             method = [RequestMethod.GET],
             produces = ["application/json"]
     )
-    fun loadPackage(request: HttpServletRequest): ResponseEntity<*> {
-
+    fun loadPackage(request: HttpServletRequest): ResponseEntity<String> {
         val focus = MockServerApplication.focus
         if (focus != null) {
             val packageFile = File(focus)
@@ -45,8 +44,7 @@ class ServerController {
                             val templateFile = File(packageFile.parentFile, template)
                             if (templateFile.exists()) {
                                 return ResponseEntity.ok(
-                                        JsonCompiler.compile(templateFile)
-                                                .toString()
+                                        JsonCompiler.compile(templateFile).toString()
                                 )
                             }
                         }
@@ -63,7 +61,7 @@ class ServerController {
                 }
             }
         }
-        return ResponseEntity.notFound().build<Any>()
+        return ResponseEntity.notFound().build<String>()
     }
 
     @RequestMapping(

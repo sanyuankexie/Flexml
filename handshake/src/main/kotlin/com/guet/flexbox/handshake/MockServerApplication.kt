@@ -9,7 +9,6 @@ import org.springframework.boot.autoconfigure.SpringBootApplication
 open class MockServerApplication : ApplicationRunner {
 
     companion object {
-
         @Volatile
         var focus: String? = null
     }

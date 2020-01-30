@@ -23,7 +23,10 @@ class BinaryLoader : ApplicationLoadListener {
 
         init {
             //clear
-            File(FileUtils.getTempDirectory(), "flexml/bin").apply {
+            File(
+                    FileUtils.getTempDirectory(),
+                    "flexml/bin"
+            ).apply {
                 if (exists()) {
                     delete()
                 }
