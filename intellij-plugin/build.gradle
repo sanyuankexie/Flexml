@@ -37,8 +37,7 @@ apply plugin: 'org.jetbrains.intellij'
 group = 'com.guet.flexbox'
 
 def taskOutput(String name, String task) {
-    project(name)
-            .getTasksByName(task, false)
+    project(name).getTasksByName(task, false)
             .first()
             .outputs
             .files

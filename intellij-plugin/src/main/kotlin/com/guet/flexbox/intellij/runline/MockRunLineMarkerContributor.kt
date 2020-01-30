@@ -15,7 +15,6 @@ import com.intellij.util.containers.ContainerUtil
 class MockRunLineMarkerContributor : RunLineMarkerContributor() {
 
     override fun getInfo(element: PsiElement): Info? {
-        val v = this.javaClass
         val file = element.containingFile?.let { it as? JsonFile }
         val obj = file?.topLevelValue?.let { it as? JsonObject }
         if (file?.name != "package.json") {
