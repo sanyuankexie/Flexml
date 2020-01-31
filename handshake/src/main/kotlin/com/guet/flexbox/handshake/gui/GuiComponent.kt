@@ -50,6 +50,7 @@ class GuiComponent : ApplicationListener<WebServerInitializedEvent> {
             setSize(WINDOW_SIZE, WINDOW_SIZE)
             isResizable = false
             val content = contentPane
+            imageView = ImageView()
             content.add(imageView)
             val kit = Toolkit.getDefaultToolkit()
             //获取屏幕的尺寸

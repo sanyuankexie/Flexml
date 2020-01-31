@@ -6,6 +6,7 @@ import org.springframework.boot.ApplicationArguments
 import org.springframework.boot.ApplicationRunner
 import org.springframework.boot.web.context.WebServerInitializedEvent
 import org.springframework.context.ApplicationListener
+import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
 import org.springframework.stereotype.Controller
 import org.springframework.web.bind.annotation.RequestMapping
@@ -98,6 +99,7 @@ class PackageFocusController : ApplicationRunner,
 
     @RequestMapping(
             "/qrcode",
+            produces = [MediaType.APPLICATION_JSON_VALUE],
             method = [RequestMethod.GET]
     )
     fun qrcode(): ResponseEntity<String> {

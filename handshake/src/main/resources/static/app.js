@@ -1,10 +1,10 @@
 !function () {
     var port = window.location.port.toString() || 8080
-
     function myAjax(url, success, error) {
         $.ajax({
             type: "get",
             timeout: 500,
+            contentType: "application/json;charset=utf-8",
             url: 'http://localhost:' + port + '/' + url,
             success: success,
             error: function () {
