@@ -1,0 +1,71 @@
+* {
+    margin: 0px;
+    padding: 0px;
+}
+
+body {
+    margin: 0px;
+    padding: 0px;
+    background-image: linear-gradient(to bottom, rgb(122, 255, 173), #1435ad);
+    background-size: cover;
+    background-attachment: fixed;
+    background-color: rgb(204, 204, 204);
+    background-repeat: no-repeat;
+}
+
+.host {
+    width: 100%;
+    display: flex;
+    margin-top: 80px;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center
+}
+
+.input {
+    border: 1px solid #ccc;
+    padding-top: 7px;
+    padding-bottom: 7px;
+    padding-left: 20px;
+    padding-right: 20px;
+    border-radius: 30px;
+    -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075);
+    box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075);
+    -webkit-transition: border-color ease-in-out .15s, -webkit-box-shadow ease-in-out .15s;
+    -o-transition: border-color ease-in-out .15s, box-shadow ease-in-out .15s;
+    transition: border-color ease-in-out .15s, box-shadow ease-in-out .15s
+}
+
+.input:focus {
+    border-color: #66afe9;
+    outline: 0;
+    -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075), 0 0 8px rgba(102, 175, 233, .6);
+    box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075), 0 0 8px rgba(102, 175, 233, .6)
+}
+
+.icon {
+    display: flex;
+    width: 150px;
+    height: 150px
+}
+
+.title {
+    margin-top: 10px;
+    margin-bottom: 10px;
+    padding: 0px;
+    display: flex;
+    color: white;
+    font-size: 30px;
+    font: bold;
+}
+
+.button {
+    padding: 0px;
+    text-align: center;
+    background: white;
+    margin: 0px;
+    border-width: 0px;
+    padding-left: 20px;
+    padding-right: 20px;
+    border-radius: 30px;
+}

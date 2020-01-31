@@ -2,6 +2,10 @@ package com.guet.flexbox.handshake
 
 import com.google.gson.Gson
 import com.guet.flexbox.compiler.JsonCompiler
+import org.springframework.boot.ApplicationArguments
+import org.springframework.boot.ApplicationRunner
+import org.springframework.boot.web.context.WebServerInitializedEvent
+import org.springframework.context.ApplicationListener
 import org.springframework.http.ResponseEntity
 import org.springframework.stereotype.Controller
 import org.springframework.web.bind.annotation.RequestMapping
@@ -12,7 +16,13 @@ import java.io.File
 import javax.servlet.http.HttpServletRequest
 
 @Controller
-class ServerController {
+class PackageFocusController : ApplicationRunner,
+        ApplicationListener<WebServerInitializedEvent> {
+
+    @Volatile
+    private var port: Int = 8080
+    @Volatile
+    private var focus: String? = null
 
     private val gson = Gson()
 
@@ -20,8 +30,9 @@ class ServerController {
             "/",
             method = [RequestMethod.GET]
     )
+    @ResponseBody
     fun index(): String {
-       return "/index"
+        return "Hello world"
     }
 
     @RequestMapping(
@@ -30,9 +41,8 @@ class ServerController {
             method = [RequestMethod.GET],
             produces = ["application/json"]
     )
-    @ResponseBody
     fun loadPackage(request: HttpServletRequest): ResponseEntity<String> {
-        val focus = MockServerApplication.focus
+        val focus = focus
         if (focus != null) {
             val packageFile = File(focus)
             if (packageFile.exists()) {
@@ -83,6 +93,30 @@ class ServerController {
             method = [RequestMethod.POST]
     )
     fun focus(@RequestParam("focus") focus: String) {
-        MockServerApplication.focus = focus
+        this.focus = focus
+    }
+
+    @RequestMapping(
+            "/qrcode",
+            method = [RequestMethod.GET]
+    )
+    fun qrcode(): ResponseEntity<String> {
+        val host = NetworkHostAddress.findHostAddress()
+        return if (host != null) {
+            val port = this.port
+            ResponseEntity.ok("http://$host:${port}")
+        } else {
+            ResponseEntity.notFound().build()
+        }
+    }
+
+    override fun run(args: ApplicationArguments) {
+        if (args.containsOption("package.focus")) {
+            focus = args.getOptionValues("package.focus").first()
+        }
+    }
+
+    override fun onApplicationEvent(event: WebServerInitializedEvent) {
+        port = event.webServer.port
     }
 }

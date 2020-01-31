@@ -1,0 +1,70 @@
+<!doctype html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<title>Welcome to Handshake</title>
+	<meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+	<link rel="stylesheet" type="text/css" href="app.css">
+	<link rel="stylesheet" type="text/css" href="toastr.min.css">
+</head>
+
+<body style="display: flex;">
+	<script type="text/javascript" src="jquery.min.js"></script>
+	<script type="text/javascript" src="toastr.min.js"></script>
+	<script type="text/javascript" src="qrcode.js"></script>
+
+	<div style="display: flex;width: 100%;">
+		<div class="host">
+			<img src="icon-big.png" class="icon" />
+			<p class="title">Welcome to Handshake</p>
+			<p style="margin:0px; padding: 0px;margin-bottom: 15px;
+			color: white;text-align: center;">Please paste the
+				path of flexml's
+				"package.json" file into <br /> the input box 👇 to start debugging.</p>
+			<div style="display: flex;flex-direction: row">
+				<div class="button" style="
+				flex-direction: column;
+				font: bold;
+				display: flex;
+				justify-content: center;
+				font-size: 18px;
+				padding-bottom: 3px;
+				">📑package.json</div>
+				<form action="foucs" method="POST">
+					<input id="focus" class="input" style="
+					width: auto;
+					margin-right: 0px;
+					margin-left: 0px;
+					width: 400px;
+					height: 25px;
+					margin-left: 10px;
+					margin-right: 10px;
+					font-size: 20px;
+					padding-left: 10px;
+					padding-right: 10px;" type="text" name="focus" />
+					<input class="button" style="margin-left: -5px;
+					width: 180px;
+					height:100%;
+					color: white;
+					background-image: linear-gradient(to right, #cf8128, #ad3314);
+					font-size: 20px;" type="submit" name="submit" value="🚀Foucs   " />
+				</form>
+			</div>
+			<p style="padding: 0px;margin:0px;margin-top: 15px;color: white;">Please scan the QR code below with the
+				playground app.</p>
+			<div style="display: flex;flex-direction: row;margin-top: 15px;">
+				<div style="display: flex;padding: 10px;background-color: white;border-radius: 5px;">
+					<div id="qrcode" style="width: 128px;height: 128px;"></div>
+				</div>
+			</div>
+		</div>
+		<div id="background" style="width: 140px; position: absolute;margin-top: 195px;z-index: -1;">
+		</div>
+	</div>
+	<script type="text/javascript" src="three.min.js"></script>
+	<script type="text/javascript" src="background.js"></script>
+	<script type="text/javascript" src="app.js"></script>
+</body>
+
+</html>
