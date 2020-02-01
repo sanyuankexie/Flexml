@@ -37,8 +37,10 @@
     <depends>com.intellij.modules.lang</depends>
     <depends>com.intellij.modules.json</depends>
     <extensions defaultExtensionNs="com.intellij">
+        <postStartupActivity
+            implementation="com.guet.flexbox.intellij.ProjectTODO"/>
         <ApplicationLoadListener
-            implementation="com.guet.flexbox.intellij.SdkJarFinder"/>
+            implementation="com.guet.flexbox.intellij.SdkLocationFinder"/>
         <configurationType
             implementation="com.guet.flexbox.intellij.configuration.type.CompileConfigurationType"/>
         <configurationType
@@ -50,11 +52,11 @@
         <runLineMarkerContributor
             language="JSON"
             order="after applicationRunLineMarkerProvider"
-            implementationClass="com.guet.flexbox.intellij.runline.MockRunLineMarkerContributor"/>
+            implementationClass="com.guet.flexbox.intellij.runLineMarker.MockRunLineMarkerContributor"/>
         <runLineMarkerContributor
             language="XML"
             order="after applicationRunLineMarkerProvider"
-            implementationClass="com.guet.flexbox.intellij.runline.CompileRunLineMarkerContributor"/>
+            implementationClass="com.guet.flexbox.intellij.runLineMarker.CompileRunLineMarkerContributor"/>
         <internalFileTemplate
             name="package"/>
         <internalFileTemplate
@@ -64,7 +66,7 @@
         <completion.contributor language="XML"
             implementationClass="com.guet.flexbox.intellij.completion.FlexmlCompletionContributor"/>
         <fileType name="flexml dsl"
-            implementationClass="com.guet.flexbox.intellij.filetype.FlexmlFileType"
+            implementationClass="com.guet.flexbox.intellij.fileType.FlexmlFileType"
             fieldName="INSTANCE"
             language="XML"
             extensions="xml;flexml"/>

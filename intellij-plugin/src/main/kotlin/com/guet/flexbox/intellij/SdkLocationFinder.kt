@@ -8,7 +8,7 @@ import com.intellij.notification.NotificationType
 import com.intellij.openapi.application.Application
 import java.io.File
 
-class SdkJarFinder : ApplicationLoadListener {
+class SdkLocationFinder : ApplicationLoadListener {
 
     override fun beforeApplicationLoaded(
             application: Application,
@@ -42,7 +42,7 @@ class SdkJarFinder : ApplicationLoadListener {
         private const val GROUP_ID = "Flexml plugin"
 
         private fun findPluginRootPath(): File? {
-            return SdkJarFinder::class.java
+            return SdkLocationFinder::class.java
                     .classLoader
                     .run { this as? PluginClassLoader }
                     ?.pluginId

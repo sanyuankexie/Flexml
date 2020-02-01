@@ -1,11 +1,11 @@
-package com.guet.flexbox.intellij.bundle
+package com.guet.flexbox.intellij.res
 
 import com.intellij.openapi.util.IconLoader
 
 object Icons {
 
-    val fileIcon by lazy {
-        IconLoader.getIcon("/icons/icon_file.png")
+    val typeIcon by lazy {
+        IconLoader.getIcon("/icons/icon_type.png")
     }
 
     val tagIcon by lazy {

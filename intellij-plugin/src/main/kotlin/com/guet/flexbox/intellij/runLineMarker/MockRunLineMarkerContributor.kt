@@ -1,4 +1,4 @@
-package com.guet.flexbox.intellij.runline
+package com.guet.flexbox.intellij.runLineMarker
 
 import com.guet.flexbox.intellij.isOnFlexmlFile
 import com.intellij.execution.lineMarker.ExecutorAction

@@ -89,21 +89,15 @@ class HomepageController : ApplicationRunner,
 
     @RequestMapping(
             "/focus",
-            method = [RequestMethod.POST, RequestMethod.GET]
+            method = [RequestMethod.POST]
     )
-    fun focus(request: HttpServletRequest, @RequestBody url: String?): ResponseEntity<String> {
-        if (request.method.equals("get", ignoreCase = true)) {
-            return ResponseEntity.ok(focus ?: "adasdsad")
-        } else if (request.method.equals("post", ignoreCase = true)) {
-            if (url != null) {
-                if (File(url).run { exists() && isFile }
-                        && url.endsWith("package.json")) {
-                    focus = url
-                    return ResponseEntity.ok().build()
-                }
+    fun focus(request: HttpServletRequest, @RequestBody url: String?) {
+        if (url != null) {
+            if (File(url).run { exists() && isFile }
+                    && url.endsWith("package.json")) {
+                focus = url
             }
         }
-        return ResponseEntity.badRequest().build()
     }
 
     @RequestMapping(

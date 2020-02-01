@@ -1,7 +1,10 @@
 !function () {
     var port = window.location.port.toString() || 8080
-    var host = 'http://localhost:' + port
+    var host = 'http://localhost:' + port;
     !function () {
+        function removeAll(node) {
+            node.innerHTML = '';
+        }
         function myAjax(url, success, error) {
             $.ajax({
                 type: "get",
@@ -10,54 +13,99 @@
                 contentType: "application/json;charset=utf-8",
                 url: host + '/' + url,
                 success: success,
-                error: function (e) {
-                    toastr.error('The request to refresh the data failed,'
-                        + ' and the server may be down. code = '
-                        + e.status, 'Error');
-                    if (error != null) {
-                        error()
-                    }
-                }
+                error: error
             });
         }
-        var root = document.getElementById("qrcode");
-        var cacheQrCodeContent = "";
-        function requestQrCode() {
-            myAjax('qrcode', function (data) {
-                if (cacheQrCodeContent != data.toString()) {
-                    cacheQrCodeContent = data.toString()
-                    while (root.hasChildNodes()) {
-                        root.removeChild(root.firstChild);
+        var requestQrCode = function () {
+            var qrcode = document.getElementById("qrcode");
+            var cacheQrCodeContent = "";
+            return function () {
+                myAjax(
+                    'qrcode',
+                    function (data) {
+                        if (cacheQrCodeContent != data.toString()) {
+                            cacheQrCodeContent = data.toString()
+                            removeAll(qrcode);
+                            new QRCode(qrcode, {
+                                text: cacheQrCodeContent,
+                                width: 128,
+                                height: 128,
+                                colorDark: "#000000",
+                                colorLight: "#ffffff",
+                                correctLevel: QRCode.CorrectLevel.H
+                            });
+                        }
+                    },
+                    function (e) {
+                        var loading = 'qrcode_loading.jpg';
+                        if (qrcode.firstChild.src != loading) {
+                            removeAll(qrcode);
+                            var image = document.createElement("img");
+                            image.src = loading;
+                            image.style.width = '128px';
+                            image.style.height = '128px';
+                            image.style.margin = '0px';
+                            image.style.padding = '0px';
+                            qrcode.appendChild(image);
+                        }
+                        toastr.error('Request for new qrcode failed. status code = ' + e.status, 'Error');
+                    })
+            }
+        }();
+        var requestTemplate = function () {
+            var template = document.getElementById("template");
+            return function () {
+                var cache = null;
+                myAjax(
+                    "template",
+                    function (code) {                        
+                        if (code.toString() != cache) {
+                            removeAll(template);
+                            var formated = formatJson(code);
+                            var html = Prism.highlight(formated, Prism.languages.json, 'json');
+                            template.innerHTML = html;
+                            cache = code;
+                        }
+                    },
+                    function () {
+                        cache = null;
+                        removeAll(template);
+                        datasource.innerHTML = "<br/>//this is empty."
                     }
-                    new QRCode(root, {
-                        text: cacheQrCodeContent,
-                        width: 128,
-                        height: 128,
-                        colorDark: "#000000",
-                        colorLight: "#ffffff",
-                        correctLevel: QRCode.CorrectLevel.H
-                    });
-                }
-            })
-        }
-        function requestTemplate() {
-            myAjax("template", function (data) {
-
-            })
-        }
-        function requestDataSource() {
-            myAjax("datasource", function (data) {
-
-            })
-        }
+                );
+            }
+        }();
+        var requestDataSource = function () {
+            var datasource = document.getElementById("datasource");
+            return function () {
+                var cache = null;
+                myAjax(
+                    "datasource",
+                    function (code) {
+                        if (code.toString() != cache) {
+                            removeAll(template);
+                            var formated = formatJson(code);
+                            var html = Prism.highlight(formated, Prism.languages.json, 'json');
+                            datasource.innerHTML = html;
+                            cache = code;
+                        }
+                    },
+                    function () {
+                        cache = null;
+                        removeAll(datasource);
+                        datasource.innerHTML = "<br/>//this is empty."
+                    }
+                );
+            }
+        }();
         function requestGroup() {
             requestQrCode();
-            // requestTemplate();
-            // requestDataSource();
+            requestTemplate();
+            requestDataSource();
         }
         window.setInterval(requestGroup, 2000)
         requestGroup()
-    }()
+    }();
     !function () {
         var btn = document.getElementById('change-focus')
         var input = document.getElementById("focus-input")
@@ -72,6 +120,7 @@
                 url: host + '/focus',
                 data: (value || ''),
                 success: function () {
+                    input.value = '';
                     toastr.success('Aready submitt.', "Success");
                 },
                 error: function (e) {
@@ -82,20 +131,5 @@
             });
         }
         btn.onclick = focus;
-        $.ajax({
-            type: "get",
-            dataType: "text",
-            timeout: 500,
-            contentType: "application/json;charset=utf-8",
-            url: host + '/focus',
-            success: function (data) {                              
-                input.value = data.toString();
-            },
-            error: function (e) {
-                toastr.error('The request to refresh the data failed,'
-                    + ' and the server may be down. code = '
-                    + e.status, 'Error');
-            }
-        });
-    }()
-}()
+    }();
+}();

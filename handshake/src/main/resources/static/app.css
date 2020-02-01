@@ -6,17 +6,17 @@
 body {
     margin: 0px;
     padding: 0px;
-    background-image: linear-gradient(to bottom, rgb(122, 255, 173), #1435ad);
+    /* background-image: linear-gradient(to bottom, rgb(122, 255, 173), #1435ad);
     background-size: cover;
     background-attachment: fixed;
     background-color: rgb(204, 204, 204);
-    background-repeat: no-repeat;
+    background-repeat: no-repeat; */
 }
 
 .host {
     width: 100%;
     display: flex;
-    margin-top: 60px;
+    margin-top: 50px;
     flex-direction: column;
     align-items: center;
     justify-content: center
@@ -76,6 +76,7 @@ body {
     display: flex;
     flex-direction: column;
     width: 700px;
+    max-height: 1132px;
     margin: 0px;
     padding: 0px;
 	background-color: gray;
@@ -98,3 +99,34 @@ body {
     border-radius: 30px;
 }
 
+/*整体部分*/ 
+::-webkit-scrollbar
+{
+	width: 10px;
+	height: 10px;
+}
+/*滑动轨道*/ 
+::-webkit-scrollbar-track
+{
+	border-radius: 0px;
+	background: none;
+}
+/*滑块*/
+::-webkit-scrollbar-thumb
+{
+	border-radius: 5px;
+	box-shadow: inset 0 0 6px rgba(0,0,0,.2);
+    background-color: rgba(85, 85, 85, 0.4);
+}
+/*滑块效果*/ 
+::-webkit-scrollbar-thumb:hover
+{
+	border-radius: 5px;
+	box-shadow: inset 0 0 6px rgba(0,0,0,.2);
+
+    background-color: rgba(255,255,255,.75)
+}
+
+::-webkit-scrollbar-corner{
+    display: none;
+}

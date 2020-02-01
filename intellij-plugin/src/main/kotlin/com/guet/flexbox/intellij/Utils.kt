@@ -1,6 +1,6 @@
 package com.guet.flexbox.intellij
 
-import com.guet.flexbox.intellij.filetype.FlexmlFileType
+import com.guet.flexbox.intellij.fileType.FlexmlFileType
 import com.intellij.execution.configurations.RunProfileState
 import com.intellij.execution.jar.JarApplicationCommandLineState
 import com.intellij.execution.jar.JarApplicationConfiguration
