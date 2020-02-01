@@ -6,18 +6,17 @@ import org.springframework.boot.ApplicationArguments
 import org.springframework.boot.ApplicationRunner
 import org.springframework.boot.web.context.WebServerInitializedEvent
 import org.springframework.context.ApplicationListener
-import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
 import org.springframework.stereotype.Controller
+import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestMethod
-import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.ResponseBody
 import java.io.File
 import javax.servlet.http.HttpServletRequest
 
 @Controller
-class PackageFocusController : ApplicationRunner,
+class HomepageController : ApplicationRunner,
         ApplicationListener<WebServerInitializedEvent> {
 
     @Volatile
@@ -39,8 +38,7 @@ class PackageFocusController : ApplicationRunner,
     @RequestMapping(
             "/template",
             "/datasource",
-            method = [RequestMethod.GET],
-            produces = ["application/json"]
+            method = [RequestMethod.GET]
     )
     fun loadPackage(request: HttpServletRequest): ResponseEntity<String> {
         val focus = focus
@@ -91,19 +89,29 @@ class PackageFocusController : ApplicationRunner,
 
     @RequestMapping(
             "/focus",
-            method = [RequestMethod.POST]
+            method = [RequestMethod.POST, RequestMethod.GET]
     )
-    fun focus(@RequestParam("focus") focus: String) {
-        this.focus = focus
+    fun focus(request: HttpServletRequest, @RequestBody url: String?): ResponseEntity<String> {
+        if (request.method.equals("get", ignoreCase = true)) {
+            return ResponseEntity.ok(focus ?: "adasdsad")
+        } else if (request.method.equals("post", ignoreCase = true)) {
+            if (url != null) {
+                if (File(url).run { exists() && isFile }
+                        && url.endsWith("package.json")) {
+                    focus = url
+                    return ResponseEntity.ok().build()
+                }
+            }
+        }
+        return ResponseEntity.badRequest().build()
     }
 
     @RequestMapping(
             "/qrcode",
-            produces = [MediaType.APPLICATION_JSON_VALUE],
             method = [RequestMethod.GET]
     )
     fun qrcode(): ResponseEntity<String> {
-        val host = NetworkHostAddress.findHostAddress()
+        val host = HostAddressFinder.findHostAddress()
         return if (host != null) {
             val port = this.port
             ResponseEntity.ok("http://$host:${port}")

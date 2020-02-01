@@ -4,26 +4,22 @@
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 	<title>Welcome to Handshake</title>
+	<link rel="icon" href="icon.png" >
 	<meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
-	<link rel="stylesheet" type="text/css" href="app.css">
+	<link rel="stylesheet" type="text/css" href="prism.css">
 	<link rel="stylesheet" type="text/css" href="toastr.min.css">
+	<link rel="stylesheet" type="text/css" href="app.css">
 </head>
 
 <body style="display: flex;">
-	<script type="text/javascript" src="jquery.min.js"></script>
-	<script type="text/javascript" src="toastr.min.js"></script>
-	<script type="text/javascript" src="qrcode.js"></script>
-
-	<div style="display: flex;width: 100%;">
+	<div style="display: flex;width: 100%;flex-direction: column;">
 		<div class="host">
 			<img src="icon-big.png" class="icon" />
 			<p class="title">Welcome to Handshake</p>
 			<p style="margin:0px; padding: 0px;margin-bottom: 15px;
-			color: white;text-align: center;">Please paste the
-				path of flexml's
-				"package.json" file into <br /> the input box 👇 to start debugging.</p>
-			<div style="display: flex;flex-direction: row">
-				<div class="button" style="
+			color: white;text-align: center;">You can paste flexml's "package.json" file 👇 to change the locked package.
+				<div style="display: flex;flex-direction: row">
+					<div class="button" style="
 				flex-direction: column;
 				font: bold;
 				display: flex;
@@ -31,37 +27,102 @@
 				font-size: 18px;
 				padding-bottom: 3px;
 				">📑package.json</div>
-				<form action="focus" method="POST">
-					<input id="focus" class="input" style="
-					width: auto;
-					margin-right: 0px;
-					margin-left: 0px;
-					width: 400px;
-					height: 25px;
-					margin-left: 10px;
-					margin-right: 10px;
-					font-size: 20px;
-					padding-left: 10px;
-					padding-right: 10px;" type="text" name="focus" />
-					<input class="button" style="margin-left: -5px;
-					width: 180px;
-					height:100%;
+					<input id="focus-input" class="input" style="
+									width: auto;
+									margin-right: 0px;
+									margin-left: 0px;
+									width: 400px;
+									height: 25px;
+									margin-left: 10px;
+									margin-right: 10px;
+									font-size: 20px;
+									padding-left: 20px;
+									padding-right: 20px;" type="text" name="focus" />
+
+					<div id="change-focus" class="button" style="
+					display: flex;
+					flex-direction: column;
+					font: bold;
+					display: flex;
+					justify-content: center;
+					font-size: 18px;
+					padding-bottom: 3px;
+					width: 150px;
 					color: white;
 					background-image: linear-gradient(to right, #cf8128, #ad3314);
-					font-size: 20px;" type="submit" name="submit" value="🚀Focus   " />
-				</form>
-			</div>
-			<p style="padding: 0px;margin:0px;margin-top: 15px;color: white;">Please scan the QR code below with the
-				playground app.</p>
-			<div style="display: flex;flex-direction: row;margin-top: 15px;">
-				<div style="display: flex;padding: 10px;background-color: white;border-radius: 5px;">
-					<div id="qrcode" style="width: 128px;height: 128px;"></div>
+					font-size: 20px;">🚀Focus</div>
 				</div>
-			</div>
+
+				<p style="padding: 0px;margin:0px;margin-top: 30px;color: white;">Please scan the QR code below with the
+					playground app.</p>
+				<div style="display: flex;flex-direction: row;margin-top: 20px;">
+					<div style="display: flex;padding: 10px;
+				background-color: white;
+				border-radius: 5px;
+				box-shadow: 0 8px 16px 0 rgba(0,0,0,0.2), 0 6px 20px 0 rgba(0,0,0,0.19);">
+						<div id="qrcode" style="width: 128px;height: 128px;"></div>
+					</div>
+				</div>
+				<div class="card" style="margin: 50px;">
+					<div class="card-title">
+						<p style="margin-left: 10px;font-size: 15px;color: white;font:bold">template ( compiled xml )</p>
+						<div style="display: flex;flex-grow: 1;"></div>
+						<div style="display: flex;flex-direction: row;margin-right: 10px;">
+							<div class="card-title-option" style="background-color:rgb(129, 194, 65)">
+							</div>
+							<div class="card-title-option" style="background-color:dodgerblue;">
+							</div>
+							<div class="card-title-option" style="background-color: tomato;">
+							</div>
+						</div>
+					</div>
+					<pre style="margin: 0px;
+			padding: 0px;
+			min-height: 400px;
+			border-bottom-left-radius: 10px;
+			border-bottom-right-radius: 10px;">
+				<code class="language-json">
+{
+	"message":"now this empty"
+}					
+				</code>
+			</pre>
+				</div>
+				<div class="card" style="margin: 50px;margin-bottom: 200px;margin-top: 0px;">
+					<div class="card-title">
+						<p style="margin-left: 10px; font-size: 15px;color: white;font:bold">datasource ( mock data )</p>
+						<div style="display: flex;flex-grow: 1;"></div>
+						<div style="display: flex;flex-direction: row;margin-right: 10px;">
+							<div class="card-title-option" style="background-color:rgb(129, 194, 65)">
+							</div>
+							<div class="card-title-option" style="background-color:dodgerblue;">
+							</div>
+							<div class="card-title-option" style="background-color: tomato;">
+							</div>
+						</div>
+					</div>
+					<pre style="margin: 0px;
+			padding: 0px;min-height: 400px;
+			border-bottom-left-radius: 10px;
+			border-bottom-right-radius: 10px;">
+				<code class="language-json">
+{
+	"message":"now this empty"
+}
+
+				</code>
+			</pre>
+				</div>
 		</div>
-		<div id="background" style="width: 140px; position: absolute;margin-top: 195px;z-index: -1;">
+
+		<div id="background" style="width: 140px; position: fixed;margin-top: 195px;z-index: -1;">
 		</div>
 	</div>
+
+	<script type="text/javascript" src="jquery.min.js"></script>
+	<script type="text/javascript" src="prism.js"></script>
+	<script type="text/javascript" src="toastr.min.js"></script>
+	<script type="text/javascript" src="qrcode.js"></script>
 	<script type="text/javascript" src="three.min.js"></script>
 	<script type="text/javascript" src="background.js"></script>
 	<script type="text/javascript" src="app.js"></script>

@@ -3,7 +3,7 @@ package com.guet.flexbox.handshake
 import java.net.Inet4Address
 import java.net.NetworkInterface
 
-object NetworkHostAddress {
+object HostAddressFinder {
     fun findHostAddress(): String? {
         try {
             Inet4Address.getLocalHost()
