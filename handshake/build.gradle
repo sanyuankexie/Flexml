@@ -39,13 +39,14 @@ compileTestKotlin {
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation('com.google.code.gson:gson:2.8.6')
-    implementation('org.dom4j:dom4j:2.1.1')
     implementation project(':compiler')
     implementation('com.google.zxing:core:3.4.0')
     implementation("org.springframework.boot:spring-boot-starter:${springIOVersion}")
-    implementation("org.springframework.boot:spring-boot-starter-web:${springIOVersion}")
-    implementation("org.jetbrains.kotlin:kotlin-reflect:${kotlinVersion}")
+    implementation("org.springframework.boot:spring-boot-starter-web:${springIOVersion}"){
+        exclude group: "org.springframework.boot", module: "spring-boot-starter-json"
+    }
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8:${kotlinVersion}")
+    implementation("org.jetbrains.kotlin:kotlin-reflect:${kotlinVersion}")
     testImplementation("org.springframework.boot:spring-boot-starter-test:${springIOVersion}") {
         exclude group: "org.junit.vintage", module: "junit-vintage-engine"
     }

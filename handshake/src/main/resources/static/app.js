@@ -79,7 +79,7 @@
             requestQrCode();
             requestTemplate();
         }
-        window.setInterval(requestGroup, 2000)
+        window.setInterval(requestGroup, 1000)
         requestGroup()
     }();
     !function () {
