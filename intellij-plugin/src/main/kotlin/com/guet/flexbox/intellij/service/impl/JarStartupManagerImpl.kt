@@ -7,13 +7,10 @@ import com.intellij.execution.jar.JarApplicationCommandLineState
 import com.intellij.execution.jar.JarApplicationConfiguration
 import com.intellij.execution.jar.JarApplicationConfigurationType
 import com.intellij.execution.runners.ExecutionEnvironment
-import com.intellij.ide.plugins.PluginManager
-import com.intellij.ide.plugins.cl.PluginClassLoader
+import com.intellij.ide.ApplicationLoadListener
 import com.intellij.json.psi.JsonFile
 import com.intellij.json.psi.JsonObject
 import com.intellij.json.psi.JsonStringLiteral
-import com.intellij.notification.Notification
-import com.intellij.notification.NotificationType
 import com.intellij.openapi.fileEditor.FileEditorManagerEvent
 import com.intellij.openapi.fileEditor.FileEditorManagerListener
 import com.intellij.openapi.project.Project
@@ -21,7 +18,6 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiManager
 import com.intellij.util.concurrency.AppExecutorUtil
 import com.intellij.util.io.HttpRequests
-import java.io.File
 import java.io.IOException
 
 class JarStartupManagerImpl(
@@ -30,9 +26,15 @@ class JarStartupManagerImpl(
 
     init {
         project.messageBus.connect().subscribe(
-                        FileEditorManagerListener.FILE_EDITOR_MANAGER,
-                        this
-                )
+                FileEditorManagerListener.FILE_EDITOR_MANAGER,
+                this
+        )
+    }
+
+    private val initializer by lazy {
+        ApplicationLoadListener.EP_NAME.findExtension(
+                PluginInitializer::class.java
+        ) ?: throw InternalError("Plugin internal error")
     }
 
     @Volatile
@@ -46,10 +48,14 @@ class JarStartupManagerImpl(
                 jar: String,
                 args: String
         ): RunProfileState {
+            val factory = JarApplicationConfigurationType
+                    .getInstance()
+                    .configurationFactories
+                    .first()
             return JarApplicationCommandLineState(
                     JarApplicationConfiguration(
                             project,
-                            JarApplicationConfigurationType.getInstance(),
+                            factory,
                             "Mock this package"
                     ).apply {
                         jarPath = jar
@@ -58,16 +64,6 @@ class JarStartupManagerImpl(
                     },
                     environment
             )
-        }
-
-        private fun findPluginRootPath(): File? {
-            return JarStartupManagerImpl::class.java
-                    .classLoader
-                    .run { this as? PluginClassLoader }
-                    ?.pluginId
-                    ?.let {
-                        PluginManager.getPlugin(it)
-                    }?.path
         }
 
         private val PsiElement.isPackageJson: Boolean
@@ -89,26 +85,6 @@ class JarStartupManagerImpl(
                 return false
             }
 
-        private const val GROUP_ID = "Flexml plugin"
-        private val compilerJarFile: File
-        private val mockJarFile: File
-
-        init {
-            val root = findPluginRootPath()
-            if (root != null) {
-                compilerJarFile = File(root, "lib/flexmlc.jar")
-                mockJarFile = File(root, "lib/handshake.jar")
-            } else {
-                Notification(
-                        GROUP_ID,
-                        "插件在加载时发生错误",
-                        "插件的根目录没有找到，请重新尝试安装插件以解决问题",
-                        NotificationType.ERROR,
-                        null
-                ).notify(null)
-                throw AssertionError()
-            }
-        }
     }
 
     override fun selectionChanged(event: FileEditorManagerEvent) {
@@ -145,7 +121,7 @@ class JarStartupManagerImpl(
         return runJar(
                 project,
                 environment,
-                compilerJarFile.absolutePath,
+                initializer.compilerJarFilePath,
                 "-i $input -o $output"
         )
     }
@@ -159,7 +135,7 @@ class JarStartupManagerImpl(
         return runJar(
                 project,
                 environment,
-                mockJarFile.absolutePath,
+                initializer.mockJarFilePath,
                 "--server.port=$port --package.focus=$focus"
         )
     }

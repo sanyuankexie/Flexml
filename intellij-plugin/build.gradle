@@ -64,6 +64,5 @@ compileTestKotlin {
 
 
 intellij {
-    version '2019.3.1'
-    plugins = ['java']
+    version '2018.3.1'
 }

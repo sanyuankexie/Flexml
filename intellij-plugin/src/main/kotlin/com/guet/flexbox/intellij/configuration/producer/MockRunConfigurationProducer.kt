@@ -4,8 +4,9 @@ import com.guet.flexbox.intellij.configuration.MockRunConfiguration
 import com.guet.flexbox.intellij.configuration.type.MockConfigurationType
 import com.guet.flexbox.intellij.isOnFlexmlFile
 import com.intellij.execution.actions.ConfigurationContext
-import com.intellij.execution.actions.LazyRunConfigurationProducer
+import com.intellij.execution.actions.RunConfigurationProducer
 import com.intellij.execution.configurations.ConfigurationFactory
+import com.intellij.execution.configurations.ConfigurationType
 import com.intellij.execution.configurations.ConfigurationTypeUtil
 import com.intellij.json.psi.JsonFile
 import com.intellij.json.psi.JsonObject
@@ -14,7 +15,11 @@ import com.intellij.openapi.util.Ref
 import com.intellij.psi.PsiElement
 
 class MockRunConfigurationProducer
-    : LazyRunConfigurationProducer<MockRunConfiguration>() {
+    : RunConfigurationProducer<MockRunConfiguration>(
+        ConfigurationTypeUtil.findConfigurationType(
+                MockConfigurationType::class.java
+        ) as ConfigurationType
+) {
 
     override fun isConfigurationFromContext(
             configuration: MockRunConfiguration,
