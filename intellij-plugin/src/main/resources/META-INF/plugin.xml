@@ -37,10 +37,9 @@
     <depends>com.intellij.modules.lang</depends>
     <depends>com.intellij.modules.json</depends>
     <extensions defaultExtensionNs="com.intellij">
-        <postStartupActivity
-            implementation="com.guet.flexbox.intellij.ProjectTODO"/>
-        <ApplicationLoadListener
-            implementation="com.guet.flexbox.intellij.SdkLocationFinder"/>
+        <projectService
+            serviceImplementation="com.guet.flexbox.intellij.service.impl.JarStartupManagerImpl"
+            serviceInterface="com.guet.flexbox.intellij.service.JarStartupManager"/>
         <configurationType
             implementation="com.guet.flexbox.intellij.configuration.type.CompileConfigurationType"/>
         <configurationType
@@ -52,11 +51,11 @@
         <runLineMarkerContributor
             language="JSON"
             order="after applicationRunLineMarkerProvider"
-            implementationClass="com.guet.flexbox.intellij.runLineMarker.MockRunLineMarkerContributor"/>
+            implementationClass="com.guet.flexbox.intellij.lineMarker.MockRunLineMarkerContributor"/>
         <runLineMarkerContributor
             language="XML"
             order="after applicationRunLineMarkerProvider"
-            implementationClass="com.guet.flexbox.intellij.runLineMarker.CompileRunLineMarkerContributor"/>
+            implementationClass="com.guet.flexbox.intellij.lineMarker.CompileRunLineMarkerContributor"/>
         <internalFileTemplate
             name="package"/>
         <internalFileTemplate

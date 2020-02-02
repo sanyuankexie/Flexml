@@ -1,7 +1,6 @@
 !function () {
-    var marginTop = 200;
     var myColor = 0xFFFFFF;
-    var SEPARATION = 100, AMOUNTX = 50, AMOUNTY = 50;
+    var SEPARATION = 100, AMOUNTX = 50, AMOUNTY = 30;
 
     var container;
     var camera, scene, renderer;
@@ -21,7 +20,7 @@
         container = document.createElement('div');
         document.getElementById("background").appendChild(container);
 
-        camera = new THREE.PerspectiveCamera(75, (window.innerWidth) / (window.innerHeight - marginTop), 1, 10000);
+        camera = new THREE.PerspectiveCamera(75, (window.innerWidth) / (window.innerHeight), 1, 10000);
         camera.position.z = 1000;
 
         scene = new THREE.Scene();
@@ -58,7 +57,7 @@
         }
 
         renderer = new THREE.CanvasRenderer();
-        renderer.setSize(window.innerWidth, window.innerHeight - marginTop);
+        renderer.setSize(window.innerWidth, window.innerHeight);
         container.appendChild(renderer.domElement);
 
         document.addEventListener('mousemove', onDocumentMouseMove, false);
@@ -79,7 +78,7 @@
         camera.aspect = window.innerWidth / window.innerHeight;
         camera.updateProjectionMatrix();
 
-        renderer.setSize(window.innerWidth, window.innerHeight - 200);
+        renderer.setSize(window.innerWidth, window.innerHeight);
 
     }
 
@@ -155,4 +154,4 @@
         count += 0.1;
 
     }
-}()
+}();

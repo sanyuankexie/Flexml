@@ -70,30 +70,7 @@
                     function () {
                         cache = null;
                         removeAll(template);
-                        datasource.innerHTML = "<br/>//this is empty."
-                    }
-                );
-            }
-        }();
-        var requestDataSource = function () {
-            var datasource = document.getElementById("datasource");
-            return function () {
-                var cache = null;
-                myAjax(
-                    "datasource",
-                    function (code) {
-                        if (code.toString() != cache) {
-                            removeAll(template);
-                            var formated = formatJson(code);
-                            var html = Prism.highlight(formated, Prism.languages.json, 'json');
-                            datasource.innerHTML = html;
-                            cache = code;
-                        }
-                    },
-                    function () {
-                        cache = null;
-                        removeAll(datasource);
-                        datasource.innerHTML = "<br/>//this is empty."
+                        template.innerHTML = "<br/>//now this is empty."
                     }
                 );
             }
@@ -101,7 +78,6 @@
         function requestGroup() {
             requestQrCode();
             requestTemplate();
-            requestDataSource();
         }
         window.setInterval(requestGroup, 2000)
         requestGroup()

@@ -1,4 +1,4 @@
-package com.guet.flexbox.intellij.runLineMarker
+package com.guet.flexbox.intellij.lineMarker
 
 import com.guet.flexbox.intellij.isOnFlexmlFile
 import com.intellij.execution.lineMarker.ExecutorAction
@@ -21,7 +21,8 @@ class MockRunLineMarkerContributor : RunLineMarkerContributor() {
             return null
         }
         val template = obj?.findProperty("template")
-        if (template == null || template != element) {
+                ?: return null
+        if (template != element) {
             return null
         }
         if (template.value?.let { it as? JsonStringLiteral }

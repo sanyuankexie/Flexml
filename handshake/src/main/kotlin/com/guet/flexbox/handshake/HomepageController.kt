@@ -11,7 +11,6 @@ import org.springframework.stereotype.Controller
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestMethod
-import org.springframework.web.bind.annotation.ResponseBody
 import java.io.File
 import javax.servlet.http.HttpServletRequest
 
@@ -30,9 +29,8 @@ class HomepageController : ApplicationRunner,
             "/",
             method = [RequestMethod.GET]
     )
-    @ResponseBody
     fun index(): String {
-        return "Hello world"
+        return "/index.html"
     }
 
     @RequestMapping(
@@ -91,13 +89,15 @@ class HomepageController : ApplicationRunner,
             "/focus",
             method = [RequestMethod.POST]
     )
-    fun focus(request: HttpServletRequest, @RequestBody url: String?) {
+    fun focus(@RequestBody url: String?): ResponseEntity<Void> {
         if (url != null) {
             if (File(url).run { exists() && isFile }
                     && url.endsWith("package.json")) {
                 focus = url
             }
+            return ResponseEntity.ok().build()
         }
+        return ResponseEntity.badRequest().build()
     }
 
     @RequestMapping(

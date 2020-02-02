@@ -12,7 +12,6 @@ import javax.swing.JFrame
 import kotlin.concurrent.schedule
 import kotlin.system.exitProcess
 
-//TODO kotlin dsl
 class QrCodeWindow : JFrame() {
 
     companion object{

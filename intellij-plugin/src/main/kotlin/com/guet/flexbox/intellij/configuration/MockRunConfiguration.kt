@@ -1,8 +1,7 @@
 package com.guet.flexbox.intellij.configuration
 
-import com.guet.flexbox.intellij.SdkLocationFinder
 import com.guet.flexbox.intellij.configuration.options.MockOptions
-import com.guet.flexbox.intellij.runJar
+import com.guet.flexbox.intellij.service.JarStartupManager
 import com.guet.flexbox.intellij.ui.MockSettingForm
 import com.intellij.execution.Executor
 import com.intellij.execution.configurations.*
@@ -21,12 +20,8 @@ class MockRunConfiguration(project: Project, factory: ConfigurationFactory) :
     ): RunProfileState? {
         val port = state!!.port
         val focus = state!!.packageJson!!
-        return runJar(
-                project,
-                environment,
-                SdkLocationFinder.mockPath,
-                "--server.port=$port --package.focus=$focus"
-        )
+        return JarStartupManager.getInstance(project)
+                .runMockServer(environment, focus, port)
     }
 
     override fun getOptionsClass(): Class<out RunConfigurationOptions>? {

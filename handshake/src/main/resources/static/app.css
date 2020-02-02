@@ -6,17 +6,12 @@
 body {
     margin: 0px;
     padding: 0px;
-    /* background-image: linear-gradient(to bottom, rgb(122, 255, 173), #1435ad);
-    background-size: cover;
-    background-attachment: fixed;
-    background-color: rgb(204, 204, 204);
-    background-repeat: no-repeat; */
 }
 
 .host {
     width: 100%;
     display: flex;
-    margin-top: 50px;
+    margin-top: 100px;
     flex-direction: column;
     align-items: center;
     justify-content: center
@@ -37,7 +32,6 @@ body {
 }
 
 .input:focus {
-
     border-color: #66afe9;
     outline: 0;
     -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075), 0 0 8px rgba(102, 175, 233, .6);
@@ -46,11 +40,22 @@ body {
 
 .icon {
     display: flex;
-    width: 150px;
-    height: 150px
+    width: 120px;
+    height: 120px
+}
+
+.focus-host{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 0px;
+    padding: 0px;
+    flex-grow: 1;
+    width: 100%;
 }
 
 .title {
+    font-family: Arial, Helvetica, sans-serif;
     text-shadow: 3px 3px 10px #000;
     margin-top: 10px;
     margin-bottom: 10px;
@@ -62,21 +67,32 @@ body {
 }
 
 .button {
+    padding-left: 10px;
+    padding-right: 10px;
     box-shadow: 0 8px 16px 0 rgba(0,0,0,0.2), 0 6px 20px 0 rgba(0,0,0,0.19);
-    padding: 0px;
     text-align: center;
     background: white;
     margin: 0px;
     border-width: 0px;
-    padding-left: 20px;
-    padding-right: 20px;
     border-radius: 30px;
+    width: 150px;
+    flex-direction: row;
+    display: flex;
+    align-items: center;
+    align-self:center;
+    justify-content: center;
 }
+
+.qrcode-host{
+    display: flex;padding: 10px;
+	background-color: white;
+    border-radius: 5px;
+	box-shadow: 0 8px 16px 0 rgba(0,0,0,0.2), 0 6px 20px 0 rgba(0,0,0,0.19);
+}
+
 .card {
     display: flex;
     flex-direction: column;
-    width: 700px;
-    max-height: 1132px;
     margin: 0px;
     padding: 0px;
 	background-color: gray;
@@ -92,11 +108,29 @@ body {
     border-top-left-radius: 10px;
     border-top-right-radius: 10px;
 }
+
+.card-title-text{
+    margin-left: 10px;
+    font-size: 15px;
+    color: white;				
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+
 .card-title-option {
     width: 18px;
     height: 18px;
     margin: 2px;
     border-radius: 30px;
+}
+
+.text{
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 18px;
+    margin:0px;
+    padding: 0px;
+    color: white;
+    text-align: center;
 }
 
 /*整体部分*/ 

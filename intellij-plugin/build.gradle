@@ -46,7 +46,6 @@ def taskOutput(String name, String task) {
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:${kotlinVersion}"
-    implementation 'com.squareup.okhttp3:okhttp:4.3.1'
     implementation project(':el')
     implementation taskOutput(":compiler", "shadowJar")
     implementation taskOutput(":handshake", "bootJar")
