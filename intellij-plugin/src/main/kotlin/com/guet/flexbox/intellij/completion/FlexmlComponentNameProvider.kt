@@ -1,7 +1,7 @@
 package com.guet.flexbox.intellij.completion
 
-import com.guet.flexbox.intellij.bundle.ComponentInfoBundle
-import com.guet.flexbox.intellij.bundle.Icons
+import com.guet.flexbox.intellij.res.ComponentInfoBundle
+import com.guet.flexbox.intellij.res.Icons
 import com.guet.flexbox.intellij.isOnFlexmlFile
 import com.intellij.codeInsight.completion.XmlTagInsertHandler
 import com.intellij.codeInsight.lookup.LookupElement

@@ -1,7 +1,7 @@
 package com.guet.flexbox.intellij.action
 
-import com.guet.flexbox.intellij.bundle.Icons
-import com.guet.flexbox.intellij.filetype.FlexmlFileType
+import com.guet.flexbox.intellij.res.Icons
+import com.guet.flexbox.intellij.fileType.FlexmlFileType
 import com.intellij.CommonBundle
 import com.intellij.ide.actions.CreateElementActionBase
 import com.intellij.ide.fileTemplates.FileTemplateManager
@@ -12,7 +12,7 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFileFactory
 import com.intellij.psi.codeStyle.CodeStyleManager
 
-class NewFlexmlAction : CreateElementActionBase("", "", Icons.fileIcon) {
+class NewFlexmlAction : CreateElementActionBase("", "", Icons.typeIcon) {
 
     override fun invokeDialog(project: Project?, directory: PsiDirectory?): Array<PsiElement> {
         val inputValidator = this.MyInputValidator(project, directory)

@@ -1,6 +1,6 @@
 package com.guet.flexbox.intellij.configuration.type
 
-import com.guet.flexbox.intellij.bundle.Icons
+import com.guet.flexbox.intellij.res.Icons
 import com.guet.flexbox.intellij.configuration.MockRunConfiguration
 import com.intellij.execution.configurations.RunConfiguration
 import com.intellij.execution.configurations.SimpleConfigurationType
@@ -12,7 +12,7 @@ class MockConfigurationType : SimpleConfigurationType(
         "Flexml mock",
         "begin run flexml mock task",
         NotNullLazyValue.createValue {
-            Icons.fileIcon
+            Icons.typeIcon
         }
 ) {
 

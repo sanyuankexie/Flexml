@@ -111,7 +111,7 @@ class AboutFragment : Fragment() {
             }
             val image: ImageView = findViewById(R.id.image)
             Glide.with(image)
-                    .load(R.drawable.ic_launcher2)
+                    .load(R.drawable.ic_gcta)
                     .into(image)
         }
     }

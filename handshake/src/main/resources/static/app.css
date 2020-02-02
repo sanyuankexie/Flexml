@@ -1,0 +1,166 @@
+* {
+    margin: 0px;
+    padding: 0px;
+}
+
+body {
+    margin: 0px;
+    padding: 0px;
+}
+
+.host {
+    width: 100%;
+    display: flex;
+    margin-top: 100px;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center
+}
+
+.input {
+    border: 1px solid #ccc;
+    padding-top: 7px;
+    padding-bottom: 7px;
+    padding-left: 20px;
+    padding-right: 20px;
+    border-radius: 30px;
+    -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075);
+    box-shadow: 0 8px 16px 0 rgba(0,0,0,0.2), 0 6px 20px 0 rgba(0,0,0,0.19);
+    -webkit-transition: border-color ease-in-out .15s, -webkit-box-shadow ease-in-out .15s;
+    -o-transition: border-color ease-in-out .15s, box-shadow ease-in-out .15s;
+    transition: border-color ease-in-out .15s, box-shadow ease-in-out .15s
+}
+
+.input:focus {
+    border-color: #66afe9;
+    outline: 0;
+    -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075), 0 0 8px rgba(102, 175, 233, .6);
+    box-shadow: 0 8px 16px 0 rgba(0,0,0,0.2), 0 6px 20px 0 rgba(0,0,0,0.19);
+}
+
+.icon {
+    display: flex;
+    width: 120px;
+    height: 120px
+}
+
+.focus-host{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 0px;
+    padding: 0px;
+    flex-grow: 1;
+    width: 100%;
+}
+
+.title {
+    font-family: Arial, Helvetica, sans-serif;
+    text-shadow: 3px 3px 10px #000;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    padding: 0px;
+    display: flex;
+    color: white;
+    font-size: 30px;
+    font: bold;
+}
+
+.button {
+    padding-left: 10px;
+    padding-right: 10px;
+    box-shadow: 0 8px 16px 0 rgba(0,0,0,0.2), 0 6px 20px 0 rgba(0,0,0,0.19);
+    text-align: center;
+    background: white;
+    margin: 0px;
+    border-width: 0px;
+    border-radius: 30px;
+    width: 150px;
+    flex-direction: row;
+    display: flex;
+    align-items: center;
+    align-self:center;
+    justify-content: center;
+}
+
+.qrcode-host{
+    display: flex;padding: 10px;
+	background-color: white;
+    border-radius: 5px;
+	box-shadow: 0 8px 16px 0 rgba(0,0,0,0.2), 0 6px 20px 0 rgba(0,0,0,0.19);
+}
+
+.card {
+    display: flex;
+    flex-direction: column;
+    margin: 0px;
+    padding: 0px;
+	background-color: gray;
+	border-radius: 10px;
+	box-shadow: 0 8px 16px 0 rgba(0,0,0,0.2), 0 6px 20px 0 rgba(0,0,0,0.19);	
+}
+.card-title {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    background-color: rgba(46, 46, 46, 0.541);
+    height: 35px;
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
+}
+
+.card-title-text{
+    margin-left: 10px;
+    font-size: 15px;
+    color: white;				
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+
+.card-title-option {
+    width: 18px;
+    height: 18px;
+    margin: 2px;
+    border-radius: 30px;
+}
+
+.text{
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 18px;
+    margin:0px;
+    padding: 0px;
+    color: white;
+    text-align: center;
+}
+
+/*整体部分*/ 
+::-webkit-scrollbar
+{
+	width: 10px;
+	height: 10px;
+}
+/*滑动轨道*/ 
+::-webkit-scrollbar-track
+{
+	border-radius: 0px;
+	background: none;
+}
+/*滑块*/
+::-webkit-scrollbar-thumb
+{
+	border-radius: 5px;
+	box-shadow: inset 0 0 6px rgba(0,0,0,.2);
+    background-color: rgba(85, 85, 85, 0.4);
+}
+/*滑块效果*/ 
+::-webkit-scrollbar-thumb:hover
+{
+	border-radius: 5px;
+	box-shadow: inset 0 0 6px rgba(0,0,0,.2);
+
+    background-color: rgba(255,255,255,.75)
+}
+
+::-webkit-scrollbar-corner{
+    display: none;
+}

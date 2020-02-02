@@ -31,13 +31,15 @@
                 relative-to-action="NewFile"/>
         </action>
     </actions>
+
     <depends>com.intellij.modules.platform</depends>
     <depends>com.intellij.modules.xml</depends>
     <depends>com.intellij.modules.lang</depends>
     <depends>com.intellij.modules.json</depends>
     <extensions defaultExtensionNs="com.intellij">
-        <ApplicationLoadListener
-            implementation="com.guet.flexbox.intellij.BinaryLoader"/>
+        <projectService
+            serviceImplementation="com.guet.flexbox.intellij.service.impl.JarStartupManagerImpl"
+            serviceInterface="com.guet.flexbox.intellij.service.JarStartupManager"/>
         <configurationType
             implementation="com.guet.flexbox.intellij.configuration.type.CompileConfigurationType"/>
         <configurationType
@@ -49,11 +51,11 @@
         <runLineMarkerContributor
             language="JSON"
             order="after applicationRunLineMarkerProvider"
-            implementationClass="com.guet.flexbox.intellij.runline.MockRunLineMarkerContributor"/>
+            implementationClass="com.guet.flexbox.intellij.lineMarker.MockRunLineMarkerContributor"/>
         <runLineMarkerContributor
             language="XML"
             order="after applicationRunLineMarkerProvider"
-            implementationClass="com.guet.flexbox.intellij.runline.CompileRunLineMarkerContributor"/>
+            implementationClass="com.guet.flexbox.intellij.lineMarker.CompileRunLineMarkerContributor"/>
         <internalFileTemplate
             name="package"/>
         <internalFileTemplate
@@ -63,7 +65,7 @@
         <completion.contributor language="XML"
             implementationClass="com.guet.flexbox.intellij.completion.FlexmlCompletionContributor"/>
         <fileType name="flexml dsl"
-            implementationClass="com.guet.flexbox.intellij.filetype.FlexmlFileType"
+            implementationClass="com.guet.flexbox.intellij.fileType.FlexmlFileType"
             fieldName="INSTANCE"
             language="XML"
             extensions="xml;flexml"/>

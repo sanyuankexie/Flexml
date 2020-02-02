@@ -1,4 +1,4 @@
-package com.guet.flexbox.intellij.bundle
+package com.guet.flexbox.intellij.res
 
 data class AttributeInfo(
     val required: Boolean,

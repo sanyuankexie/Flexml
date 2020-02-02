@@ -1,8 +1,8 @@
 package com.guet.flexbox.intellij.completion
 
-import com.guet.flexbox.intellij.bundle.ComponentInfoBundle
-import com.guet.flexbox.intellij.bundle.Icons
-import com.guet.flexbox.intellij.bundle.SupportType
+import com.guet.flexbox.intellij.res.ComponentInfoBundle
+import com.guet.flexbox.intellij.res.Icons
+import com.guet.flexbox.intellij.res.SupportType
 import com.guet.flexbox.intellij.isOnFlexmlFile
 import com.guet.flexbox.intellij.isUrl
 import com.intellij.codeInsight.completion.*

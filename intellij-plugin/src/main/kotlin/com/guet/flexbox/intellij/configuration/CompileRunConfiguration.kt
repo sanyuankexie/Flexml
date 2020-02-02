@@ -1,8 +1,7 @@
 package com.guet.flexbox.intellij.configuration
 
-import com.guet.flexbox.intellij.BinaryLoader
 import com.guet.flexbox.intellij.configuration.options.CompileOptions
-import com.guet.flexbox.intellij.runJar
+import com.guet.flexbox.intellij.service.JarStartupManager
 import com.guet.flexbox.intellij.ui.CompileSettingForm
 import com.intellij.execution.Executor
 import com.intellij.execution.configurations.*
@@ -25,12 +24,8 @@ class CompileRunConfiguration(
     ): RunProfileState? {
         val input = state!!.template!!
         val output = state!!.output!!
-        return runJar(
-                project,
-                environment,
-                BinaryLoader.compilerJarPath,
-                "-i $input -o $output"
-        )
+        return JarStartupManager.getInstance(project)
+                .runCompiler(environment, input, output)
     }
 
     override fun getOptionsClass(): Class<out RunConfigurationOptions>? {

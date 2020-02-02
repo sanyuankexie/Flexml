@@ -1,4 +1,4 @@
-package com.guet.flexbox.intellij.bundle
+package com.guet.flexbox.intellij.res
 
 import com.google.gson.annotations.SerializedName
 

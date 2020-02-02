@@ -1,0 +1,75 @@
+﻿<!doctype html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <title>background</title>
+  <style>
+    body {
+      background-image: linear-gradient(to bottom, rgb(122, 255, 173), #1435ad);
+      background-attachment: fixed;
+      overflow: hidden;
+    }
+
+    @keyframes rotate {
+      0% {
+        transform: perspective(400px) rotateZ(20deg) rotateX(-40deg) rotateY(0);
+      }
+
+      100% {
+        transform: perspective(400px) rotateZ(20deg) rotateX(-40deg) rotateY(-360deg);
+      }
+    }
+
+    .stars {
+      transform: perspective(500px);
+      transform-style: preserve-3d;
+      position: absolute;
+      bottom: 0;
+      perspective-origin: 50% 100%;
+      left: 50%;
+      animation: rotate 90s infinite linear;
+    }
+
+    .star {
+      width: 2px;
+      height: 2px;
+      background: #F7F7B6;
+      position: absolute;
+      top: 0;
+      left: 0;
+      transform-origin: 0 0 -300px;
+      transform: translate3d(0, 0, -300px);
+      backface-visibility: hidden;
+    }
+  </style>
+
+</head>
+
+<body>
+  <div class="stars"></div>
+  <script src="jquery.min.js"></script>
+  <script>
+    $(document).ready(function () {
+      var stars = 800;
+      var $stars = $(".stars");
+      var r = 800;
+      for (var i = 0; i < stars; i++) {
+        var $star = $("<div/>").addClass("star");
+        $stars.append($star);
+      }
+      $(".star").each(function () {
+        var cur = $(this);
+        var s = 0.2 + (Math.random() * 1);
+        var curR = r + (Math.random() * 300);
+        cur.css({
+          transformOrigin: "0 0 " + curR + "px",
+          transform: " translate3d(0,0,-" + curR + "px) rotateY(" + (Math.random() * 360) + "deg) rotateX(" + (Math.random() * -50) + "deg) scale(" + s + "," + s + ")"
+
+        })
+      })
+    })
+  </script>
+</body>
+
+</html>
