@@ -8,9 +8,14 @@ import com.intellij.execution.jar.JarApplicationConfiguration
 import com.intellij.execution.jar.JarApplicationConfigurationType
 import com.intellij.execution.runners.ExecutionEnvironment
 import com.intellij.ide.ApplicationLoadListener
+import com.intellij.ide.plugins.PluginManager
+import com.intellij.ide.plugins.cl.PluginClassLoader
 import com.intellij.json.psi.JsonFile
 import com.intellij.json.psi.JsonObject
 import com.intellij.json.psi.JsonStringLiteral
+import com.intellij.notification.Notification
+import com.intellij.notification.NotificationType
+import com.intellij.openapi.application.Application
 import com.intellij.openapi.fileEditor.FileEditorManagerEvent
 import com.intellij.openapi.fileEditor.FileEditorManagerListener
 import com.intellij.openapi.project.Project
@@ -18,6 +23,7 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiManager
 import com.intellij.util.concurrency.AppExecutorUtil
 import com.intellij.util.io.HttpRequests
+import java.io.File
 import java.io.IOException
 
 class JarStartupManagerImpl(
@@ -29,12 +35,6 @@ class JarStartupManagerImpl(
                 FileEditorManagerListener.FILE_EDITOR_MANAGER,
                 this
         )
-    }
-
-    private val initializer by lazy {
-        ApplicationLoadListener.EP_NAME.findExtension(
-                PluginInitializer::class.java
-        ) ?: throw InternalError("Plugin internal error")
     }
 
     @Volatile
@@ -85,6 +85,58 @@ class JarStartupManagerImpl(
                 return false
             }
 
+        private const val GROUP_ID = "Flexml plugin"
+
+        private val compilerPath: String
+            get() = if (files.size == 2) {
+                files[0].absolutePath
+            } else {
+                throw InternalError()
+            }
+        private val mockServerPath: String
+            get() = if (files.size == 2) {
+                files[1].absolutePath
+            } else {
+                throw InternalError()
+            }
+
+        private val files: Array<File> by lazy {
+            val root = findPluginRootPath()
+            return@lazy if (root != null) {
+                arrayOf(File(root, "lib/flexmlc.jar"),
+                        File(root, "lib/handshake.jar"))
+            } else {
+                Notification(
+                        GROUP_ID,
+                        "插件在加载时发生错误",
+                        "插件的根目录没有找到，请重新尝试安装插件以解决问题",
+                        NotificationType.ERROR,
+                        null
+                ).notify(null)
+                val cl = JarStartupManagerImpl::class.java
+                        .classLoader as PluginClassLoader
+                val pluginId = cl.pluginId.idString
+                PluginManager.disablePlugin(pluginId)
+                emptyArray()
+            }
+        }
+
+        private fun findPluginRootPath(): File? {
+            val cl = JarStartupManagerImpl::class.java
+                    .classLoader as PluginClassLoader
+            return PluginManager.getPlugins().firstOrNull {
+                it.pluginId == cl.pluginId
+            }?.path
+        }
+
+    }
+
+    class Initializer : ApplicationLoadListener {
+        override fun beforeApplicationLoaded(
+                application: Application,
+                configPath: String) {
+            Companion::files.invoke()
+        }
     }
 
     override fun selectionChanged(event: FileEditorManagerEvent) {
@@ -121,7 +173,7 @@ class JarStartupManagerImpl(
         return runJar(
                 project,
                 environment,
-                initializer.compilerJarFilePath,
+                compilerPath,
                 "-i $input -o $output"
         )
     }
@@ -135,7 +187,7 @@ class JarStartupManagerImpl(
         return runJar(
                 project,
                 environment,
-                initializer.mockJarFilePath,
+                mockServerPath,
                 "--server.port=$port --package.focus=$focus"
         )
     }

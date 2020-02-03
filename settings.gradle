@@ -1,1 +1,1 @@
-include ':playground', ':core', ':el', ':beans', ':litho', ':compiler', ':handshake', ':intellij-plugin'
+include ':playground', ':core', ':el', ':beans', ':litho', ':compiler', ':handshake'

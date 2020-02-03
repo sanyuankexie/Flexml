@@ -39,7 +39,7 @@
     <depends>com.intellij.modules.json</depends>
     <extensions defaultExtensionNs="com.intellij">
         <ApplicationLoadListener
-            implementation="com.guet.flexbox.intellij.service.impl.PluginInitializer"/>
+            implementation="com.guet.flexbox.intellij.service.impl.JarStartupManagerImpl$Initializer"/>
         <projectService
             serviceImplementation="com.guet.flexbox.intellij.service.impl.JarStartupManagerImpl"
             serviceInterface="com.guet.flexbox.intellij.service.JarStartupManager"/>

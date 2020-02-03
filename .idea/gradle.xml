@@ -14,7 +14,6 @@
             <option value="$PROJECT_DIR$/core" />
             <option value="$PROJECT_DIR$/el" />
             <option value="$PROJECT_DIR$/handshake" />
-            <option value="$PROJECT_DIR$/intellij-plugin" />
             <option value="$PROJECT_DIR$/litho" />
             <option value="$PROJECT_DIR$/playground" />
           </set>
