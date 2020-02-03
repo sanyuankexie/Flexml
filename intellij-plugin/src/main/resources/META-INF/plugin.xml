@@ -12,7 +12,7 @@
       🚀Android high performance dynamic business container based on litho solves the pain point of dynamic homepage. Released under the Apache 2.0 open source protocol, it is an open source software based on open source software.
     ]]>
     </change-notes>
-    <idea-version since-build="191" until-build="193.*"/>
+    <idea-version since-build="183.2940.10"/>
     <actions>
         <action id="com.guet.flexbox.intellij.new.flexml"
             class="com.guet.flexbox.intellij.action.NewFlexmlAction"
@@ -35,6 +35,7 @@
     <depends>com.intellij.modules.platform</depends>
     <depends>com.intellij.modules.xml</depends>
     <depends>com.intellij.modules.lang</depends>
+    <depends>com.intellij.modules.java</depends>
     <depends>com.intellij.modules.json</depends>
     <extensions defaultExtensionNs="com.intellij">
         <ApplicationLoadListener

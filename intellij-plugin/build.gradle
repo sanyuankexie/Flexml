@@ -65,4 +65,6 @@ compileTestKotlin {
 
 intellij {
     version '2018.3.1'
+    updateSinceUntilBuild false
+    //plugins = ['java']
 }
