@@ -46,12 +46,10 @@ dependencies {
     implementation 'com.squareup.retrofit2:retrofit:2.6.2'
     implementation 'com.squareup.retrofit2:converter-gson:2.6.2'
     implementation 'com.blankj:utilcodex:1.26.0'
-    implementation 'thereisnospon.codeview:codeview:0.3.1'
     implementation('com.didichuxing.doraemonkit:doraemonkit:1.2.1') {
         exclude group: 'com.google.zxing', module: 'core'
     }
     implementation 'ch.ielse:switchbutton:1.0.1'
-    implementation 'com.github.LukeXeon:blurlayout:0.0.1'
 
     implementation project(':litho')
     implementation project(':compiler')

@@ -36,7 +36,7 @@ class AppBundle(
             }
             val sourcesF = args.map {
                 it to executor.submit<String> {
-                    c.assets.open("$it.xml").use { stream ->
+                    c.assets.open("$it.flexml").use { stream ->
                         stream.reader().buffered().readText()
                     }
                 }

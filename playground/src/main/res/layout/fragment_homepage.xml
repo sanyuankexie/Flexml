@@ -1,16 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:orientation="vertical"
+<androidx.coordinatorlayout.widget.CoordinatorLayout
+    android:background="@color/colorPrimary"
+    android:id="@+id/coordinator"
+    xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
-    <LinearLayout
-        android:orientation="vertical"
-        android:background="@color/colorPrimary"
-        android:clipChildren="false"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <com.google.android.material.appbar.AppBarLayout
+        android:id="@+id/appbar"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="?attr/actionBarSize">
         <LinearLayout
+            app:layout_scrollFlags="noScroll"
+            android:visibility="visible"
+            android:id="@+id/toolbar"
             android:paddingTop="10dp"
             android:paddingBottom="10dp"
             android:background="@color/colorPrimary"
@@ -38,32 +41,20 @@
                 android:layout_width="0dp"
                 android:layout_height="36dp" />
             <ImageView
-                android:id="@+id/jump"
+                android:id="@+id/info"
                 android:src="@drawable/ic_about"
                 android:scaleType="fitXY"
                 android:layout_marginRight="15dp"
                 android:layout_width="25dp"
                 android:layout_height="25dp" />
         </LinearLayout>
-        <com.guet.flexbox.litho.HostingView
-            android:id="@+id/banner"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-        </com.guet.flexbox.litho.HostingView>
-    </LinearLayout>
-    <FrameLayout
+    </com.google.android.material.appbar.AppBarLayout>
+    <androidx.recyclerview.widget.RecyclerView
+        android:background="@color/whitesmoke"
+        app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior"
+        android:overScrollMode="never"
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+        android:id="@+id/feed"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-        <View
-            android:background="@drawable/ic_background_transition"
-            android:layout_width="match_parent"
-            android:layout_height="100dp"/>
-        <com.guet.flexbox.litho.HostingView
-            android:id="@+id/function"
-            android:layout_marginTop="10dp"
-            android:layout_marginBottom="5dp"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-        </com.guet.flexbox.litho.HostingView>
-    </FrameLayout>
-</LinearLayout>
+        android:layout_height="match_parent"/>
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

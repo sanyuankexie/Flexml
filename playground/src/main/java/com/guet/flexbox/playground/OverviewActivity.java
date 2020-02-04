@@ -18,8 +18,7 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import com.google.android.material.appbar.AppBarLayout;
 import com.guet.flexbox.TemplateNode;
 import com.guet.flexbox.litho.HostingView;
-import com.guet.flexbox.litho.LithoBuildTool;
-import com.guet.flexbox.litho.Page;
+import com.guet.flexbox.litho.TemplatePage;
 import com.guet.flexbox.playground.model.MockService;
 import com.guet.flexbox.playground.widget.QuickHandler;
 
@@ -67,7 +66,7 @@ public class OverviewActivity
     private QuickHandler mNetwork = new QuickHandler("network");
     private MockService mMockService;
     private ArrayAdapter<String> mAdapter;
-    private Page mLayout;
+    private TemplatePage mLayout;
     private Runnable mReload = new Runnable() {
         @WorkerThread
         @Override
@@ -77,11 +76,10 @@ public class OverviewActivity
                 Response<TemplateNode> layout = mMockService.layout().execute();
                 Map<String, Object> dataBody = dataResponse.body();
                 TemplateNode layoutBody = layout.body();
-                mLayout = LithoBuildTool.build(
-                        getApplicationContext(),
-                        Objects.requireNonNull(layoutBody),
-                        dataBody
-                );
+                mLayout = TemplatePage.create(getApplicationContext())
+                        .template(Objects.requireNonNull(layoutBody))
+                        .data(dataBody)
+                        .build();
                 runOnUiThread(() -> {
                     apply();
                     if (mSwipeRefreshLayout.isRefreshing()) {
@@ -106,7 +104,7 @@ public class OverviewActivity
 
     private void apply() {
         if (mLayout != null) {
-            mLithoView.setContentAsync(mLayout);
+            mLithoView.setComponentTree(mLayout);
         }
     }
 

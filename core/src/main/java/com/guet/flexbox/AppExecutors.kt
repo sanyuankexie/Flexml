@@ -2,7 +2,10 @@ package com.guet.flexbox
 
 import android.os.Handler
 import android.os.Looper
-import java.util.concurrent.*
+import java.util.concurrent.LinkedBlockingQueue
+import java.util.concurrent.ThreadFactory
+import java.util.concurrent.ThreadPoolExecutor
+import java.util.concurrent.TimeUnit
 import java.util.concurrent.atomic.AtomicInteger
 import kotlin.math.max
 
@@ -10,7 +13,7 @@ object AppExecutors {
 
     private val mainThreadLooper = Looper.getMainLooper()
 
-    val threadPool: ExecutorService = kotlin.run {
+    val threadPool: ThreadPoolExecutor = kotlin.run {
         val count = AtomicInteger(0)
         val nThreads = max(
                 Runtime.getRuntime().availableProcessors(),

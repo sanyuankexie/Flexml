@@ -1,6 +1,6 @@
 package com.guet.flexbox.build
 
-import com.guet.flexbox.HostContext
+import com.guet.flexbox.EventContext
 import com.guet.flexbox.TemplateNode
 import com.guet.flexbox.el.ELContext
 
@@ -13,7 +13,7 @@ object Empty : Declaration(Common) {
             attrs: AttributeSet,
             children: List<TemplateNode>,
             factory: RenderNodeFactory?,
-            hostContext: HostContext,
+            eventContext: EventContext,
             data: ELContext,
             upperVisibility: Boolean,
             other: Any
@@ -23,7 +23,7 @@ object Empty : Declaration(Common) {
                 attrs,
                 children,
                 factory,
-                hostContext,
+                eventContext,
                 data,
                 false,
                 other

@@ -17,13 +17,11 @@ class StartupActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         val ctx = application
         AppLoader.init(ctx) {
-            runOnUiThread {
-                ActivityCompat.requestPermissions(
-                        this,
-                        definedPermissions,
-                        REQUEST_CODE
-                )
-            }
+            ActivityCompat.requestPermissions(
+                    this,
+                    definedPermissions,
+                    REQUEST_CODE
+            )
         }
         initWebView()
     }

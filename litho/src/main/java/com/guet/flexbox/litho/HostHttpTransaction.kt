@@ -5,7 +5,7 @@ import com.guet.flexbox.AppExecutors
 import com.guet.flexbox.el.ELContext
 import com.guet.flexbox.transaction.HttpTransaction
 
-internal class HttpTransactionImpl(
+internal class HostHttpTransaction(
         private val host: HostingView,
         private val source: View?
 ) : HttpTransaction() {
@@ -30,7 +30,7 @@ internal class HttpTransactionImpl(
                     AppExecutors.runOnUiThread {
                         success.invoke(
                                 elContext,
-                                host.pageContext.toPageContext(source),
+                                host.target.toPageContext(source),
                                 it
                         )
                     }
@@ -42,7 +42,7 @@ internal class HttpTransactionImpl(
                 {
                     AppExecutors.runOnUiThread {
                         error.invoke(elContext,
-                                host.pageContext.toPageContext(source)
+                                host.target.toPageContext(source)
                         )
                     }
                 }

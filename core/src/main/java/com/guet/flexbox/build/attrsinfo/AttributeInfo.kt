@@ -1,6 +1,6 @@
 package com.guet.flexbox.build.attrsinfo
 
-import com.guet.flexbox.HostContext
+import com.guet.flexbox.EventContext
 import com.guet.flexbox.el.ELContext
 
 internal abstract class AttributeInfo<T : Any>(
@@ -8,7 +8,7 @@ internal abstract class AttributeInfo<T : Any>(
         protected val fallback: T? = null
 ) {
     abstract fun cast(
-            hostContext: HostContext,
+            eventContext: EventContext,
             data: ELContext,
             raw: String
     ): T?

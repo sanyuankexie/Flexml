@@ -3,11 +3,11 @@ package com.guet.flexbox
 import android.util.Log
 import java.lang.ref.WeakReference
 
-class EventBridge : HostContext() {
+class EventBridge : EventContext() {
 
-    private var targetImpl: WeakReference<HostContext>? = null
+    private var targetImpl: WeakReference<EventContext>? = null
 
-    var target: HostContext?
+    var target: EventContext?
         set(value) {
             targetImpl = if (value != null) {
                 val t = target

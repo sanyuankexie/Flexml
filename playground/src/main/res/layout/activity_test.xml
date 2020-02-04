@@ -1,18 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout
+<com.guet.flexbox.playground.widget.TransformRootLayout
+    android:background="@android:color/black"
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:id="@+id/host"
     tools:context="com.guet.flexbox.playground.test.TestActivity">
-    <com.facebook.litho.LithoView
-        android:id="@+id/litho"
+    <FrameLayout
+        android:background="@color/colorPrimary"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
-    </com.facebook.litho.LithoView>
-    <com.guet.blurlayout.BlurLayout
-        android:layout_gravity="bottom"
-        android:layout_width="match_parent"
-        android:layout_height="100dp" />
-</FrameLayout>
+    </FrameLayout>
+</com.guet.flexbox.playground.widget.TransformRootLayout>

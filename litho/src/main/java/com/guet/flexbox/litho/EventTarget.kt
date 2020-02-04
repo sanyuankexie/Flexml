@@ -1,13 +1,12 @@
 package com.guet.flexbox.litho
 
 import android.view.View
-import com.guet.flexbox.HostContext
-import com.guet.flexbox.HostContext.ActionKey.*
+import com.guet.flexbox.EventContext
+import com.guet.flexbox.EventContext.ActionKey.*
 
-internal class HostContextImpl(
+internal class EventTarget(
         private val host: HostingView
-) : HostContext() {
-
+) : EventContext() {
     override fun dispatchEvent(key: ActionKey, args: List<Any?>?): Any? {
         return when (key) {
             SendObjects -> {
@@ -17,11 +16,11 @@ internal class HostContextImpl(
                         args?.let { it.subList(1,it.size).toTypedArray() }
                 )
             }
-            RefreshPage -> RefreshTransactionImpl(
+            RefreshPage -> HostRefreshTransaction(
                     host,
                     args?.get(0) as? View
             )
-            HttpRequest -> HttpTransactionImpl(
+            HttpRequest -> HostHttpTransaction(
                     host,
                     args?.get(0) as? View
             )

@@ -4,24 +4,15 @@ import android.view.View
 import com.chad.library.adapter.base.BaseQuickAdapter
 import com.chad.library.adapter.base.BaseViewHolder
 import com.guet.flexbox.litho.HostingView
-import com.guet.flexbox.litho.Page
+import com.guet.flexbox.litho.TemplatePage
 import com.guet.flexbox.playground.R
 
 
 class FlexBoxAdapter(
         private val onClick: (v: View, url: String) -> Unit
-) : BaseQuickAdapter<Page, BaseViewHolder>(R.layout.feed_item) {
+) : BaseQuickAdapter<TemplatePage, BaseViewHolder>(R.layout.feed_item) {
 
-
-    override fun onViewRecycled(holder: BaseViewHolder) {
-        val lithoView = holder.getView<HostingView>(R.id.litho)
-        lithoView?.unmountAllItems()
-        lithoView?.setContentAsync(null)
-    }
-
-    private inner class HandleClickWithUpdater(
-            private val old: Page
-    ) : HostingView.PageEventListener {
+    private val callback = object : HostingView.PageEventListener {
 
         override fun onEventDispatched(
                 h: HostingView,
@@ -35,10 +26,16 @@ class FlexBoxAdapter(
         }
     }
 
+    override fun onViewRecycled(holder: BaseViewHolder) {
+        val lithoView = holder.getView<HostingView>(R.id.litho)
+        lithoView?.unmountAllItems()
+        lithoView?.templatePage = null
+    }
 
-    override fun convert(helper: BaseViewHolder, item: Page) {
+
+    override fun convert(helper: BaseViewHolder, item: TemplatePage) {
         val lithoView = helper.getView<HostingView>(R.id.litho)
-        lithoView.setPageEventListener(HandleClickWithUpdater(item))
-        lithoView.setContentAsync(item)
+        lithoView.setPageEventListener(callback)
+        lithoView.templatePage = item
     }
 }

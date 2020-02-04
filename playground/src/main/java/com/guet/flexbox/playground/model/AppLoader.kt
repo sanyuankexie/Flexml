@@ -4,8 +4,7 @@ import android.content.Context
 import android.os.SystemClock
 import androidx.annotation.WorkerThread
 import com.guet.flexbox.AppExecutors
-import com.guet.flexbox.litho.LithoBuildTool
-import com.guet.flexbox.litho.Page
+import com.guet.flexbox.litho.TemplatePage
 import com.guet.flexbox.playground.R
 import com.orhanobut.logger.Logger
 import java.util.concurrent.Callable
@@ -33,33 +32,32 @@ object AppLoader {
                 randomImageUrls.addAll(res.getStringArray(R.array.images))
 
                 //头部轮播图
-                val bannerTask = AppExecutors.threadPool.submit<Page> {
+                val bannerTask = AppExecutors.threadPool.submit<TemplatePage> {
                     val page = loadPage(c, res.getString(R.string.banner_path))
                     Logger.d("load banner ${SystemClock.uptimeMillis() - start}")
                     return@submit page
                 }
                 //功能区
-                val functionTask = AppExecutors.threadPool.submit<Page> {
+                val functionTask = AppExecutors.threadPool.submit<TemplatePage> {
                     val page = loadPage(c, res.getString(R.string.function_path))
                     Logger.d("load function ${SystemClock.uptimeMillis() - start}")
                     return@submit page
                 }
                 //Feed流
-                val feed = loadMoreFeedItem(c, 10, false)
+                val feed = loadMoreFeedItem(c, 10, false) as ArrayList
+                feed.add(0, functionTask.get())
+                feed.add(0, bannerTask.get())
                 homepageCache = Homepage(
-                        bannerTask.get(),
-                        functionTask.get(),
                         feed
                 )
                 Logger.d("AppLoader: load time:" + (SystemClock.uptimeMillis() - start))
-                callback()
+                AppExecutors.runOnUiThread(callback)
             }
         }
     }
 
-
     @WorkerThread
-    fun loadMoreFeedItem(c: Context, count: Int, needNewImage: Boolean = true): List<Page> {
+    fun loadMoreFeedItem(c: Context, count: Int, needNewImage: Boolean = true): List<TemplatePage> {
         if (needNewImage) {
             try {
                 val start = SystemClock.uptimeMillis()
@@ -76,7 +74,7 @@ object AppLoader {
         val feedUrls = res.getStringArray(R.array.feed_paths)
         val pageStart = SystemClock.uptimeMillis()
         val tasks = (1..count).map {
-            Callable<Page> {
+            Callable<TemplatePage> {
                 val start = SystemClock.uptimeMillis()
                 val type = Default.nextInt(0, feedUrls.size)
                 val url = feedUrls[type]
@@ -123,13 +121,17 @@ object AppLoader {
     }
 
     @WorkerThread
-    fun loadPage(c: Context, url: String, data: (Map<String, Any>) = emptyMap()): Page {
+    fun loadPage(c: Context, url: String, data: (Map<String, Any>) = emptyMap()): TemplatePage {
         val template = appBundle.templateNode.getValue(url)
         val dataSource = appBundle.dataSource.getValue(url)
-        return LithoBuildTool.build(c, template, HashMap(dataSource).apply {
+        val myData =  HashMap(dataSource).apply {
             put("url", url)
             putAll(data)
-        })
+        }
+        return TemplatePage.create(c)
+                .template(template)
+                .data(myData)
+                .build()
     }
 
     fun waitHomepage(): Lazy<Homepage> {

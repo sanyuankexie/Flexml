@@ -6,7 +6,7 @@ import com.guet.flexbox.el.unWrap
 
 abstract class EventHandler(
         elContext: ELContext,
-        protected val hostContext: HostContext
+        protected val eventContext: EventContext
 ) {
 
     protected val elContext: ELContext = elContext.unWrap()

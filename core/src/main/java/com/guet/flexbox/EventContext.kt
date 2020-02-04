@@ -2,7 +2,7 @@ package com.guet.flexbox
 
 import android.view.View
 
-abstract class HostContext {
+abstract class EventContext {
 
     abstract fun dispatchEvent(key: ActionKey,  args: List<Any?>?): Any?
 

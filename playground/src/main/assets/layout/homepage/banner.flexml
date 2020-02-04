@@ -1,9 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Flex
+    background="#7c4dff"
     alignItems="center"
     justifyContent="center"
     width="360">
     <Banner
+        marginTop="10"
+        marginBottom="5"
         borderRadius="12"
         height="150"
         width="340">

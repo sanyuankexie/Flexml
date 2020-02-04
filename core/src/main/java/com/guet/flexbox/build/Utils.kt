@@ -1,6 +1,6 @@
 package com.guet.flexbox.build
 
-import com.guet.flexbox.HostContext
+import com.guet.flexbox.EventContext
 import com.guet.flexbox.TemplateNode
 import com.guet.flexbox.build.attrsinfo.AttributeInfo
 import com.guet.flexbox.build.attrsinfo.AttrsInfoRegistry
@@ -20,7 +20,7 @@ internal inline fun create(crossinline action: AttrsInfoRegistry.() -> Unit): La
 
 typealias AttributeSet = Map<String, Any>
 
-internal typealias Converter<T> = (HostContext, ELContext, String) -> T?
+internal typealias Converter<T> = (EventContext, ELContext, String) -> T?
 
 typealias RenderNodeFactory = (
         visibility: Boolean,
@@ -36,7 +36,7 @@ typealias ToWidget = Pair<Declaration, RenderNodeFactory?>
 internal fun ToWidget.toWidget(
         bindings: BuildTool,
         template: TemplateNode,
-        pageContext: HostContext,
+        pageContext: EventContext,
         data: ELContext,
         upperVisibility: Boolean,
         other: Any

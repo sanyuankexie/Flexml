@@ -1,38 +1,11 @@
 package com.guet.flexbox.litho
 
-import android.content.Context
 import android.util.ArrayMap
-import androidx.annotation.WorkerThread
-import com.facebook.litho.Component
-import com.facebook.litho.ComponentContext
-import com.guet.flexbox.EventBridge
-import com.guet.flexbox.TemplateNode
 import com.guet.flexbox.build.*
 import com.guet.flexbox.build.Common
-import com.guet.flexbox.el.PropsELContext
 import com.guet.flexbox.litho.factories.*
 
 object LithoBuildTool : BuildTool() {
-
-    @JvmStatic
-    @JvmOverloads
-    @WorkerThread
-    fun build(
-            c: Context,
-            template: TemplateNode,
-            data: Any? = null
-    ): Page {
-        val componentContext = ComponentContext(c)
-        val eventBridge = EventBridge()
-        val elContext = PropsELContext(data)
-        val com = build(
-                template,
-                eventBridge,
-                elContext,
-                componentContext
-        ) as Component
-        return Page(template, com, eventBridge)
-    }
 
     private val myWidgets by lazy {
         val arr = arrayOf(

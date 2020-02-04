@@ -45,10 +45,6 @@
             android:configChanges="orientation|screenSize" />
         <activity
             android:screenOrientation="portrait"
-            android:name=".CodeActivity"
-            android:configChanges="orientation|screenSize" />
-        <activity
-            android:screenOrientation="portrait"
             android:name=".SearchActivity"
             android:configChanges="orientation|screenSize" />
         <activity

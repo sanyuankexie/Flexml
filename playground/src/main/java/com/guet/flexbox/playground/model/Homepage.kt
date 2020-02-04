@@ -1,10 +1,8 @@
 package com.guet.flexbox.playground.model
 
-import com.guet.flexbox.litho.Page
+import com.guet.flexbox.litho.TemplatePage
 
 class Homepage(
-        val banner: Page,
-        val function: Page,
-        val feed: List<Page>
+        val feed: List<TemplatePage>
         //val introduction: Page
 )

@@ -1,6 +1,6 @@
 package com.guet.flexbox.build
 
-import com.guet.flexbox.HostContext
+import com.guet.flexbox.EventContext
 import com.guet.flexbox.TemplateNode
 import com.guet.flexbox.el.ELContext
 
@@ -14,13 +14,13 @@ abstract class BuildTool {
 
     fun build(
             templateNode: TemplateNode,
-            hostContext: HostContext,
+            eventContext: EventContext,
             data: ELContext,
             c: Any
     ): Child {
         return buildAll(
                 listOf(templateNode),
-                hostContext,
+                eventContext,
                 data,
                 true,
                 c
@@ -29,7 +29,7 @@ abstract class BuildTool {
 
     internal fun buildAll(
             templates: List<TemplateNode>,
-            hostContext: HostContext,
+            eventContext: EventContext,
             data: ELContext,
             upperVisibility: Boolean,
             other: Any
@@ -43,7 +43,7 @@ abstract class BuildTool {
             toWidget.toWidget(
                     this@BuildTool,
                     templateNode,
-                    hostContext,
+                    eventContext,
                     data,
                     upperVisibility,
                     other
