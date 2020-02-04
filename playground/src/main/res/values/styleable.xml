@@ -1,11 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <declare-styleable name="PullToRefreshLayout">
-        <attr name="header" format="reference" />
-        <attr name="footer" format="reference" />
-        <attr name="header_length" format="dimension" />
-        <attr name="footer_length" format="dimension" />
-    </declare-styleable>
     <declare-styleable name="BlurLayout">
         <attr format="dimension" name="cornerRadius"/>
         <attr format="float" name="sampling"/>
