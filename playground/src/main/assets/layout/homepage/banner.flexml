@@ -15,7 +15,7 @@
                 clickUrl="${url}">
                 <Image
                     flexGrow="1"
-                    scaleType="centerCrop"
+                    scaleType="fitXY"
                     url="${urls[index]}" />
             </Flex>
         </for>

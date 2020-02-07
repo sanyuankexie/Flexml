@@ -13,7 +13,6 @@ import com.guet.flexbox.build.RenderNodeFactory
 import com.guet.flexbox.litho.ChildComponent
 import com.guet.flexbox.litho.toPx
 import com.guet.flexbox.litho.widget.AsyncLazyDrawable
-import com.guet.flexbox.litho.widget.CornerOutlineProvider
 import com.guet.flexbox.litho.widget.NoOpDrawable
 
 abstract class ToComponent<C : Component.Builder<*>>(
@@ -79,11 +78,6 @@ abstract class ToComponent<C : Component.Builder<*>>(
                         .radiusPx(borderRadius)
                         .build()
         )
-        if (borderRadius > 0) {
-            val outline = CornerOutlineProvider(borderRadius)
-            c.outlineProvider(outline)
-            c.clipToOutline(true)
-        }
     }
 
     private fun createBackground(c: C, attrs: Map<String, Any>) {

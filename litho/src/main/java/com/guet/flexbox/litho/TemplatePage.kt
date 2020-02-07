@@ -11,10 +11,10 @@ import com.guet.flexbox.el.PropsELContext
 
 class TemplatePage @WorkerThread internal constructor(
         builder: Builder
-) : ComponentTree2(builder) {
-    internal val template: TemplateNode = builder.template
+) : TreeManager(builder) {
+    internal val template: TemplateNode = requireNotNull(builder.template)
     internal val data: Any? = builder.data
-    internal val eventBridge = builder.eventBridge
+    internal val eventBridge: EventBridge = builder.eventBridge
 
     override fun attach() {
         super.attach()
@@ -38,35 +38,46 @@ class TemplatePage @WorkerThread internal constructor(
     class Builder(
             private val context: ComponentContext
     ) : ComponentTree.Builder(context) {
-        @field:RestrictTo(RestrictTo.Scope.LIBRARY)
-        internal lateinit var template: TemplateNode
-        @field:RestrictTo(RestrictTo.Scope.LIBRARY)
+        @JvmSynthetic
+        @JvmField
+        @RestrictTo(RestrictTo.Scope.LIBRARY)
+        internal var template: TemplateNode? = null
+        @JvmSynthetic
+        @JvmField
+        @RestrictTo(RestrictTo.Scope.LIBRARY)
         internal var data: Any? = null
-        @field:RestrictTo(RestrictTo.Scope.LIBRARY)
+        @JvmSynthetic
+        @JvmField
+        @RestrictTo(RestrictTo.Scope.LIBRARY)
         internal val eventBridge = EventBridge()
 
         @Deprecated(
                 message = "use template() and data()",
                 level = DeprecationLevel.HIDDEN
         )
+        @RestrictTo(RestrictTo.Scope.LIBRARY)
         override fun withRoot(root: Component?): ComponentTree.Builder {
-            throw IllegalStateException()
+            throw IllegalStateException("use template() and data()")
         }
 
         @Deprecated(
                 message = "framework use default thread pool",
                 level = DeprecationLevel.HIDDEN
         )
+        @RestrictTo(RestrictTo.Scope.LIBRARY)
         override fun layoutThreadHandler(handler: LithoHandler?): ComponentTree.Builder {
-            throw IllegalStateException()
+            throw IllegalStateException("framework use default thread pool")
         }
 
         @Deprecated(
                 message = "framework use default thread pool",
                 level = DeprecationLevel.HIDDEN
         )
+        @Suppress("DEPRECATED_JAVA_ANNOTATION")
+        @java.lang.Deprecated
+        @RestrictTo(RestrictTo.Scope.LIBRARY)
         override fun layoutThreadLooper(looper: Looper?): ComponentTree.Builder {
-            throw IllegalStateException()
+            throw IllegalStateException("framework use default thread pool")
         }
 
         fun template(templateNode: TemplateNode): Builder {
@@ -82,12 +93,14 @@ class TemplatePage @WorkerThread internal constructor(
         @WorkerThread
         override fun build(): TemplatePage {
             super.layoutThreadHandler(LayoutThreadHandler)
-            super.withRoot(LithoBuildTool.build(
-                    template,
+            super.withRoot((LithoBuildTool.build(
+                    requireNotNull(template),
                     eventBridge,
                     PropsELContext(data),
                     context
-            ) as Component)
+            ) as Component).apply {
+                logger(null, simpleName)
+            })
             return TemplatePage(this)
         }
     }

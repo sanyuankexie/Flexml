@@ -3,6 +3,7 @@ package com.guet.flexbox.litho
 import android.content.Context
 import android.util.AttributeSet
 import android.view.View
+import androidx.annotation.RestrictTo
 import com.facebook.litho.ComponentTree
 import com.facebook.litho.LithoView
 import com.guet.flexbox.HttpClient
@@ -40,6 +41,9 @@ class HostingView @JvmOverloads constructor(
             ReplaceWith("templatePage"),
             DeprecationLevel.HIDDEN
     )
+    @Suppress("DEPRECATED_JAVA_ANNOTATION")
+    @java.lang.Deprecated
+    @RestrictTo(RestrictTo.Scope.LIBRARY)
     override fun getComponentTree(): ComponentTree? {
         return super.getComponentTree()
     }
@@ -49,6 +53,7 @@ class HostingView @JvmOverloads constructor(
             ReplaceWith("templatePage"),
             DeprecationLevel.HIDDEN
     )
+    @RestrictTo(RestrictTo.Scope.LIBRARY)
     override fun setComponentTree(componentTree: ComponentTree?) {
         throw IllegalStateException()
     }

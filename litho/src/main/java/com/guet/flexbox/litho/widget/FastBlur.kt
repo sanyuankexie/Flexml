@@ -19,7 +19,7 @@ import java.nio.ByteBuffer
 import java.security.MessageDigest
 import kotlin.math.max
 
-class BlurTransformation(
+class FastBlur(
         private val radius: Float,
         private val sampling: Float
 ) : Transformation<Bitmap> {
@@ -30,6 +30,9 @@ class BlurTransformation(
             outWidth: Int,
             outHeight: Int
     ): Resource<Bitmap> {
+        if (radius == 0f || sampling < 1f) {
+            return resource
+        }
         require(Util.isValidDimensions(outWidth, outHeight)) {
             ("Cannot apply transformation on width: "
                     + outWidth
@@ -67,11 +70,11 @@ class BlurTransformation(
     }
 
     override fun toString(): String {
-        return "${BlurTransformation::class.java.name}(radius=$radius, sampling=$sampling)"
+        return "${FastBlur::class.java.name}(radius=$radius, sampling=$sampling)"
     }
 
     override fun equals(other: Any?): Boolean {
-        return other is BlurTransformation
+        return other is FastBlur
                 && other.radius == radius
                 && other.sampling == sampling
     }
@@ -118,8 +121,8 @@ class BlurTransformation(
         return bitmap
     }
 
-    internal companion object {
-        internal val ID = BlurTransformation::class.java.name
-        internal val ID_BYTE = ID.toByteArray()
+    private companion object {
+        private val ID = FastBlur::class.java.name
+        private val ID_BYTE = ID.toByteArray()
     }
 }

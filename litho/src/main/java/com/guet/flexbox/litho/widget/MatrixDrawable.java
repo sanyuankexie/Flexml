@@ -44,7 +44,7 @@ import static android.os.Build.VERSION_CODES.LOLLIPOP;
  * modify from{@link com.facebook.litho.MatrixDrawable}
  */
 @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
-final class MatrixDrawable extends Drawable implements Drawable.Callback, Touchable {
+public class MatrixDrawable extends Drawable implements Drawable.Callback, Touchable {
 
     private static final int UNSET = -1;
     private static final int[] EMPTY = new int[0];

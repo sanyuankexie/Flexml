@@ -8,6 +8,7 @@ import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Matrix
 import android.util.AttributeSet
+import android.view.animation.DecelerateInterpolator
 import android.widget.FrameLayout
 import com.didichuxing.doraemonkit.util.UIUtils
 
@@ -17,7 +18,7 @@ class TransformRootLayout @JvmOverloads constructor(
         defStyleAttr: Int = 0
 ) : FrameLayout(context, attrs, defStyleAttr) {
     private val myMatrix = Matrix()
-    var animationDuration: Long = 300L
+    var animationDuration: Long = 500L
     var offset: Float = UIUtils.dp2px(context, 30f).toFloat()
     private var moved: Boolean = false
     private val src = FloatArray(8)
@@ -78,6 +79,7 @@ class TransformRootLayout @JvmOverloads constructor(
                 }
                 invalidate()
             }
+            interpolator = DecelerateInterpolator()
             duration = animationDuration
         }.start()
     }
@@ -113,6 +115,7 @@ class TransformRootLayout @JvmOverloads constructor(
                     moved = false
                 }
             })
+            interpolator = DecelerateInterpolator()
             duration = animationDuration
         }.start()
     }

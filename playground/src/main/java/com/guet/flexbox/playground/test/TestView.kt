@@ -15,21 +15,7 @@ class TestView @JvmOverloads constructor(
 ) : View(context, attrs, defStyleAttr) {
 
 
-
-    init {
-
-        val cc= context.theme.obtainStyledAttributes(
-                R.styleable.CoordinatorLayout_Layout
-        )
-        R.styleable.RecycleListView
-        val xx = cc.peekValue(R.styleable.CoordinatorLayout_Layout_layout_behavior)
-        val x= cc.peekValue(R.styleable.CoordinatorLayout_Layout_android_layout_gravity)
-        post {
-
-        }
-    }
-
-    private val bitmap = BitmapDrawable(resources, BitmapFactory.decodeResource(resources, R.drawable.ic_launcher))
+    private val bitmap = BitmapDrawable(resources, BitmapFactory.decodeResource(resources, R.drawable.ic_photo2))
     private val paint = Paint().apply {
         color = Color.RED
         isAntiAlias = true
@@ -40,7 +26,6 @@ class TestView @JvmOverloads constructor(
     private val path = Path()
 
     init {
-
         setOnClickListener {
             if (++index >= enumValues<PorterDuff.Mode>().size) {
                 index = 0
@@ -52,32 +37,25 @@ class TestView @JvmOverloads constructor(
         }
     }
 
-    override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
-        super.onMeasure(widthMeasureSpec, heightMeasureSpec)
-    }
-
     override fun onDraw(canvas: Canvas) {
-
-
-        val sc = canvas.saveLayer(null, null, Canvas.ALL_SAVE_FLAG);
-        bitmap.bounds = canvas.clipBounds
+        canvas.drawColor(Color.RED)
+        canvas.save()
+        canvas.save()
+        bitmap.bounds = Rect(0, 0, width, height)
         bitmap.draw(canvas)
-
+        canvas.restore()
         paint.reset()
         path.reset()
-        rectF.set(canvas.clipBounds)
+        rectF.set(Rect(0, 0, width, height))
         path.apply {
             reset()
             addRect(rectF, Path.Direction.CW)
-            addRoundRect(rectF, 30f, 30f, Path.Direction.CCW)
+            addRoundRect(rectF, 100f, 100f, Path.Direction.CCW)
             close()
         }
         paint.xfermode = xfermode
         canvas.drawPath(path, paint)
-
-
-        canvas.restoreToCount(sc)
-
+        canvas.restore()
 
     }
 }

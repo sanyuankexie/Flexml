@@ -1,29 +1,58 @@
 package com.guet.flexbox.playground.test
 
+import android.graphics.drawable.Drawable
 import android.os.Bundle
+import android.os.Handler
+import android.widget.ImageView
+import android.widget.ImageView.ScaleType
 import androidx.appcompat.app.AppCompatActivity
-import com.facebook.litho.ComponentContext
+import com.bumptech.glide.Glide
+import com.bumptech.glide.load.resource.bitmap.GranularRoundedCorners
+import com.bumptech.glide.request.target.SimpleTarget
+import com.bumptech.glide.request.transition.Transition
+import com.guet.flexbox.litho.widget.ImageScale
 import com.guet.flexbox.playground.R
-import com.guet.flexbox.playground.widget.TransformRootLayout
 
 class TestActivity : AppCompatActivity() {
 
-    var m: Boolean = false
+    private lateinit var imageView: ImageView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        val c = ComponentContext(this)
         setContentView(R.layout.activity_test)
-        findViewById<TransformRootLayout>(R.id.host).apply {
-            setOnClickListener {
-                m = if (!m) {
-                    move()
-                    true
-                } else {
-                    reset()
-                    false
-                }
-            }
-        }
+        imageView = findViewById(R.id.image)
+
+
+        Handler().postDelayed({
+            Glide.with(this)
+                    .load("https://tva1.sinaimg.cn/large/87c01ec7gy1frqbkngr3dj21hc0u0u0x.jpg")
+                    .transform(
+                            ImageScale(
+                                    ScaleType.FIT_XY
+                            ),
+//                            FastBlur(
+//                                    10f,
+//                                    3f
+//                            ),
+                            GranularRoundedCorners(
+                                    100f,
+                                    100f,
+                                    100f,
+                                    100f
+                            )
+                    )
+                    .into(object :SimpleTarget<Drawable>(
+                            imageView.width,
+                            imageView.height
+                    ){
+                        override fun onResourceReady(
+                                resource: Drawable,
+                                transition: Transition<in Drawable>?) {
+                            imageView.scaleType = ScaleType.FIT_XY
+                            imageView.setImageDrawable(resource)
+                        }
+                    })
+        },2000)
     }
+
 }

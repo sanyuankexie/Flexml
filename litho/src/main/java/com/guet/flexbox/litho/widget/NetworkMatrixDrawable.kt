@@ -31,13 +31,15 @@ internal class NetworkMatrixDrawable(
             blurSampling: Float,
             scaleType: ScaleType
     ) {
+
+
         this.width = width
         this.height = height
         this.scaleType = scaleType
         if (resId != 0) {
             Glide.with(c).load(resId).apply {
                 if (blurRadius > 0 && blurSampling > 0) {
-                    transform(BlurTransformation(
+                    transform(FastBlur(
                             blurRadius,
                             blurSampling
                     ))
@@ -60,7 +62,7 @@ internal class NetworkMatrixDrawable(
         this.scaleType = scaleType
         if (blurRadius > 0 && blurSampling > 0) {
             Glide.with(c).load(drawable)
-                    .transform(BlurTransformation(
+                    .transform(FastBlur(
                             blurRadius,
                             blurSampling
                     ))
@@ -78,13 +80,16 @@ internal class NetworkMatrixDrawable(
             blurSampling: Float,
             scaleType: ScaleType
     ) {
+
+
+
         this.width = width
         this.height = height
         this.scaleType = scaleType
         if (url.isNotEmpty()) {
             Glide.with(c).load(url).apply {
                 if (blurRadius > 0 && blurSampling > 0) {
-                    transform(BlurTransformation(
+                    transform(FastBlur(
                             blurRadius,
                             blurSampling
                     ))

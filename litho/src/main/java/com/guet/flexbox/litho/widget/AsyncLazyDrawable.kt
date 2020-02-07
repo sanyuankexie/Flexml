@@ -4,7 +4,6 @@ import android.content.Context
 import android.content.res.Configuration
 import android.graphics.Canvas
 import android.graphics.drawable.Drawable
-import com.bumptech.glide.Glide
 import com.bumptech.glide.request.target.SizeReadyCallback
 import com.bumptech.glide.request.target.Target
 import com.bumptech.glide.request.transition.Transition
@@ -23,11 +22,11 @@ internal class AsyncLazyDrawable(
     private val isInitialized = AtomicBoolean(false)
 
     override fun draw(canvas: Canvas) {
-        if (isInitialized.compareAndSet(false, true)) {
-            Glide.with(c).load(model).into(this)
-        } else {
-            super.draw(canvas)
-        }
+//        if (isInitialized.compareAndSet(false, true)) {
+//            Glide.with(c).load(model).into(this)
+//        } else {
+//            super.draw(canvas)
+//        }
     }
 
     override fun getSize(cb: SizeReadyCallback) {

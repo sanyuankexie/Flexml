@@ -2,7 +2,6 @@ package com.guet.flexbox.litho
 
 import android.view.View
 import com.facebook.litho.Component
-import com.facebook.litho.StateHandler
 import com.guet.flexbox.AppExecutors
 import com.guet.flexbox.el.ELContext
 import com.guet.flexbox.transaction.RefreshTransaction
@@ -12,7 +11,6 @@ internal class HostRefreshTransaction(
         private val source: View?
 ) : RefreshTransaction() {
     override fun commit(): (ELContext) -> Unit {
-        StateHandler.createNewInstance(null)
         return create { elContext ->
             host.pageEventListener?.run {
                 sends.forEach {

@@ -7,7 +7,7 @@ import com.guet.flexbox.litho.factories.*
 
 object LithoBuildTool : BuildTool() {
 
-    private val myWidgets by lazy {
+    override val widgets: Map<String, ToWidget> by lazy {
         val arr = arrayOf(
                 "Empty" to (Empty to ToEmpty),
                 "Flex" to (Flex to ToFlex),
@@ -24,6 +24,4 @@ object LithoBuildTool : BuildTool() {
         )
         arr.toMap(ArrayMap<String, ToWidget>(arr.size))
     }
-
-    override val widgets: Map<String, ToWidget> = myWidgets
 }

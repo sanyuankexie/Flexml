@@ -2,14 +2,13 @@ package com.guet.flexbox.litho.widget
 
 import android.content.Context
 import android.graphics.drawable.Drawable
-import android.text.TextUtils
 import android.widget.ImageView.ScaleType
 import com.facebook.litho.*
 import com.facebook.litho.annotations.*
 import com.facebook.litho.utils.MeasureUtils
 
 @MountSpec(isPureRender = true, poolSize = 30)
-internal object NetworkImageSpec {
+internal object GlideImageSpec {
 
     @PropDefault
     val scaleType = ScaleType.FIT_CENTER
@@ -17,8 +16,8 @@ internal object NetworkImageSpec {
     val imageAspectRatio = 1f
 
     @OnCreateMountContent
-    fun onCreateMountContent(c: Context): NetworkMatrixDrawable {
-        return NetworkMatrixDrawable(c)
+    fun onCreateMountContent(c: Context): GlideDrawable {
+        return GlideDrawable(c)
     }
 
     @OnMeasure
@@ -48,52 +47,43 @@ internal object NetworkImageSpec {
 
     @OnMount
     fun onMount(c: ComponentContext,
-                image: NetworkMatrixDrawable,
+                image: GlideDrawable,
                 @Prop(optional = true) resId: Int,
                 @Prop(optional = true) drawable: Drawable?,
-                @Prop(optional = true) url: CharSequence?,
+                @Prop(optional = true) url: String?,
                 @Prop(optional = true) blurRadius: Float,
                 @Prop(optional = true) blurSampling: Float,
                 @Prop(optional = true) scaleType: ScaleType,
                 @FromBoundsDefined width: Int,
                 @FromBoundsDefined height: Int) {
-        when {
+        val model: Any? = when {
             resId != 0 -> {
-                image.mount(
-                        resId,
-                        width,
-                        height,
-                        blurRadius,
-                        blurSampling,
-                        scaleType
-                )
+                resId
             }
             drawable != null -> {
-                image.mount(
-                        drawable,
-                        width,
-                        height,
-                        blurRadius,
-                        blurSampling,
-                        scaleType
-                )
+                drawable
             }
-            else -> {
-                image.mount(
-                        url ?: "",
-                        width,
-                        height,
-                        blurRadius,
-                        blurSampling,
-                        scaleType
-                )
+            !url.isNullOrBlank() -> {
+                url
             }
+            else -> null
+        }
+        if (model != null) {
+            image.mount(
+                    model,
+                    width,
+                    height,
+                    floatArrayOf(100f, 100f, 100f, 100f),
+                    blurRadius,
+                    blurSampling,
+                    scaleType
+            )
         }
     }
 
     @OnUnmount
     fun onUnmount(c: ComponentContext,
-                  drawable: NetworkMatrixDrawable) {
+                  drawable: GlideDrawable) {
         drawable.unmount()
     }
 
@@ -103,9 +93,9 @@ internal object NetworkImageSpec {
             @Prop(optional = true) blurSampling: Diff<Float>,
             @Prop(optional = true) blurRadius: Diff<Float>,
             @Prop(optional = true) scaleType: Diff<ScaleType>,
-            @Prop(optional = true) url: Diff<CharSequence?>,
+            @Prop(optional = true) url: Diff<String?>,
             @Prop(optional = true) drawable: Diff<Drawable?>): Boolean {
-        return !TextUtils.equals(url.next, url.previous)
+        return url.next != url.previous
                 || scaleType.next != scaleType.previous
                 || blurRadius.next != blurRadius.previous
                 || blurSampling.next != blurSampling.previous

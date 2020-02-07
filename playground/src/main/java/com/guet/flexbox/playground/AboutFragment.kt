@@ -127,7 +127,7 @@ class AboutFragment : Fragment() {
                     setBackgroundColor(Color.TRANSPARENT)
                     layoutParams = ViewGroup.LayoutParams(-1, -1)
                     addView(AppCompatImageView(c).apply {
-                        val px = UIUtils.dp2px(c, 120f)
+                        val px = UIUtils.dp2px(c, 150f)
                         layoutParams = LinearLayout.LayoutParams(px, px)
                         Glide.with(this)
                                 .load(R.drawable.ic_gcta)
