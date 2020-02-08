@@ -45,7 +45,6 @@ class TransformGlideDrawable(
         bind(width, height)
         var request = Glide.with(context)
                 .load(model)
-                .override(width, height)
                 .diskCacheStrategy(DiskCacheStrategy.ALL)
         var transforms: ArrayList<Transformation<Bitmap>>? = null
         val needRoundedCorners = lt != 0f || rb != 0f || lb != 0f || rt != 0f
