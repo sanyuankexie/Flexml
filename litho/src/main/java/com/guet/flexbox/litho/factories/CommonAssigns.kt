@@ -9,6 +9,7 @@ import com.guet.flexbox.EventHandler
 import com.guet.flexbox.build.AttributeSet
 import com.guet.flexbox.enums.FlexAlign
 import com.guet.flexbox.litho.event.EventHandlerWrapper
+import com.guet.flexbox.litho.resolve.mapping
 import com.guet.flexbox.litho.toPx
 import com.guet.flexbox.litho.toPxFloat
 import java.util.*

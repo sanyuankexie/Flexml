@@ -1,4 +1,4 @@
-package com.guet.flexbox.litho.factories
+package com.guet.flexbox.litho.resolve
 
 import android.content.Context
 import android.graphics.Color

@@ -101,6 +101,7 @@ class TemplatePage @WorkerThread internal constructor(
             ) as Component).apply {
                 logger(null, simpleName)
             })
+            isReconciliationEnabled(false)
             return TemplatePage(this)
         }
     }

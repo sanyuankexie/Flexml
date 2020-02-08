@@ -6,6 +6,7 @@ import android.graphics.drawable.Drawable
 import android.widget.ImageView.ScaleType
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.Transformation
+import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.load.resource.bitmap.GranularRoundedCorners
 import com.bumptech.glide.request.target.SizeReadyCallback
 import com.bumptech.glide.request.target.Target
@@ -38,6 +39,7 @@ class MatrixGlideDrawable(
         val needRoundedCorners = lt != 0f || rb != 0f || lb != 0f || rt != 0f
         var request = Glide.with(context)
                 .load(model)
+                .diskCacheStrategy(DiskCacheStrategy.ALL)
         var transforms: ArrayList<Transformation<Bitmap>>? = null
         if (needRoundedCorners) {
             transforms = ArrayList()

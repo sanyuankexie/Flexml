@@ -58,6 +58,7 @@ dependencies {
     api project(':core')
 
     kapt 'com.facebook.litho:litho-processor:0.33.0'
+    kapt 'com.github.bumptech.glide:compiler:4.9.0'
 
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'androidx.test:runner:1.2.0'

@@ -11,6 +11,7 @@ import com.guet.flexbox.build.Child
 import com.guet.flexbox.build.RenderNodeFactory
 import com.guet.flexbox.litho.ChildComponent
 import com.guet.flexbox.litho.drawable.*
+import com.guet.flexbox.litho.resolve.UrlType
 import com.guet.flexbox.litho.toPxFloat
 
 abstract class ToComponent<C : Component.Builder<*>>(

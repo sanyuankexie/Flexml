@@ -13,6 +13,7 @@ import com.guet.flexbox.build.Child
 import com.guet.flexbox.build.RenderNodeFactory
 import com.guet.flexbox.litho.drawable.RoundedColorDrawable
 import com.guet.flexbox.litho.drawable.RoundedGradientDrawable
+import com.guet.flexbox.litho.resolve.UrlType
 import com.guet.flexbox.litho.toPxFloat
 
 object ToImage : RenderNodeFactory {

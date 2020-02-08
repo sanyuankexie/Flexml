@@ -3,6 +3,7 @@ package com.guet.flexbox.litho.factories
 import com.facebook.litho.ComponentContext
 import com.guet.flexbox.build.AttributeSet
 import com.guet.flexbox.enums.ScaleType
+import com.guet.flexbox.litho.resolve.mapping
 import com.guet.flexbox.litho.widget.GlideImage
 
 internal object ToGlideImage : ToComponent<GlideImage.Builder>(CommonAssigns) {

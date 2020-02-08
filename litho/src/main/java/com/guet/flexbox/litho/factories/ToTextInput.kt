@@ -4,10 +4,11 @@ import android.graphics.Typeface
 import android.text.TextUtils.TruncateAt
 import com.facebook.litho.ComponentContext
 import com.facebook.litho.widget.TextInput
-import com.guet.flexbox.build.AttributeSet
 import com.guet.flexbox.EventHandler
+import com.guet.flexbox.build.AttributeSet
 import com.guet.flexbox.enums.TextStyle
 import com.guet.flexbox.litho.event.EventHandlerWrapper
+import com.guet.flexbox.litho.resolve.mapping
 
 internal object ToTextInput : ToComponent<TextInput.Builder>(CommonAssigns) {
     override val attributeAssignSet: AttributeAssignSet<TextInput.Builder> by create {
