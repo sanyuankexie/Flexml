@@ -7,9 +7,9 @@ import com.facebook.litho.widget.TextInput
 import com.guet.flexbox.build.AttributeSet
 import com.guet.flexbox.EventHandler
 import com.guet.flexbox.enums.TextStyle
-import com.guet.flexbox.litho.EventHandlerWrapper
+import com.guet.flexbox.litho.event.EventHandlerWrapper
 
-internal object ToTextInput : ToComponent<TextInput.Builder>(Common) {
+internal object ToTextInput : ToComponent<TextInput.Builder>(CommonAssigns) {
     override val attributeAssignSet: AttributeAssignSet<TextInput.Builder> by create {
         register("maxLines") { _, _, value: Double ->
             maxLines(value.toInt())
@@ -21,7 +21,7 @@ internal object ToTextInput : ToComponent<TextInput.Builder>(Common) {
             textSizePx(value.toInt())
         }
         register("textStyle") { _, _, value: TextStyle ->
-            typeface(Typeface.defaultFromStyle(value.mapToLithoValue()))
+            typeface(Typeface.defaultFromStyle(value.mapping()))
         }
         register("ellipsize") { _, _, value: TruncateAt ->
             ellipsize(value)

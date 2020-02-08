@@ -35,7 +35,7 @@ class FlexBoxAdapter(
 
     override fun convert(helper: BaseViewHolder, item: TemplatePage) {
         val lithoView = helper.getView<HostingView>(R.id.litho)
-        lithoView.setPageEventListener(callback)
+        lithoView.pageEventListener = callback
         lithoView.templatePage = item
     }
 }

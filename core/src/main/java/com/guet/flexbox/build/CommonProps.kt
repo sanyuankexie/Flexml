@@ -11,7 +11,7 @@ import com.guet.flexbox.el.tryGetValue
 import com.guet.flexbox.enums.FlexAlign
 import com.guet.flexbox.enums.Visibility
 
-object Common : Declaration() {
+object CommonProps : Declaration() {
 
     override val attributeInfoSet: AttributeInfoSet by create {
         enum("visibility", mapOf(
@@ -39,6 +39,11 @@ object Common : Declaration() {
         value("padding")
         color("borderColor")
         value("borderRadius")
+        for (lr in arrayOf("Left", "Right")) {
+            for (tb in arrayOf("Top", "Bottom")) {
+                value("border${lr}${tb}Radius")
+            }
+        }
         value("borderWidth")
         value("shadowElevation")
         text("background")

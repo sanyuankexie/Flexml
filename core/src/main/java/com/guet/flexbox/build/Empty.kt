@@ -4,7 +4,7 @@ import com.guet.flexbox.EventContext
 import com.guet.flexbox.TemplateNode
 import com.guet.flexbox.el.ELContext
 
-object Empty : Declaration(Common) {
+object Empty : Declaration(CommonProps) {
     override val attributeInfoSet: AttributeInfoSet
         get() = emptyMap()
 

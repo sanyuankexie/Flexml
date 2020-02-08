@@ -1,8 +1,11 @@
-package com.guet.flexbox.litho
+package com.guet.flexbox.litho.event
 
 import android.view.View
 import com.guet.flexbox.EventContext
 import com.guet.flexbox.EventContext.ActionKey.*
+import com.guet.flexbox.litho.HostHttpTransaction
+import com.guet.flexbox.litho.HostRefreshTransaction
+import com.guet.flexbox.litho.HostingView
 
 internal class EventTarget(
         private val host: HostingView

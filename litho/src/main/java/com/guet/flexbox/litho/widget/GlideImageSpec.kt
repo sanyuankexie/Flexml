@@ -6,6 +6,7 @@ import android.widget.ImageView.ScaleType
 import com.facebook.litho.*
 import com.facebook.litho.annotations.*
 import com.facebook.litho.utils.MeasureUtils
+import com.guet.flexbox.litho.drawable.MatrixGlideDrawable
 
 @MountSpec(isPureRender = true, poolSize = 30)
 internal object GlideImageSpec {
@@ -16,17 +17,19 @@ internal object GlideImageSpec {
     val imageAspectRatio = 1f
 
     @OnCreateMountContent
-    fun onCreateMountContent(c: Context): GlideDrawable {
-        return GlideDrawable(c)
+    fun onCreateMountContent(c: Context): MatrixGlideDrawable {
+        return MatrixGlideDrawable(c)
     }
 
     @OnMeasure
-    fun onMeasure(c: ComponentContext,
-                  layout: ComponentLayout,
-                  widthSpec: Int,
-                  heightSpec: Int,
-                  size: Size,
-                  @Prop(optional = true) imageAspectRatio: Float) {
+    fun onMeasure(
+            c: ComponentContext,
+            layout: ComponentLayout,
+            widthSpec: Int,
+            heightSpec: Int,
+            size: Size,
+            @Prop(optional = true) imageAspectRatio: Float
+    ) {
         MeasureUtils.measureWithAspectRatio(
                 widthSpec,
                 heightSpec,
@@ -45,45 +48,59 @@ internal object GlideImageSpec {
         height.set(layout.height - (layout.paddingTop + layout.paddingBottom))
     }
 
+    @OnBind
+    fun onBind(
+            c: ComponentContext,
+            image: MatrixGlideDrawable,
+            @FromBoundsDefined width: Int,
+            @FromBoundsDefined height: Int
+    ) {
+        image.bind(width, height)
+    }
+
     @OnMount
     fun onMount(c: ComponentContext,
-                image: GlideDrawable,
+                image: MatrixGlideDrawable,
                 @Prop(optional = true) resId: Int,
-                @Prop(optional = true) drawable: Drawable?,
                 @Prop(optional = true) url: String?,
                 @Prop(optional = true) blurRadius: Float,
                 @Prop(optional = true) blurSampling: Float,
                 @Prop(optional = true) scaleType: ScaleType,
+                @Prop(optional = true) leftTop: Float,
+                @Prop(optional = true) rightTop: Float,
+                @Prop(optional = true) rightBottom: Float,
+                @Prop(optional = true) leftBottom: Float,
                 @FromBoundsDefined width: Int,
-                @FromBoundsDefined height: Int) {
-        val model: Any? = when {
-            resId != 0 -> {
-                resId
-            }
-            drawable != null -> {
-                drawable
-            }
-            !url.isNullOrBlank() -> {
+                @FromBoundsDefined height: Int
+    ) {
+        val model: Any? = if (resId == 0) {
+            if (url.isNullOrEmpty()) {
+                null
+            } else {
                 url
             }
-            else -> null
+        } else {
+            resId
         }
         if (model != null) {
             image.mount(
                     model,
                     width,
                     height,
-                    floatArrayOf(100f, 100f, 100f, 100f),
                     blurRadius,
                     blurSampling,
-                    scaleType
+                    scaleType,
+                    leftTop,
+                    rightTop,
+                    rightBottom,
+                    leftBottom
             )
         }
     }
 
     @OnUnmount
     fun onUnmount(c: ComponentContext,
-                  drawable: GlideDrawable) {
+                  drawable: MatrixGlideDrawable) {
         drawable.unmount()
     }
 
@@ -94,12 +111,20 @@ internal object GlideImageSpec {
             @Prop(optional = true) blurRadius: Diff<Float>,
             @Prop(optional = true) scaleType: Diff<ScaleType>,
             @Prop(optional = true) url: Diff<String?>,
-            @Prop(optional = true) drawable: Diff<Drawable?>): Boolean {
+            @Prop(optional = true) drawable: Diff<Drawable?>,
+            @Prop(optional = true) leftTop: Diff<Float>,
+            @Prop(optional = true) rightTop: Diff<Float>,
+            @Prop(optional = true) rightBottom: Diff<Float>,
+            @Prop(optional = true) leftBottom: Diff<Float>): Boolean {
         return url.next != url.previous
                 || scaleType.next != scaleType.previous
                 || blurRadius.next != blurRadius.previous
                 || blurSampling.next != blurSampling.previous
                 || drawable.next != drawable.previous
                 || resId.next != resId.previous
+                || rightTop.next != rightTop.previous
+                || leftTop.next != leftTop.previous
+                || rightBottom.next != rightBottom.previous
+                || leftBottom.next != leftBottom.previous
     }
 }

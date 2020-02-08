@@ -5,7 +5,7 @@ import com.guet.flexbox.enums.FlexDirection
 import com.guet.flexbox.enums.FlexJustify
 import com.guet.flexbox.enums.FlexWrap
 
-object Flex : Declaration(Common) {
+object Flex : Declaration(CommonProps) {
     override val attributeInfoSet: AttributeInfoSet by create {
         enum("flexWrap", mapOf(
                 "wrap" to FlexWrap.WRAP,

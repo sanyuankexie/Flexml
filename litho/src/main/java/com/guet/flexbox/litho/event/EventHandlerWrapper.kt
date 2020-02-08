@@ -1,4 +1,4 @@
-package com.guet.flexbox.litho
+package com.guet.flexbox.litho.event
 
 import com.facebook.litho.ClickEvent
 import com.facebook.litho.EventDispatcher

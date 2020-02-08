@@ -9,7 +9,7 @@ abstract class BuildTool {
     protected abstract val widgets: Map<String, ToWidget>
 
     companion object {
-        private val default: ToWidget = Common to null
+        private val default: ToWidget = CommonProps to null
     }
 
     fun build(

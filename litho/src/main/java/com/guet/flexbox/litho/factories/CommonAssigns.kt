@@ -5,14 +5,15 @@ import com.facebook.litho.Component
 import com.facebook.litho.ComponentContext
 import com.facebook.litho.VisibleEvent
 import com.facebook.yoga.YogaEdge
-import com.guet.flexbox.build.AttributeSet
 import com.guet.flexbox.EventHandler
+import com.guet.flexbox.build.AttributeSet
 import com.guet.flexbox.enums.FlexAlign
-import com.guet.flexbox.litho.EventHandlerWrapper
+import com.guet.flexbox.litho.event.EventHandlerWrapper
 import com.guet.flexbox.litho.toPx
+import com.guet.flexbox.litho.toPxFloat
 import java.util.*
 
-internal object Common : ToComponent<Component.Builder<*>>() {
+internal object CommonAssigns : ToComponent<Component.Builder<*>>() {
 
     override val attributeAssignSet: AttributeAssignSet<Component.Builder<*>> by create {
         register("width") { _, _, value: Double ->
@@ -40,7 +41,7 @@ internal object Common : ToComponent<Component.Builder<*>>() {
             flexShrink(value.toFloat())
         }
         register("alignSelf") { _, _, value: FlexAlign ->
-            alignSelf(value.mapToLithoValue())
+            alignSelf(value.mapping())
         }
         register("margin") { _, _, value: Double ->
             marginPx(YogaEdge.ALL, value.toPx())
@@ -70,7 +71,7 @@ internal object Common : ToComponent<Component.Builder<*>>() {
             visibleHandler(EventHandlerWrapper<VisibleEvent>(value))
         }
         register("shadowElevation") { _, _, value: Double ->
-            shadowElevationPx(value.toPx().toFloat())
+            shadowElevationPx(value.toPxFloat())
         }
     }
 

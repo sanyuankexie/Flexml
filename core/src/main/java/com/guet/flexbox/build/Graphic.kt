@@ -2,7 +2,7 @@ package com.guet.flexbox.build
 
 import com.guet.flexbox.enums.ScaleType
 
-internal object Graphic : Declaration(Common) {
+internal object Graphic : Declaration(CommonProps) {
     override val attributeInfoSet: AttributeInfoSet by create {
         enum("scaleType", mapOf(
                 "center" to ScaleType.CENTER,

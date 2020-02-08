@@ -1,4 +1,4 @@
-package com.guet.flexbox.litho.widget
+package com.guet.flexbox.litho.drawable
 
 import android.graphics.drawable.Drawable
 import com.bumptech.glide.request.Request

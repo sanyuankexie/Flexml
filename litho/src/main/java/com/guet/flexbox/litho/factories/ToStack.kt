@@ -5,7 +5,7 @@ import com.guet.flexbox.build.AttributeSet
 import com.guet.flexbox.litho.ChildComponent
 import com.guet.flexbox.litho.widget.Stack
 
-internal object ToStack : ToComponent<Stack.Builder>(Common) {
+internal object ToStack : ToComponent<Stack.Builder>(CommonAssigns) {
 
     override val attributeAssignSet: AttributeAssignSet<Stack.Builder>
         get() = emptyMap()

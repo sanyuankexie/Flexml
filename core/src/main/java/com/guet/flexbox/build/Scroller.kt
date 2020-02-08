@@ -2,7 +2,7 @@ package com.guet.flexbox.build
 
 import com.guet.flexbox.enums.Orientation
 
-object Scroller : Declaration(Common) {
+object Scroller : Declaration(CommonProps) {
     override val attributeInfoSet: AttributeInfoSet by create {
         bool("scrollBarEnable")
         enum("orientation", mapOf(

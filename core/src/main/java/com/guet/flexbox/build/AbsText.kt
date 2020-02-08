@@ -5,7 +5,7 @@ import com.guet.flexbox.enums.Horizontal
 import com.guet.flexbox.enums.TextStyle
 import com.guet.flexbox.enums.Vertical
 
-internal object AbsText : Declaration(Common) {
+internal object AbsText : Declaration(CommonProps) {
 
     override val attributeInfoSet: AttributeInfoSet by create {
         enum("verticalGravity", mapOf(

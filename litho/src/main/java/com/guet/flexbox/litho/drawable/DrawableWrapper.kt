@@ -1,4 +1,4 @@
-package com.guet.flexbox.litho.widget
+package com.guet.flexbox.litho.drawable
 
 import android.content.res.ColorStateList
 import android.graphics.*
@@ -10,7 +10,7 @@ open class DrawableWrapper<T : Drawable>(
         drawable: T
 ) : Drawable(), Drawable.Callback {
 
-    var wrappedDrawable: T = drawable.apply { callback = this@DrawableWrapper }
+    open var wrappedDrawable: T = drawable.apply { callback = this@DrawableWrapper }
         set(value) {
             field.callback = null
             field = value

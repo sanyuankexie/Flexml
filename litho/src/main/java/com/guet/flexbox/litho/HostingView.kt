@@ -7,6 +7,7 @@ import androidx.annotation.RestrictTo
 import com.facebook.litho.ComponentTree
 import com.facebook.litho.LithoView
 import com.guet.flexbox.HttpClient
+import com.guet.flexbox.litho.event.EventTarget
 
 class HostingView @JvmOverloads constructor(
         context: Context, attrs: AttributeSet? = null
@@ -14,17 +15,9 @@ class HostingView @JvmOverloads constructor(
 
     internal val target = EventTarget(this)
 
-    internal var httpClient: HttpClient? = null
+    var httpClient: HttpClient? = null
 
-    internal var pageEventListener: PageEventListener? = null
-
-    fun setPageEventListener(pageEventListener: PageEventListener?) {
-        this.pageEventListener = pageEventListener
-    }
-
-    fun setHttpClient(httpClient: HttpClient?) {
-        this.httpClient = httpClient
-    }
+    var pageEventListener: PageEventListener? = null
 
     var templatePage: TemplatePage?
         set(value) {
@@ -41,8 +34,6 @@ class HostingView @JvmOverloads constructor(
             ReplaceWith("templatePage"),
             DeprecationLevel.HIDDEN
     )
-    @Suppress("DEPRECATED_JAVA_ANNOTATION")
-    @java.lang.Deprecated
     @RestrictTo(RestrictTo.Scope.LIBRARY)
     override fun getComponentTree(): ComponentTree? {
         return super.getComponentTree()
@@ -55,7 +46,7 @@ class HostingView @JvmOverloads constructor(
     )
     @RestrictTo(RestrictTo.Scope.LIBRARY)
     override fun setComponentTree(componentTree: ComponentTree?) {
-        throw IllegalStateException()
+        super.setComponentTree(componentTree)
     }
 
     interface PageEventListener {

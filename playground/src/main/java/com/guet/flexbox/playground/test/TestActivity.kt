@@ -10,7 +10,7 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.GranularRoundedCorners
 import com.bumptech.glide.request.target.SimpleTarget
 import com.bumptech.glide.request.transition.Transition
-import com.guet.flexbox.litho.widget.ImageScale
+import com.guet.flexbox.litho.transforms.ImageScale
 import com.guet.flexbox.playground.R
 
 class TestActivity : AppCompatActivity() {

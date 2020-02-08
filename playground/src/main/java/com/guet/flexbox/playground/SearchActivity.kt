@@ -49,7 +49,7 @@ class SearchActivity : AppCompatActivity() {
         setContentView(R.layout.activity_search)
         sharedPreferences = getSharedPreferences("history", Context.MODE_PRIVATE)
         list = findViewById(R.id.list)
-        list.setPageEventListener(handler)
+        list.pageEventListener = handler
         editText = findViewById(R.id.search)
         editText.apply {
             setOnFocusChangeListener { v, hasFocus ->

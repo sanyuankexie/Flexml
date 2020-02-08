@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.guet.flexbox.litho.widget;
+package com.guet.flexbox.litho.drawable;
 
 import android.annotation.TargetApi;
 import android.graphics.Canvas;

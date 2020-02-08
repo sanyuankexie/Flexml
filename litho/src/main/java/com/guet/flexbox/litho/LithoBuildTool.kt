@@ -2,7 +2,6 @@ package com.guet.flexbox.litho
 
 import android.util.ArrayMap
 import com.guet.flexbox.build.*
-import com.guet.flexbox.build.Common
 import com.guet.flexbox.litho.factories.*
 
 object LithoBuildTool : BuildTool() {
@@ -16,7 +15,7 @@ object LithoBuildTool : BuildTool() {
                 "Scroller" to (Scroller to ToScroller),
                 "TextInput" to (TextInput to ToTextInput),
                 "Text" to (Text to ToText),
-                "Stack" to (Common to ToStack),
+                "Stack" to (CommonProps to ToStack),
                 "for" to (For to null),
                 "foreach" to (ForEach to null),
                 "when" to (When to null),
