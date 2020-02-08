@@ -12,7 +12,7 @@ import com.bumptech.glide.request.target.SizeReadyCallback
 import com.bumptech.glide.request.target.Target
 import com.bumptech.glide.request.transition.Transition
 import com.guet.flexbox.litho.transforms.FastBlur
-import com.guet.flexbox.litho.transforms.ScaleTypes
+import com.guet.flexbox.litho.transforms.ImageScale
 
 class TransformGlideDrawable(
         private val context: Context
@@ -48,7 +48,7 @@ class TransformGlideDrawable(
                 .diskCacheStrategy(DiskCacheStrategy.ALL)
         var transforms: ArrayList<Transformation<Bitmap>>? = null
         val needRoundedCorners = lt != 0f || rb != 0f || lb != 0f || rt != 0f
-        if (blurRadius <= 0 || blurSampling < 1) {
+        if (blurRadius > 0 && blurSampling >= 1) {
             transforms = ArrayList()
             transforms.add(FastBlur(blurRadius, blurSampling))
         }
@@ -56,7 +56,7 @@ class TransformGlideDrawable(
             if (transforms == null) {
                 transforms = ArrayList()
             }
-            transforms.add(ScaleTypes(scaleType))
+            transforms.add(ImageScale(scaleType))
         }
         if (needRoundedCorners) {
             if (transforms == null) {

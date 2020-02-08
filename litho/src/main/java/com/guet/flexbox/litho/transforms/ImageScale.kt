@@ -10,7 +10,7 @@ import java.security.MessageDigest
 import kotlin.math.min
 import kotlin.math.round
 
-class ScaleTypes(
+class ImageScale(
         private val scaleType: ScaleType
 ) : BitmapTransformation() {
 
@@ -22,7 +22,7 @@ class ScaleTypes(
     }
 
     override fun equals(other: Any?): Boolean {
-        return other is ScaleTypes && scaleType == other.scaleType
+        return other is ImageScale && scaleType == other.scaleType
     }
 
     override fun transform(
@@ -71,7 +71,7 @@ class ScaleTypes(
 
     private companion object {
 
-        private val ID = ScaleTypes::class.java.name
+        private val ID = ImageScale::class.java.name
         private val ID_BYTE = ID.toByteArray()
 
         private fun create(

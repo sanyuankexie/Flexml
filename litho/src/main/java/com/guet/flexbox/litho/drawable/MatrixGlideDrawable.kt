@@ -41,7 +41,7 @@ class MatrixGlideDrawable(
                 .load(model)
                 .diskCacheStrategy(DiskCacheStrategy.ALL)
         var transforms: ArrayList<Transformation<Bitmap>>? = null
-        if (blurRadius <= 0 || blurSampling < 1) {
+        if (blurRadius > 0 && blurSampling >= 1) {
             transforms = ArrayList()
             transforms.add(FastBlur(blurRadius, blurSampling))
         }
