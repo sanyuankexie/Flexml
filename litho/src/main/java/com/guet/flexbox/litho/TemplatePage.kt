@@ -8,6 +8,7 @@ import com.facebook.litho.*
 import com.guet.flexbox.EventBridge
 import com.guet.flexbox.TemplateNode
 import com.guet.flexbox.el.PropsELContext
+import com.guet.flexbox.litho.widget.Root
 
 class TemplatePage @WorkerThread internal constructor(
         builder: Builder
@@ -93,15 +94,15 @@ class TemplatePage @WorkerThread internal constructor(
         @WorkerThread
         override fun build(): TemplatePage {
             super.layoutThreadHandler(LayoutThreadHandler)
-            super.withRoot((LithoBuildTool.build(
-                    requireNotNull(template),
-                    eventBridge,
-                    PropsELContext(data),
-                    context
-            ) as Component).apply {
-                logger(null, simpleName)
-            })
-            isReconciliationEnabled(false)
+            super.withRoot(Root.create(context)
+                    .component((LithoBuildTool.build(
+                            requireNotNull(template),
+                            eventBridge,
+                            PropsELContext(data),
+                            context
+                    ) as Component)).build().apply {
+                        logger(null, simpleName)
+                    })
             return TemplatePage(this)
         }
     }

@@ -188,8 +188,6 @@ class BlurLayout @JvmOverloads constructor(
                     //set to false
                     flags = flags and (hasPendingWork.inv())
                     startWork()
-                    //set to true
-                    flags = flags or inWorking
                 }
             } else {
                 // 如果不是在等待绘制，那么记录有堆积的任务
@@ -199,8 +197,7 @@ class BlurLayout @JvmOverloads constructor(
         } else {
             // 空闲状态直接开始新任务
             startWork()
-            //set to true
-            flags = flags or inWorking
+
         }
     }
 
@@ -210,6 +207,12 @@ class BlurLayout @JvmOverloads constructor(
         getGlobalVisibleRect(rect)
         val width = rect.width()
         val height = rect.height()
+        if (width * height == 0) {
+            return
+        } else {
+            //set to true
+            flags = flags or inWorking
+        }
         // 使用Picture来记录绘制内容
         // 因为它只记录绘制的操作，所以这比直接用Canvas要更快
         // 不需要绘制整个屏幕，只需要绘制View底下那一层就可以了

@@ -11,15 +11,24 @@ import com.bumptech.glide.load.resource.bitmap.GranularRoundedCorners
 import com.bumptech.glide.request.target.SizeReadyCallback
 import com.bumptech.glide.request.target.Target
 import com.bumptech.glide.request.transition.Transition
-import com.facebook.litho.DrawableMatrix
 import com.guet.flexbox.litho.transforms.FastBlur
+import com.guet.flexbox.litho.transforms.ScaleTypes
 
-class MatrixGlideDrawable(
+class TransformGlideDrawable(
         private val context: Context
-) : MatrixDrawable(), Target<Drawable> by DelegateTarget() {
+) : DrawableWrapper<Drawable>(NoOpDrawable()),
+        Target<Drawable> by DelegateTarget() {
     private var width: Int = 0
     private var height: Int = 0
-    private var scaleType = ScaleType.FIT_CENTER
+
+    fun unmount() {
+        wrappedDrawable = NoOpDrawable()
+    }
+
+    fun bind(width: Int, height: Int) {
+        this.width = width
+        this.height = height
+    }
 
     fun mount(
             model: Any,
@@ -33,17 +42,22 @@ class MatrixGlideDrawable(
             rb: Float,
             lb: Float
     ) {
-        this.width = width
-        this.height = height
-        this.scaleType = scaleType
-        val needRoundedCorners = lt != 0f || rb != 0f || lb != 0f || rt != 0f
+        bind(width, height)
         var request = Glide.with(context)
                 .load(model)
+                .override(width, height)
                 .diskCacheStrategy(DiskCacheStrategy.ALL)
         var transforms: ArrayList<Transformation<Bitmap>>? = null
+        val needRoundedCorners = lt != 0f || rb != 0f || lb != 0f || rt != 0f
         if (blurRadius <= 0 || blurSampling < 1) {
             transforms = ArrayList()
             transforms.add(FastBlur(blurRadius, blurSampling))
+        }
+        if (scaleType != ScaleType.FIT_XY || scaleType != ScaleType.MATRIX) {
+            if (transforms == null) {
+                transforms = ArrayList()
+            }
+            transforms.add(ScaleTypes(scaleType))
         }
         if (needRoundedCorners) {
             if (transforms == null) {
@@ -62,52 +76,16 @@ class MatrixGlideDrawable(
         request.into(this)
     }
 
-    fun bind(width: Int, height: Int) {
-        this.width = width
-        this.height = height
-    }
-
-    override fun unmount() {
-        super.unmount()
-        Glide.with(context).clear(this)
+    override fun getSize(cb: SizeReadyCallback) {
+        cb.onSizeReady(width, height)
     }
 
     override fun onResourceReady(
             resource: Drawable,
             transition: Transition<in Drawable>?
     ) {
-        notifyChanged(resource)
-    }
-
-    override fun getSize(cb: SizeReadyCallback) {
-        cb.onSizeReady(width, height)
-    }
-
-    private fun notifyChanged(resource: Drawable) {
-        val drawableWidth: Int
-        val drawableHeight: Int
-        val matrix: DrawableMatrix?
-        if (ScaleType.FIT_XY == scaleType
-                || resource.intrinsicWidth <= 0
-                || resource.intrinsicHeight <= 0) {
-            matrix = null
-            drawableWidth = width
-            drawableHeight = height
-        } else {
-            matrix = DrawableMatrix.create(
-                    resource,
-                    scaleType,
-                    width,
-                    height
-            )
-            drawableWidth = resource.intrinsicWidth
-            drawableHeight = resource.intrinsicHeight
-        }
-        mount(
-                resource,
-                matrix,
-                drawableWidth,
-                drawableHeight
-        )
+        resource.bounds = bounds
+        wrappedDrawable = resource
+        invalidateSelf()
     }
 }

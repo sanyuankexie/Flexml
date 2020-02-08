@@ -1,21 +1,18 @@
 package com.guet.flexbox.litho.transforms
 
-import android.content.Context
 import android.graphics.*
 import android.graphics.Matrix.ScaleToFit
 import android.widget.ImageView.ScaleType
-import com.bumptech.glide.Glide
-import com.bumptech.glide.load.Transformation
-import com.bumptech.glide.load.engine.Resource
-import com.bumptech.glide.load.resource.bitmap.BitmapResource
+import com.bumptech.glide.load.engine.bitmap_recycle.BitmapPool
+import com.bumptech.glide.load.resource.bitmap.BitmapTransformation
 import java.nio.ByteBuffer
 import java.security.MessageDigest
 import kotlin.math.min
 import kotlin.math.round
 
-class ImageScale(
+class ScaleTypes(
         private val scaleType: ScaleType
-) : Transformation<Bitmap> {
+) : BitmapTransformation() {
 
     override fun updateDiskCacheKey(messageDigest: MessageDigest) {
         messageDigest.update(ID_BYTE)
@@ -25,26 +22,24 @@ class ImageScale(
     }
 
     override fun equals(other: Any?): Boolean {
-        return other is ImageScale && scaleType == other.scaleType
+        return other is ScaleTypes && scaleType == other.scaleType
     }
 
     override fun transform(
-            context: Context,
-            resource: Resource<Bitmap>,
+            pool: BitmapPool,
+            toTransform: Bitmap,
             outWidth: Int,
             outHeight: Int
-    ): Resource<Bitmap> {
+    ): Bitmap {
         if (scaleType == ScaleType.FIT_XY) {
-            return resource
+            return toTransform
         }
-        val bitmap = resource.get()
         val (matrix, shouldClipRect) = create(
-                bitmap,
+                toTransform,
                 scaleType,
                 outWidth,
                 outWidth
         )
-        val pool = Glide.get(context).bitmapPool
         val output = pool[outWidth, outWidth, Bitmap.Config.ARGB_8888]
         val canvas = Canvas(output)
         if (shouldClipRect) {
@@ -54,18 +49,18 @@ class ImageScale(
             canvas.concat(matrix)
         }
         canvas.drawBitmap(
-                bitmap,
+                toTransform,
                 null,
                 Rect(
                         0,
                         0,
-                        bitmap.width,
-                        bitmap.height
+                        toTransform.width,
+                        toTransform.height
                 ),
                 null
         )
         canvas.setBitmap(null)
-        return BitmapResource(output, pool)
+        return output
     }
 
     override fun hashCode(): Int {
@@ -76,7 +71,7 @@ class ImageScale(
 
     private companion object {
 
-        private val ID = ImageScale::class.java.name
+        private val ID = ScaleTypes::class.java.name
         private val ID_BYTE = ID.toByteArray()
 
         private fun create(

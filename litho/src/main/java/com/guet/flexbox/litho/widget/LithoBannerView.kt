@@ -29,8 +29,9 @@ class LithoBannerView(context: Context) : FrameLayout(context), HasLithoViewChil
     private var indicatorUnselectedColor: Int = BannerSpec.indicatorUnselectedColor
     private var indicatorEnable: Boolean = BannerSpec.indicatorEnable
     private var isCircular: Boolean = BannerSpec.isCircular
-    private val components = ArrayList<Component>()
     private var token: Runnable? = null
+    private val components = ArrayList<Component>()
+
 
     init {
         addView(viewPager2, ViewGroup.LayoutParams(-1, -1))

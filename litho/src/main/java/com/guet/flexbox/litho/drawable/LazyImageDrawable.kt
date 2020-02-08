@@ -11,7 +11,7 @@ import com.bumptech.glide.request.transition.Transition
 import com.facebook.litho.drawable.ComparableDrawable
 import java.util.concurrent.atomic.AtomicBoolean
 
-open class GlideDrawable(
+open class LazyImageDrawable(
         private val context: Context,
         private val model: Any
 ) : DrawableWrapper<Drawable>(NoOpDrawable()),
@@ -21,7 +21,7 @@ open class GlideDrawable(
     private val isInit = AtomicBoolean(false)
 
     override fun isEquivalentTo(other: ComparableDrawable?): Boolean {
-        return other is GlideDrawable
+        return other is LazyImageDrawable
                 && model == other.model
     }
 

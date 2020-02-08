@@ -6,14 +6,14 @@ import com.bumptech.glide.RequestBuilder
 import com.bumptech.glide.load.resource.bitmap.GranularRoundedCorners
 import com.facebook.litho.drawable.ComparableDrawable
 
-class RoundedGlideDrawable(
+class RoundedLazyImageDrawable(
         context: Context,
         model: Any,
         override val leftTop: Float,
         override val rightTop: Float,
         override val rightBottom: Float,
         override val leftBottom: Float
-) : GlideDrawable(context, model), RoundedCorners {
+) : LazyImageDrawable(context, model), RoundedCorners {
 
     override fun buildRequest(
             builder: RequestBuilder<Drawable>
@@ -32,7 +32,7 @@ class RoundedGlideDrawable(
     }
 
     override fun isEquivalentTo(other: ComparableDrawable?): Boolean {
-        return other is RoundedGlideDrawable
+        return other is RoundedLazyImageDrawable
                 && super.isEquivalentTo(other)
                 && RoundedCorners.equals(this, other)
     }

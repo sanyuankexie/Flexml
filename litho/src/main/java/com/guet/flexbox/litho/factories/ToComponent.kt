@@ -162,7 +162,7 @@ abstract class ToComponent<C : Component.Builder<*>>(
                 UrlType.URL -> {
                     val url = prams[0] as CharSequence
                     if (needRoundedCorners) {
-                        val rounded = RoundedGlideDrawable(
+                        val rounded = RoundedLazyImageDrawable(
                                 context,
                                 url.toString(),
                                 lt,
@@ -180,7 +180,7 @@ abstract class ToComponent<C : Component.Builder<*>>(
                             c.background(rounded)
                         }
                     } else {
-                        val normal = GlideDrawable(
+                        val normal = LazyImageDrawable(
                                 context,
                                 url.toString()
                         )
@@ -198,7 +198,7 @@ abstract class ToComponent<C : Component.Builder<*>>(
                 UrlType.RESOURCE -> {
                     val id = prams[0] as Int
                     if (needRoundedCorners) {
-                        val rounded = RoundedGlideDrawable(
+                        val rounded = RoundedLazyImageDrawable(
                                 context,
                                 id,
                                 lt,
@@ -216,7 +216,7 @@ abstract class ToComponent<C : Component.Builder<*>>(
                             c.background(rounded)
                         }
                     } else {
-                        val normal = GlideDrawable(
+                        val normal = LazyImageDrawable(
                                 context,
                                 id
                         )
