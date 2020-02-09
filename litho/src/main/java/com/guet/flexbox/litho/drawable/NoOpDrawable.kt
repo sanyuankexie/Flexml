@@ -7,7 +7,7 @@ import android.graphics.Rect
 import android.graphics.drawable.Drawable
 import com.facebook.litho.drawable.ComparableDrawable
 
-open class NoOpDrawable : Drawable(), ComparableDrawable {
+class NoOpDrawable : Drawable(), ComparableDrawable {
 
     init {
         super.setBounds(0, 0, 0, 0)

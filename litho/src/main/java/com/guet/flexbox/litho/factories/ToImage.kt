@@ -1,18 +1,16 @@
 package com.guet.flexbox.litho.factories
 
 import android.graphics.drawable.GradientDrawable
+import android.graphics.drawable.GradientDrawable.Orientation
 import android.widget.ImageView
 import com.facebook.litho.Component
 import com.facebook.litho.ComponentContext
-import com.facebook.litho.drawable.ComparableColorDrawable
-import com.facebook.litho.drawable.ComparableGradientDrawable
 import com.facebook.litho.widget.EmptyComponent
 import com.facebook.litho.widget.Image
 import com.guet.flexbox.build.AttributeSet
 import com.guet.flexbox.build.Child
 import com.guet.flexbox.build.RenderNodeFactory
-import com.guet.flexbox.litho.drawable.rounded.RoundedColorDrawable
-import com.guet.flexbox.litho.drawable.rounded.RoundedGradientDrawable
+import com.guet.flexbox.litho.drawable.ColorDrawable
 import com.guet.flexbox.litho.resolve.UrlType
 import com.guet.flexbox.litho.toPxFloat
 
@@ -44,45 +42,52 @@ object ToImage : RenderNodeFactory {
         val rt = attrs.getFloatValue("borderRightTopRadius").toPxFloat()
         val lb = attrs.getFloatValue("borderLeftBottomRadius").toPxFloat()
         val rb = attrs.getFloatValue("borderRightBottomRadius").toPxFloat()
-        val needRoundedCorners = lt != 0f || rb != 0f || lb != 0f || rt != 0f
+        val needCorners = lt != 0f || rb != 0f || lb != 0f || rt != 0f
+        val isSameCorners = lt == rt && lt == rb && lt == lb
         if (url != null) {
             val (type, prams) = UrlType.parseUrl(
                     c.androidContext, url
             )
             when (type) {
                 UrlType.GRADIENT -> {
-                    val o = prams[0] as GradientDrawable.Orientation
+                    val orientation = prams[0] as Orientation
                     val colors = prams[1] as IntArray
+                    val drawable= GradientDrawable(
+                            orientation, colors
+                    ).apply {
+                        if (needCorners) {
+                            if (isSameCorners) {
+                                cornerRadius = lb
+                            } else {
+                                cornerRadii = floatArrayOf(
+                                        lt, rt, rb, lb
+                                )
+                            }
+                        }
+                    }
                     return Image.create(c)
                             .scaleType(ImageView.ScaleType.FIT_XY)
-                            .drawable(if (needRoundedCorners) {
-                                RoundedGradientDrawable(
-                                        o,
-                                        colors,
-                                        lt,
-                                        rt,
-                                        rb,
-                                        lb
-                                )
-                            } else {
-                                ComparableGradientDrawable(o, colors)
-                            }).build()
+                            .drawable(drawable)
+                            .build()
                 }
                 UrlType.COLOR -> {
                     val color = prams[0] as Int
+                    val drawable = ColorDrawable(
+                            color
+                    ).apply {
+                        if (isSameCorners) {
+                            cornerRadius = lb
+                        } else {
+                            cornerRadii = floatArrayOf(
+                                    lt, lt, rt, rt,
+                                    rb, rb, lb, lb
+                            )
+                        }
+                    }
                     return Image.create(c)
                             .scaleType(ImageView.ScaleType.FIT_XY)
-                            .drawable(if (needRoundedCorners) {
-                                RoundedColorDrawable(
-                                        color,
-                                        lt,
-                                        rt,
-                                        rb,
-                                        lb
-                                )
-                            } else {
-                                ComparableColorDrawable.create(color)
-                            }).build()
+                            .drawable(drawable)
+                            .build()
                 }
                 UrlType.URL -> return ToGlideImage.toComponent(c, visibility, attrs, emptyList())
                 UrlType.RESOURCE -> {
