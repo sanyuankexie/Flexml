@@ -56,6 +56,8 @@
         </FrameLayout>
     </com.guet.flexbox.playground.widget.TransformRootLayout>
     <androidx.coordinatorlayout.widget.CoordinatorLayout
+        android:id="@+id/bottom_sheet_host"
+        android:visibility="gone"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
         <FrameLayout

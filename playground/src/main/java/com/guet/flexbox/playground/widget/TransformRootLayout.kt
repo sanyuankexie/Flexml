@@ -8,6 +8,7 @@ import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Matrix
 import android.graphics.RectF
+import android.graphics.drawable.ColorDrawable
 import android.util.AttributeSet
 import android.view.MotionEvent
 import android.view.animation.DecelerateInterpolator
@@ -50,10 +51,14 @@ class TransformRootLayout @JvmOverloads constructor(
         src[6] = 0f
         src[7] = height.toFloat()
         inDraw = true
+        foreground = ColorDrawable(Color.BLACK).apply {
+            alpha = 0
+        }
         //不能取边界值，硬件加速由bug会闪屏
         ValueAnimator.ofFloat(0.1f, 1.9f).apply {
             addUpdateListener {
                 var value = it.animatedValue as Float
+                (foreground as ColorDrawable).alpha = ((255f / 2f) * (value / 2f)).toInt()
                 if (value <= 1) {
                     //lt-x
                     dst[0] = value * offset
@@ -110,6 +115,7 @@ class TransformRootLayout @JvmOverloads constructor(
                     dst[6] = offset
                     //lb-y
                     dst[7] = height - offset
+                    (foreground as ColorDrawable).alpha = 255 / 2
                     invalidate()
                 }
             })
@@ -123,6 +129,7 @@ class TransformRootLayout @JvmOverloads constructor(
         ValueAnimator.ofFloat(0.1f, 1.9f).apply {
             addUpdateListener {
                 var value = it.animatedValue as Float
+                (foreground as ColorDrawable).alpha = ((255f / 2f) - (255f / 2f) * (value / 2f)).toInt()
                 if (value <= 1) {
                     dst[0] = offset
                     dst[1] = offset
@@ -147,6 +154,7 @@ class TransformRootLayout @JvmOverloads constructor(
             }
             addListener(object : AnimatorListenerAdapter() {
                 override fun onAnimationEnd(animation: Animator?) {
+                    foreground = null
                     inDraw = false
                     callback()
                 }

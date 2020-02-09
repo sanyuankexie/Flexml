@@ -26,6 +26,8 @@ class MainActivity : AppCompatActivity() {
         )
     }
 
+    private lateinit var bottomHost:View
+
     private lateinit var codeView: LithoView
 
     private lateinit var root: TransformRootLayout
@@ -97,14 +99,16 @@ class MainActivity : AppCompatActivity() {
                 if (newState == BottomSheetBehavior.STATE_HIDDEN) {
                     reset()
                     codeView.release()
+                    bottomHost.visibility = View.GONE
                 }
             }
         })
-
+        bottomHost = findViewById(R.id.bottom_sheet_host)
     }
 
     fun showCodePanel(url: String) {
         move()
+        bottomHost.visibility = View.VISIBLE
         val code = AppLoader.findSourceCode(url)
         val c = codeView.componentContext
         codeView.setComponentAsync(Row.create(c)
