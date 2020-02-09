@@ -55,15 +55,16 @@ class HostingView @JvmOverloads constructor(
                 SizeSpec.makeSizeSpec(0, SizeSpec.UNSPECIFIED),
                 SizeSpec.makeSizeSpec(0, SizeSpec.UNSPECIFIED)
         )
-        val page = templatePage
-        if (page != null) {
+        //fast path
+        val size = templatePage?.size
+        if (size != null) {
             setMeasuredDimension(
                     View.getDefaultSize(
-                            page.size.width,
+                            size.width,
                             widthMeasureSpec
                     ),
                     View.getDefaultSize(
-                            page.size.height,
+                            size.height,
                             heightMeasureSpec
                     )
             )
