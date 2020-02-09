@@ -27,11 +27,13 @@ internal inline fun <T> ELContext.scope(
 
 @Throws(ELException::class)
 internal fun ELContext.getValue(expr: String, type: Class<*>): Any {
-    return expressionFactory.createValueExpression(
-            this,
-            expr,
-            type
-    ).getValue(this) ?: throw ELException("$expr out null")
+    return synchronized(this){
+        expressionFactory.createValueExpression(
+                this,
+                expr,
+                type
+        ).getValue(this) ?: throw ELException("$expr out null")
+    }
 }
 
 @Throws(ELException::class)

@@ -33,14 +33,16 @@ object AppLoader {
 
                 //头部轮播图
                 val bannerTask = AppExecutors.threadPool.submit<TemplatePage> {
+                    val start1 = SystemClock.uptimeMillis()
                     val page = loadPage(c, res.getString(R.string.banner_path))
-                    Logger.d("load banner ${SystemClock.uptimeMillis() - start}")
+                    Logger.d("load banner ${SystemClock.uptimeMillis() - start1}")
                     return@submit page
                 }
                 //功能区
                 val functionTask = AppExecutors.threadPool.submit<TemplatePage> {
+                    val start1 = SystemClock.uptimeMillis()
                     val page = loadPage(c, res.getString(R.string.function_path))
-                    Logger.d("load function ${SystemClock.uptimeMillis() - start}")
+                    Logger.d("load function ${SystemClock.uptimeMillis() - start1}")
                     return@submit page
                 }
                 //Feed流
@@ -110,12 +112,13 @@ object AppLoader {
                 Logger.d("AppLoader: load single page time:" + (SystemClock.uptimeMillis() - start))
                 return@Callable page
             }
-        }.map {
-            AppExecutors.threadPool.submit(it)
         }
-        val result = tasks.map {
-            it.get()
-        }
+        val result = AppExecutors
+                .threadPool
+                .invokeAll(tasks)
+                .map {
+                    it.get()
+                }
         Logger.d("AppLoader: load more page time:" + (SystemClock.uptimeMillis() - pageStart))
         return result
     }
@@ -124,7 +127,7 @@ object AppLoader {
     fun loadPage(c: Context, url: String, data: (Map<String, Any>) = emptyMap()): TemplatePage {
         val template = appBundle.templateNode.getValue(url)
         val dataSource = appBundle.dataSource.getValue(url)
-        val myData =  HashMap(dataSource).apply {
+        val myData = HashMap(dataSource).apply {
             put("url", url)
             putAll(data)
         }

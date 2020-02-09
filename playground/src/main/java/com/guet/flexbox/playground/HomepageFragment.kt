@@ -1,7 +1,6 @@
 package com.guet.flexbox.playground
 
 import android.app.Activity
-import android.content.DialogInterface
 import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -24,7 +23,6 @@ import es.dmoral.toasty.Toasty
 
 class HomepageFragment : Fragment() {
 
-
     private lateinit var coordinator: CoordinatorLayout
     private lateinit var feed: RecyclerView
     private val feedAdapter = FlexBoxAdapter(this::handleEvent)
@@ -35,14 +33,7 @@ class HomepageFragment : Fragment() {
             container: ViewGroup?,
             savedInstanceState: Bundle?
     ): View? {
-        return inflater.inflate(R.layout.fragment_homepage, container, false).apply {
-            setPadding(
-                    paddingLeft,
-                    getStatusBarHeight(),
-                    paddingRight,
-                    paddingBottom
-            )
-        }
+        return inflater.inflate(R.layout.fragment_homepage, container, false)
     }
 
 
@@ -68,7 +59,6 @@ class HomepageFragment : Fragment() {
         }
         coordinator = view.findViewById(R.id.coordinator)
         feed = view.findViewById(R.id.feed)
-        load()
         feedAdapter.setNewData(homepageInfo.feed)
         feed.adapter = feedAdapter
         NetworkUtils.isAvailableAsync {
@@ -81,9 +71,6 @@ class HomepageFragment : Fragment() {
 
     }
 
-    private fun load() {
-        feedAdapter.setNewData(homepageInfo.feed)
-    }
 
     private fun startQRCodeActivity() {
         val intent = Intent(requireContext(), CaptureActivity::class.java)
@@ -102,20 +89,7 @@ class HomepageFragment : Fragment() {
     }
 
     private fun handleEvent(v: View, url: String) {
-        CodeFragment().apply {
-            arguments = Bundle().apply {
-                putString("url", url)
-            }
-            onDismissListener = DialogInterface.OnDismissListener {
-                activity?.run {
-                    this as? MainActivity
-                }?.reset()
-            }
-
-        }.show(childFragmentManager, "dialog")
-        activity?.run {
-            this as? MainActivity
-        }?.move()
+        (requireActivity() as MainActivity).showCodePanel(url)
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {

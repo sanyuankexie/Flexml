@@ -10,7 +10,7 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.GranularRoundedCorners
 import com.bumptech.glide.request.target.SimpleTarget
 import com.bumptech.glide.request.transition.Transition
-import com.guet.flexbox.litho.transforms.ScaleTypes
+import com.guet.flexbox.litho.transforms.ImageScale
 import com.guet.flexbox.playground.R
 
 class TestActivity : AppCompatActivity() {
@@ -27,7 +27,7 @@ class TestActivity : AppCompatActivity() {
             Glide.with(this)
                     .load("https://tva1.sinaimg.cn/large/87c01ec7gy1frqbkngr3dj21hc0u0u0x.jpg")
                     .transform(
-                            ScaleTypes(
+                            ImageScale(
                                     ScaleType.FIT_XY
                             ),
 //                            FastBlur(

@@ -7,7 +7,9 @@ import android.content.Context
 import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Matrix
+import android.graphics.RectF
 import android.util.AttributeSet
+import android.view.MotionEvent
 import android.view.animation.DecelerateInterpolator
 import android.widget.FrameLayout
 import com.didichuxing.doraemonkit.util.UIUtils
@@ -17,15 +19,25 @@ class TransformRootLayout @JvmOverloads constructor(
         attrs: AttributeSet? = null,
         defStyleAttr: Int = 0
 ) : FrameLayout(context, attrs, defStyleAttr) {
+
+    private var inDraw: Boolean = false
     private val myMatrix = Matrix()
     var animationDuration: Long = 500L
     var offset: Float = UIUtils.dp2px(context, 30f).toFloat()
-    private var moved: Boolean = false
+    private val rectF = RectF()
     private val src = FloatArray(8)
     private val dst = FloatArray(8)
 
     init {
         setBackgroundColor(Color.BLACK)
+    }
+
+    override fun onInterceptTouchEvent(ev: MotionEvent?): Boolean {
+        return inDraw
+    }
+
+    override fun onTouchEvent(event: MotionEvent?): Boolean {
+        return true
     }
 
     fun move() {
@@ -37,8 +49,9 @@ class TransformRootLayout @JvmOverloads constructor(
         src[5] = height.toFloat()
         src[6] = 0f
         src[7] = height.toFloat()
-        moved = true
-        ValueAnimator.ofFloat(0f, 2f).apply {
+        inDraw = true
+        //不能取边界值，硬件加速由bug会闪屏
+        ValueAnimator.ofFloat(0.1f, 1.9f).apply {
             addUpdateListener {
                 var value = it.animatedValue as Float
                 if (value <= 1) {
@@ -85,7 +98,8 @@ class TransformRootLayout @JvmOverloads constructor(
     }
 
     fun reset() {
-        ValueAnimator.ofFloat(0f, 2f).apply {
+        //不能取边界值，硬件加速由bug会闪屏
+        ValueAnimator.ofFloat(0.1f, 1.9f).apply {
             addUpdateListener {
                 var value = it.animatedValue as Float
                 if (value <= 1) {
@@ -112,7 +126,7 @@ class TransformRootLayout @JvmOverloads constructor(
             }
             addListener(object : AnimatorListenerAdapter() {
                 override fun onAnimationEnd(animation: Animator?) {
-                    moved = false
+                    inDraw = false
                 }
             })
             interpolator = DecelerateInterpolator()
@@ -121,7 +135,7 @@ class TransformRootLayout @JvmOverloads constructor(
     }
 
     override fun dispatchDraw(canvas: Canvas) {
-        if (moved) {
+        if (inDraw) {
             canvas.save()
             myMatrix.reset()
             myMatrix.setPolyToPoly(
