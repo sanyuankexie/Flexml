@@ -6,6 +6,7 @@ import android.view.View
 import androidx.annotation.RestrictTo
 import com.facebook.litho.ComponentTree
 import com.facebook.litho.LithoView
+import com.facebook.litho.SizeSpec
 import com.guet.flexbox.HttpClient
 import com.guet.flexbox.litho.event.EventTarget
 
@@ -50,7 +51,34 @@ class HostingView @JvmOverloads constructor(
     }
 
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
-        super.onMeasure(0, 0)
+        super.onMeasure(
+                SizeSpec.makeSizeSpec(0, SizeSpec.UNSPECIFIED),
+                SizeSpec.makeSizeSpec(0, SizeSpec.UNSPECIFIED)
+        )
+        val page = templatePage
+        if (page != null) {
+            setMeasuredDimension(
+                    View.getDefaultSize(
+                            page.size.width,
+                            widthMeasureSpec
+                    ),
+                    View.getDefaultSize(
+                            page.size.height,
+                            heightMeasureSpec
+                    )
+            )
+        } else {
+            setMeasuredDimension(
+                    View.getDefaultSize(
+                            suggestedMinimumWidth,
+                            widthMeasureSpec
+                    ),
+                    View.getDefaultSize(
+                            suggestedMinimumHeight,
+                            heightMeasureSpec
+                    )
+            )
+        }
     }
 
     interface PageEventListener {

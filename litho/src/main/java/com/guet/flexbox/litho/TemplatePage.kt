@@ -14,8 +14,8 @@ class TemplatePage @WorkerThread internal constructor(
         builder: Builder
 ) : TreeManager(builder) {
     internal val template: TemplateNode = requireNotNull(builder.template)
-    internal val data: Any? = builder.data
     internal val eventBridge: EventBridge = builder.eventBridge
+    internal val size: Size = builder.size
 
     override fun attach() {
         super.attach()
@@ -42,15 +42,20 @@ class TemplatePage @WorkerThread internal constructor(
         @JvmSynthetic
         @JvmField
         @RestrictTo(RestrictTo.Scope.LIBRARY)
+        internal val size = Size()
+        @JvmSynthetic
+        @JvmField
+        @RestrictTo(RestrictTo.Scope.LIBRARY)
+        internal val eventBridge = EventBridge()
+
+        @JvmSynthetic
+        @JvmField
+        @RestrictTo(RestrictTo.Scope.LIBRARY)
         internal var template: TemplateNode? = null
         @JvmSynthetic
         @JvmField
         @RestrictTo(RestrictTo.Scope.LIBRARY)
         internal var data: Any? = null
-        @JvmSynthetic
-        @JvmField
-        @RestrictTo(RestrictTo.Scope.LIBRARY)
-        internal val eventBridge = EventBridge()
 
         @Deprecated(
                 message = "use template() and data()",
@@ -104,9 +109,13 @@ class TemplatePage @WorkerThread internal constructor(
                     .component((com))
                     .build())
             logger(null, com.simpleName)
-            return TemplatePage(this).apply {
-                setSizeSpec(0, 0)
-            }
+            val page = TemplatePage(this)
+            page.setSizeSpec(
+                    SizeSpec.makeSizeSpec(0, SizeSpec.UNSPECIFIED),
+                    SizeSpec.makeSizeSpec(0, SizeSpec.UNSPECIFIED),
+                    size
+            )
+            return page
         }
     }
 

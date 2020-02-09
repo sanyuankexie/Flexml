@@ -1,8 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Flex
     width="360"
-    flexGrow="1"
-    background="#FFFFFF"
     flexDirection="column">
     <Text
         marginTop="15"
