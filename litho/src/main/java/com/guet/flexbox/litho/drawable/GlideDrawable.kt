@@ -14,7 +14,7 @@ import com.bumptech.glide.request.transition.Transition
 import com.guet.flexbox.litho.transforms.FastBlur
 import com.guet.flexbox.litho.transforms.ImageScale
 
-class TransformGlideDrawable(
+class GlideDrawable(
         private val context: Context
 ) : DrawableWrapper<Drawable>(NoOpDrawable()),
         Target<Drawable> by DelegateTarget() {
