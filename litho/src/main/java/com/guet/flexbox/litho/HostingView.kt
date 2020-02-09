@@ -36,8 +36,8 @@ class HostingView @JvmOverloads constructor(
             DeprecationLevel.HIDDEN
     )
     @RestrictTo(RestrictTo.Scope.LIBRARY)
-    override fun getComponentTree(): ComponentTree? {
-        return super.getComponentTree()
+    override fun getComponentTree(): TemplatePage? {
+        return super.getComponentTree() as TemplatePage?
     }
 
     @Deprecated(
@@ -47,7 +47,7 @@ class HostingView @JvmOverloads constructor(
     )
     @RestrictTo(RestrictTo.Scope.LIBRARY)
     override fun setComponentTree(componentTree: ComponentTree?) {
-        super.setComponentTree(componentTree)
+        super.setComponentTree(componentTree as TemplatePage?)
     }
 
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
