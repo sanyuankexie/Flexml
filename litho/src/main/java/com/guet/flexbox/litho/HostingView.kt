@@ -25,6 +25,7 @@ class HostingView @JvmOverloads constructor(
             templatePage?.eventBridge?.target = null
             value?.eventBridge?.target = target
             super.setComponentTree(value)
+            requestLayout()
         }
         get() {
             return super.getComponentTree() as? TemplatePage
