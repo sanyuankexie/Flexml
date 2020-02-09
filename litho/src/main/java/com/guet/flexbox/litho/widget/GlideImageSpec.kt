@@ -6,7 +6,7 @@ import android.widget.ImageView.ScaleType
 import com.facebook.litho.*
 import com.facebook.litho.annotations.*
 import com.facebook.litho.utils.MeasureUtils
-import com.guet.flexbox.litho.drawable.TransformGlideDrawable
+import com.guet.flexbox.litho.drawable.GlideDrawable
 
 @MountSpec(isPureRender = true, poolSize = 30)
 internal object GlideImageSpec {
@@ -17,8 +17,8 @@ internal object GlideImageSpec {
     val imageAspectRatio = 1f
 
     @OnCreateMountContent
-    fun onCreateMountContent(c: Context): TransformGlideDrawable {
-        return TransformGlideDrawable(c)
+    fun onCreateMountContent(c: Context): GlideDrawable {
+        return GlideDrawable(c)
     }
 
     @OnMeasure
@@ -51,7 +51,7 @@ internal object GlideImageSpec {
     @OnBind
     fun onBind(
             c: ComponentContext,
-            image: TransformGlideDrawable,
+            image: GlideDrawable,
             @FromBoundsDefined width: Int,
             @FromBoundsDefined height: Int
     ) {
@@ -61,7 +61,7 @@ internal object GlideImageSpec {
     @OnMount
     fun onMount(
             c: ComponentContext,
-            image: TransformGlideDrawable,
+            image: GlideDrawable,
             @Prop(optional = true) resId: Int,
             @Prop(optional = true) url: String?,
             @Prop(optional = true) blurRadius: Float,
@@ -101,7 +101,7 @@ internal object GlideImageSpec {
 
     @OnUnmount
     fun onUnmount(c: ComponentContext,
-                  drawable: TransformGlideDrawable) {
+                  drawable: GlideDrawable) {
         drawable.unmount()
     }
 
