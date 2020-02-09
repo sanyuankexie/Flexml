@@ -22,8 +22,8 @@ class HostingView @JvmOverloads constructor(
 
     var templatePage: TemplatePage?
         set(value) {
-            templatePage?.eventBridge?.target = null
-            value?.eventBridge?.target = target
+            templatePage?.eventTarget = null
+            value?.eventTarget = target
             super.setComponentTree(value)
             requestLayout()
         }
@@ -57,15 +57,15 @@ class HostingView @JvmOverloads constructor(
                 SizeSpec.makeSizeSpec(0, SizeSpec.UNSPECIFIED)
         )
         //fast path
-        val size = templatePage?.size
-        if (size != null) {
+        val page = templatePage
+        if (page != null) {
             setMeasuredDimension(
                     View.getDefaultSize(
-                            size.width,
+                            page.width,
                             widthMeasureSpec
                     ),
                     View.getDefaultSize(
-                            size.height,
+                            page.height,
                             heightMeasureSpec
                     )
             )

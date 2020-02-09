@@ -6,6 +6,7 @@ import androidx.annotation.RestrictTo
 import androidx.annotation.WorkerThread
 import com.facebook.litho.*
 import com.guet.flexbox.EventBridge
+import com.guet.flexbox.EventContext
 import com.guet.flexbox.TemplateNode
 import com.guet.flexbox.el.PropsELContext
 import com.guet.flexbox.litho.widget.ThreadChecker
@@ -13,9 +14,24 @@ import com.guet.flexbox.litho.widget.ThreadChecker
 class TemplatePage @WorkerThread internal constructor(
         builder: Builder
 ) : TreeManager(builder) {
-    internal val template: TemplateNode = requireNotNull(builder.template)
-    internal val eventBridge: EventBridge = builder.eventBridge
-    internal val size: Size = builder.size
+    private val template: TemplateNode = requireNotNull(builder.template)
+    private val data: Any? = builder.data
+    private val eventBridge: EventBridge = builder.eventBridge
+    private val size = Size()
+
+    var eventTarget: EventContext?
+        set(value) {
+            eventBridge.target = value
+        }
+        get() {
+            return eventBridge.target
+        }
+
+    val width: Int
+        get() = size.width
+
+    val height: Int
+        get() = size.height
 
     override fun attach() {
         super.attach()
@@ -36,13 +52,40 @@ class TemplatePage @WorkerThread internal constructor(
         super.release()
     }
 
+    @WorkerThread
+    fun computeNewLayout() {
+        val oldWidth = size.width
+        val oldHeight = size.height
+        val com = LithoBuildTool.build(
+                template,
+                eventBridge,
+                PropsELContext(data),
+                context
+        ) as Component
+        setRootAndSizeSpec(
+                com,
+                SizeSpec.makeSizeSpec(0, SizeSpec.UNSPECIFIED),
+                SizeSpec.makeSizeSpec(0, SizeSpec.UNSPECIFIED),
+                size
+        )
+        if (oldWidth != width || oldHeight != height) {
+            val hostingView = lithoView as? HostingView
+            hostingView?.post { hostingView.requestLayout() }
+        }
+    }
+
+    @WorkerThread
+    fun computeLayout() {
+        setSizeSpec(
+                SizeSpec.makeSizeSpec(0, SizeSpec.UNSPECIFIED),
+                SizeSpec.makeSizeSpec(0, SizeSpec.UNSPECIFIED),
+                size
+        )
+    }
+
     class Builder(
             private val context: ComponentContext
     ) : ComponentTree.Builder(context) {
-        @JvmSynthetic
-        @JvmField
-        @RestrictTo(RestrictTo.Scope.LIBRARY)
-        internal val size = Size()
         @JvmSynthetic
         @JvmField
         @RestrictTo(RestrictTo.Scope.LIBRARY)
@@ -110,11 +153,7 @@ class TemplatePage @WorkerThread internal constructor(
                     .build())
             logger(null, com.simpleName)
             val page = TemplatePage(this)
-            page.setSizeSpec(
-                    SizeSpec.makeSizeSpec(0, SizeSpec.UNSPECIFIED),
-                    SizeSpec.makeSizeSpec(0, SizeSpec.UNSPECIFIED),
-                    size
-            )
+            page.computeLayout()
             return page
         }
     }

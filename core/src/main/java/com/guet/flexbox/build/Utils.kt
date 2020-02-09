@@ -5,7 +5,6 @@ import com.guet.flexbox.TemplateNode
 import com.guet.flexbox.build.attrsinfo.AttributeInfo
 import com.guet.flexbox.build.attrsinfo.AttrsInfoRegistry
 import com.guet.flexbox.el.ELContext
-import com.guet.flexbox.el.LambdaExpression
 
 internal inline val CharSequence.isExpr: Boolean
     get() = length > 3 && startsWith("\${") && endsWith('}')
@@ -51,16 +50,5 @@ internal fun ToWidget.toWidget(
             upperVisibility,
             other
     )
-}
-
-internal fun LambdaExpression.execute(
-        elContext: ELContext,
-        vararg values: Any?
-) {
-    @Suppress("UNCHECKED_CAST")
-    this.invoke(elContext, values)?.run {
-        this as? Set<*>
-    }?.firstOrNull()?.run { this as? (ELContext) -> Unit }
-            ?.invoke(elContext)
 }
 

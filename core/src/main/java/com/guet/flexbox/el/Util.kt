@@ -82,10 +82,3 @@ internal fun ELContext.tryGetColor(expr: String?, @ColorInt fallback: Int?): Int
     }
 }
 
-internal fun ELContext.unWrap(): ELContext {
-    var ctx = this
-    while (ctx is ScopeELContext) {
-        ctx = ctx.target
-    }
-    return ctx as PropsELContext
-}
