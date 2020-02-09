@@ -40,8 +40,9 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun reset() {
-        root.reset()
-        clip.clipToOutline = false
+        root.reset{
+            clip.clipToOutline = false
+        }
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {

@@ -97,7 +97,7 @@ class TransformRootLayout @JvmOverloads constructor(
         }.start()
     }
 
-    fun reset() {
+    fun reset(callback: () -> Unit) {
         //不能取边界值，硬件加速由bug会闪屏
         ValueAnimator.ofFloat(0.1f, 1.9f).apply {
             addUpdateListener {
@@ -127,6 +127,7 @@ class TransformRootLayout @JvmOverloads constructor(
             addListener(object : AnimatorListenerAdapter() {
                 override fun onAnimationEnd(animation: Animator?) {
                     inDraw = false
+                    callback()
                 }
             })
             interpolator = DecelerateInterpolator()
