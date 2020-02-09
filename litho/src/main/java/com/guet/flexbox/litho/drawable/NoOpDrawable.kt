@@ -26,7 +26,7 @@ class NoOpDrawable : Drawable(), ComparableDrawable {
     override fun setAlpha(alpha: Int) {}
 
     override fun getOpacity(): Int {
-        return PixelFormat.UNKNOWN
+        return PixelFormat.TRANSLUCENT
     }
 
     override fun setColorFilter(colorFilter: ColorFilter?) {}
