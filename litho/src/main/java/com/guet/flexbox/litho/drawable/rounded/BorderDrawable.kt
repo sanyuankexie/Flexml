@@ -1,7 +1,8 @@
 package com.guet.flexbox.litho.drawable.rounded
 
 import android.graphics.Canvas
-import android.graphics.Path
+import android.graphics.Paint
+import android.graphics.Rect
 import android.graphics.drawable.Drawable
 import androidx.annotation.ColorInt
 import androidx.annotation.Px
@@ -16,39 +17,32 @@ class BorderDrawable(
         RoundedRadius by RoundedRadius.from(drawable),
         ComparableDrawable {
 
-    private val drawKit by lazy {
-        RoundedDrawKit()
+    private inner class MyDrawRoundedDelegate : DrawRoundedDelegate() {
+        private val paint = Paint(Paint.ANTI_ALIAS_FLAG)
+
+        init {
+            paint.color = borderColor
+            paint.strokeWidth = borderWidth
+        }
+
+        override fun draw(canvas: Canvas) {
+            val path = buildPathIfDirty(this@BorderDrawable)
+            canvas.drawPath(path, paint)
+        }
+    }
+
+    private lateinit var drawDelegate: MyDrawRoundedDelegate
+
+    override fun onBoundsChange(bounds: Rect) {
+        super.onBoundsChange(bounds)
+        if (this::drawDelegate.isInitialized) {
+            drawDelegate.onBoundChanged()
+        }
     }
 
     override fun draw(canvas: Canvas) {
         super.draw(canvas)
-        drawKit.paint.apply {
-            reset()
-            isAntiAlias = true
-            color = borderColor
-            strokeWidth = borderWidth
-        }
-        drawKit.path.apply {
-            reset()
-            if (hasRoundedCorners) {
-                addRoundRect(
-                        drawKit.rectF.apply {
-                            set(bounds)
-                        },
-                        toRadiiArray(drawKit.array),
-                        Path.Direction.CW
-                )
-            } else {
-                addRect(
-                        drawKit.rectF.apply {
-                            set(bounds)
-                        },
-                        Path.Direction.CW
-                )
-            }
-            close()
-        }
-        canvas.drawPath(drawKit.path, drawKit.paint)
+        drawDelegate.draw(canvas)
     }
 
     override fun isEquivalentTo(other: ComparableDrawable?): Boolean {

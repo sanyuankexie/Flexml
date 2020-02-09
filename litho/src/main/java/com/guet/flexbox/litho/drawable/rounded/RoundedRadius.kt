@@ -8,7 +8,7 @@ interface RoundedRadius {
     val rightBottom: Float
     val leftBottom: Float
 
-    val hasRoundedCorners: Boolean
+    val hasRounded: Boolean
         get() = leftTop != 0f || rightTop != 0f || rightBottom != 0f || leftBottom != 0f
 
     fun toRadiiArray(array: FloatArray): FloatArray {

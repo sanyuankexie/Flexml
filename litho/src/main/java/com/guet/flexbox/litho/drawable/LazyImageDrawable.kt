@@ -33,12 +33,12 @@ open class LazyImageDrawable(
 
     override fun draw(canvas: Canvas) {
         if (isInit.compareAndSet(false, true)) {
-            val request = Glide.with(context)
+            Glide.with(context)
                     .load(model)
                     .override(bounds.width(), bounds.height())
                     .diskCacheStrategy(DiskCacheStrategy.ALL)
-            buildRequest(request)
-            request.into(this)
+                    .let(this::buildRequest)
+                    .into(this)
         } else {
             super.draw(canvas)
         }

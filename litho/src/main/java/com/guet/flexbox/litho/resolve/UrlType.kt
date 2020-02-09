@@ -2,7 +2,7 @@ package com.guet.flexbox.litho.resolve
 
 import android.content.Context
 import android.graphics.Color
-import android.graphics.drawable.GradientDrawable
+import android.graphics.drawable.GradientDrawable.Orientation
 import android.net.Uri
 import android.text.TextUtils
 
@@ -15,14 +15,14 @@ enum class UrlType {
 
     companion object {
 
-        private val orientations: Map<String, GradientDrawable.Orientation> = mapOf(
-                "t2b" to GradientDrawable.Orientation.TOP_BOTTOM,
-                "tr2bl" to GradientDrawable.Orientation.TR_BL,
-                "l2r" to GradientDrawable.Orientation.LEFT_RIGHT,
-                "br2tl" to GradientDrawable.Orientation.BR_TL,
-                "b2t" to GradientDrawable.Orientation.BOTTOM_TOP,
-                "r2l" to GradientDrawable.Orientation.RIGHT_LEFT,
-                "tl2br" to GradientDrawable.Orientation.TL_BR
+        private val orientations: Map<String, Orientation> = mapOf(
+                "t2b" to Orientation.TOP_BOTTOM,
+                "tr2bl" to Orientation.TR_BL,
+                "l2r" to Orientation.LEFT_RIGHT,
+                "br2tl" to Orientation.BR_TL,
+                "b2t" to Orientation.BOTTOM_TOP,
+                "r2l" to Orientation.RIGHT_LEFT,
+                "tl2br" to Orientation.TL_BR
         )
 
         internal fun parseUrl(

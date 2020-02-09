@@ -1,10 +1,7 @@
 package com.guet.flexbox.litho.drawable.rounded
 
-import android.graphics.Canvas
-import android.graphics.ColorFilter
-import android.graphics.Path.Direction
+import android.graphics.*
 import android.graphics.Path.FillType
-import android.graphics.PixelFormat
 import android.graphics.drawable.Drawable
 import androidx.annotation.ColorInt
 import com.facebook.litho.drawable.ComparableDrawable
@@ -18,36 +15,36 @@ class RoundedColorDrawable(
 ) : Drawable(), RoundedRadius, ComparableDrawable {
     private var useColor: Int = baseColor
 
-    private val drawKit by lazy { RoundedDrawKit() }
+    private inner class MyDrawRoundedDelegate : DrawRoundedDelegate() {
+
+        private val paint = Paint(Paint.ANTI_ALIAS_FLAG)
+
+        override fun <T> buildPath(drawable: T, path: Path) where T : Drawable, T : RoundedRadius {
+            super.buildPath(drawable, path)
+            path.fillType = FillType.WINDING
+        }
+
+        override fun draw(canvas: Canvas) {
+            paint.color = useColor
+            val path = buildPathIfDirty(this@RoundedColorDrawable)
+            canvas.drawPath(path, paint)
+        }
+    }
+
+    private lateinit var drawDelegate: MyDrawRoundedDelegate
+
+    override fun onBoundsChange(bounds: Rect?) {
+        super.onBoundsChange(bounds)
+        if (this::drawDelegate.isInitialized) {
+            drawDelegate.onBoundChanged()
+        }
+    }
 
     override fun draw(canvas: Canvas) {
-        drawKit.paint.apply {
-            reset()
-            isAntiAlias = true
-            color = useColor
+        if (!this::drawDelegate.isInitialized) {
+            drawDelegate = MyDrawRoundedDelegate()
         }
-        drawKit.path.apply {
-            reset()
-            if (hasRoundedCorners) {
-                addRoundRect(
-                        drawKit.rectF.apply {
-                            set(bounds)
-                        },
-                        toRadiiArray(drawKit.array),
-                        Direction.CW
-                )
-            } else {
-                addRect(
-                        drawKit.rectF.apply {
-                            set(bounds)
-                        },
-                        Direction.CW
-                )
-            }
-            close()
-            fillType = FillType.WINDING
-        }
-        canvas.drawPath(drawKit.path, drawKit.paint)
+        drawDelegate.draw(canvas)
     }
 
     override fun setAlpha(alpha: Int) {

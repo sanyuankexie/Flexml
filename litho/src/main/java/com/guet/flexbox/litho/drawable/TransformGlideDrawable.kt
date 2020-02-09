@@ -49,12 +49,12 @@ class TransformGlideDrawable(
         var transforms: ArrayList<Transformation<Bitmap>>? = null
         val needRoundedCorners = lt != 0f || rb != 0f || lb != 0f || rt != 0f
         if (blurRadius > 0 && blurSampling >= 1) {
-            transforms = ArrayList()
+            transforms = ArrayList(3)
             transforms.add(FastBlur(blurRadius, blurSampling))
         }
         if (scaleType != ScaleType.FIT_XY || scaleType != ScaleType.MATRIX) {
             if (transforms == null) {
-                transforms = ArrayList()
+                transforms = ArrayList(2)
             }
             transforms.add(ImageScale(scaleType))
         }

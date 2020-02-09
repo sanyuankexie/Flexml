@@ -49,6 +49,10 @@ class HostingView @JvmOverloads constructor(
         super.setComponentTree(componentTree)
     }
 
+    override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
+        super.onMeasure(0, 0)
+    }
+
     interface PageEventListener {
         fun onEventDispatched(
                 h: HostingView,

@@ -20,7 +20,7 @@ class RoundedLazyImageDrawable(
             builder: RequestBuilder<Drawable>
     ): RequestBuilder<Drawable> {
         val requestBuilder = super.buildRequest(builder)
-        return if (hasRoundedCorners) {
+        return if (hasRounded) {
             requestBuilder.transform(GranularRoundedCorners(
                     leftTop,
                     rightTop,

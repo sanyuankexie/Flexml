@@ -6,7 +6,7 @@ import android.widget.ImageView.ScaleType
 import com.facebook.litho.*
 import com.facebook.litho.annotations.*
 import com.facebook.litho.utils.MeasureUtils
-import com.guet.flexbox.litho.drawable.MatrixGlideDrawable
+import com.guet.flexbox.litho.drawable.TransformGlideDrawable
 
 @MountSpec(isPureRender = true, poolSize = 30)
 internal object GlideImageSpec {
@@ -17,8 +17,8 @@ internal object GlideImageSpec {
     val imageAspectRatio = 1f
 
     @OnCreateMountContent
-    fun onCreateMountContent(c: Context): MatrixGlideDrawable {
-        return MatrixGlideDrawable(c)
+    fun onCreateMountContent(c: Context): TransformGlideDrawable {
+        return TransformGlideDrawable(c)
     }
 
     @OnMeasure
@@ -51,7 +51,7 @@ internal object GlideImageSpec {
     @OnBind
     fun onBind(
             c: ComponentContext,
-            image: MatrixGlideDrawable,
+            image: TransformGlideDrawable,
             @FromBoundsDefined width: Int,
             @FromBoundsDefined height: Int
     ) {
@@ -59,28 +59,29 @@ internal object GlideImageSpec {
     }
 
     @OnMount
-    fun onMount(c: ComponentContext,
-                image: MatrixGlideDrawable,
-                @Prop(optional = true) resId: Int,
-                @Prop(optional = true) url: String?,
-                @Prop(optional = true) blurRadius: Float,
-                @Prop(optional = true) blurSampling: Float,
-                @Prop(optional = true) scaleType: ScaleType,
-                @Prop(optional = true) leftTop: Float,
-                @Prop(optional = true) rightTop: Float,
-                @Prop(optional = true) rightBottom: Float,
-                @Prop(optional = true) leftBottom: Float,
-                @FromBoundsDefined width: Int,
-                @FromBoundsDefined height: Int
+    fun onMount(
+            c: ComponentContext,
+            image: TransformGlideDrawable,
+            @Prop(optional = true) resId: Int,
+            @Prop(optional = true) url: String?,
+            @Prop(optional = true) blurRadius: Float,
+            @Prop(optional = true) blurSampling: Float,
+            @Prop(optional = true) scaleType: ScaleType,
+            @Prop(optional = true) leftTop: Float,
+            @Prop(optional = true) rightTop: Float,
+            @Prop(optional = true) rightBottom: Float,
+            @Prop(optional = true) leftBottom: Float,
+            @FromBoundsDefined width: Int,
+            @FromBoundsDefined height: Int
     ) {
-        val model: Any? = if (resId == 0) {
+        val model: Any? = if (resId != 0) {
+            resId
+        } else {
             if (url.isNullOrEmpty()) {
                 null
             } else {
                 url
             }
-        } else {
-            resId
         }
         if (model != null) {
             image.mount(
@@ -100,7 +101,7 @@ internal object GlideImageSpec {
 
     @OnUnmount
     fun onUnmount(c: ComponentContext,
-                  drawable: MatrixGlideDrawable) {
+                  drawable: TransformGlideDrawable) {
         drawable.unmount()
     }
 
