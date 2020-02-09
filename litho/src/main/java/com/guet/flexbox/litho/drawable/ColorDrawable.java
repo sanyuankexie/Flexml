@@ -282,11 +282,13 @@ public class ColorDrawable extends Drawable {
     }
 
     public void setCornerRadius(float value) {
+        mPathIsDirty = true;
         mColorState.mRadius = value;
         mColorState.mRadiusArray = null;
     }
 
     public void setCornerRadii(float[] radii) {
+        mPathIsDirty = true;
         mColorState.mRadiusArray = radii;
         if (radii == null) {
             mColorState.mRadius = 0;
