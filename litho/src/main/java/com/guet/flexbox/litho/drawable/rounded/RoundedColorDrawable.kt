@@ -1,4 +1,4 @@
-package com.guet.flexbox.litho.drawable
+package com.guet.flexbox.litho.drawable.rounded
 
 import android.graphics.Canvas
 import android.graphics.ColorFilter
@@ -15,7 +15,7 @@ class RoundedColorDrawable(
         override val rightTop: Float,
         override val rightBottom: Float,
         override val leftBottom: Float
-) : Drawable(), RoundedCorners, ComparableDrawable {
+) : Drawable(), RoundedRadius, ComparableDrawable {
     private var useColor: Int = baseColor
 
     private val drawKit by lazy { RoundedDrawKit() }
@@ -75,6 +75,6 @@ class RoundedColorDrawable(
     override fun isEquivalentTo(other: ComparableDrawable?): Boolean {
         return other is RoundedColorDrawable
                 && other.baseColor == baseColor
-                && RoundedCorners.equals(this, other)
+                && RoundedRadius.equals(this, other)
     }
 }

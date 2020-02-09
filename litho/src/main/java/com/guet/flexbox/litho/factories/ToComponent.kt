@@ -5,12 +5,14 @@ import android.graphics.drawable.GradientDrawable
 import com.facebook.litho.Component
 import com.facebook.litho.ComponentContext
 import com.facebook.litho.drawable.ComparableColorDrawable
-import com.facebook.litho.drawable.ComparableGradientDrawable
 import com.guet.flexbox.build.AttributeSet
 import com.guet.flexbox.build.Child
 import com.guet.flexbox.build.RenderNodeFactory
 import com.guet.flexbox.litho.ChildComponent
-import com.guet.flexbox.litho.drawable.*
+import com.guet.flexbox.litho.drawable.LazyGradientDrawable
+import com.guet.flexbox.litho.drawable.LazyImageDrawable
+import com.guet.flexbox.litho.drawable.NoOpDrawable
+import com.guet.flexbox.litho.drawable.rounded.*
 import com.guet.flexbox.litho.resolve.UrlType
 import com.guet.flexbox.litho.toPxFloat
 
@@ -114,7 +116,7 @@ abstract class ToComponent<C : Component.Builder<*>>(
                             c.background(rounded)
                         }
                     } else {
-                        val normal = ComparableGradientDrawable(o, colors)
+                        val normal = LazyGradientDrawable(o, colors)
                         if (needBorder) {
                             c.background(BorderDrawable(
                                     normal,

@@ -1,8 +1,8 @@
-package com.guet.flexbox.litho.drawable
+package com.guet.flexbox.litho.drawable.rounded
 
 import android.graphics.drawable.Drawable
 
-interface RoundedCorners {
+interface RoundedRadius {
     val leftTop: Float
     val rightTop: Float
     val rightBottom: Float
@@ -23,7 +23,7 @@ interface RoundedCorners {
         return array
     }
 
-    object Default : RoundedCorners {
+    object Default : RoundedRadius {
         override val leftTop: Float
             get() = 0f
         override val rightTop: Float
@@ -36,15 +36,15 @@ interface RoundedCorners {
 
     companion object {
 
-        fun equals(left: RoundedCorners, right: RoundedCorners): Boolean {
+        fun equals(left: RoundedRadius, right: RoundedRadius): Boolean {
             return left.leftBottom == right.leftBottom
                     && left.leftTop == right.leftTop
                     && left.rightBottom == right.rightBottom
                     && left.rightTop == right.rightTop
         }
 
-        fun from(drawable: Drawable): RoundedCorners {
-            return if (drawable is RoundedCorners) {
+        fun from(drawable: Drawable): RoundedRadius {
+            return if (drawable is RoundedRadius) {
                 drawable
             } else {
                 Default

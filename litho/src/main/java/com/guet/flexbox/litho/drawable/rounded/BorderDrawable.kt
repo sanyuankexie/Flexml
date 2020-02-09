@@ -1,4 +1,4 @@
-package com.guet.flexbox.litho.drawable
+package com.guet.flexbox.litho.drawable.rounded
 
 import android.graphics.Canvas
 import android.graphics.Path
@@ -6,16 +6,19 @@ import android.graphics.drawable.Drawable
 import androidx.annotation.ColorInt
 import androidx.annotation.Px
 import com.facebook.litho.drawable.ComparableDrawable
+import com.guet.flexbox.litho.drawable.DrawableWrapper
 
 class BorderDrawable(
         drawable: Drawable,
         @Px private val borderWidth: Float,
         @ColorInt private val borderColor: Int
 ) : DrawableWrapper<Drawable>(drawable),
-        RoundedCorners by RoundedCorners.from(drawable),
+        RoundedRadius by RoundedRadius.from(drawable),
         ComparableDrawable {
 
-    private val drawKit by lazy { RoundedDrawKit() }
+    private val drawKit by lazy {
+        RoundedDrawKit()
+    }
 
     override fun draw(canvas: Canvas) {
         super.draw(canvas)
@@ -56,7 +59,7 @@ class BorderDrawable(
                 val otherDrawable = other.wrappedDrawable
                 return if (myDrawable is ComparableDrawable
                         && otherDrawable is ComparableDrawable
-                        && RoundedCorners.equals(this, other)) {
+                        && RoundedRadius.equals(this, other)) {
                     myDrawable.isEquivalentTo(otherDrawable)
                 } else {
                     myDrawable == otherDrawable

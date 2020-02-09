@@ -1,10 +1,11 @@
-package com.guet.flexbox.litho.drawable
+package com.guet.flexbox.litho.drawable.rounded
 
 import android.content.Context
 import android.graphics.drawable.Drawable
 import com.bumptech.glide.RequestBuilder
 import com.bumptech.glide.load.resource.bitmap.GranularRoundedCorners
 import com.facebook.litho.drawable.ComparableDrawable
+import com.guet.flexbox.litho.drawable.LazyImageDrawable
 
 class RoundedLazyImageDrawable(
         context: Context,
@@ -13,7 +14,7 @@ class RoundedLazyImageDrawable(
         override val rightTop: Float,
         override val rightBottom: Float,
         override val leftBottom: Float
-) : LazyImageDrawable(context, model), RoundedCorners {
+) : LazyImageDrawable(context, model), RoundedRadius {
 
     override fun buildRequest(
             builder: RequestBuilder<Drawable>
@@ -34,6 +35,6 @@ class RoundedLazyImageDrawable(
     override fun isEquivalentTo(other: ComparableDrawable?): Boolean {
         return other is RoundedLazyImageDrawable
                 && super.isEquivalentTo(other)
-                && RoundedCorners.equals(this, other)
+                && RoundedRadius.equals(this, other)
     }
 }
