@@ -92,6 +92,27 @@ class TransformRootLayout @JvmOverloads constructor(
                 }
                 invalidate()
             }
+            addListener(object : AnimatorListenerAdapter() {
+                override fun onAnimationEnd(animation: Animator?) {
+                    //lt-x
+                    dst[0] = offset
+                    //lt-y
+                    dst[1] = offset
+                    //rt-x
+                    dst[2] = width - offset
+                    //rt-y
+                    dst[3] = offset
+                    //rb-x
+                    dst[4] = width - offset
+                    //rb-y
+                    dst[5] = height - offset
+                    //lb-x
+                    dst[6] = offset
+                    //lb-y
+                    dst[7] = height - offset
+                    invalidate()
+                }
+            })
             interpolator = DecelerateInterpolator()
             duration = animationDuration
         }.start()
