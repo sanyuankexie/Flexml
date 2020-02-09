@@ -30,7 +30,7 @@ class FastBlur(
             outWidth: Int,
             outHeight: Int
     ): Resource<Bitmap> {
-        if (radius == 0f || sampling < 1f) {
+        if (radius <= 0f || sampling < 1f) {
             return resource
         }
         require(Util.isValidDimensions(outWidth, outHeight)) {
@@ -79,10 +79,6 @@ class FastBlur(
                 && other.sampling == sampling
     }
 
-    override fun hashCode(): Int {
-        return (ID.hashCode() + radius * 10 + sampling * 100).toInt()
-    }
-
     override fun updateDiskCacheKey(messageDigest: MessageDigest) {
         messageDigest.update(ID_BYTE)
         messageDigest.update(ByteBuffer.allocate(8)
@@ -119,6 +115,12 @@ class FastBlur(
             blur?.destroy()
         }
         return bitmap
+    }
+
+    override fun hashCode(): Int {
+        var result = radius.hashCode()
+        result = 31 * result + sampling.hashCode()
+        return result
     }
 
     private companion object {
