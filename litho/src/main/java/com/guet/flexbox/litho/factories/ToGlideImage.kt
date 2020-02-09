@@ -1,5 +1,6 @@
 package com.guet.flexbox.litho.factories
 
+import com.bumptech.glide.Glide
 import com.facebook.litho.ComponentContext
 import com.guet.flexbox.build.AttributeSet
 import com.guet.flexbox.enums.ScaleType
@@ -24,8 +25,14 @@ internal object ToGlideImage : ToComponent<GlideImage.Builder>(CommonAssigns) {
         }
         register("url") { _, _, value: Any ->
             if (value is Int) {
+                Glide.with(context!!.androidContext)
+                        .load(value)
+                        .preload()
                 resId(value)
             } else if (value is String) {
+                Glide.with(context!!.androidContext)
+                        .load(value)
+                        .preload()
                 url(value)
             }
         }
