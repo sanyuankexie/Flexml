@@ -1163,11 +1163,8 @@ public class GradientDrawable extends Drawable {
 
         // Don't check opacity if we're using a gradient, as we've already
         // checked the gradient opacity in mOpaqueOverShape.
-        if (mGradientState.mGradientColors == null && !isOpaque(mFillPaint.getColor())) {
-            return false;
-        }
-
-        return true;
+        return mGradientState.mGradientColors != null
+                || isOpaque(mFillPaint.getColor());
     }
 
     @Override
