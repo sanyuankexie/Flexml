@@ -33,6 +33,14 @@ class TemplatePage @WorkerThread internal constructor(
     val height: Int
         get() = size.height
 
+    init {
+        super.setSizeSpec(
+                SizeSpec.makeSizeSpec(0, SizeSpec.UNSPECIFIED),
+                SizeSpec.makeSizeSpec(0, SizeSpec.UNSPECIFIED),
+                size
+        )
+    }
+
     override fun attach() {
         super.attach()
         val host = lithoView as? HostingView
@@ -69,18 +77,9 @@ class TemplatePage @WorkerThread internal constructor(
                 size
         )
         if (oldWidth != width || oldHeight != height) {
-            val hostingView = lithoView as? HostingView
-            hostingView?.post { hostingView.requestLayout() }
+            val hostingView = lithoView as? HostingView ?: return
+            hostingView.post { hostingView.requestLayout() }
         }
-    }
-
-    @WorkerThread
-    fun computeLayout() {
-        setSizeSpec(
-                SizeSpec.makeSizeSpec(0, SizeSpec.UNSPECIFIED),
-                SizeSpec.makeSizeSpec(0, SizeSpec.UNSPECIFIED),
-                size
-        )
     }
 
     class Builder(
@@ -153,7 +152,6 @@ class TemplatePage @WorkerThread internal constructor(
                     .build())
             logger(null, com.simpleName)
             val page = TemplatePage(this)
-            page.computeLayout()
             return page
         }
     }

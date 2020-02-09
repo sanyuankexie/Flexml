@@ -83,7 +83,6 @@ class GlideDrawable(
                 ))
             }
         }
-
         if (!transforms.isNullOrEmpty()) {
             request = request.transform(*transforms.toTypedArray())
         }

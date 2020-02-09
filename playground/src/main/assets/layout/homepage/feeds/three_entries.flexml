@@ -97,7 +97,7 @@
                 marginRight="3"
                 flexGrow="1">
                 <Image
-                    borderRadius="4"
+                    borderRadius="10"
                     scaleType="fitXY"
                     flexGrow="1"
                     url="${images[0]}">
@@ -116,7 +116,7 @@
                 marginRight="3"
                 flexGrow="1">
                 <Image
-                    borderRadius="4"
+                    borderRadius="10"
                     scaleType="fitXY"
                     flexGrow="1"
                     url="${images[1]}">
@@ -137,7 +137,7 @@
                 <Image
                     blurSampling="3"
                     blurRadius="25"
-                    borderRadius="4"
+                    borderRadius="10"
                     scaleType="fitXY"
                     flexGrow="1"
                     url="${images[2]}">

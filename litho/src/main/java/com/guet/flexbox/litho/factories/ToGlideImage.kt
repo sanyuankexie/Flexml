@@ -22,12 +22,11 @@ internal object ToGlideImage : ToComponent<GlideImage.Builder>(CommonAssigns) {
         register("aspectRatio") { _, _, value: Double ->
             imageAspectRatio(value.toFloat())
         }
-        register("url") { _, _, value: Any ->
-            if (value is Int) {
-                resId(value)
-            } else if (value is String) {
-                url(value)
-            }
+        register("url") { _, _, value: String ->
+            url(value)
+        }
+        register("internal:resId") { _, _, value: Int ->
+            resId(value)
         }
         register("borderLeftTopRadius") { _, _, value: Double ->
             leftTopRadius(value.toPxFloat())

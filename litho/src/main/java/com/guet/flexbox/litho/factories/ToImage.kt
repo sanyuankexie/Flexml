@@ -94,7 +94,8 @@ object ToImage : RenderNodeFactory {
                     val id = prams[0] as Int
                     return ToGlideImage.toComponent(c, visibility,
                             (attrs as MutableMap).apply {
-                                this["url"] = id
+                                this.remove("url")
+                                this["internal:resId"] = id
                             }, emptyList())
                 }
                 else -> {
