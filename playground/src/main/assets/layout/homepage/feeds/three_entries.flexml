@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Flex
+    width="360"
     alignItems="center"
     justifyContent="center">
     <Flex
@@ -105,7 +106,7 @@
                     marginTop="5"
                     horizontalGravity="center"
                     textSize="11"
-                    text="拉菲">
+                    text="Test1">
                 </Text>
             </Flex>
             <Flex
@@ -124,7 +125,7 @@
                     marginTop="5"
                     horizontalGravity="center"
                     textSize="11"
-                    text="初音未来">
+                    text="Test2">
                 </Text>
             </Flex>
             <Flex
@@ -134,8 +135,8 @@
                 marginRight="3"
                 flexGrow="1">
                 <Image
-                    blurSampling="1"
-                    blurRadius="10"
+                    blurSampling="3"
+                    blurRadius="25"
                     borderRadius="4"
                     scaleType="fitXY"
                     flexGrow="1"

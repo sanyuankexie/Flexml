@@ -67,10 +67,10 @@ internal object GlideImageSpec {
             @Prop(optional = true) blurRadius: Float,
             @Prop(optional = true) blurSampling: Float,
             @Prop(optional = true) scaleType: ScaleType,
-            @Prop(optional = true) leftTop: Float,
-            @Prop(optional = true) rightTop: Float,
-            @Prop(optional = true) rightBottom: Float,
-            @Prop(optional = true) leftBottom: Float,
+            @Prop(optional = true) leftTopRadius: Float,
+            @Prop(optional = true) rightTopRadius: Float,
+            @Prop(optional = true) rightBottomRadius: Float,
+            @Prop(optional = true) leftBottomRadius: Float,
             @FromBoundsDefined width: Int,
             @FromBoundsDefined height: Int
     ) {
@@ -91,10 +91,10 @@ internal object GlideImageSpec {
                     blurRadius,
                     blurSampling,
                     scaleType,
-                    leftTop,
-                    rightTop,
-                    rightBottom,
-                    leftBottom
+                    leftTopRadius,
+                    rightTopRadius,
+                    rightBottomRadius,
+                    leftBottomRadius
             )
         }
     }
@@ -113,19 +113,19 @@ internal object GlideImageSpec {
             @Prop(optional = true) scaleType: Diff<ScaleType>,
             @Prop(optional = true) url: Diff<String?>,
             @Prop(optional = true) drawable: Diff<Drawable?>,
-            @Prop(optional = true) leftTop: Diff<Float>,
-            @Prop(optional = true) rightTop: Diff<Float>,
-            @Prop(optional = true) rightBottom: Diff<Float>,
-            @Prop(optional = true) leftBottom: Diff<Float>): Boolean {
+            @Prop(optional = true) leftTopRadius: Diff<Float>,
+            @Prop(optional = true) rightTopRadius: Diff<Float>,
+            @Prop(optional = true) rightBottomRadius: Diff<Float>,
+            @Prop(optional = true) leftBottomRadius: Diff<Float>): Boolean {
         return url.next != url.previous
                 || scaleType.next != scaleType.previous
                 || blurRadius.next != blurRadius.previous
                 || blurSampling.next != blurSampling.previous
                 || drawable.next != drawable.previous
                 || resId.next != resId.previous
-                || rightTop.next != rightTop.previous
-                || leftTop.next != leftTop.previous
-                || rightBottom.next != rightBottom.previous
-                || leftBottom.next != leftBottom.previous
+                || rightTopRadius.next != rightTopRadius.previous
+                || leftTopRadius.next != leftTopRadius.previous
+                || rightBottomRadius.next != rightBottomRadius.previous
+                || leftBottomRadius.next != leftBottomRadius.previous
     }
 }

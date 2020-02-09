@@ -69,7 +69,7 @@ abstract class ToComponent<C : Component.Builder<*>>(
     }
 
     private fun prepareAssign(attrs: AttributeSet) {
-        val borderRadius = attrs["borderRadius"] as? Double
+        val borderRadius = attrs["borderRadius"]
         if (borderRadius != null) {
             for (lr in arrayOf("Left", "Right")) {
                 for (tb in arrayOf("Top", "Bottom")) {

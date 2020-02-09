@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Flex
+    width="360"
     justifyContent="center">
     <Flex
         marginTop="5"
