@@ -55,7 +55,7 @@ class TransformRootLayout @JvmOverloads constructor(
             alpha = 0
         }
         //不能取边界值，硬件加速由bug会闪屏
-        ValueAnimator.ofFloat(0.1f, 1.9f).apply {
+        ValueAnimator.ofFloat(0f, 1.88f).apply {
             addUpdateListener {
                 var value = it.animatedValue as Float
                 (foreground as ColorDrawable).alpha = ((255f / 2f) * (value / 2f)).toInt()
@@ -126,7 +126,7 @@ class TransformRootLayout @JvmOverloads constructor(
 
     fun reset(callback: () -> Unit) {
         //不能取边界值，硬件加速由bug会闪屏
-        ValueAnimator.ofFloat(0.1f, 1.9f).apply {
+        ValueAnimator.ofFloat(0f, 1.88f).apply {
             addUpdateListener {
                 var value = it.animatedValue as Float
                 (foreground as ColorDrawable).alpha = ((255f / 2f) - (255f / 2f) * (value / 2f)).toInt()

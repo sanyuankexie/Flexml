@@ -661,7 +661,7 @@ public class GradientDrawable extends Drawable {
             float rad = mStrokePaint.getStrokeWidth();
             canvas.saveLayer(mRect.left - rad, mRect.top - rad,
                     mRect.right + rad, mRect.bottom + rad,
-                    mLayerPaint);
+                    mLayerPaint, Canvas.ALL_SAVE_FLAG);
 
             // don't perform the filter in our individual paints
             // since the layer will do it for us
@@ -1167,6 +1167,7 @@ public class GradientDrawable extends Drawable {
                 || isOpaque(mFillPaint.getColor());
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     @Override
     public void getOutline(Outline outline) {
         final GradientState st = mGradientState;

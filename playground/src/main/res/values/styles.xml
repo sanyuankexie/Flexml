@@ -1,4 +1,4 @@
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
 
     <!-- Base application theme. -->
     <style name="AppStartup" parent="Theme.AppCompat.Light.NoActionBar">
@@ -12,8 +12,10 @@
         <item name="colorAccent">@color/colorAccent</item>
     </style>
     <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="android:windowTranslucentStatus">false</item>
+        <item name="android:windowTranslucentNavigation">true</item>
+        <item name="android:statusBarColor" tools:ignore="NewApi">#00ffffff</item>
         <item name="colorPrimary">@color/colorPrimary</item>
-        <item name="android:windowTranslucentStatus">true</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
     </style>

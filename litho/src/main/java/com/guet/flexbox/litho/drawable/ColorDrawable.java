@@ -27,11 +27,13 @@ import android.graphics.Rect;
 import android.graphics.RectF;
 import android.graphics.Xfermode;
 import android.graphics.drawable.Drawable;
+import android.os.Build;
 import android.view.ViewDebug;
 
 import androidx.annotation.ColorInt;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.annotation.RequiresApi;
 
 /**
  * A specialized Drawable that fills the Canvas with a specified color.
@@ -221,6 +223,7 @@ public class ColorDrawable extends Drawable {
         return PixelFormat.TRANSLUCENT;
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     @Override
     public void getOutline(@NonNull Outline outline) {
         outline.setRect(getBounds());

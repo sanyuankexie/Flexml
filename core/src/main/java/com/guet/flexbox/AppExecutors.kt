@@ -13,13 +13,15 @@ object AppExecutors {
 
     private val mainThreadLooper = Looper.getMainLooper()
 
-    val threadPool: ThreadPoolExecutor = kotlin.run {
+    val threadPool: ThreadPoolExecutor
+
+    init {
         val count = AtomicInteger(0)
         val nThreads = max(
                 Runtime.getRuntime().availableProcessors(),
                 4
         )
-        ThreadPoolExecutor(
+        threadPool = ThreadPoolExecutor(
                 nThreads, nThreads,
                 3,
                 TimeUnit.SECONDS,

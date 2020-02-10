@@ -3,6 +3,7 @@ package com.guet.flexbox.litho.transforms
 import android.graphics.*
 import android.graphics.Matrix.ScaleToFit
 import android.widget.ImageView.ScaleType
+import android.widget.ImageView.ScaleType.*
 import com.bumptech.glide.load.engine.bitmap_recycle.BitmapPool
 import com.bumptech.glide.load.resource.bitmap.BitmapTransformation
 import java.nio.ByteBuffer
@@ -13,6 +14,12 @@ import kotlin.math.round
 class ImageScale(
         private val scaleType: ScaleType
 ) : BitmapTransformation() {
+
+    init {
+        if (scaleType == MATRIX) {
+            throw IllegalArgumentException()
+        }
+    }
 
     override fun updateDiskCacheKey(messageDigest: MessageDigest) {
         messageDigest.update(ID_BYTE)
@@ -31,20 +38,23 @@ class ImageScale(
             outWidth: Int,
             outHeight: Int
     ): Bitmap {
-        if (scaleType == ScaleType.FIT_XY) {
+        if (scaleType == FIT_XY
+                && toTransform.width == outWidth
+                && toTransform.height == outHeight) {
             return toTransform
         }
-        val (matrix, shouldClipRect) = create(
+        // Alpha is required for this transformation.
+        val safeConfig = getAlphaSafeConfig(toTransform)
+        val safeToTransform = getAlphaSafeBitmap(pool, toTransform)
+        val matrix = create(
                 toTransform,
                 scaleType,
                 outWidth,
-                outWidth
+                outHeight
         )
-        val output = pool[outWidth, outWidth, Bitmap.Config.ARGB_8888]
+        val output = pool[outWidth, outHeight, safeConfig]
+        output.setHasAlpha(true)
         val canvas = Canvas(output)
-        if (shouldClipRect) {
-            canvas.clipRect(0, 0, outWidth, outWidth)
-        }
         if (matrix != null) {
             canvas.concat(matrix)
         }
@@ -54,12 +64,15 @@ class ImageScale(
                 Rect(
                         0,
                         0,
-                        toTransform.width,
-                        toTransform.height
+                        outWidth,
+                        outHeight
                 ),
                 null
         )
         canvas.setBitmap(null)
+        if (safeToTransform != toTransform) {
+            pool.put(safeToTransform)
+        }
         return output
     }
 
@@ -79,30 +92,29 @@ class ImageScale(
                 scaleType: ScaleType,
                 width: Int,
                 height: Int
-        ): Pair<Matrix?, Boolean> {
+        ): Matrix? {
             val intrinsicWidth = bitmap.width
             val intrinsicHeight = bitmap.height
             if (intrinsicWidth <= 0 || intrinsicHeight <= 0
-                    || ScaleType.FIT_XY == scaleType
-                    || ScaleType.MATRIX == scaleType) {
-                return null to false
+                    || FIT_XY == scaleType) {
+                return null
             }
             if (width == intrinsicWidth && height == intrinsicHeight) {
                 // The bitmap fits exactly, no transform needed.
-                return null to false
+                return null
             }
             val result = Matrix()
-            var shouldClipRect = false
+            //var shouldClipRect = false
             when (scaleType) {
-                ScaleType.CENTER -> {
+                CENTER -> {
                     // Center bitmap in view, no scaling.
                     result.setTranslate(
                             round((width - intrinsicWidth) * 0.5f),
                             round((height - intrinsicHeight) * 0.5f)
                     )
-                    shouldClipRect = intrinsicWidth > width || intrinsicHeight > height
+                    //shouldClipRect = intrinsicWidth > width || intrinsicHeight > height
                 }
-                ScaleType.CENTER_CROP -> {
+                CENTER_CROP -> {
                     val scale: Float
                     var dx = 0f
                     var dy = 0f
@@ -115,9 +127,9 @@ class ImageScale(
                     }
                     result.setScale(scale, scale)
                     result.postTranslate(round(dx), round(dy))
-                    shouldClipRect = true
+                    //shouldClipRect = true
                 }
-                ScaleType.CENTER_INSIDE -> {
+                CENTER_INSIDE -> {
                     val scale: Float = if (intrinsicWidth <= width && intrinsicHeight <= height) {
                         1.0f
                     } else {
@@ -137,16 +149,16 @@ class ImageScale(
                     result.setRectToRect(src, dest, scaleTypeToScaleToFit(scaleType))
                 }
             }
-            return result to shouldClipRect
+            return result
         }
 
         private fun scaleTypeToScaleToFit(st: ScaleType): ScaleToFit {
             // ScaleToFit enum to their corresponding Matrix.ScaleToFit values
             return when (st) {
-                ScaleType.FIT_XY -> ScaleToFit.FILL
-                ScaleType.FIT_START -> ScaleToFit.START
-                ScaleType.FIT_CENTER -> ScaleToFit.CENTER
-                ScaleType.FIT_END -> ScaleToFit.END
+                FIT_XY -> ScaleToFit.FILL
+                FIT_START -> ScaleToFit.START
+                FIT_CENTER -> ScaleToFit.CENTER
+                FIT_END -> ScaleToFit.END
                 else -> throw IllegalArgumentException("Only FIT_... values allowed")
             }
         }

@@ -47,7 +47,6 @@ class LithoBannerView(context: Context) : FrameLayout(context), HasLithoViewChil
     private fun renderIndicators(position: Int): Component {
         val realPosition = getNormalizedPosition(position)
         val indicatorPx = 5.toPx()
-        val outline = CornerOutlineProvider(indicatorPx)
         val c = indicators.componentContext
         val cc = (components.indices).map { index ->
             Row.create(c)
@@ -55,7 +54,6 @@ class LithoBannerView(context: Context) : FrameLayout(context), HasLithoViewChil
                     .heightPx(indicatorPx)
                     .marginPx(YogaEdge.LEFT, indicatorPx / 2)
                     .marginPx(YogaEdge.RIGHT, indicatorPx / 2)
-                    .outlineProvider(outline)
                     .clipToOutline(true)
                     .apply {
                         if (index == realPosition) {

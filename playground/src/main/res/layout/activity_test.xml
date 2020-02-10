@@ -1,26 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.coordinatorlayout.widget.CoordinatorLayout
+<FrameLayout
     android:fitsSystemWindows="true"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
-    <LinearLayout
-        android:orientation="vertical"
+    <ImageView
+        android:id="@+id/native_image"
+        android:scaleType="fitXY"
+        android:layout_weight="1"
+        android:src="#ffff0000"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
-        <ImageView
-            android:scaleType="fitXY"
-            android:layout_weight="1"
-            android:src="@drawable/ic_photo2"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"/>
-        <ImageView
-            android:scaleType="fitXY"
-            android:id="@+id/image"
-            android:layout_weight="1"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"/>
-    </LinearLayout>
-</androidx.coordinatorlayout.widget.CoordinatorLayout>
+        android:layout_height="match_parent"/>
+    <ImageView
+        android:scaleType="fitXY"
+        android:id="@+id/image"
+        android:layout_weight="1"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"/>
+</FrameLayout>

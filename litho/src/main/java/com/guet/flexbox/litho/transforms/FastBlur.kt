@@ -59,7 +59,7 @@ class FastBlur(
         val bitmap = pool[
                 scaledWidth,
                 scaledHeight,
-                Bitmap.Config.ARGB_8888
+                toTransform.config
         ]
         val canvas = Canvas(bitmap)
         canvas.scale(1 / sampling, 1 / sampling)
@@ -99,7 +99,8 @@ class FastBlur(
         try {
             rs = RenderScript.create(context)
             rs.messageHandler = RenderScript.RSMessageHandler()
-            input = Allocation.createFromBitmap(rs, bitmap, Allocation.MipmapControl.MIPMAP_NONE,
+            input = Allocation.createFromBitmap(rs, bitmap,
+                    Allocation.MipmapControl.MIPMAP_NONE,
                     Allocation.USAGE_SCRIPT)
             output = Allocation.createTyped(rs, input.type)
             blur = ScriptIntrinsicBlur.create(rs, Element.U8_4(rs))
@@ -118,7 +119,8 @@ class FastBlur(
     }
 
     override fun hashCode(): Int {
-        var result = radius.hashCode()
+        var result = ID.hashCode()
+        result = 31 * result + radius.hashCode()
         result = 31 * result + sampling.hashCode()
         return result
     }
