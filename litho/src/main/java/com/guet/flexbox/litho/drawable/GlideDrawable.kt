@@ -1,18 +1,13 @@
 package com.guet.flexbox.litho.drawable
 
 import android.content.Context
-import android.graphics.Bitmap
 import android.graphics.Rect
 import android.graphics.drawable.Drawable
 import android.widget.ImageView.ScaleType
 import com.bumptech.glide.Glide
-import com.bumptech.glide.load.Transformation
-import com.bumptech.glide.load.resource.bitmap.GranularRoundedCorners
 import com.bumptech.glide.request.target.SizeReadyCallback
 import com.bumptech.glide.request.target.Target
 import com.bumptech.glide.request.transition.Transition
-import com.guet.flexbox.litho.transforms.FastBlur
-import com.guet.flexbox.litho.transforms.ImageScale
 
 class GlideDrawable(
         private val context: Context
@@ -48,36 +43,17 @@ class GlideDrawable(
             lb: Float
     ) {
         bind(width, height)
-        var request = Glide.with(context)
+        Glide.with(context)
                 .load(model)
-        val transforms: ArrayList<Transformation<Bitmap>> = ArrayList()
-        val needBlur = blurRadius > 0 && blurSampling >= 1
-        val needCorners = lt != 0f || rb != 0f || lb != 0f || rt != 0f
-        transforms.add(ImageScale(scaleType))
-        if (needBlur) {
-            transforms.add(FastBlur(blurRadius, blurSampling))
-        }
-        if (needCorners) {
-            if (needBlur) {
-                transforms.add(GranularRoundedCorners(
-                        lt / blurSampling,
-                        rt / blurSampling,
-                        rb / blurSampling,
-                        lb / blurSampling
-                ))
-            } else {
-                transforms.add(GranularRoundedCorners(
+                .transform(OffScreenRendering(
+                        scaleType,
+                        blurRadius,
+                        blurSampling,
                         lt,
                         rt,
                         rb,
                         lb
-                ))
-            }
-        }
-        if (!transforms.isNullOrEmpty()) {
-            request = request.transform(*transforms.toTypedArray())
-        }
-        request.into(this)
+                )).into(this)
     }
 
     override fun getSize(cb: SizeReadyCallback) {
