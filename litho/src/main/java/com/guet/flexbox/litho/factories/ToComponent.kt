@@ -114,7 +114,7 @@ abstract class ToComponent<C : Component.Builder<*>>(
                 if (needBorder) {
                     val border = BorderColorDrawable
                             .Builder()
-                            .borderBottomColor(borderColor)
+                            .borderColor(borderColor)
                             .borderWidth(borderWidth)
                             .apply {
                                 if (isSameCorners) {
@@ -152,7 +152,7 @@ abstract class ToComponent<C : Component.Builder<*>>(
                 if (needBorder) {
                     val border = BorderColorDrawable
                             .Builder()
-                            .borderBottomColor(borderColor)
+                            .borderColor(borderColor)
                             .borderWidth(borderWidth)
                             .apply {
                                 if (isSameCorners) {
@@ -193,7 +193,7 @@ abstract class ToComponent<C : Component.Builder<*>>(
                 if (needBorder) {
                     val border = BorderColorDrawable
                             .Builder()
-                            .borderBottomColor(borderColor)
+                            .borderColor(borderColor)
                             .borderWidth(borderWidth)
                             .apply {
                                 if (isSameCorners) {
@@ -219,7 +219,7 @@ abstract class ToComponent<C : Component.Builder<*>>(
         if (needBorder) {
             val border = BorderColorDrawable
                     .Builder()
-                    .borderBottomColor(borderColor)
+                    .borderColor(borderColor)
                     .borderWidth(borderWidth)
                     .apply {
                         if (needCorners) {
