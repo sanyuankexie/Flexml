@@ -8,6 +8,7 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.request.target.SizeReadyCallback
 import com.bumptech.glide.request.target.Target
 import com.bumptech.glide.request.transition.Transition
+import com.guet.flexbox.litho.transforms.RenderGroup
 
 class GlideDrawable(
         private val context: Context
@@ -37,23 +38,25 @@ class GlideDrawable(
             blurRadius: Float,
             blurSampling: Float,
             scaleType: ScaleType,
-            lt: Float,
-            rt: Float,
-            rb: Float,
-            lb: Float
+            leftTop: Float,
+            rightTop: Float,
+            rightBottom: Float,
+            lightBottom: Float
     ) {
         bind(width, height)
         Glide.with(context)
                 .load(model)
-                .transform(OffScreenRendering(
-                        scaleType,
-                        blurRadius,
-                        blurSampling,
-                        lt,
-                        rt,
-                        rb,
-                        lb
-                )).into(this)
+                .transform(
+                        RenderGroup.Builder {
+                            this.blurRadius = blurRadius
+                            this.blurSampling = blurSampling
+                            this.scaleType = scaleType
+                            this.leftTop = leftTop
+                            this.rightTop = rightTop
+                            this.rightBottom = rightBottom
+                            this.leftBottom = lightBottom
+                        }.build()
+                ).into(this)
     }
 
     override fun getSize(cb: SizeReadyCallback) {

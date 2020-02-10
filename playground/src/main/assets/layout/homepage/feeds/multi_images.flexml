@@ -69,13 +69,11 @@
                         <Image
                             borderLeftTopRadius="${(index*3)==0?10:0}"
                             borderLeftBottomRadius="${(index*3)==(images.size()-3)?10:0}"
-                            scaleType="fitXY"
                             width="105"
                             height="105"
                             url="${images[index*3]}">
                         </Image>
                         <Image
-                            scaleType="fitXY"
                             marginRight="2"
                             marginLeft="2"
                             width="105"
@@ -85,7 +83,6 @@
                         <Image
                             borderRightTopRadius="${(index*3+2)==2?10:0}"
                             borderRightBottomRadius="${(index*3+2)==(images.size()-1)?10:0}"
-                            scaleType="fitXY"
                             width="105"
                             height="105"
                             url="${images[index*3+2]}">

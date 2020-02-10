@@ -12,7 +12,7 @@ import com.guet.flexbox.litho.drawable.GlideDrawable
 internal object GlideImageSpec {
 
     @PropDefault
-    val scaleType = ScaleType.FIT_XY
+    val scaleType = ScaleType.FIT_START
     @PropDefault
     val imageAspectRatio = 1f
 
