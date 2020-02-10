@@ -6,6 +6,7 @@ import android.graphics.drawable.Drawable
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.GranularRoundedCorners
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
+import com.bumptech.glide.request.target.SizeReadyCallback
 import com.bumptech.glide.request.target.Target
 import com.bumptech.glide.request.transition.Transition
 import com.facebook.litho.drawable.ComparableDrawable
@@ -18,10 +19,11 @@ class LazyImageDrawable(
 ) : DrawableWrapper<Drawable>(NoOpDrawable()),
         Target<Drawable> by DelegateTarget(),
         ComparableDrawable {
-
     private companion object {
         private val emptyArray = FloatArray(0)
     }
+
+    private val cacheNoOpDrawable = wrappedDrawable
 
     private val isInit = AtomicBoolean(false)
 
@@ -56,6 +58,10 @@ class LazyImageDrawable(
         }
     }
 
+    override fun getSize(cb: SizeReadyCallback) {
+        cb.onSizeReady(bounds.width(), bounds.height())
+    }
+
     override fun onResourceReady(
             resource: Drawable,
             transition: Transition<in Drawable>?) {
@@ -64,9 +70,12 @@ class LazyImageDrawable(
         invalidateSelf()
     }
 
-    override fun onLoadFailed(errorDrawable: Drawable?) {
+    override fun onLoadCleared(placeholder: Drawable?) {
         isInit.set(false)
-        wrappedDrawable = NoOpDrawable()
-        invalidateSelf()
+        wrappedDrawable = cacheNoOpDrawable
+    }
+
+    override fun onLoadFailed(errorDrawable: Drawable?) {
+        onLoadCleared(null)
     }
 }

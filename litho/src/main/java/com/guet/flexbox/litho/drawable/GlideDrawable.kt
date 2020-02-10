@@ -26,6 +26,10 @@ class GlideDrawable(
         unmount()
     }
 
+    override fun onLoadFailed(errorDrawable: Drawable?) {
+        wrappedDrawable = cacheNoOpDrawable
+    }
+
     override fun onBoundsChange(bounds: Rect) {
         super.onBoundsChange(bounds)
         width = bounds.width()
