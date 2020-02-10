@@ -37,7 +37,7 @@ import java.util.Arrays;
 import java.util.Objects;
 
 /**
- * Drawable that draws border lines with given color, widths and path effect.
+ * Drawable that draws border lines with given color, widths and getPath effect.
  */
 public class ColorBorderDrawable extends Drawable implements ComparableDrawable {
 
@@ -139,7 +139,7 @@ public class ColorBorderDrawable extends Drawable implements ComparableDrawable 
         sDrawBounds.set(getBounds());
         mPaint.setStrokeWidth(strokeWidth);
         mPaint.setColor(color);
-        drawBorder(canvas, path(), mState.mBorderRadius, mPaint);
+        drawBorder(canvas, getPath(), mState.mBorderRadius, mPaint);
     }
 
     /**
@@ -161,7 +161,7 @@ public class ColorBorderDrawable extends Drawable implements ComparableDrawable 
         if (color != QUICK_REJECT_COLOR) {
             saveCount = canvas.save();
             mPaint.setColor(color);
-            drawBorder(canvas, path(), mState.mBorderRadius, mPaint);
+            drawBorder(canvas, getPath(), mState.mBorderRadius, mPaint);
             canvas.restoreToCount(saveCount);
         }
 
@@ -170,7 +170,7 @@ public class ColorBorderDrawable extends Drawable implements ComparableDrawable 
         if (color != QUICK_REJECT_COLOR) {
             saveCount = canvas.save();
             mPaint.setColor(color);
-            drawBorder(canvas, path(), mState.mBorderRadius, mPaint);
+            drawBorder(canvas, getPath(), mState.mBorderRadius, mPaint);
             canvas.restoreToCount(saveCount);
         }
 
@@ -179,7 +179,7 @@ public class ColorBorderDrawable extends Drawable implements ComparableDrawable 
         if (color != QUICK_REJECT_COLOR) {
             saveCount = canvas.save();
             mPaint.setColor(color);
-            drawBorder(canvas, path(), mState.mBorderRadius, mPaint);
+            drawBorder(canvas, getPath(), mState.mBorderRadius, mPaint);
             canvas.restoreToCount(saveCount);
         }
 
@@ -188,7 +188,7 @@ public class ColorBorderDrawable extends Drawable implements ComparableDrawable 
         if (color != QUICK_REJECT_COLOR) {
             saveCount = canvas.save();
             mPaint.setColor(color);
-            drawBorder(canvas, path(), mState.mBorderRadius, mPaint);
+            drawBorder(canvas, getPath(), mState.mBorderRadius, mPaint);
             canvas.restoreToCount(saveCount);
         }
 
@@ -244,12 +244,12 @@ public class ColorBorderDrawable extends Drawable implements ComparableDrawable 
         mPaint.setColor(color);
         sDrawBounds.set(getBounds());
         int saveCount = canvas.save();
-        drawBorder(canvas, path(), mState.mBorderRadius, mPaint);
+        drawBorder(canvas, getPath(), mState.mBorderRadius, mPaint);
         canvas.restoreToCount(saveCount);
     }
 
     @Nullable
-    private Path path() {
+    private Path getPath() {
         return mDrawBorderWithPath ? mPath : null;
     }
 
