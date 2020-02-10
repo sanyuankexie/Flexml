@@ -49,7 +49,6 @@ public class ColorBorderDrawable extends Drawable implements ComparableDrawable 
 
     private Paint mPaint;
     private Path mPath;
-    private Path mClipPath;
     private boolean mDrawBorderWithPath;
 
     private ColorBorderDrawable(State state) {
@@ -74,7 +73,6 @@ public class ColorBorderDrawable extends Drawable implements ComparableDrawable 
     public void init() {
         mPaint = new Paint();
         mPath = new Path();
-        mClipPath = new Path();
         boolean hasRadius = false;
         float lastRadius = 0f;
         for (int i = 0; i < mState.mBorderRadius.length; ++i) {
@@ -167,13 +165,6 @@ public class ColorBorderDrawable extends Drawable implements ComparableDrawable 
         if (color != QUICK_REJECT_COLOR) {
             saveCount = canvas.save();
             mPaint.setColor(color);
-            mClipPath.reset();
-            mClipPath.moveTo(sDrawBounds.left - inset, sDrawBounds.top - inset);
-            mClipPath.lineTo(sInnerDrawBounds.left, sInnerDrawBounds.top);
-            mClipPath.lineTo(sInnerDrawBounds.left, sInnerDrawBounds.bottom);
-            mClipPath.lineTo(sDrawBounds.left - inset, sDrawBounds.bottom + inset);
-            mClipPath.close();
-            canvas.clipPath(mClipPath);
             drawBorder(canvas, path(), mState.mBorderRadius, mPaint);
             canvas.restoreToCount(saveCount);
         }
@@ -183,13 +174,6 @@ public class ColorBorderDrawable extends Drawable implements ComparableDrawable 
         if (color != QUICK_REJECT_COLOR) {
             saveCount = canvas.save();
             mPaint.setColor(color);
-            mClipPath.reset();
-            mClipPath.moveTo(sDrawBounds.left - inset, sDrawBounds.top - inset);
-            mClipPath.lineTo(sInnerDrawBounds.left, sInnerDrawBounds.top);
-            mClipPath.lineTo(sInnerDrawBounds.right, sInnerDrawBounds.top);
-            mClipPath.lineTo(sDrawBounds.right + inset, sDrawBounds.top - inset);
-            mClipPath.close();
-            canvas.clipPath(mClipPath);
             drawBorder(canvas, path(), mState.mBorderRadius, mPaint);
             canvas.restoreToCount(saveCount);
         }
@@ -199,13 +183,6 @@ public class ColorBorderDrawable extends Drawable implements ComparableDrawable 
         if (color != QUICK_REJECT_COLOR) {
             saveCount = canvas.save();
             mPaint.setColor(color);
-            mClipPath.reset();
-            mClipPath.moveTo(sDrawBounds.right + inset, sDrawBounds.top - inset);
-            mClipPath.lineTo(sInnerDrawBounds.right, sInnerDrawBounds.top);
-            mClipPath.lineTo(sInnerDrawBounds.right, sInnerDrawBounds.bottom);
-            mClipPath.lineTo(sDrawBounds.right + inset, sDrawBounds.bottom + inset);
-            mClipPath.close();
-            canvas.clipPath(mClipPath);
             drawBorder(canvas, path(), mState.mBorderRadius, mPaint);
             canvas.restoreToCount(saveCount);
         }
@@ -215,13 +192,6 @@ public class ColorBorderDrawable extends Drawable implements ComparableDrawable 
         if (color != QUICK_REJECT_COLOR) {
             saveCount = canvas.save();
             mPaint.setColor(color);
-            mClipPath.reset();
-            mClipPath.moveTo(sDrawBounds.left - inset, sDrawBounds.bottom + inset);
-            mClipPath.lineTo(sInnerDrawBounds.left, sInnerDrawBounds.bottom);
-            mClipPath.lineTo(sInnerDrawBounds.right, sInnerDrawBounds.bottom);
-            mClipPath.lineTo(sDrawBounds.right + inset, sDrawBounds.bottom + inset);
-            mClipPath.close();
-            canvas.clipPath(mClipPath);
             drawBorder(canvas, path(), mState.mBorderRadius, mPaint);
             canvas.restoreToCount(saveCount);
         }
