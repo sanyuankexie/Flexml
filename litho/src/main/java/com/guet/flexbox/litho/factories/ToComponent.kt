@@ -106,7 +106,8 @@ abstract class ToComponent<C : Component.Builder<*>>(
                             cornerRadius = lb
                         } else {
                             cornerRadii = floatArrayOf(
-                                    lt, rt, rb, lb
+                                    lt, lt, rt, rt,
+                                    rb, rb, lb, lb
                             )
                         }
                     }
