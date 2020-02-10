@@ -5,14 +5,12 @@ import android.graphics.Bitmap
 import android.os.SystemClock
 import android.util.Log
 import android.widget.ImageView.ScaleType
-import com.bumptech.glide.Glide
 import com.bumptech.glide.load.Transformation
 import com.bumptech.glide.load.engine.Resource
-import com.bumptech.glide.load.resource.bitmap.BitmapResource
 import com.bumptech.glide.load.resource.bitmap.GranularRoundedCorners
 import java.security.MessageDigest
 
-class RenderGroup(
+class OffScreenRender(
         private val fitScale: FitScale,
         private val fastBlur: FastBlur? = null,
         private val corners: GranularRoundedCorners? = null
@@ -26,7 +24,7 @@ class RenderGroup(
 
     override fun equals(other: Any?): Boolean {
         return (this === other) || (
-                other is RenderGroup
+                other is OffScreenRender
                         && fitScale == other.fitScale
                         && fastBlur == other.fastBlur
                         && corners == other.corners
@@ -39,7 +37,7 @@ class RenderGroup(
             outWidth: Int,
             outHeight: Int
     ): Resource<Bitmap> {
-        val startTime = SystemClock.uptimeMillis()
+        val start = SystemClock.uptimeMillis()
         try {
             val blurOutput = fastBlur?.transform(
                     context,
@@ -47,33 +45,31 @@ class RenderGroup(
                     outWidth,
                     outHeight
             )
-            val pool = Glide.get(context).bitmapPool
-            val start = resource.get()
-            val inWidth = start.width
-            val inHeight = start.height
+            val inWidth = resource.get().width
+            val inHeight = resource.get().height
             val scaleOutput = if (blurOutput != null) {
-                val bitmap = fitScale.safeTransform(
-                        pool,
-                        blurOutput.get(),
+                val currentOutput = fitScale.transform(
+                        context,
+                        blurOutput,
                         inWidth,
                         inHeight,
                         outWidth,
                         outHeight
                 )
-                if (blurOutput.get() != bitmap && blurOutput.get() != resource.get()) {
+                if (blurOutput != resource
+                        && blurOutput != currentOutput) {
                     blurOutput.recycle()
                 }
-                BitmapResource(bitmap, pool)
+                currentOutput
             } else {
-                val bitmap = fitScale.safeTransform(
-                        pool,
-                        start,
+                fitScale.transform(
+                        context,
+                        resource,
                         inWidth,
                         inHeight,
                         outWidth,
                         outHeight
                 )
-                BitmapResource(bitmap, pool)
             }
             return if (corners != null) {
                 val cornersOutput = corners.transform(
@@ -82,8 +78,8 @@ class RenderGroup(
                         outWidth,
                         outHeight
                 )
-                if (scaleOutput.get() != cornersOutput.get()
-                        && scaleOutput.get() != resource.get()) {
+                if (scaleOutput != cornersOutput
+                        && scaleOutput != resource) {
                     scaleOutput.recycle()
                 }
                 cornersOutput
@@ -91,7 +87,7 @@ class RenderGroup(
                 scaleOutput
             }
         } finally {
-            Log.i("OffScreenRendering", "use time: ${SystemClock.uptimeMillis() - startTime}")
+            Log.i(LOG, "use time: ${SystemClock.uptimeMillis() - start}")
         }
     }
 
@@ -103,6 +99,10 @@ class RenderGroup(
         ).hashCode()
     }
 
+    private companion object{
+        private val LOG = OffScreenRender::class.java.simpleName
+    }
+
     class Builder {
         var blurRadius: Float = 0f
         var blurSampling: Float = 0f
@@ -112,7 +112,7 @@ class RenderGroup(
         var rightBottom: Float = 0f
         var leftBottom: Float = 0f
 
-        fun build(): RenderGroup {
+        fun build(): OffScreenRender {
             val fitScale = FitScale(scaleType)
             var corners: GranularRoundedCorners? = null
             if (leftTop + rightTop + rightBottom + leftBottom != 0f) {
@@ -127,7 +127,7 @@ class RenderGroup(
             if (blurRadius > 0 && blurSampling >= 1) {
                 fastBlur = FastBlur(blurRadius, blurSampling)
             }
-            return RenderGroup(fitScale, fastBlur, corners)
+            return OffScreenRender(fitScale, fastBlur, corners)
         }
 
         companion object {

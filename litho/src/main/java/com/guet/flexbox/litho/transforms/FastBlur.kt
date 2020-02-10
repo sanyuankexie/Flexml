@@ -43,37 +43,49 @@ class FastBlur(
                     + outHeight
                     + " less than or equal to zero and not Target.SIZE_ORIGINAL")
         }
-        val bitmapPool = Glide.get(context).bitmapPool
-        val toTransform = resource.get()
-        val transformed = transform(context, bitmapPool, toTransform)
-        return BitmapResource(transformed, bitmapPool)
+        val pool = Glide.get(context).bitmapPool
+        return transformCheckResult(context, pool, resource)
     }
 
-    private fun transform(
+    private fun transformCheckResult(
             context: Context,
             pool: BitmapPool,
-            toTransform: Bitmap
+            toTransform: Resource<Bitmap>
+    ): Resource<Bitmap> {
+        val input = toTransform.get()
+        val output = transformInternal(context, pool, input)
+        return if (output == input) {
+            toTransform
+        } else {
+            BitmapResource(output, pool)
+        }
+    }
+
+    private fun transformInternal(
+            context: Context,
+            pool: BitmapPool,
+            input: Bitmap
     ): Bitmap {
         val sampling = max(this.sampling, 1f)
-        val width = toTransform.width
-        val height = toTransform.height
+        val width = input.width
+        val height = input.height
         if (sampling == 1f) {
             //fast path
-            return blur(context, toTransform)
+            return blur(context, input)
         } else {
             val scaledWidth = (width / sampling).toInt()
             val scaledHeight = (height / sampling).toInt()
-            val bitmap = pool[
+            val output = pool[
                     scaledWidth,
                     scaledHeight,
-                    toTransform.config
+                    input.config
             ]
-            val canvas = Canvas(bitmap)
+            val canvas = Canvas(output)
             canvas.scale(1 / sampling, 1 / sampling)
             val paint = Paint()
             paint.flags = Paint.FILTER_BITMAP_FLAG
-            canvas.drawBitmap(toTransform, 0f, 0f, paint)
-            return blur(context, bitmap)
+            canvas.drawBitmap(input, 0f, 0f, paint)
+            return blur(context, output)
         }
     }
 

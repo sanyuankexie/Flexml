@@ -8,22 +8,32 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.request.target.SizeReadyCallback
 import com.bumptech.glide.request.target.Target
 import com.bumptech.glide.request.transition.Transition
-import com.guet.flexbox.litho.transforms.RenderGroup
+import com.guet.flexbox.litho.transforms.OffScreenRender
 
 class GlideDrawable(
         private val context: Context
 ) : DrawableWrapper<Drawable>(NoOpDrawable()),
         Target<Drawable> by DelegateTarget() {
+    private val cacheNoOpDrawable = wrappedDrawable
     private var width: Int = 0
     private var height: Int = 0
 
     fun unmount() {
-        wrappedDrawable = NoOpDrawable()
+        onLoadCleared(null)
+        Glide.with(context).clear(this)
+    }
+
+    override fun onLoadCleared(placeholder: Drawable?) {
+        wrappedDrawable = cacheNoOpDrawable
     }
 
     override fun onBoundsChange(bounds: Rect) {
         super.onBoundsChange(bounds)
-        bind(bounds.width(), bounds.height())
+        width = bounds.width()
+        height = bounds.height()
+    }
+
+    fun unbind() {
     }
 
     fun bind(width: Int, height: Int) {
@@ -43,11 +53,12 @@ class GlideDrawable(
             rightBottom: Float,
             lightBottom: Float
     ) {
-        bind(width, height)
+        this.width = width
+        this.height = height
         Glide.with(context)
                 .load(model)
                 .transform(
-                        RenderGroup.Builder {
+                        OffScreenRender.Builder {
                             this.blurRadius = blurRadius
                             this.blurSampling = blurSampling
                             this.scaleType = scaleType

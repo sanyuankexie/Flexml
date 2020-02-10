@@ -1,5 +1,6 @@
 package com.guet.flexbox.litho.transforms
 
+import android.content.Context
 import android.graphics.*
 import android.graphics.Bitmap.Config
 import android.graphics.Matrix.ScaleToFit
@@ -7,8 +8,12 @@ import android.os.Build.VERSION
 import android.os.Build.VERSION_CODES
 import android.widget.ImageView.ScaleType
 import android.widget.ImageView.ScaleType.*
+import com.bumptech.glide.Glide
+import com.bumptech.glide.load.Transformation
+import com.bumptech.glide.load.engine.Resource
 import com.bumptech.glide.load.engine.bitmap_recycle.BitmapPool
-import com.bumptech.glide.load.resource.bitmap.BitmapTransformation
+import com.bumptech.glide.load.resource.bitmap.BitmapResource
+import com.bumptech.glide.util.Util
 import java.nio.ByteBuffer
 import java.security.MessageDigest
 import kotlin.math.min
@@ -16,7 +21,7 @@ import kotlin.math.round
 
 class FitScale(
         scaleType: ScaleType
-) : BitmapTransformation() {
+) : Transformation<Bitmap> {
 
     private val scaleType: ScaleType = if (scaleType == MATRIX) {
         FIT_XY
@@ -36,68 +41,74 @@ class FitScale(
     }
 
     override fun transform(
-            pool: BitmapPool,
-            toTransform: Bitmap,
+            context: Context,
+            resource: Resource<Bitmap>,
             outWidth: Int,
             outHeight: Int
-    ): Bitmap {
-        val inWidth: Int = toTransform.width
-        val inHeight: Int = toTransform.height
-        return safeTransform(
-                pool,
-                toTransform,
-                inWidth,
-                inHeight,
+    ): Resource<Bitmap> {
+        return transform(
+                context,
+                resource,
+                resource.get().width,
+                resource.get().height,
                 outWidth,
                 outHeight
         )
     }
 
-    fun safeTransform(
-            pool: BitmapPool,
-            toTransform: Bitmap,
+    fun transform(
+            context: Context,
+            toTransform: Resource<Bitmap>,
             inWidth: Int,
             inHeight: Int,
             outWidth: Int,
             outHeight: Int
-    ): Bitmap {
-        if (scaleType == FIT_XY
-                && toTransform.width == outWidth
-                && toTransform.height == outHeight) {
+    ): Resource<Bitmap> {
+        require(Util.isValidDimensions(outWidth, outHeight)) {
+            ("Cannot apply transformation on width: "
+                    + outWidth
+                    + " or height: "
+                    + outHeight
+                    + " less than or equal to zero and not Target.SIZE_ORIGINAL")
+        }
+        val pool = Glide.get(context).bitmapPool
+        val input = toTransform.get()
+        if (scaleType == FIT_XY && input.width == outWidth
+                && input.height == outHeight) {
             //fast path
             return toTransform
         }
-        val safeToTransform = getAlphaSafeBitmap(pool, toTransform)
+        val safeInput = getAlphaSafeBitmap(pool, input)
         val output = transformInternal(
                 pool,
-                safeToTransform,
+                safeInput,
                 inWidth,
                 inHeight,
                 outWidth,
                 outHeight
         )
-        if (safeToTransform != toTransform) {
-            pool.put(safeToTransform)
+        if (safeInput != input) {
+            pool.put(safeInput)
         }
-        return output
+        return BitmapResource(output, pool)
     }
 
     private fun transformInternal(
             pool: BitmapPool,
-            toTransform: Bitmap,
+            input: Bitmap,
             inWidth: Int,
             inHeight: Int,
             outWidth: Int,
             outHeight: Int
     ): Bitmap {
         // Alpha is required for this transformation.
-        val safeConfig = getAlphaSafeConfig(toTransform)
+        val safeConfig = getAlphaSafeConfig(input)
         val output = pool[outWidth, outHeight, safeConfig]
         output.setHasAlpha(true)
         val canvas = Canvas(output)
         if (scaleType == FIT_XY) {
             canvas.drawBitmap(
-                    toTransform,
+                    input,
                     null,
                     Rect(
                             0,
@@ -119,7 +130,7 @@ class FitScale(
                 canvas.concat(matrix)
             }
             canvas.drawBitmap(
-                    toTransform,
+                    input,
                     null,
                     Rect(
                             0,

@@ -11,8 +11,6 @@ internal val colorMap = Collections.unmodifiableMap(
                 .apply { isAccessible = true }
                 .get(null) as Map<String, Int>))
 
-internal val expressionFactory = ELManager.getExpressionFactory()
-
 internal inline fun <T> ELContext.scope(
         scope: Map<String, Any>,
         action: ELContext.() -> T
@@ -26,19 +24,8 @@ internal inline fun <T> ELContext.scope(
 }
 
 @Throws(ELException::class)
-internal fun ELContext.getValue(expr: String, type: Class<*>): Any {
-    return synchronized(this){
-        expressionFactory.createValueExpression(
-                this,
-                expr,
-                type
-        ).getValue(this) ?: throw ELException("$expr out null")
-    }
-}
-
-@Throws(ELException::class)
 internal inline fun <reified T> ELContext.getValue(expr: String): T {
-    return getValue(expr, T::class.java) as T
+    return (this as PropsELContext).getValue(expr, T::class.java) as T
 }
 
 @ColorInt

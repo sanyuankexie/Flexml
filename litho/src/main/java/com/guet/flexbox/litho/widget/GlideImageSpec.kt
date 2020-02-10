@@ -48,6 +48,13 @@ internal object GlideImageSpec {
         height.set(layout.height - (layout.paddingTop + layout.paddingBottom))
     }
 
+    @OnUnbind
+    fun onUnbind(c: ComponentContext,
+                 image: GlideDrawable
+    ) {
+        image.unbind()
+    }
+
     @OnBind
     fun onBind(
             c: ComponentContext,
