@@ -6,11 +6,11 @@ android {
     compileSdkVersion 28
     defaultConfig {
         applicationId "com.guet.flexbox.playground"
-        minSdkVersion 19
+        minSdkVersion 21
         targetSdkVersion 28
         versionCode 1
         versionName "0.3.0"
-        multiDexEnabled true
+        multiDexEnabled false
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
     buildTypes {

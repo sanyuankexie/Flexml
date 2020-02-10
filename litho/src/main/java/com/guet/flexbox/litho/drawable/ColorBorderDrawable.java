@@ -136,9 +136,7 @@ public class ColorBorderDrawable extends Drawable implements ComparableDrawable 
      * Best case possible, all colors are the same and all widths are the same
      */
     private void drawAllBorders(Canvas canvas, float strokeWidth, @ColorInt int color) {
-        float inset = strokeWidth / 2f;
         sDrawBounds.set(getBounds());
-        sDrawBounds.inset(inset, inset);
         mPaint.setStrokeWidth(strokeWidth);
         mPaint.setColor(color);
         drawBorder(canvas, path(), mState.mBorderRadius, mPaint);
@@ -149,12 +147,10 @@ public class ColorBorderDrawable extends Drawable implements ComparableDrawable 
      */
     private void drawMultiColoredBorders(Canvas canvas) {
         mPaint.setStrokeWidth(mState.mBorderLeftWidth);
-        float inset = mState.mBorderLeftWidth / 2f;
         sDrawBounds.set(getBounds());
         final int translateSaveCount = canvas.save();
         canvas.translate(sDrawBounds.left, sDrawBounds.top);
         sDrawBounds.offsetTo(0.0f, 0.0f);
-        sDrawBounds.inset(inset, inset);
         sInnerDrawBounds.set(sDrawBounds);
         float third = Math.min(sDrawBounds.width(), sDrawBounds.height()) / 3f;
         sInnerDrawBounds.inset(third, third);
