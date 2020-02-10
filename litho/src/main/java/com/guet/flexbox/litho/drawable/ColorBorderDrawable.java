@@ -23,7 +23,6 @@ import android.graphics.Paint;
 import android.graphics.Path;
 import android.graphics.PathEffect;
 import android.graphics.PixelFormat;
-import android.graphics.Rect;
 import android.graphics.RectF;
 import android.graphics.drawable.Drawable;
 
@@ -32,10 +31,10 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.Px;
 
-import com.facebook.litho.CommonUtils;
 import com.facebook.litho.drawable.ComparableDrawable;
 
 import java.util.Arrays;
+import java.util.Objects;
 
 /**
  * Drawable that draws border lines with given color, widths and path effect.
@@ -43,8 +42,6 @@ import java.util.Arrays;
 public class ColorBorderDrawable extends Drawable implements ComparableDrawable {
 
     private static final int QUICK_REJECT_COLOR = Color.TRANSPARENT;
-    private static final float CLIP_ANGLE = 45f;
-    private static final RectF sClipBounds = new RectF();
     private static final RectF sDrawBounds = new RectF();
     private static final RectF sInnerDrawBounds = new RectF();
 
@@ -60,15 +57,15 @@ public class ColorBorderDrawable extends Drawable implements ComparableDrawable 
     }
 
     private static void drawBorder(
-            Canvas canvas, RectF bounds, Path path, float[] radii, Paint paint) {
-        float maxRadii = Math.min(bounds.width(), bounds.height()) / 2f;
+            Canvas canvas, Path path, float[] radii, Paint paint) {
+        float maxRadii = Math.min(ColorBorderDrawable.sDrawBounds.width(), ColorBorderDrawable.sDrawBounds.height()) / 2f;
         if (path == null) {
             // All radii are the same
             float radius = Math.min(maxRadii, radii[0]);
-            canvas.drawRoundRect(bounds, radius, radius, paint);
+            canvas.drawRoundRect(ColorBorderDrawable.sDrawBounds, radius, radius, paint);
         } else {
             if (path.isEmpty()) {
-                path.addRoundRect(bounds, radii, Path.Direction.CW);
+                path.addRoundRect(ColorBorderDrawable.sDrawBounds, radii, Path.Direction.CW);
             }
             canvas.drawPath(path, paint);
         }
@@ -146,7 +143,7 @@ public class ColorBorderDrawable extends Drawable implements ComparableDrawable 
         sDrawBounds.inset(inset, inset);
         mPaint.setStrokeWidth(strokeWidth);
         mPaint.setColor(color);
-        drawBorder(canvas, sDrawBounds, path(), mState.mBorderRadius, mPaint);
+        drawBorder(canvas, path(), mState.mBorderRadius, mPaint);
     }
 
     /**
@@ -177,7 +174,7 @@ public class ColorBorderDrawable extends Drawable implements ComparableDrawable 
             mClipPath.lineTo(sDrawBounds.left - inset, sDrawBounds.bottom + inset);
             mClipPath.close();
             canvas.clipPath(mClipPath);
-            drawBorder(canvas, sDrawBounds, path(), mState.mBorderRadius, mPaint);
+            drawBorder(canvas, path(), mState.mBorderRadius, mPaint);
             canvas.restoreToCount(saveCount);
         }
 
@@ -193,7 +190,7 @@ public class ColorBorderDrawable extends Drawable implements ComparableDrawable 
             mClipPath.lineTo(sDrawBounds.right + inset, sDrawBounds.top - inset);
             mClipPath.close();
             canvas.clipPath(mClipPath);
-            drawBorder(canvas, sDrawBounds, path(), mState.mBorderRadius, mPaint);
+            drawBorder(canvas, path(), mState.mBorderRadius, mPaint);
             canvas.restoreToCount(saveCount);
         }
 
@@ -209,7 +206,7 @@ public class ColorBorderDrawable extends Drawable implements ComparableDrawable 
             mClipPath.lineTo(sDrawBounds.right + inset, sDrawBounds.bottom + inset);
             mClipPath.close();
             canvas.clipPath(mClipPath);
-            drawBorder(canvas, sDrawBounds, path(), mState.mBorderRadius, mPaint);
+            drawBorder(canvas, path(), mState.mBorderRadius, mPaint);
             canvas.restoreToCount(saveCount);
         }
 
@@ -225,7 +222,7 @@ public class ColorBorderDrawable extends Drawable implements ComparableDrawable 
             mClipPath.lineTo(sDrawBounds.right + inset, sDrawBounds.bottom + inset);
             mClipPath.close();
             canvas.clipPath(mClipPath);
-            drawBorder(canvas, sDrawBounds, path(), mState.mBorderRadius, mPaint);
+            drawBorder(canvas, path(), mState.mBorderRadius, mPaint);
             canvas.restoreToCount(saveCount);
         }
 
@@ -236,18 +233,13 @@ public class ColorBorderDrawable extends Drawable implements ComparableDrawable 
      * Worst case, we have different widths _and_ colors specified
      */
     private void drawIndividualBorders(Canvas canvas) {
-        Rect bounds = getBounds();
         // Draw left border.
         if (mState.mBorderLeftWidth > 0 && mState.mBorderLeftColor != QUICK_REJECT_COLOR) {
             drawBorder(
                     canvas,
                     mState.mBorderLeftColor,
-                    mState.mBorderLeftWidth,
-                    bounds.left,
-                    bounds.top,
-                    Math.min(bounds.left + mState.mBorderLeftWidth, bounds.right),
-                    bounds.bottom,
-                    true);
+                    mState.mBorderLeftWidth
+            );
         }
 
         // Draw right border.
@@ -255,12 +247,8 @@ public class ColorBorderDrawable extends Drawable implements ComparableDrawable 
             drawBorder(
                     canvas,
                     mState.mBorderRightColor,
-                    mState.mBorderRightWidth,
-                    Math.max(bounds.right - mState.mBorderRightWidth, bounds.left),
-                    bounds.top,
-                    bounds.right,
-                    bounds.bottom,
-                    true);
+                    mState.mBorderRightWidth
+            );
         }
 
         // Draw top border.
@@ -268,12 +256,8 @@ public class ColorBorderDrawable extends Drawable implements ComparableDrawable 
             drawBorder(
                     canvas,
                     mState.mBorderTopColor,
-                    mState.mBorderTopWidth,
-                    bounds.left,
-                    bounds.top,
-                    bounds.right,
-                    Math.min(bounds.top + mState.mBorderTopWidth, bounds.bottom),
-                    false);
+                    mState.mBorderTopWidth
+            );
         }
 
         // Draw bottom border.
@@ -281,42 +265,25 @@ public class ColorBorderDrawable extends Drawable implements ComparableDrawable 
             drawBorder(
                     canvas,
                     mState.mBorderBottomColor,
-                    mState.mBorderBottomWidth,
-                    bounds.left,
-                    Math.max(bounds.bottom - mState.mBorderBottomWidth, bounds.top),
-                    bounds.right,
-                    bounds.bottom,
-                    false);
+                    mState.mBorderBottomWidth
+            );
         }
     }
 
     private void drawBorder(
             Canvas canvas,
             @ColorInt int color,
-            float strokeWidth,
-            float left,
-            float top,
-            float right,
-            float bottom,
-            boolean insetHorizontal) {
+            float strokeWidth) {
         mPaint.setStrokeWidth(strokeWidth);
         mPaint.setColor(color);
-        sClipBounds.set(left, top, right, bottom);
         sDrawBounds.set(getBounds());
-        if (insetHorizontal) {
-            sDrawBounds.inset(sClipBounds.centerX() - sClipBounds.left, 0f);
-        } else {
-            sDrawBounds.inset(0f, sClipBounds.centerY() - sClipBounds.top);
-        }
-
         int saveCount = canvas.save();
-        canvas.clipRect(sClipBounds);
-        drawBorder(canvas, sDrawBounds, path(), mState.mBorderRadius, mPaint);
+        drawBorder(canvas, path(), mState.mBorderRadius, mPaint);
         canvas.restoreToCount(saveCount);
     }
 
-    private @Nullable
-    Path path() {
+    @Nullable
+    private Path path() {
         return mDrawBorderWithPath ? mPath : null;
     }
 
@@ -355,7 +322,7 @@ public class ColorBorderDrawable extends Drawable implements ComparableDrawable 
 
         ColorBorderDrawable that = (ColorBorderDrawable) o;
 
-        return CommonUtils.equals(mState, that.mState);
+        return Objects.equals(mState, that.mState);
     }
 
     @Override
@@ -418,7 +385,7 @@ public class ColorBorderDrawable extends Drawable implements ComparableDrawable 
                     && mBorderTopColor == state.mBorderTopColor
                     && mBorderRightColor == state.mBorderRightColor
                     && mBorderBottomColor == state.mBorderBottomColor
-                    && CommonUtils.equals(mPathEffect, state.mPathEffect)
+                    && Objects.equals(mPathEffect, state.mPathEffect)
                     && Arrays.equals(mBorderRadius, state.mBorderRadius);
         }
     }
