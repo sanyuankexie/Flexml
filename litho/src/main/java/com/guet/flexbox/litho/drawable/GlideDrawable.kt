@@ -19,12 +19,11 @@ class GlideDrawable(
     private var height: Int = 0
 
     fun unmount() {
-        onLoadCleared(null)
-        Glide.with(context).clear(this)
+        wrappedDrawable = cacheNoOpDrawable
     }
 
     override fun onLoadCleared(placeholder: Drawable?) {
-        wrappedDrawable = cacheNoOpDrawable
+        unmount()
     }
 
     override fun onBoundsChange(bounds: Rect) {
