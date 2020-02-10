@@ -5,11 +5,11 @@ import android.graphics.drawable.GradientDrawable.Orientation
 import android.graphics.drawable.LayerDrawable
 import com.facebook.litho.Component
 import com.facebook.litho.ComponentContext
-import com.facebook.litho.drawable.BorderColorDrawable
 import com.guet.flexbox.build.AttributeSet
 import com.guet.flexbox.build.Child
 import com.guet.flexbox.build.RenderNodeFactory
 import com.guet.flexbox.litho.ChildComponent
+import com.guet.flexbox.litho.drawable.ColorBorderDrawable
 import com.guet.flexbox.litho.drawable.ColorDrawable
 import com.guet.flexbox.litho.drawable.GradientDrawable
 import com.guet.flexbox.litho.drawable.LazyImageDrawable
@@ -113,7 +113,7 @@ abstract class ToComponent<C : Component.Builder<*>>(
                     }
                 }
                 if (needBorder) {
-                    val border = BorderColorDrawable
+                    val border = ColorBorderDrawable
                             .Builder()
                             .borderColor(borderColor)
                             .borderWidth(borderWidth)
@@ -151,7 +151,7 @@ abstract class ToComponent<C : Component.Builder<*>>(
                     }
                 }
                 if (needBorder) {
-                    val border = BorderColorDrawable
+                    val border = ColorBorderDrawable
                             .Builder()
                             .borderColor(borderColor)
                             .borderWidth(borderWidth)
@@ -192,7 +192,7 @@ abstract class ToComponent<C : Component.Builder<*>>(
                     LazyImageDrawable(context, model)
                 }
                 if (needBorder) {
-                    val border = BorderColorDrawable
+                    val border = ColorBorderDrawable
                             .Builder()
                             .borderColor(borderColor)
                             .borderWidth(borderWidth)
@@ -218,7 +218,7 @@ abstract class ToComponent<C : Component.Builder<*>>(
             }
         }
         if (needBorder) {
-            val border = BorderColorDrawable
+            val border = ColorBorderDrawable
                     .Builder()
                     .borderColor(borderColor)
                     .borderWidth(borderWidth)
