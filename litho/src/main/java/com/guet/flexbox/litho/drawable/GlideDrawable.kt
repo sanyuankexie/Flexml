@@ -50,29 +50,29 @@ class GlideDrawable(
         bind(width, height)
         var request = Glide.with(context)
                 .load(model)
-        var transforms: ArrayList<Transformation<Bitmap>>? = null
+        val transforms: ArrayList<Transformation<Bitmap>> = ArrayList()
         val needBlur = blurRadius > 0 && blurSampling >= 1
         val needCorners = lt != 0f || rb != 0f || lb != 0f || rt != 0f
+        transforms.add(ImageScale(scaleType))
         if (needBlur) {
-            transforms = ArrayList()
             transforms.add(FastBlur(blurRadius, blurSampling))
         }
-        if (scaleType != ScaleType.FIT_XY || scaleType != ScaleType.MATRIX) {
-            if (transforms == null) {
-                transforms = ArrayList()
-            }
-            transforms.add(ImageScale(scaleType))
-        }
         if (needCorners) {
-            if (transforms == null) {
-                transforms = ArrayList()
+            if (needBlur) {
+                transforms.add(GranularRoundedCorners(
+                        lt / blurSampling,
+                        rt / blurSampling,
+                        rb / blurSampling,
+                        lb / blurSampling
+                ))
+            } else {
+                transforms.add(GranularRoundedCorners(
+                        lt,
+                        rt,
+                        rb,
+                        lb
+                ))
             }
-            transforms.add(GranularRoundedCorners(
-                    lt,
-                    rt,
-                    rb,
-                    lb
-            ))
         }
         if (!transforms.isNullOrEmpty()) {
             request = request.transform(*transforms.toTypedArray())

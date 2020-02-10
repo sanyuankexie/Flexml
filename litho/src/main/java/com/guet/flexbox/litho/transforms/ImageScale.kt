@@ -46,29 +46,43 @@ class ImageScale(
         // Alpha is required for this transformation.
         val safeConfig = getAlphaSafeConfig(toTransform)
         val safeToTransform = getAlphaSafeBitmap(pool, toTransform)
-        val matrix = create(
-                toTransform,
-                scaleType,
-                outWidth,
-                outHeight
-        )
         val output = pool[outWidth, outHeight, safeConfig]
         output.setHasAlpha(true)
         val canvas = Canvas(output)
-        if (matrix != null) {
-            canvas.concat(matrix)
+        if (scaleType == FIT_XY) {
+            canvas.drawBitmap(
+                    safeToTransform,
+                    null,
+                    Rect(
+                            0,
+                            0,
+                            outWidth,
+                            outHeight
+                    ),
+                    null
+            )
+        } else {
+            val matrix = create(
+                    toTransform,
+                    scaleType,
+                    outWidth,
+                    outHeight
+            )
+            if (matrix != null) {
+                canvas.concat(matrix)
+            }
+            canvas.drawBitmap(
+                    safeToTransform,
+                    null,
+                    Rect(
+                            0,
+                            0,
+                            safeToTransform.width,
+                            safeToTransform.height
+                    ),
+                    null
+            )
         }
-        canvas.drawBitmap(
-                toTransform,
-                null,
-                Rect(
-                        0,
-                        0,
-                        outWidth,
-                        outHeight
-                ),
-                null
-        )
         canvas.setBitmap(null)
         if (safeToTransform != toTransform) {
             pool.put(safeToTransform)
