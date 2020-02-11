@@ -15,8 +15,8 @@ public class ExampleUnitTest {
         ELProcessor elProcessor = new ELProcessor();
         elProcessor.defineBean("test",new TestBean());
         LambdaExpression lambdaExpression;
-        System.out.println(lambdaExpression= (LambdaExpression) elProcessor.eval("()->System.out.println('121212')"));
-        lambdaExpression.invoke();
+        System.out.println(lambdaExpression= (LambdaExpression) elProcessor.eval("(a)->{()->{System.out.println('121212')}}"));
+        lambdaExpression.invoke(this);
         assertEquals(4, 2 + 2);
     }
 }
