@@ -9,7 +9,6 @@ import com.guet.flexbox.build.AttributeSet
 import com.guet.flexbox.build.Child
 import com.guet.flexbox.build.RenderNodeFactory
 import com.guet.flexbox.litho.ChildComponent
-import com.guet.flexbox.litho.drawable.ColorBorderDrawable
 import com.guet.flexbox.litho.drawable.ColorDrawable
 import com.guet.flexbox.litho.drawable.GradientDrawable
 import com.guet.flexbox.litho.drawable.LazyImageDrawable
@@ -113,15 +112,19 @@ abstract class ToComponent<C : Component.Builder<*>>(
                     }
                 }
                 if (needBorder) {
-                    val border = ColorBorderDrawable.Builder()
-                            .borderColor(borderColor)
-                            .borderWidth(borderWidth)
-                            .borderRadius(floatArrayOf(
-                                    lt, lt, rt, rt,
-                                    rb, rb, lb, lb
-                            ))
-                            .build()
-                    c.background(LayerDrawable(arrayOf(drawable, border)))
+//                    val border = ColorBorderDrawable
+//                            .Builder()
+//                            .borderColor(borderColor)
+//                            .borderWidth(borderWidth)
+//                            .apply {
+//                                if (isSameCorners) {
+//
+//                                } else {
+//
+//                                }
+//                            }
+//                            .build()
+                    c.background(LayerDrawable(arrayOf(drawable)))
                 } else {
                     c.background(drawable)
                 }
@@ -141,15 +144,28 @@ abstract class ToComponent<C : Component.Builder<*>>(
                     }
                 }
                 if (needBorder) {
-                    val border = ColorBorderDrawable.Builder()
-                            .borderColor(borderColor)
-                            .borderWidth(borderWidth)
-                            .borderRadius(floatArrayOf(
-                                    lt, lt, rt, rt,
-                                    rb, rb, lb, lb
-                            ))
-                            .build()
-                    c.background(LayerDrawable(arrayOf(drawable, border)))
+//                    val border = ColorBorderDrawable
+//                            .Builder()
+//                            .borderColor(borderColor)
+//                            .borderWidth(borderWidth)
+//                            .apply {
+//                                if (needCorners) {
+//                                    if (isSameCorners) {
+//                                        borderRadius(FloatArray(
+//                                                8
+//                                        ).apply {
+//                                            fill(lt)
+//                                        })
+//                                    } else {
+//                                        borderRadius(floatArrayOf(
+//                                                lt, lt, rt, rt,
+//                                                rb, rb, lb, lb
+//                                        ))
+//                                    }
+//                                }
+//                            }
+//                            .build()
+                    c.background(LayerDrawable(arrayOf(drawable)))
                 } else {
                     c.background(drawable)
                 }
@@ -170,15 +186,28 @@ abstract class ToComponent<C : Component.Builder<*>>(
                     LazyImageDrawable(context, model)
                 }
                 if (needBorder) {
-                    val border = ColorBorderDrawable.Builder()
-                            .borderColor(borderColor)
-                            .borderWidth(borderWidth)
-                            .borderRadius(floatArrayOf(
-                                    lt, lt, rt, rt,
-                                    rb, rb, lb, lb
-                            ))
-                            .build()
-                    c.background(LayerDrawable(arrayOf(drawable, border)))
+//                    val border = ColorBorderDrawable
+//                            .Builder()
+//                            .borderColor(borderColor)
+//                            .borderWidth(borderWidth)
+//                            .apply {
+//                                if (needCorners) {
+//                                    if (isSameCorners) {
+//                                        borderRadius(FloatArray(
+//                                                8
+//                                        ).apply {
+//                                            fill(lt)
+//                                        })
+//                                    } else {
+//                                        borderRadius(floatArrayOf(
+//                                                lt, lt, rt, rt,
+//                                                rb, rb, lb, lb
+//                                        ))
+//                                    }
+//                                }
+//                            }
+//                            .build()
+                    c.background(LayerDrawable(arrayOf(drawable)))
                 } else {
                     c.background(drawable)
                 }
@@ -186,14 +215,28 @@ abstract class ToComponent<C : Component.Builder<*>>(
             }
         }
         if (needBorder) {
-            c.background(ColorBorderDrawable.Builder()
-                    .borderColor(borderColor)
-                    .borderWidth(borderWidth)
-                    .borderRadius(floatArrayOf(
-                            lt, lt, rt, rt,
-                            rb, rb, lb, lb
-                    ))
-                    .build())
+//            val border = ColorBorderDrawable
+//                    .Builder()
+//                    .borderColor(borderColor)
+//                    .borderWidth(borderWidth)
+//                    .apply {
+//                        if (needCorners) {
+//                            if (isSameCorners) {
+//                                borderRadius(FloatArray(
+//                                        8
+//                                ).apply {
+//                                    fill(lt)
+//                                })
+//                            } else {
+//                                borderRadius(floatArrayOf(
+//                                        lt, lt, rt, rt,
+//                                        rb, rb, lb, lb
+//                                ))
+//                            }
+//                        }
+//                    }
+//                    .build()
+            //c.background()
         }
     }
 

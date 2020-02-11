@@ -17,11 +17,11 @@
 
 package org.apache.el.lang;
 
+import java.lang.reflect.Method;
+
 import com.guet.flexbox.el.FunctionMapper;
 
 import org.apache.el.util.MessageFactory;
-
-import java.lang.reflect.Method;
 
 /**
  * @author Jacob Hookom [jacob@hookom.net]
@@ -40,7 +40,7 @@ public class FunctionMapperFactory extends FunctionMapper {
 
 
     /* (non-Javadoc)
-     * @see com.guet.flexbox.el.FunctionMapper#resolveFunction(java.lang.String, java.lang.String)
+     * @see javax.el.FunctionMapper#resolveFunction(java.lang.String, java.lang.String)
      */
     @Override
     public Method resolveFunction(String prefix, String localName) {

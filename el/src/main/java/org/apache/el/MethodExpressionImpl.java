@@ -17,9 +17,17 @@
 
 package org.apache.el;
 
+import java.io.Externalizable;
+import java.io.IOException;
+import java.io.ObjectInput;
+import java.io.ObjectOutput;
+
 import com.guet.flexbox.el.ELContext;
 import com.guet.flexbox.el.ELException;
 import com.guet.flexbox.el.FunctionMapper;
+import com.guet.flexbox.el.ELResolver;
+import com.guet.flexbox.el.Expression;
+import com.guet.flexbox.el.ExpressionFactory;
 import com.guet.flexbox.el.MethodExpression;
 import com.guet.flexbox.el.MethodInfo;
 import com.guet.flexbox.el.MethodNotFoundException;
@@ -31,17 +39,12 @@ import org.apache.el.lang.ExpressionBuilder;
 import org.apache.el.parser.Node;
 import org.apache.el.util.ReflectionUtil;
 
-import java.io.Externalizable;
-import java.io.IOException;
-import java.io.ObjectInput;
-import java.io.ObjectOutput;
-
 
 /**
  * An <code>Expression</code> that refers to a method on an object.
  *
  * <p>
- * The {@link com.guet.flexbox.el.ExpressionFactory#createMethodExpression} method
+ * The {@link ExpressionFactory#createMethodExpression} method
  * can be used to parse an expression string and return a concrete instance
  * of <code>MethodExpression</code> that encapsulates the parsed expression.
  * The {@link FunctionMapper} is used at parse time, not evaluation time,
@@ -49,11 +52,11 @@ import java.io.ObjectOutput;
  * However, the {@link ELContext} is needed at evaluation time.</p>
  *
  * <p>The {@link #getMethodInfo} and {@link #invoke} methods will evaluate the
- * expression each time they are called. The {@link com.guet.flexbox.el.ELResolver} in the
+ * expression each time they are called. The {@link ELResolver} in the
  * <code>ELContext</code> is used to resolve the top-level variables and to
  * determine the behavior of the <code>.</code> and <code>[]</code>
  * operators. For any of the two methods, the
- * {@link com.guet.flexbox.el.ELResolver#getValue} method is used to resolve all properties
+ * {@link ELResolver#getValue} method is used to resolve all properties
  * up to but excluding the last one. This provides the <code>base</code> object
  * on which the method appears. If the <code>base</code> object is null, a
  * <code>NullPointerException</code> must be thrown. At the last resolution,
@@ -64,12 +67,12 @@ import java.io.ObjectOutput;
  * <code>MethodExpression</code>).</p>
  *
  * <p>See the notes about comparison, serialization and immutability in
- * the {@link com.guet.flexbox.el.Expression} javadocs.
+ * the {@link Expression} javadocs.
  *
- * @see com.guet.flexbox.el.ELResolver
- * @see com.guet.flexbox.el.Expression
- * @see com.guet.flexbox.el.ExpressionFactory
- * @see com.guet.flexbox.el.MethodExpression
+ * @see ELResolver
+ * @see Expression
+ * @see ExpressionFactory
+ * @see MethodExpression
  *
  * @author Jacob Hookom [jacob@hookom.net]
  */
@@ -93,8 +96,8 @@ public final class MethodExpressionImpl extends MethodExpression implements
     }
 
     public MethodExpressionImpl(String expr, Node node,
-                                FunctionMapper fnMapper, VariableMapper varMapper,
-                                Class<?> expectedType, Class<?>[] paramTypes) {
+            FunctionMapper fnMapper, VariableMapper varMapper,
+            Class<?> expectedType, Class<?>[] paramTypes) {
         super();
         this.expr = expr;
         this.node = node;
@@ -156,7 +159,7 @@ public final class MethodExpressionImpl extends MethodExpression implements
      *
      * @return The original expression String.
      *
-     * @see com.guet.flexbox.el.Expression#getExpressionString()
+     * @see Expression#getExpressionString()
      */
     @Override
     public String getExpressionString() {
@@ -183,7 +186,7 @@ public final class MethodExpressionImpl extends MethodExpression implements
      *             if an exception was thrown while performing property or
      *             variable resolution. The thrown exception must be included as
      *             the cause property of this exception, if available.
-     * @see com.guet.flexbox.el.MethodExpression#getMethodInfo(com.guet.flexbox.el.ELContext)
+     * @see MethodExpression#getMethodInfo(ELContext)
      */
     @Override
     public MethodInfo getMethodInfo(ELContext context)
@@ -254,7 +257,7 @@ public final class MethodExpressionImpl extends MethodExpression implements
      *             exception thrown is an <code>InvocationTargetException</code>,
      *             extract its <code>cause</code> and pass it to the
      *             <code>ELException</code> constructor.
-     * @see com.guet.flexbox.el.MethodExpression#invoke(com.guet.flexbox.el.ELContext,
+     * @see MethodExpression#invoke(ELContext,
      *      Object[])
      */
     @Override

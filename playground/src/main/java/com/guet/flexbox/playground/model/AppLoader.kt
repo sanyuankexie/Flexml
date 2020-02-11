@@ -52,7 +52,7 @@ object AppLoader {
                     return@Callable page
                 })
                 //Feed流
-                val feed = loadMoreFeedItem(c, 10, false) as ArrayList
+                val feed = loadMoreFeedItem(c, 100, false) as ArrayList
                 feed.add(0, functionTask.get())
                 feed.add(0, bannerTask.get())
                 homepageCache = Homepage(

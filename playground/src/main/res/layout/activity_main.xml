@@ -62,7 +62,7 @@
         android:layout_height="match_parent">
         <FrameLayout
             app:behavior_hideable="true"
-            app:behavior_peekHeight="500dp"
+            app:behavior_peekHeight="400dp"
             android:id="@+id/design_bottom_sheet"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

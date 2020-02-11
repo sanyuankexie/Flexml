@@ -25,8 +25,6 @@ import org.apache.el.lang.EvaluationContext;
 import java.lang.reflect.Array;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
-import java.security.AccessController;
-import java.security.PrivilegedAction;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
@@ -124,7 +122,7 @@ public class ReflectionUtil {
      *         the given criteria
      */
     /*
-     * This class duplicates code in com.guet.flexbox.el.Util. When making changes keep
+     * This class duplicates code in javax.el.Util. When making changes keep
      * the code in sync.
      */
     @SuppressWarnings("null")
@@ -246,7 +244,7 @@ public class ReflectionUtil {
             // If a method is found where every parameter matches exactly,
             // return it
             if (exactMatch == paramCount) {
-                return getMethod(base.getClass(), base, m);
+                return getMethod(base.getClass(), m);
             }
 
             candidates.put(m, new MatchResult(
@@ -293,11 +291,11 @@ public class ReflectionUtil {
                         paramString(paramTypes)));
         }
 
-        return getMethod(base.getClass(), base, match);
+        return getMethod(base.getClass(), match);
     }
 
     /*
-     * This class duplicates code in com.guet.flexbox.el.Util. When making changes keep
+     * This class duplicates code in javax.el.Util. When making changes keep
      * the code in sync.
      */
     private static Method resolveAmbiguousMethod(Set<Method> candidates,
@@ -365,7 +363,7 @@ public class ReflectionUtil {
 
 
     /*
-     * This class duplicates code in com.guet.flexbox.el.Util. When making changes keep
+     * This class duplicates code in javax.el.Util. When making changes keep
      * the code in sync.
      */
     private static boolean isAssignableFrom(Class<?> src, Class<?> target) {
@@ -403,7 +401,7 @@ public class ReflectionUtil {
 
 
     /*
-     * This class duplicates code in com.guet.flexbox.el.Util. When making changes keep
+     * This class duplicates code in javax.el.Util. When making changes keep
      * the code in sync.
      */
     private static boolean isCoercibleFrom(EvaluationContext ctx, Object src, Class<?> target) {
@@ -419,16 +417,11 @@ public class ReflectionUtil {
 
 
     /*
-     * This class duplicates code in com.guet.flexbox.el.Util. When making changes keep
+     * This class duplicates code in javax.el.Util. When making changes keep
      * the code in sync.
      */
-    private static Method getMethod(Class<?> type, Object base, Method m) {
-        JreCompat jreCompat = JreCompat.getInstance();
-        // If base is null, method MUST be static
-        // If base is non-null, method may be static or non-static
-        if (m == null ||
-                (Modifier.isPublic(type.getModifiers()) &&
-                        (jreCompat.canAcccess(base, m) || base != null && jreCompat.canAcccess(null, m)))) {
+    private static Method getMethod(Class<?> type, Method m) {
+        if (m == null || Modifier.isPublic(type.getModifiers())) {
             return m;
         }
         Class<?>[] inf = type.getInterfaces();
@@ -436,7 +429,7 @@ public class ReflectionUtil {
         for (int i = 0; i < inf.length; i++) {
             try {
                 mp = inf[i].getMethod(m.getName(), m.getParameterTypes());
-                mp = getMethod(mp.getDeclaringClass(), base, mp);
+                mp = getMethod(mp.getDeclaringClass(), mp);
                 if (mp != null) {
                     return mp;
                 }
@@ -448,7 +441,7 @@ public class ReflectionUtil {
         if (sup != null) {
             try {
                 mp = sup.getMethod(m.getName(), m.getParameterTypes());
-                mp = getMethod(mp.getDeclaringClass(), base, mp);
+                mp = getMethod(mp.getDeclaringClass(), mp);
                 if (mp != null) {
                     return mp;
                 }
@@ -480,28 +473,12 @@ public class ReflectionUtil {
 
 
     private static ClassLoader getContextClassLoader() {
-        ClassLoader tccl;
-        if (System.getSecurityManager() != null) {
-            PrivilegedAction<ClassLoader> pa = new PrivilegedGetTccl();
-            tccl = AccessController.doPrivileged(pa);
-        } else {
-            tccl = Thread.currentThread().getContextClassLoader();
-        }
-
-        return tccl;
-    }
-
-
-    private static class PrivilegedGetTccl implements PrivilegedAction<ClassLoader> {
-        @Override
-        public ClassLoader run() {
-            return Thread.currentThread().getContextClassLoader();
-        }
+        return Thread.currentThread().getContextClassLoader();
     }
 
 
     /*
-     * This class duplicates code in com.guet.flexbox.el.Util. When making changes keep
+     * This class duplicates code in javax.el.Util. When making changes keep
      * the code in sync.
      */
     private static class MatchResult implements Comparable<MatchResult> {
