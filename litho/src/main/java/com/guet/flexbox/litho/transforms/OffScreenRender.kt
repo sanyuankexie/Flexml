@@ -10,24 +10,20 @@ import com.bumptech.glide.load.engine.Resource
 import com.bumptech.glide.load.resource.bitmap.GranularRoundedCorners
 import java.security.MessageDigest
 
-class OffScreenRender(
-        private val fitScale: FitScale,
-        private val fastBlur: FastBlur? = null,
-        private val corners: GranularRoundedCorners? = null
+class OffScreenRender internal constructor(
+        private val queue: Array<TransformationEx<Bitmap>>
 ) : Transformation<Bitmap> {
 
     override fun updateDiskCacheKey(messageDigest: MessageDigest) {
-        fitScale.updateDiskCacheKey(messageDigest)
-        fastBlur?.updateDiskCacheKey(messageDigest)
-        corners?.updateDiskCacheKey(messageDigest)
+        messageDigest.update(ID_BYTES)
+        queue.forEach {
+            it.updateDiskCacheKey(messageDigest)
+        }
     }
 
     override fun equals(other: Any?): Boolean {
         return (this === other) || (
-                other is OffScreenRender
-                        && fitScale == other.fitScale
-                        && fastBlur == other.fastBlur
-                        && corners == other.corners
+                other is OffScreenRender && queue.contentEquals(other.queue)
                 )
     }
 
@@ -39,67 +35,36 @@ class OffScreenRender(
     ): Resource<Bitmap> {
         val start = SystemClock.uptimeMillis()
         try {
-            val blurOutput = fastBlur?.transform(
-                    context,
-                    resource,
-                    outWidth,
-                    outHeight
-            )
             val inWidth = resource.get().width
             val inHeight = resource.get().height
-            val scaleOutput = if (blurOutput != null) {
-                val currentOutput = fitScale.transform(
-                        context,
-                        blurOutput,
-                        inWidth,
-                        inHeight,
-                        outWidth,
-                        outHeight
-                )
-                if (blurOutput != resource
-                        && blurOutput != currentOutput) {
-                    blurOutput.recycle()
+            var previous: Resource<Bitmap> = resource
+            for (transformation in queue) {
+                val transformed: Resource<Bitmap> = transformation
+                        .transform(
+                                context, previous,
+                                inWidth, inHeight,
+                                outWidth, outHeight
+                        )
+                if (previous != resource && previous != transformed) {
+                    previous.recycle()
                 }
-                currentOutput
-            } else {
-                fitScale.transform(
-                        context,
-                        resource,
-                        inWidth,
-                        inHeight,
-                        outWidth,
-                        outHeight
-                )
+                previous = transformed
             }
-            return if (corners != null) {
-                val cornersOutput = corners.transform(
-                        context,
-                        scaleOutput,
-                        outWidth,
-                        outHeight
-                )
-                if (scaleOutput != cornersOutput
-                        && scaleOutput != resource) {
-                    scaleOutput.recycle()
-                }
-                cornersOutput
-            } else {
-                scaleOutput
-            }
+            return previous
         } finally {
             Log.i(LOG, "use time: ${SystemClock.uptimeMillis() - start}")
         }
     }
 
     override fun hashCode(): Int {
-        return arrayOf(
-                fitScale,
-                fastBlur,
-                corners
-        ).hashCode()
+        var result = ID.hashCode()
+        result += queue.hashCode()
+        return result
     }
 
-    private companion object{
+    private companion object {
+        private val ID = OffScreenRender::class.java.name
+        private val ID_BYTES = ID.toByteArray()
         private val LOG = OffScreenRender::class.java.simpleName
     }
 
@@ -113,7 +78,6 @@ class OffScreenRender(
         var leftBottom: Float = 0f
 
         fun build(): OffScreenRender {
-            val fitScale = FitScale(scaleType)
             var corners: GranularRoundedCorners? = null
             if (leftTop + rightTop + rightBottom + leftBottom != 0f) {
                 corners = GranularRoundedCorners(
@@ -127,7 +91,23 @@ class OffScreenRender(
             if (blurRadius > 0 && blurSampling >= 1) {
                 fastBlur = FastBlur(blurRadius, blurSampling)
             }
-            return OffScreenRender(fitScale, fastBlur, corners)
+            var fitScale: FitScale? = null
+            if (!(scaleType == ScaleType.FIT_XY
+                            && corners == null
+                            && fastBlur == null)) {
+                fitScale = FitScale(scaleType)
+            }
+            val list = ArrayList<TransformationEx<Bitmap>>()
+            if (fastBlur != null) {
+                list.add(TransformationExAdapter(fastBlur))
+            }
+            if (fitScale != null) {
+                list.add(fitScale)
+            }
+            if (corners != null) {
+                list.add(TransformationExAdapter(corners))
+            }
+            return OffScreenRender(list.toTypedArray())
         }
 
         companion object {

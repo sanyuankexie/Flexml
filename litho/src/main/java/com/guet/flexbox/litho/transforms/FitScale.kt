@@ -21,7 +21,7 @@ import kotlin.math.round
 
 class FitScale(
         scaleType: ScaleType
-) : Transformation<Bitmap> {
+) : Transformation<Bitmap>, TransformationEx<Bitmap> {
 
     private val scaleType: ScaleType = if (scaleType == MATRIX) {
         FIT_XY
@@ -37,7 +37,7 @@ class FitScale(
     }
 
     override fun equals(other: Any?): Boolean {
-        return other is FitScale && scaleType == other.scaleType
+        return (other === this) || (other is FitScale && scaleType == other.scaleType)
     }
 
     override fun transform(
@@ -56,7 +56,7 @@ class FitScale(
         )
     }
 
-    fun transform(
+    override fun transform(
             context: Context,
             toTransform: Resource<Bitmap>,
             inWidth: Int,

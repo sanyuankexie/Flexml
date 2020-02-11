@@ -47,7 +47,6 @@ dependencies {
 
     implementation 'com.github.bumptech.glide:glide:4.10.0'
 
-    implementation 'com.caverock:androidsvg:1.4'
     //implementation 'com.yqritc:android-scalablevideoview:1.0.4'
 
     api 'com.facebook.yoga:yoga:1.16.0'

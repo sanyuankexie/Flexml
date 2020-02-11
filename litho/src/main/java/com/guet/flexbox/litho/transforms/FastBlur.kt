@@ -94,9 +94,9 @@ class FastBlur(
     }
 
     override fun equals(other: Any?): Boolean {
-        return other is FastBlur
+        return (this === other) || (other is FastBlur
                 && other.radius == radius
-                && other.sampling == sampling
+                && other.sampling == sampling)
     }
 
     override fun updateDiskCacheKey(messageDigest: MessageDigest) {
