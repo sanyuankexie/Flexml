@@ -5,16 +5,11 @@ import android.graphics.ColorFilter
 import android.graphics.PixelFormat
 import android.graphics.Rect
 import android.graphics.drawable.Drawable
-import com.facebook.litho.drawable.ComparableDrawable
 
-class NoOpDrawable : Drawable(), ComparableDrawable {
+class NoOpDrawable : Drawable() {
 
     init {
         super.setBounds(0, 0, 0, 0)
-    }
-
-    override fun isEquivalentTo(other: ComparableDrawable?): Boolean {
-        return other is NoOpDrawable
     }
 
     override fun setBounds(left: Int, top: Int, right: Int, bottom: Int) {}

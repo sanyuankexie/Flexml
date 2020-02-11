@@ -71,7 +71,7 @@ class FastBlur(
         val height = input.height
         if (sampling == 1f) {
             //fast path
-            return blur(context, input)
+            return rsBlur(context, input)
         } else {
             val scaledWidth = (width / sampling).toInt()
             val scaledHeight = (height / sampling).toInt()
@@ -85,7 +85,7 @@ class FastBlur(
             val paint = Paint()
             paint.flags = Paint.FILTER_BITMAP_FLAG
             canvas.drawBitmap(input, 0f, 0f, paint)
-            return blur(context, output)
+            return rsBlur(context, output)
         }
     }
 
@@ -107,7 +107,7 @@ class FastBlur(
         )
     }
 
-    private fun blur(
+    private fun rsBlur(
             context: Context,
             bitmap: Bitmap
     ): Bitmap {

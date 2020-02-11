@@ -1,7 +1,6 @@
 package com.guet.flexbox.litho.widget
 
 import android.content.Context
-import android.graphics.drawable.Drawable
 import android.widget.ImageView.ScaleType
 import com.facebook.litho.*
 import com.facebook.litho.annotations.*
@@ -119,17 +118,15 @@ internal object GlideImageSpec {
             @Prop(optional = true) blurRadius: Diff<Float>,
             @Prop(optional = true) scaleType: Diff<ScaleType>,
             @Prop(optional = true) url: Diff<String?>,
-            @Prop(optional = true) drawable: Diff<Drawable?>,
             @Prop(optional = true) leftTopRadius: Diff<Float>,
             @Prop(optional = true) rightTopRadius: Diff<Float>,
             @Prop(optional = true) rightBottomRadius: Diff<Float>,
             @Prop(optional = true) leftBottomRadius: Diff<Float>): Boolean {
         return url.next != url.previous
-                || scaleType.next != scaleType.previous
-                || blurRadius.next != blurRadius.previous
-                || blurSampling.next != blurSampling.previous
-                || drawable.next != drawable.previous
                 || resId.next != resId.previous
+                || blurSampling.next != blurSampling.previous
+                || blurRadius.next != blurRadius.previous
+                || scaleType.next != scaleType.previous
                 || rightTopRadius.next != rightTopRadius.previous
                 || leftTopRadius.next != leftTopRadius.previous
                 || rightBottomRadius.next != rightBottomRadius.previous

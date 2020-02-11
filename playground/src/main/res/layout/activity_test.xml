@@ -10,13 +10,13 @@
         android:id="@+id/native_image"
         android:scaleType="fitXY"
         android:layout_weight="1"
-        android:src="#ffff0000"
         android:layout_width="match_parent"
         android:layout_height="match_parent"/>
     <ImageView
+        android:layout_gravity="center"
         android:scaleType="fitXY"
         android:id="@+id/image"
         android:layout_weight="1"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
+        android:layout_width="200dp"
+        android:layout_height="200dp"/>
 </FrameLayout>

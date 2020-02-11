@@ -3,8 +3,10 @@ package com.guet.flexbox.litho.drawable
 import android.content.Context
 import android.graphics.Rect
 import android.graphics.drawable.Drawable
+import android.graphics.drawable.TransitionDrawable
 import android.widget.ImageView.ScaleType
 import com.bumptech.glide.Glide
+import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.request.target.SizeReadyCallback
 import com.bumptech.glide.request.target.Target
 import com.bumptech.glide.request.transition.Transition
@@ -19,15 +21,16 @@ class GlideDrawable(
     private var height: Int = 0
 
     fun unmount() {
+        Glide.with(context).clear(this)
         wrappedDrawable = cacheNoOpDrawable
     }
 
     override fun onLoadCleared(placeholder: Drawable?) {
-        unmount()
+        wrappedDrawable = cacheNoOpDrawable
     }
 
     override fun onLoadFailed(errorDrawable: Drawable?) {
-        unmount()
+        wrappedDrawable = cacheNoOpDrawable
     }
 
     override fun onBoundsChange(bounds: Rect) {
@@ -54,23 +57,26 @@ class GlideDrawable(
             leftTop: Float,
             rightTop: Float,
             rightBottom: Float,
-            lightBottom: Float
+            leftBottom: Float
     ) {
         this.width = width
         this.height = height
-        Glide.with(context)
+        var request = Glide.with(context)
                 .load(model)
-                .transform(
-                        OffScreenRender.Builder {
-                            this.blurRadius = blurRadius
-                            this.blurSampling = blurSampling
-                            this.scaleType = scaleType
-                            this.leftTop = leftTop
-                            this.rightTop = rightTop
-                            this.rightBottom = rightBottom
-                            this.leftBottom = lightBottom
-                        }.build()
-                ).into(this)
+                .diskCacheStrategy(DiskCacheStrategy.ALL)
+        val tf = OffScreenRender.Builder {
+            this.blurRadius = blurRadius
+            this.blurSampling = blurSampling
+            this.scaleType = scaleType
+            this.leftTop = leftTop
+            this.rightTop = rightTop
+            this.rightBottom = rightBottom
+            this.leftBottom = leftBottom
+        }.build()
+        if (tf != null) {
+            request = request.transform(tf)
+        }
+        request.into(this)
     }
 
     override fun getSize(cb: SizeReadyCallback) {
@@ -81,8 +87,14 @@ class GlideDrawable(
             resource: Drawable,
             transition: Transition<in Drawable>?
     ) {
-        resource.bounds = bounds
-        wrappedDrawable = resource
+        wrappedDrawable = wrappedToTransition(resource)
         invalidateSelf()
+    }
+
+    private fun wrappedToTransition(target: Drawable): Drawable {
+        val transitionDrawable = TransitionDrawable(arrayOf(cacheNoOpDrawable, target))
+        transitionDrawable.isCrossFadeEnabled = true
+        transitionDrawable.startTransition(200)
+        return transitionDrawable
     }
 }

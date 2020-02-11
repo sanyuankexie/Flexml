@@ -8,6 +8,7 @@ import android.widget.ImageView.ScaleType
 import com.bumptech.glide.load.Transformation
 import com.bumptech.glide.load.engine.Resource
 import com.bumptech.glide.load.resource.bitmap.GranularRoundedCorners
+import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import java.security.MessageDigest
 
 class OffScreenRender internal constructor(
@@ -15,7 +16,6 @@ class OffScreenRender internal constructor(
 ) : Transformation<Bitmap> {
 
     override fun updateDiskCacheKey(messageDigest: MessageDigest) {
-        messageDigest.update(ID_BYTES)
         queue.forEach {
             it.updateDiskCacheKey(messageDigest)
         }
@@ -57,14 +57,10 @@ class OffScreenRender internal constructor(
     }
 
     override fun hashCode(): Int {
-        var result = ID.hashCode()
-        result += queue.hashCode()
-        return result
+        return queue.hashCode()
     }
 
     private companion object {
-        private val ID = OffScreenRender::class.java.name
-        private val ID_BYTES = ID.toByteArray()
         private val LOG = OffScreenRender::class.java.simpleName
     }
 
@@ -77,15 +73,23 @@ class OffScreenRender internal constructor(
         var rightBottom: Float = 0f
         var leftBottom: Float = 0f
 
-        fun build(): OffScreenRender {
-            var corners: GranularRoundedCorners? = null
+        fun build(): OffScreenRender? {
+            var corners: Transformation<Bitmap>? = null
             if (leftTop + rightTop + rightBottom + leftBottom != 0f) {
-                corners = GranularRoundedCorners(
-                        leftTop,
-                        rightTop,
-                        rightBottom,
-                        leftBottom
-                )
+                corners = if (leftTop == rightTop
+                        && leftTop == rightBottom
+                        && leftTop == leftBottom) {
+                    RoundedCorners(
+                            leftTop.toInt()
+                    )
+                } else {
+                    GranularRoundedCorners(
+                            leftTop,
+                            rightTop,
+                            rightBottom,
+                            leftBottom
+                    )
+                }
             }
             var fastBlur: FastBlur? = null
             if (blurRadius > 0 && blurSampling >= 1) {
@@ -107,7 +111,11 @@ class OffScreenRender internal constructor(
             if (corners != null) {
                 list.add(TransformationExAdapter(corners))
             }
-            return OffScreenRender(list.toTypedArray())
+            return if (list.isEmpty()) {
+                null
+            } else {
+                OffScreenRender(list.toTypedArray())
+            }
         }
 
         companion object {

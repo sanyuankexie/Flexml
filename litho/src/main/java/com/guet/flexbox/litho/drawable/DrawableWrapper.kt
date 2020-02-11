@@ -12,6 +12,7 @@ open class DrawableWrapper<T : Drawable>(
 
     open var wrappedDrawable: T = drawable.apply { callback = this@DrawableWrapper }
         set(value) {
+            value.bounds = bounds
             field.callback = null
             field = value
             field.callback = this

@@ -10,6 +10,8 @@
         alignItems="center"
         justifyContent="center">
         <Flex
+            borderColor="red"
+            borderWidth="5"
             marginTop="5"
             marginBottom="5"
             clickUrl="${url}"
