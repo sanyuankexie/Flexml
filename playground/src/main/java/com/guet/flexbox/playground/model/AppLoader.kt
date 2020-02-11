@@ -7,44 +7,50 @@ import com.guet.flexbox.AppExecutors
 import com.guet.flexbox.litho.TemplatePage
 import com.guet.flexbox.playground.R
 import com.orhanobut.logger.Logger
+import es.dmoral.toasty.Toasty
 import java.util.concurrent.Callable
-import kotlin.concurrent.thread
+import java.util.concurrent.SynchronousQueue
+import java.util.concurrent.ThreadPoolExecutor
+import java.util.concurrent.TimeUnit
 import kotlin.random.Random.Default
 
 object AppLoader {
 
-    private lateinit var appBundle: AppBundle
     private val randomImageUrls = ArrayList<String>(5)
+    private val loaderExecutor = ThreadPoolExecutor(0, Int.MAX_VALUE,
+            10L, TimeUnit.SECONDS,
+            SynchronousQueue())
+    private lateinit var appBundle: AppBundle
     private lateinit var homepageCache: Homepage
 
-    fun init(ctx: Context, callback: () -> Unit) {
+    fun loadWithCallback(ctx: Context, callback: () -> Unit) {
         val c = ctx.applicationContext
-        thread {
+        loaderExecutor.execute {
             synchronized(this) {
                 val start = SystemClock.uptimeMillis()
                 val res = c.resources
                 appBundle = AppBundle.loadAppBundle(
                         c,
+                        loaderExecutor,
                         res.getString(R.string.banner_path),
                         res.getString(R.string.function_path),
                         *res.getStringArray(R.array.feed_paths)
                 )
                 randomImageUrls.addAll(res.getStringArray(R.array.images))
-
                 //头部轮播图
-                val bannerTask = AppExecutors.threadPool.submit<TemplatePage> {
+                val bannerTask = loaderExecutor.submit(Callable<TemplatePage> {
                     val start1 = SystemClock.uptimeMillis()
                     val page = loadPage(c, res.getString(R.string.banner_path))
                     Logger.d("load banner ${SystemClock.uptimeMillis() - start1}")
-                    return@submit page
-                }
+                    return@Callable page
+                })
                 //功能区
-                val functionTask = AppExecutors.threadPool.submit<TemplatePage> {
+                val functionTask = loaderExecutor.submit(Callable<TemplatePage> {
                     val start1 = SystemClock.uptimeMillis()
                     val page = loadPage(c, res.getString(R.string.function_path))
                     Logger.d("load function ${SystemClock.uptimeMillis() - start1}")
-                    return@submit page
-                }
+                    return@Callable page
+                })
                 //Feed流
                 val feed = loadMoreFeedItem(c, 10, false) as ArrayList
                 feed.add(0, functionTask.get())
@@ -52,8 +58,12 @@ object AppLoader {
                 homepageCache = Homepage(
                         feed
                 )
-                Logger.d("AppLoader: load time:" + (SystemClock.uptimeMillis() - start))
-                AppExecutors.runOnUiThread(callback)
+                val finish = (SystemClock.uptimeMillis() - start)
+                Logger.d("AppLoader: load time:$finish")
+                AppExecutors.runOnUiThread {
+                    Toasty.info(c, "load time:${finish}").show()
+                    callback()
+                }
             }
         }
     }
@@ -113,12 +123,9 @@ object AppLoader {
                 return@Callable page
             }
         }
-        val result = AppExecutors
-                .threadPool
-                .invokeAll(tasks)
-                .map {
-                    it.get()
-                }
+        val result = loaderExecutor.invokeAll(tasks).map {
+            it.get()
+        }
         Logger.d("AppLoader: load more page time:" + (SystemClock.uptimeMillis() - pageStart))
         return result
     }
@@ -137,7 +144,7 @@ object AppLoader {
                 .build()
     }
 
-    fun waitHomepage(): Lazy<Homepage> {
+    fun lockHomepage(): Lazy<Homepage> {
         return synchronized(this) {
             lazyOf(homepageCache)
         }

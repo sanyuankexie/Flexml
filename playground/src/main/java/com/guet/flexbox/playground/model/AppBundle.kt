@@ -6,7 +6,7 @@ import com.google.gson.Gson
 import com.guet.flexbox.TemplateNode
 import com.orhanobut.logger.Logger
 import java.io.FileNotFoundException
-import java.util.concurrent.Executors
+import java.util.concurrent.ExecutorService
 import java.util.concurrent.Future
 
 class AppBundle(
@@ -15,11 +15,13 @@ class AppBundle(
         val dataSource: Map<String, Map<String, Any>>
 ) {
     companion object {
-        // 狂暴加载法
-        fun loadAppBundle(c: Context, vararg args: String): AppBundle {
+        fun loadAppBundle(
+                c: Context,
+                executor: ExecutorService,
+                vararg args: String
+        ): AppBundle {
             val start = SystemClock.uptimeMillis()
             val gson = Gson()
-            val executor = Executors.newCachedThreadPool()
             val dataSourcesF = args.map { url ->
                 url to executor.submit<Map<String, Any>> {
                     val jsonUrl = "$url.json"

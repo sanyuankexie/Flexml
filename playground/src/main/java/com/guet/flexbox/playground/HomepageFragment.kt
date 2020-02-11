@@ -26,7 +26,7 @@ class HomepageFragment : Fragment() {
     private lateinit var coordinator: CoordinatorLayout
     private lateinit var feed: RecyclerView
     private val feedAdapter = FlexBoxAdapter(this::handleEvent)
-    private val homepageInfo: Homepage by AppLoader.waitHomepage()
+    private val homepageInfo: Homepage by AppLoader.lockHomepage()
 
     override fun onCreateView(
             inflater: LayoutInflater,
