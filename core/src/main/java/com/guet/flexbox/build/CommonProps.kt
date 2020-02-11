@@ -3,7 +3,10 @@ package com.guet.flexbox.build
 import com.guet.flexbox.EventContext
 import com.guet.flexbox.TemplateNode
 import com.guet.flexbox.build.event.ClickUrlHandler
+import com.guet.flexbox.build.event.OnClickHandler
+import com.guet.flexbox.build.event.OnVisibleHandler
 import com.guet.flexbox.el.ELContext
+import com.guet.flexbox.el.LambdaExpression
 import com.guet.flexbox.el.tryGetValue
 import com.guet.flexbox.enums.FlexAlign
 import com.guet.flexbox.enums.Visibility
@@ -55,14 +58,13 @@ object CommonProps : Declaration() {
             }
         }
         event("onClick") { hostContext, elContext, raw ->
-            elContext.tryGetValue<Any>(raw)?.let { executable ->
-                println(executable)
-                return@let null //OnClickHandler(elContext, hostContext, executable)
+            elContext.tryGetValue<LambdaExpression>(raw)?.let { executable ->
+                return@let OnClickHandler(elContext, hostContext, executable)
             }
         }
         event("onVisible") { hostContext, elContext, raw ->
-            elContext.tryGetValue<Any>(raw)?.let { executable ->
-                return@let null//OnVisibleHandler(elContext, hostContext, executable)
+            elContext.tryGetValue<LambdaExpression>(raw)?.let { executable ->
+                return@let OnVisibleHandler(elContext, hostContext, executable)
             }
         }
     }
