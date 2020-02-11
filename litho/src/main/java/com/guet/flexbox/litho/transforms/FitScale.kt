@@ -37,7 +37,9 @@ class FitScale(
     }
 
     override fun equals(other: Any?): Boolean {
-        return (other === this) || (other is FitScale && scaleType == other.scaleType)
+        return (other === this) || (
+                other is FitScale && scaleType == other.scaleType
+                )
     }
 
     override fun transform(
