@@ -56,5 +56,9 @@
             android:name=".test.TestActivity"
             android:configChanges="orientation|screenSize"
             android:exported="true" />
+        <meta-data
+            android:name="com.bumptech.glide.integration.okhttp3.OkHttpGlideModule"
+            android:value="GlideModule" />
     </application>
+
 </manifest>
