@@ -151,8 +151,8 @@ class TemplatePage @WorkerThread internal constructor(
                     .component((com))
                     .build())
             logger(null, com.simpleName)
-            val page = TemplatePage(this)
-            return page
+            isReconciliationEnabled(false)
+            return TemplatePage(this)
         }
     }
 
