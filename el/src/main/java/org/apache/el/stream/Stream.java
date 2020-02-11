@@ -16,13 +16,6 @@
  */
 package org.apache.el.stream;
 
-import com.guet.flexbox.el.ELException;
-import com.guet.flexbox.el.LambdaExpression;
-
-import org.apache.el.lang.ELArithmetic;
-import org.apache.el.lang.ELSupport;
-import org.apache.el.util.MessageFactory;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -31,6 +24,13 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Set;
+
+import com.guet.flexbox.el.ELException;
+import com.guet.flexbox.el.LambdaExpression;
+
+import org.apache.el.lang.ELArithmetic;
+import org.apache.el.lang.ELSupport;
+import org.apache.el.util.MessageFactory;
 
 public class Stream {
 
@@ -48,8 +48,8 @@ public class Stream {
             protected void findNext() {
                 while (iterator.hasNext()) {
                     Object obj = iterator.next();
-                    Boolean bool = ELSupport.coerceToBoolean(null, le.invoke(obj), true);
-                    if (bool != null && bool) {
+                    if (ELSupport.coerceToBoolean(null, le.invoke(obj),
+                            true).booleanValue()) {
                         next = obj;
                         foundNext = true;
                         break;
@@ -138,8 +138,8 @@ public class Stream {
                 }
             }
 
-            @SuppressWarnings({"rawtypes", "unchecked"})
-            private void sort() {
+            @SuppressWarnings({ "rawtypes", "unchecked" })
+            private final void sort() {
                 List list = new ArrayList<>();
                 while (iterator.hasNext()) {
                     list.add(iterator.next());
@@ -168,8 +168,8 @@ public class Stream {
                 }
             }
 
-            @SuppressWarnings({"rawtypes", "unchecked"})
-            private void sort(LambdaExpression le) {
+            @SuppressWarnings({ "rawtypes", "unchecked" })
+            private final void sort(LambdaExpression le) {
                 List list = new ArrayList<>();
                 Comparator<Object> c = new LambdaExpressionComparator(le);
                 while (iterator.hasNext()) {
@@ -213,12 +213,12 @@ public class Stream {
 
 
     public Stream limit(final Number count) {
-        return substream(0, count);
+        return substream(Integer.valueOf(0), count);
     }
 
 
     public Stream substream(final Number start) {
-        return substream(start, Integer.MAX_VALUE);
+        return substream(start, Integer.valueOf(Integer.MAX_VALUE));
     }
 
     public Stream substream(final Number start, final Number end) {
@@ -260,7 +260,7 @@ public class Stream {
         while (iterator.hasNext()) {
             result.add(iterator.next());
         }
-        return result.toArray(new Object[0]);
+        return result.toArray(new Object[result.size()]);
     }
 
 
@@ -312,7 +312,7 @@ public class Stream {
 
     public Optional average() {
         long count = 0;
-        Number sum = 0L;
+        Number sum = Long.valueOf(0);
 
         while (iterator.hasNext()) {
             count++;
@@ -322,13 +322,13 @@ public class Stream {
         if (count == 0) {
             return Optional.EMPTY;
         } else {
-            return new Optional(ELArithmetic.divide(sum, count));
+            return new Optional(ELArithmetic.divide(sum, Long.valueOf(count)));
         }
     }
 
 
     public Number sum() {
-        Number sum = 0L;
+        Number sum = Long.valueOf(0);
 
         while (iterator.hasNext()) {
             sum = ELArithmetic.add(sum, iterator.next());
@@ -343,10 +343,10 @@ public class Stream {
 
         while (iterator.hasNext()) {
             iterator.next();
-            count++;
+            count ++;
         }
 
-        return count;
+        return Long.valueOf(count);
     }
 
 
@@ -357,7 +357,7 @@ public class Stream {
 
         Boolean match = Boolean.FALSE;
 
-        while (!match && iterator.hasNext()) {
+        while (!match.booleanValue() && iterator.hasNext()) {
             match = (Boolean) le.invoke(iterator.next());
         }
 
@@ -372,7 +372,7 @@ public class Stream {
 
         Boolean match = Boolean.TRUE;
 
-        while (match && iterator.hasNext()) {
+        while (match.booleanValue() && iterator.hasNext()) {
             match = (Boolean) le.invoke(iterator.next());
         }
 
@@ -387,11 +387,11 @@ public class Stream {
 
         Boolean match = Boolean.FALSE;
 
-        while (!match && iterator.hasNext()) {
+        while (!match.booleanValue() && iterator.hasNext()) {
             match = (Boolean) le.invoke(iterator.next());
         }
 
-        return new Optional(!match);
+        return new Optional(Boolean.valueOf(!match.booleanValue()));
     }
 
 
@@ -404,7 +404,7 @@ public class Stream {
     }
 
 
-    @SuppressWarnings({"rawtypes", "unchecked"})
+    @SuppressWarnings({ "rawtypes", "unchecked" })
     private Optional compare(boolean isMax) {
         Comparable result = null;
 
@@ -444,7 +444,8 @@ public class Stream {
         Object result = null;
 
         if (iterator.hasNext()) {
-            result = iterator.next();
+            Object obj = iterator.next();
+            result = obj;
         }
 
         while (iterator.hasNext()) {

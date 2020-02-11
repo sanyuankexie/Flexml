@@ -17,19 +17,11 @@
 
 package org.apache.el;
 
-import java.io.Externalizable;
-import java.io.IOException;
-import java.io.ObjectInput;
-import java.io.ObjectOutput;
-
 import com.guet.flexbox.el.ELContext;
 import com.guet.flexbox.el.ELException;
 import com.guet.flexbox.el.FunctionMapper;
-import com.guet.flexbox.el.ExpressionFactory;
 import com.guet.flexbox.el.PropertyNotFoundException;
 import com.guet.flexbox.el.PropertyNotWritableException;
-import com.guet.flexbox.el.ELResolver;
-import com.guet.flexbox.el.Expression;
 import com.guet.flexbox.el.ValueExpression;
 import com.guet.flexbox.el.ValueReference;
 import com.guet.flexbox.el.VariableMapper;
@@ -39,6 +31,11 @@ import org.apache.el.lang.ExpressionBuilder;
 import org.apache.el.parser.AstLiteralExpression;
 import org.apache.el.parser.Node;
 import org.apache.el.util.ReflectionUtil;
+
+import java.io.Externalizable;
+import java.io.IOException;
+import java.io.ObjectInput;
+import java.io.ObjectOutput;
 
 
 /**
@@ -57,7 +54,7 @@ import org.apache.el.util.ReflectionUtil;
  * </p>
  *
  * <p>
- * The {@link ExpressionFactory#createValueExpression} method
+ * The {@link com.guet.flexbox.el.ExpressionFactory#createValueExpression} method
  * can be used to parse an expression string and return a concrete instance
  * of <code>ValueExpression</code> that encapsulates the parsed expression.
  * The {@link FunctionMapper} is used at parse time, not evaluation time,
@@ -66,25 +63,25 @@ import org.apache.el.util.ReflectionUtil;
  *
  * <p>The {@link #getValue}, {@link #setValue}, {@link #isReadOnly} and
  * {@link #getType} methods will evaluate the expression each time they are
- * called. The {@link ELResolver} in the <code>ELContext</code> is used
+ * called. The {@link com.guet.flexbox.el.ELResolver} in the <code>ELContext</code> is used
  * to resolve the top-level variables and to determine the behavior of the
  * <code>.</code> and <code>[]</code> operators. For any of the four methods,
- * the {@link ELResolver#getValue} method is used to resolve all
+ * the {@link com.guet.flexbox.el.ELResolver#getValue} method is used to resolve all
  * properties up to but excluding the last one. This provides the
  * <code>base</code> object. At the last resolution, the
  * <code>ValueExpression</code> will call the corresponding
- * {@link ELResolver#getValue}, {@link ELResolver#setValue},
- * {@link ELResolver#isReadOnly} or {@link ELResolver#getType}
+ * {@link com.guet.flexbox.el.ELResolver#getValue}, {@link com.guet.flexbox.el.ELResolver#setValue},
+ * {@link com.guet.flexbox.el.ELResolver#isReadOnly} or {@link com.guet.flexbox.el.ELResolver#getType}
  * method, depending on which was called on the <code>ValueExpression</code>.
  * </p>
  *
  * <p>See the notes about comparison, serialization and immutability in
- * the {@link Expression} javadocs.
+ * the {@link com.guet.flexbox.el.Expression} javadocs.
  *
- * @see ELResolver
- * @see Expression
- * @see ExpressionFactory
- * @see ValueExpression
+ * @see com.guet.flexbox.el.ELResolver
+ * @see com.guet.flexbox.el.Expression
+ * @see com.guet.flexbox.el.ExpressionFactory
+ * @see com.guet.flexbox.el.ValueExpression
  *
  * @author Jacob Hookom [jacob@hookom.net]
  */
@@ -134,7 +131,7 @@ public final class ValueExpressionImpl extends ValueExpression implements
     /*
      * (non-Javadoc)
      *
-     * @see javax.el.ValueExpression#getExpectedType()
+     * @see com.guet.flexbox.el.ValueExpression#getExpectedType()
      */
     @Override
     public Class<?> getExpectedType() {
@@ -149,7 +146,7 @@ public final class ValueExpressionImpl extends ValueExpression implements
      *         <code>ExpressionFactory.createValueExpression</code> method
      *         that created this <code>ValueExpression</code>.
      *
-     * @see Expression#getExpressionString()
+     * @see com.guet.flexbox.el.Expression#getExpressionString()
      */
     @Override
     public String getExpressionString() {
@@ -166,7 +163,7 @@ public final class ValueExpressionImpl extends ValueExpression implements
     /*
      * (non-Javadoc)
      *
-     * @see javax.el.ValueExpression#getType(javax.el.ELContext)
+     * @see com.guet.flexbox.el.ValueExpression#getType(com.guet.flexbox.el.ELContext)
      */
     @Override
     public Class<?> getType(ELContext context) throws PropertyNotFoundException,
@@ -182,7 +179,7 @@ public final class ValueExpressionImpl extends ValueExpression implements
     /*
      * (non-Javadoc)
      *
-     * @see javax.el.ValueExpression#getValue(javax.el.ELContext)
+     * @see com.guet.flexbox.el.ValueExpression#getValue(com.guet.flexbox.el.ELContext)
      */
     @Override
     public Object getValue(ELContext context) throws PropertyNotFoundException,
@@ -211,7 +208,7 @@ public final class ValueExpressionImpl extends ValueExpression implements
     /*
      * (non-Javadoc)
      *
-     * @see javax.el.ValueExpression#isLiteralText()
+     * @see com.guet.flexbox.el.ValueExpression#isLiteralText()
      */
     @Override
     public boolean isLiteralText() {
@@ -225,7 +222,7 @@ public final class ValueExpressionImpl extends ValueExpression implements
     /*
      * (non-Javadoc)
      *
-     * @see javax.el.ValueExpression#isReadOnly(javax.el.ELContext)
+     * @see com.guet.flexbox.el.ValueExpression#isReadOnly(com.guet.flexbox.el.ELContext)
      */
     @Override
     public boolean isReadOnly(ELContext context)
@@ -253,7 +250,7 @@ public final class ValueExpressionImpl extends ValueExpression implements
     /*
      * (non-Javadoc)
      *
-     * @see javax.el.ValueExpression#setValue(javax.el.ELContext,
+     * @see com.guet.flexbox.el.ValueExpression#setValue(com.guet.flexbox.el.ELContext,
      *      java.lang.Object)
      */
     @Override

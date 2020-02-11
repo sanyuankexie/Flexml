@@ -35,9 +35,9 @@ public final class AstPlus extends ArithmeticNode {
 
     @Override
     public Class<?> getType(EvaluationContext ctx) throws ELException {
-        Object obj0 = this.children[0].getValue(ctx);
-        Object obj1 = this.children[1].getValue(ctx);
-        if (obj0 instanceof String || obj1 instanceof String) {
+        Class<?> type0 = this.children[0].getType(ctx);
+        Class<?> type1 = this.children[1].getType(ctx);
+        if (type0 == String.class || type1 == String.class) {
             return String.class;
         }
         return super.getType(ctx);
