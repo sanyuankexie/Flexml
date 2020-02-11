@@ -8,7 +8,6 @@ class PropsELContext(
         val data: Any?
 ) : ELContext() {
 
-    private val expressionFactory = ExpressionFactory.newInstance()
     private val variableMapper = StandardVariableMapper()
     private val functionMapper = StandardFunctionMapper()
     private val standardResolver = CompositeELResolver()
