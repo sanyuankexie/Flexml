@@ -9,7 +9,7 @@ import androidx.appcompat.app.AppCompatActivity
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.target.SimpleTarget
 import com.bumptech.glide.request.transition.Transition
-import com.guet.flexbox.litho.drawable.EnhancedBitmapDrawable
+import com.guet.flexbox.litho.drawable.ExBitmapDrawable
 import com.guet.flexbox.playground.R
 
 class TestActivity : AppCompatActivity() {
@@ -32,7 +32,7 @@ class TestActivity : AppCompatActivity() {
                         val type = ImageView.ScaleType.FIT_START
                         imageView.scaleType = type
                         imageView.setImageBitmap(resource)
-                        val drawable = EnhancedBitmapDrawable(resource)
+                        val drawable = ExBitmapDrawable(resource)
                         imageView2.setImageDrawable(drawable)
                         drawable.scaleType = type
                         drawable.cornerRadius = 130f

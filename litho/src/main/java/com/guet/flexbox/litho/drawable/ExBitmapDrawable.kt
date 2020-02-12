@@ -9,7 +9,7 @@ import android.widget.ImageView.ScaleType
 import kotlin.math.min
 import kotlin.math.round
 
-class EnhancedBitmapDrawable : Drawable {
+class ExBitmapDrawable : Drawable {
 
     private companion object {
 
@@ -129,7 +129,7 @@ class EnhancedBitmapDrawable : Drawable {
         }
 
         override fun newDrawable(): Drawable {
-            return EnhancedBitmapDrawable(this)
+            return ExBitmapDrawable(this)
         }
 
         override fun getChangingConfigurations(): Int {
@@ -206,6 +206,9 @@ class EnhancedBitmapDrawable : Drawable {
             pathIsDirty = true
             invalidateSelf()
         }
+
+    val bitmap: Bitmap?
+        get() = state.bitmap
 
     override fun setFilterBitmap(filter: Boolean) {
         state.paint.isFilterBitmap = filter
