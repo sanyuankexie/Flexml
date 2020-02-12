@@ -18,7 +18,7 @@ import java.nio.ByteBuffer
 @GlideModule
 class ExBitmapDrawableModule : LibraryGlideModule() {
 
-    private companion object {
+    private companion object ModuleRegistry{
         private const val BUCKET_EX_BITMAP_DRAWABLE = "ExBitmapDrawable"
     }
 
