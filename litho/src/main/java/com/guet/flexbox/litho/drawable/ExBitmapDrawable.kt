@@ -137,7 +137,14 @@ class ExBitmapDrawable : Drawable {
             if (value != null && value.size != 8) {
                 throw UnsupportedOperationException()
             }
-            state.radiiArray = value?.copyOf()
+            val copy = value?.copyOf()
+            if (copy?.sum() == 0f) {
+                state.radiiArray = null
+            } else if (copy != null && copy.all { it == copy[0] }) {
+                state.radiiArray = floatArrayOf(copy[0])
+            } else {
+                state.radiiArray = copy
+            }
             pathIsDirty = true
             invalidateSelf()
         }
