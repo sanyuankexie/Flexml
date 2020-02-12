@@ -29,12 +29,13 @@ class TestActivity : AppCompatActivity() {
                             resource: Bitmap,
                             transition: Transition<in Bitmap>?
                     ) {
-                        val type = ImageView.ScaleType.CENTER_CROP
+                        val type = ImageView.ScaleType.FIT_START
                         imageView.scaleType = type
                         imageView.setImageBitmap(resource)
                         val drawable = EnhancedBitmapDrawable(resource)
                         imageView2.setImageDrawable(drawable)
                         drawable.scaleType = type
+                        drawable.cornerRadius = 130f
                     }
                 })
 

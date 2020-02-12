@@ -191,7 +191,6 @@ class EnhancedBitmapDrawable : Drawable {
             } else {
                 state.radiiArray = floatArrayOf(value)
             }
-            pathIsDirty = true
             invalidateSelf()
         }
 
