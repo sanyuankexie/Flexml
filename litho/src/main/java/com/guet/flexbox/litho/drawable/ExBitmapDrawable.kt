@@ -289,18 +289,17 @@ class ExBitmapDrawable : Drawable {
         val bm = state.bitmap ?: return
         init()
         buildMatrixIfDirty(bm)
-        if (this::srcRect.isInitialized) {
-            srcRect.set(bounds)
-        } else {
-            srcRect = RectF(bounds)
-        }
 
         val sc = canvas.save()
 
         canvas.translate(bounds.left.toFloat(), bounds.top.toFloat())
-
-        canvas.clipRect(0, 0, bounds.width(), bounds.height())
-
+        
+        if (this::srcRect.isInitialized) {
+            srcRect.set(0f, 0f, bounds.width().toFloat(), bounds.height().toFloat())
+        } else {
+            srcRect = RectF(0f, 0f, bounds.width().toFloat(), bounds.height().toFloat())
+        }
+        canvas.clipRect(srcRect)
         if (needClipInner) {
             if (!this::dstRect.isInitialized) {
                 dstRect = RectF(bounds)

@@ -87,8 +87,7 @@ abstract class ToComponent<C : Component.Builder<*>>(
         val needBorder = borderWidth != 0 && borderColor != Color.TRANSPARENT
         val needCorners = lt != 0f || rb != 0f || lb != 0f || rt != 0f
         val isSameCorners = lt == rt && lt == rb && lt == lb
-        c.clipChildren(false)
-        c.clipToOutline(false)
+        //TODO
         if (background != null) {
             val (type, prams) = UrlType.parseUrl(
                     context, background
