@@ -59,6 +59,9 @@
         <meta-data
             android:name="com.bumptech.glide.integration.okhttp3.OkHttpGlideModule"
             android:value="GlideModule" />
+        <meta-data
+            android:name="com.guet.flexbox.litho.load.ExBitmapDrawableGlideModule"
+            android:value="GlideModule"/>
     </application>
 
 </manifest>

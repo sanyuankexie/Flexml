@@ -16,7 +16,7 @@ import java.io.InputStream
 import java.nio.ByteBuffer
 
 @GlideModule
-class ExBitmapDrawableModule : LibraryGlideModule() {
+class ExBitmapDrawableLibraryModule : LibraryGlideModule() {
 
     override fun registerComponents(
             context: Context,

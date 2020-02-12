@@ -13,71 +13,6 @@ class ExBitmapDrawable : Drawable {
 
     private companion object {
 
-        private fun createMatrix(
-                result: Matrix,
-                intrinsicWidth: Int,
-                intrinsicHeight: Int,
-                scaleType: ScaleType,
-                width: Int,
-                height: Int
-        ): Pair<Matrix?, Boolean> {
-            if (intrinsicWidth <= 0 || intrinsicHeight <= 0
-                    || ScaleType.FIT_XY == scaleType) {
-                return null to false
-            }
-            if (width == intrinsicWidth && height == intrinsicHeight) {
-                // The bitmap fits exactly, no transform needed.
-                return null to false
-            }
-            result.reset()
-            var shouldClipRect = false
-            when (scaleType) {
-                ScaleType.CENTER -> {
-                    // Center bitmap in view, no scaling.
-                    result.setTranslate(
-                            round((width - intrinsicWidth) * 0.5f),
-                            round((height - intrinsicHeight) * 0.5f)
-                    )
-                    shouldClipRect = intrinsicWidth > width || intrinsicHeight > height
-                }
-                ScaleType.CENTER_CROP -> {
-                    val scale: Float
-                    var dx = 0f
-                    var dy = 0f
-                    if (intrinsicWidth * height > width * intrinsicHeight) {
-                        scale = height.toFloat() / intrinsicHeight.toFloat()
-                        dx = (width - intrinsicWidth * scale) * 0.5f
-                    } else {
-                        scale = width.toFloat() / intrinsicWidth.toFloat()
-                        dy = (height - intrinsicHeight * scale) * 0.5f
-                    }
-                    result.setScale(scale, scale)
-                    result.postTranslate(round(dx), round(dy))
-                    shouldClipRect = true
-                }
-                ScaleType.CENTER_INSIDE -> {
-                    val scale: Float = if (intrinsicWidth <= width && intrinsicHeight <= height) {
-                        1.0f
-                    } else {
-                        min(width.toFloat() / intrinsicWidth.toFloat(), height.toFloat() / intrinsicHeight.toFloat())
-                    }
-                    val dx = round((width - intrinsicWidth * scale) * 0.5f)
-                    val dy = round((height - intrinsicHeight * scale) * 0.5f)
-                    result.setScale(scale, scale)
-                    result.postTranslate(dx, dy)
-                }
-                else -> {
-                    val src = RectF()
-                    val dest = RectF()
-                    // Generate the required transform.
-                    src.set(0f, 0f, intrinsicWidth.toFloat(), intrinsicHeight.toFloat())
-                    dest.set(0f, 0f, width.toFloat(), height.toFloat())
-                    result.setRectToRect(src, dest, scaleTypeToScaleToFit(scaleType))
-                }
-            }
-            return result to shouldClipRect
-        }
-
         private fun scaleTypeToScaleToFit(
                 st: ScaleType
         ): ScaleToFit {
@@ -91,11 +26,11 @@ class ExBitmapDrawable : Drawable {
             }
         }
 
-        private const val DEFAULT_PAINT_FLAGS = Paint.FILTER_BITMAP_FLAG or Paint.DITHER_FLAG
+        private const val DEFAULT_PAINT_FLAGS = Paint.FILTER_BITMAP_FLAG or Paint.DITHER_FLAG or Paint.ANTI_ALIAS_FLAG
     }
 
-    private val state: EnhancedBitmapState
-    private var shouldClipRect: Boolean = false
+    private val state: ExBitmapState
+    private var needClipInner: Boolean = true
     private var pathIsDirty: Boolean = true
     private var scaleTypeIsDirty: Boolean = true
     private lateinit var path: Path
@@ -104,13 +39,13 @@ class ExBitmapDrawable : Drawable {
     private lateinit var matrix: Matrix
     private lateinit var shader: BitmapShader
 
-    constructor(bitmap: Bitmap) : this(EnhancedBitmapState(bitmap))
+    constructor(bitmap: Bitmap) : this(ExBitmapState(bitmap))
 
-    private constructor(state: EnhancedBitmapState) : super() {
+    private constructor(state: ExBitmapState) : super() {
         this.state = state
     }
 
-    private class EnhancedBitmapState : ConstantState {
+    private class ExBitmapState : ConstantState {
         val paint: Paint
         var radiiArray: FloatArray? = null
         var scaleType: ScaleType = ScaleType.FIT_XY
@@ -121,7 +56,7 @@ class ExBitmapDrawable : Drawable {
             this.paint = Paint(DEFAULT_PAINT_FLAGS)
         }
 
-        constructor(state: EnhancedBitmapState) {
+        constructor(state: ExBitmapState) {
             paint = Paint(state.paint)
             radiiArray = state.radiiArray
             scaleType = state.scaleType
@@ -246,17 +181,78 @@ class ExBitmapDrawable : Drawable {
             )
             this.shader = shader
             state.paint.shader = shader
-            matrix = Matrix()
+
         }
 
     }
 
-    private fun applyScaleTypeIfDirty(bm: Bitmap) {
+    private fun buildMatrix(
+            result: Matrix,
+            intrinsicWidth: Int,
+            intrinsicHeight: Int,
+            scaleType: ScaleType,
+            width: Int,
+            height: Int
+    ) {
+        result.reset()
+        needClipInner = scaleType != ScaleType.FIT_XY
+        //var shouldClipRect = false
+        when (scaleType) {
+            ScaleType.CENTER -> {
+                // Center bitmap in view, no scaling.
+                result.setTranslate(
+                        round((width - intrinsicWidth) * 0.5f),
+                        round((height - intrinsicHeight) * 0.5f)
+                )
+                //shouldClipRect = intrinsicWidth > width || intrinsicHeight > height
+            }
+            ScaleType.CENTER_CROP -> {
+                val scale: Float
+                var dx = 0f
+                var dy = 0f
+                if (intrinsicWidth * height > width * intrinsicHeight) {
+                    scale = height.toFloat() / intrinsicHeight.toFloat()
+                    dx = (width - intrinsicWidth * scale) * 0.5f
+                } else {
+                    scale = width.toFloat() / intrinsicWidth.toFloat()
+                    dy = (height - intrinsicHeight * scale) * 0.5f
+                }
+                result.setScale(scale, scale)
+                result.postTranslate(round(dx), round(dy))
+                //shouldClipRect = true
+            }
+            ScaleType.CENTER_INSIDE -> {
+                val scale: Float = if (intrinsicWidth <= width && intrinsicHeight <= height) {
+                    1.0f
+                } else {
+                    min(width.toFloat() / intrinsicWidth.toFloat(), height.toFloat() / intrinsicHeight.toFloat())
+                }
+                val dx = round((width - intrinsicWidth * scale) * 0.5f)
+                val dy = round((height - intrinsicHeight * scale) * 0.5f)
+                result.setScale(scale, scale)
+                result.postTranslate(dx, dy)
+            }
+            else -> {
+                if (intrinsicWidth == width && intrinsicHeight == height) {
+                    needClipInner = false
+                } else {
+                    val src = RectF()
+                    val dest = RectF()
+                    // Generate the required transform.
+                    src.set(0f, 0f, intrinsicWidth.toFloat(), intrinsicHeight.toFloat())
+                    dest.set(0f, 0f, width.toFloat(), height.toFloat())
+                    result.setRectToRect(src, dest, scaleTypeToScaleToFit(scaleType))
+                }
+            }
+        }
+    }
+
+    private fun buildMatrixIfDirty(bm: Bitmap) {
         if (scaleTypeIsDirty) {
-            val (
-                    outMatrix,
-                    shouldClipRect
-            ) = createMatrix(
+            if (!this::matrix.isInitialized) {
+                matrix = Matrix()
+            }
+            buildMatrix(
                     matrix,
                     bm.width,
                     bm.height,
@@ -264,13 +260,8 @@ class ExBitmapDrawable : Drawable {
                     bounds.width(),
                     bounds.height()
             )
-            this.shouldClipRect = shouldClipRect
-            if (outMatrix == null) {
-                state.paint.shader = null
-            } else {
-                this.shader.setLocalMatrix(outMatrix)
-                state.paint.shader = this.shader
-            }
+            this.shader.setLocalMatrix(matrix)
+            state.paint.shader = this.shader
             scaleTypeIsDirty = false
         }
     }
@@ -290,18 +281,20 @@ class ExBitmapDrawable : Drawable {
     override fun draw(canvas: Canvas) {
         val bm = state.bitmap ?: return
         init()
-        applyScaleTypeIfDirty(bm)
+        buildMatrixIfDirty(bm)
         if (this::srcRect.isInitialized) {
             srcRect.set(bounds)
         } else {
             srcRect = RectF(bounds)
         }
+
         val sc = canvas.save()
+
         canvas.translate(bounds.left.toFloat(), bounds.top.toFloat())
-        if (shouldClipRect) {
-            canvas.clipRect(0, 0, bounds.width(), bounds.height())
-        }
-        if (state.paint.shader != null) {
+
+        canvas.clipRect(0, 0, bounds.width(), bounds.height())
+
+        if (needClipInner) {
             if (!this::dstRect.isInitialized) {
                 dstRect = RectF(bounds)
             }
@@ -309,16 +302,9 @@ class ExBitmapDrawable : Drawable {
             matrix.mapRect(dstRect)
             canvas.clipRect(dstRect)
         }
+
         val radii = state.radiiArray
         when {
-            state.paint.shader == null -> {
-                canvas.drawBitmap(
-                        bm,
-                        null,
-                        srcRect,
-                        state.paint
-                )
-            }
             radii == null || radii.isEmpty() -> {
                 canvas.drawPaint(state.paint)
             }

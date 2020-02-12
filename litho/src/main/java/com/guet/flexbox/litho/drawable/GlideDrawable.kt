@@ -9,7 +9,8 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.request.target.SizeReadyCallback
 import com.bumptech.glide.request.target.Target
 import com.bumptech.glide.request.transition.Transition
-import com.guet.flexbox.litho.transforms.OffScreenRender
+import com.guet.flexbox.litho.load.Constants
+import com.guet.flexbox.litho.transforms.FastBlur
 
 class GlideDrawable(
         private val context: Context
@@ -61,22 +62,31 @@ class GlideDrawable(
         this.width = width
         this.height = height
         var request = Glide.with(context)
+                .`as`(ExBitmapDrawable::class.java)
                 .load(model)
                 .transform()
-
-        val tf = OffScreenRender.Builder {
-            this.blurRadius = blurRadius
-            this.blurSampling = blurSampling
-            this.scaleType = scaleType
-            this.leftTop = leftTop
-            this.rightTop = rightTop
-            this.rightBottom = rightBottom
-            this.leftBottom = leftBottom
-        }.build()
-        if (tf != null) {
-            request = request.transform(tf)
+                .set(Constants.scaleType, scaleType)
+        if (leftTop + rightTop + rightBottom + leftBottom != 0f) {
+            request = if (leftTop == rightTop
+                    && leftTop == rightBottom
+                    && leftTop == leftBottom) {
+                request.set(Constants.cornerRadii, floatArrayOf(leftTop))
+            } else {
+                request.set(Constants.cornerRadii, floatArrayOf(
+                        leftTop, leftTop,
+                        rightTop, rightTop,
+                        rightBottom, rightBottom,
+                        leftBottom, leftBottom
+                ))
+            }
         }
-        request.into(this)
+        if (blurRadius > 0 && blurSampling >= 1) {
+            request = request.transform(FastBlur(
+                    blurRadius, blurSampling
+            ))
+        }
+        @Suppress("UNCHECKED_CAST")
+        request.into(this as Target<ExBitmapDrawable>)
     }
 
     override fun getSize(cb: SizeReadyCallback) {
