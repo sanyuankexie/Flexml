@@ -4,14 +4,13 @@ import android.content.Context
 import android.graphics.Canvas
 import android.graphics.drawable.Drawable
 import android.graphics.drawable.TransitionDrawable
+import android.widget.ImageView.ScaleType
 import com.bumptech.glide.Glide
-import com.bumptech.glide.load.engine.DiskCacheStrategy
-import com.bumptech.glide.load.resource.bitmap.GranularRoundedCorners
-import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.bumptech.glide.request.target.SizeReadyCallback
 import com.bumptech.glide.request.target.Target
 import com.bumptech.glide.request.transition.Transition
 import com.facebook.litho.drawable.ComparableDrawable
+import com.guet.flexbox.litho.load.Constants
 import java.lang.ref.WeakReference
 import java.util.concurrent.atomic.AtomicBoolean
 
@@ -40,7 +39,12 @@ class LazyImageDrawable private constructor(
             leftBottom: Float
     ) : this(
             context, model,
-            floatArrayOf(leftTop, rightTop, rightBottom, leftBottom)
+            floatArrayOf(
+                    leftTop, leftTop,
+                    rightTop, rightTop,
+                    rightBottom, rightBottom,
+                    leftBottom, leftBottom
+            )
     )
 
     constructor(
@@ -65,25 +69,14 @@ class LazyImageDrawable private constructor(
     override fun draw(canvas: Canvas) {
         val context = weakContext.get()
         if (context != null && isInit.compareAndSet(false, true)) {
-            var request = Glide.with(context)
+            @Suppress("UNCHECKED_CAST")
+            Glide.with(context)
+                    .`as`(ExBitmapDrawable::class.java)
                     .load(model)
-                    .diskCacheStrategy(DiskCacheStrategy.ALL)
-                    .override(bounds.width(), bounds.height())
-            if (radiusArray.size == 4) {
-                request = request.transform(
-                        GranularRoundedCorners(
-                                radiusArray[0],
-                                radiusArray[1],
-                                radiusArray[2],
-                                radiusArray[3]
-                        )
-                )
-            } else if (radiusArray.size == 1) {
-                request = request.transform(
-                        RoundedCorners(radiusArray[0].toInt())
-                )
-            }
-            request.into(this)
+                    .transform()
+                    .set(Constants.scaleType, ScaleType.FIT_XY)
+                    .set(Constants.cornerRadii, radiusArray)
+                    .into(this as Target<ExBitmapDrawable>)
         } else {
             super.draw(canvas)
         }
