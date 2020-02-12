@@ -28,7 +28,11 @@ class ExBitmapDrawableDecoder<DataType>(
         val bitmapResource: Resource<Bitmap>? = decoder
                 .decode(source, width, height, options)
         if (bitmapResource != null) {
-            return LazyExBitmapDrawableResource(resources, bitmapResource)
+            return LazyExBitmapDrawableResource(
+                    bitmapResource,
+                    resources,
+                    options
+            )
         }
         return null
     }

@@ -12,7 +12,11 @@ class ExBitmapDrawableTranscoder(
 ) : ResourceTranscoder<Bitmap, ExBitmapDrawable> {
     override fun transcode(
             toTranscode: Resource<Bitmap>, options: Options): Resource<ExBitmapDrawable>? {
-        return LazyExBitmapDrawableResource(resources, toTranscode)
+        return LazyExBitmapDrawableResource(
+                toTranscode,
+                resources,
+                options
+        )
     }
 
 }

@@ -20,7 +20,8 @@ class ExBitmapDrawableEncoder(
         return encoder.encode(BitmapResource(
                 requireNotNull(data.get().bitmap),
                 bitmapPool),
-                file, options
+                file,
+                options
         )
     }
 

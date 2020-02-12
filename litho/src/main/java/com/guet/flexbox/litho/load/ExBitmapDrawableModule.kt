@@ -18,10 +18,6 @@ import java.nio.ByteBuffer
 @GlideModule
 class ExBitmapDrawableModule : LibraryGlideModule() {
 
-    private companion object ModuleRegistry{
-        private const val BUCKET_EX_BITMAP_DRAWABLE = "ExBitmapDrawable"
-    }
-
     override fun registerComponents(
             context: Context,
             glide: Glide,
@@ -45,15 +41,15 @@ class ExBitmapDrawableModule : LibraryGlideModule() {
             streamBitmapDecoder = StreamBitmapDecoder(downSampler, arrayPool)
         }
         registry.append(
-                BUCKET_EX_BITMAP_DRAWABLE,
+                Constants.BUCKET_EX_BITMAP_DRAWABLE,
                 ByteBuffer::class.java,
                 ExBitmapDrawable::class.java,
                 ExBitmapDrawableDecoder(byteBufferBitmapDecoder, resources)
-        ).append(BUCKET_EX_BITMAP_DRAWABLE,
+        ).append(Constants.BUCKET_EX_BITMAP_DRAWABLE,
                 InputStream::class.java,
                 ExBitmapDrawable::class.java,
                 ExBitmapDrawableDecoder(streamBitmapDecoder, resources)
-        ).append(BUCKET_EX_BITMAP_DRAWABLE,
+        ).append(Constants.BUCKET_EX_BITMAP_DRAWABLE,
                 ParcelFileDescriptor::class.java,
                 ExBitmapDrawable::class.java,
                 ExBitmapDrawableDecoder(parcelDecoder, resources)
@@ -76,7 +72,7 @@ class ExBitmapDrawableModule : LibraryGlideModule() {
         registry.setResourceDecoderBucketPriorityList(listOf(
                 Registry.BUCKET_GIF,
                 Registry.BUCKET_BITMAP,
-                BUCKET_EX_BITMAP_DRAWABLE,
+                Constants.BUCKET_EX_BITMAP_DRAWABLE,
                 Registry.BUCKET_BITMAP_DRAWABLE
         ))
     }
