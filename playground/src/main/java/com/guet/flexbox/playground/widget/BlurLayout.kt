@@ -16,6 +16,7 @@ import android.widget.FrameLayout
 import com.bumptech.glide.Glide
 import com.guet.flexbox.AppExecutors
 import com.guet.flexbox.playground.R
+import java.lang.reflect.Method
 import kotlin.math.max
 import kotlin.math.min
 
@@ -229,6 +230,7 @@ class BlurLayout @JvmOverloads constructor(
         snapshotCanvas = null
         // 结束录制
         snapshot.endRecording()
+        canvas.release()
         val mySampling = this.sampling
         val myBlurRadius = this.blurRadius
         AppExecutors.threadPool.execute {
@@ -327,6 +329,30 @@ class BlurLayout @JvmOverloads constructor(
         fun dp2px(dpValue: Float): Int {
             val scale = Resources.getSystem().displayMetrics.density
             return (dpValue * scale + 0.5f).toInt()
+        }
+
+        private val release by buildMethod<Canvas>("release")
+
+        private inline fun <reified T> buildMethod(name: String): Lazy<T.() -> Unit> {
+            return lazy<T.() -> Unit> {
+                var method: Method? = null
+                try {
+                    method = T::class.java
+                            .getDeclaredMethod(name)
+                            .apply {
+                                isAccessible = true
+                            }
+                } catch (e: Throwable) {
+                    e.printStackTrace()
+                }
+                return@lazy {
+                    try {
+                        method?.invoke(this)
+                    } catch (e: Throwable) {
+                        e.printStackTrace()
+                    }
+                }
+            }
         }
     }
 }

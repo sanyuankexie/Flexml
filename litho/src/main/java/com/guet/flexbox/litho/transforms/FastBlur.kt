@@ -1,19 +1,15 @@
 package com.guet.flexbox.litho.transforms
 
 import android.content.Context
-import android.graphics.Bitmap
-import android.graphics.Canvas
-import android.graphics.Paint
+import android.graphics.*
 import android.renderscript.Allocation
 import android.renderscript.Element
 import android.renderscript.RenderScript
 import android.renderscript.ScriptIntrinsicBlur
-import com.bumptech.glide.Glide
 import com.bumptech.glide.load.Transformation
 import com.bumptech.glide.load.engine.Resource
-import com.bumptech.glide.load.engine.bitmap_recycle.BitmapPool
-import com.bumptech.glide.load.resource.bitmap.BitmapResource
 import com.bumptech.glide.util.Util
+import java.lang.reflect.Method
 import java.nio.ByteBuffer
 import java.security.MessageDigest
 import kotlin.math.max
@@ -43,51 +39,35 @@ class FastBlur(
                     + outHeight
                     + " less than or equal to zero and not Target.SIZE_ORIGINAL")
         }
-        val pool = Glide.get(context).bitmapPool
-        return transformCheckResult(context, pool, resource)
-    }
-
-    private fun transformCheckResult(
-            context: Context,
-            pool: BitmapPool,
-            toTransform: Resource<Bitmap>
-    ): Resource<Bitmap> {
-        val input = toTransform.get()
-        val output = transformInternal(context, pool, input)
-        return if (output == input) {
-            toTransform
-        } else {
-            BitmapResource(output, pool)
-        }
-    }
-
-    private fun transformInternal(
-            context: Context,
-            pool: BitmapPool,
-            input: Bitmap
-    ): Bitmap {
+        val input = resource.get()
         val sampling = max(this.sampling, 1f)
         val width = input.width
         val height = input.height
-        if (sampling == 1f) {
-            //fast path
-            return rsBlur(context, input)
-        } else {
+        if (sampling != 1f) {
             val scaledWidth = (width / sampling).toInt()
             val scaledHeight = (height / sampling).toInt()
-            val output = pool[
-                    scaledWidth,
-                    scaledHeight,
-                    input.config
-            ]
-            val canvas = Canvas(output)
-            canvas.scale(1 / sampling, 1 / sampling)
-            val paint = Paint()
-            paint.flags = Paint.FILTER_BITMAP_FLAG
-            canvas.drawBitmap(input, 0f, 0f, paint)
-            return rsBlur(context, output)
+            val picture = Picture()
+            val paint = Paint(DEFAULT_PAINT_FLAGS)
+            val canvas = picture.beginRecording(scaledWidth, scaledHeight)
+            canvas.drawBitmap(
+                    input,
+                    Rect(0, 0, input.width, input.height),
+                    Rect(0, 0, scaledWidth, scaledHeight),
+                    paint
+            )
+            picture.endRecording()
+            input.reconfigure(scaledWidth, scaledHeight, input.config)
+            val canvas2 = Canvas(input)
+            canvas2.drawPicture(picture)
+            canvas2.setBitmap(null)
+            canvas2.release()
+            canvas.release()
+            picture.finalize()
         }
+        rsBlur(context, input)
+        return resource
     }
+
 
     override fun toString(): String {
         return "${FastBlur::class.java.name}(radius=$radius, sampling=$sampling)"
@@ -110,7 +90,7 @@ class FastBlur(
     private fun rsBlur(
             context: Context,
             bitmap: Bitmap
-    ): Bitmap {
+    ) {
         var rs: RenderScript? = null
         var input: Allocation? = null
         var output: Allocation? = null
@@ -133,7 +113,6 @@ class FastBlur(
             output?.destroy()
             blur?.destroy()
         }
-        return bitmap
     }
 
     override fun hashCode(): Int {
@@ -144,6 +123,35 @@ class FastBlur(
     }
 
     private companion object {
+
+        private const val DEFAULT_PAINT_FLAGS = Paint.FILTER_BITMAP_FLAG or Paint.DITHER_FLAG or Paint.ANTI_ALIAS_FLAG
+
+        private val finalize by buildMethod<Picture>("finalize")
+
+        private val release by buildMethod<Canvas>("release")
+
+        private inline fun <reified T> buildMethod(name: String): Lazy<T.() -> Unit> {
+            return lazy<T.() -> Unit> {
+                var method: Method? = null
+                try {
+                    method = T::class.java
+                            .getDeclaredMethod(name)
+                            .apply {
+                                isAccessible = true
+                            }
+                } catch (e: Throwable) {
+                    e.printStackTrace()
+                }
+                return@lazy {
+                    try {
+                        method?.invoke(this)
+                    } catch (e: Throwable) {
+                        e.printStackTrace()
+                    }
+                }
+            }
+        }
+
         private val ID = FastBlur::class.java.name
         private val ID_BYTE = ID.toByteArray()
     }
