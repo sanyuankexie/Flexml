@@ -95,7 +95,6 @@ class EnhancedBitmapDrawable : Drawable {
     }
 
     private val state: EnhancedBitmapState
-    private var useMatrix: Boolean = false
     private var shouldClipRect: Boolean = false
     private var pathIsDirty: Boolean = true
     private var scaleTypeIsDirty: Boolean = true
@@ -265,10 +264,8 @@ class EnhancedBitmapDrawable : Drawable {
             )
             this.shouldClipRect = shouldClipRect
             if (outMatrix == null) {
-                useMatrix = false
                 state.paint.shader = null
             } else {
-                useMatrix = true
                 this.shader.setLocalMatrix(outMatrix)
                 state.paint.shader = this.shader
             }
@@ -302,7 +299,7 @@ class EnhancedBitmapDrawable : Drawable {
         if (shouldClipRect) {
             canvas.clipRect(0, 0, bounds.width(), bounds.height())
         }
-        if (useMatrix) {
+        if (state.paint.shader != null) {
             if (!this::dstRect.isInitialized) {
                 dstRect = RectF(bounds)
             }
