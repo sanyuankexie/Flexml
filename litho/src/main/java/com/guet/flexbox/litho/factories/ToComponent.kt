@@ -2,17 +2,13 @@ package com.guet.flexbox.litho.factories
 
 import android.graphics.Color
 import android.graphics.drawable.GradientDrawable.Orientation
-import android.graphics.drawable.LayerDrawable
 import com.facebook.litho.Component
 import com.facebook.litho.ComponentContext
 import com.guet.flexbox.build.AttributeSet
 import com.guet.flexbox.build.Child
 import com.guet.flexbox.build.RenderNodeFactory
 import com.guet.flexbox.litho.ChildComponent
-import com.guet.flexbox.litho.drawable.ColorBorderDrawable
-import com.guet.flexbox.litho.drawable.ColorDrawable
-import com.guet.flexbox.litho.drawable.GradientDrawable
-import com.guet.flexbox.litho.drawable.LazyImageDrawable
+import com.guet.flexbox.litho.drawable.*
 import com.guet.flexbox.litho.resolve.UrlType
 import com.guet.flexbox.litho.toPx
 import com.guet.flexbox.litho.toPxFloat
@@ -91,108 +87,107 @@ abstract class ToComponent<C : Component.Builder<*>>(
         val needBorder = borderWidth != 0 && borderColor != Color.TRANSPARENT
         val needCorners = lt != 0f || rb != 0f || lb != 0f || rt != 0f
         val isSameCorners = lt == rt && lt == rb && lt == lb
+        c.clipChildren(false)
+        c.clipToOutline(false)
         if (background != null) {
             val (type, prams) = UrlType.parseUrl(
                     context, background
             )
-            if (type == UrlType.GRADIENT) {
-                val orientation = prams[0] as Orientation
-                val colors = prams[1] as IntArray
-                val drawable = GradientDrawable(
-                        orientation, colors
-                ).apply {
-                    if (needCorners) {
-                        if (isSameCorners) {
-                            cornerRadius = lb
-                        } else {
-                            cornerRadii = floatArrayOf(
-                                    lt, lt, rt, rt,
-                                    rb, rb, lb, lb
-                            )
+            when (type) {
+                UrlType.GRADIENT -> {
+                    val orientation = prams[0] as Orientation
+                    val colors = prams[1] as IntArray
+                    val drawable = lazyDrawable {
+                        GradientDrawable(
+                                orientation, colors
+                        ).apply {
+                            if (needCorners) {
+                                if (isSameCorners) {
+                                    cornerRadius = lb
+                                } else {
+                                    cornerRadii = floatArrayOf(
+                                            lt, lt, rt, rt,
+                                            rb, rb, lb, lb
+                                    )
+                                }
+                            }
                         }
                     }
-                }
-                if (needBorder) {
-                    val border = ColorBorderDrawable.Builder()
-                            .borderColor(borderColor)
-                            .borderWidth(borderWidth)
-                            .borderRadius(floatArrayOf(
-                                    lt, lt, rt, rt,
-                                    rb, rb, lb, lb
-                            ))
-                            .build()
-                    c.background(LayerDrawable(arrayOf(drawable, border)))
-                } else {
-                    c.background(drawable)
-                }
-                return
-            } else if (type == UrlType.COLOR) {
-                val color = prams[0] as Int
-                val drawable = ColorDrawable(
-                        color
-                ).apply {
-                    if (isSameCorners) {
-                        cornerRadius = lb
+                    if (needBorder) {
+                        val border = ColorBorderDrawable.Builder()
+                                .borderColor(borderColor)
+                                .borderWidth(borderWidth)
+                                .borderRadius(lt, rt, rb, lb)
+                                .build()
+                        c.background(ComparableLayerDrawable(drawable, border))
                     } else {
-                        cornerRadii = floatArrayOf(
-                                lt, lt, rt, rt,
-                                rb, rb, lb, lb
-                        )
+                        c.background(drawable)
                     }
+                    return
                 }
-                if (needBorder) {
-                    val border = ColorBorderDrawable.Builder()
-                            .borderColor(borderColor)
-                            .borderWidth(borderWidth)
-                            .borderRadius(floatArrayOf(
-                                    lt, lt, rt, rt,
-                                    rb, rb, lb, lb
-                            ))
-                            .build()
-                    c.background(LayerDrawable(arrayOf(drawable, border)))
-                } else {
-                    c.background(drawable)
-                }
-                return
-            } else if (type == UrlType.URL || type == UrlType.RESOURCE) {
-                val model = prams[0]
-                val drawable = if (needCorners) {
-                    if (isSameCorners) {
-                        LazyImageDrawable(context, model, lt)
+                UrlType.COLOR -> {
+                    val color = prams[0] as Int
+                    val drawable = lazyDrawable {
+                        ColorDrawable(
+                                color
+                        ).apply {
+                            if (isSameCorners) {
+                                cornerRadius = lb
+                            } else {
+                                cornerRadii = floatArrayOf(
+                                        lt, lt, rt, rt,
+                                        rb, rb, lb, lb
+                                )
+                            }
+                        }
+                    }
+                    if (needBorder) {
+                        val border = ColorBorderDrawable.Builder()
+                                .borderColor(borderColor)
+                                .borderWidth(borderWidth)
+                                .borderRadius(lt, rt, rb, lb)
+                                .build()
+                        c.background(ComparableLayerDrawable(drawable, border))
                     } else {
-                        LazyImageDrawable(
-                                context,
-                                model,
-                                lt, rt, rb, lb
-                        )
+                        c.background(drawable)
                     }
-                } else {
-                    LazyImageDrawable(context, model)
+                    return
                 }
-                if (needBorder) {
-                    val border = ColorBorderDrawable.Builder()
-                            .borderColor(borderColor)
-                            .borderWidth(borderWidth)
-                            .borderRadius(floatArrayOf(
-                                    lt, lt, rt, rt,
-                                    rb, rb, lb, lb
-                            ))
-                            .build()
-                    c.background(LayerDrawable(arrayOf(drawable, border)))
-                } else {
-                    c.background(drawable)
+                UrlType.URL, UrlType.RESOURCE -> {
+                    val model = prams[0]
+                    val drawable = if (needCorners) {
+                        if (isSameCorners) {
+                            LazyImageDrawable(context, model, lt)
+                        } else {
+                            LazyImageDrawable(
+                                    context,
+                                    model,
+                                    lt, rt, rb, lb
+                            )
+                        }
+                    } else {
+                        LazyImageDrawable(context, model)
+                    }
+                    if (needBorder) {
+                        val border = ColorBorderDrawable.Builder()
+                                .borderColor(borderColor)
+                                .borderWidth(borderWidth)
+                                .borderRadius(lt, rt, rb, lb)
+                                .build()
+                        c.background(ComparableLayerDrawable(drawable, border))
+                    } else {
+                        c.background(drawable)
+                    }
+                    return
                 }
-                return
+                else -> Unit
             }
         }
         if (needBorder) {
             c.background(ColorBorderDrawable.Builder()
                     .borderColor(borderColor)
                     .borderWidth(borderWidth)
-                    .borderRadius(floatArrayOf(
-                            lt, lt, rt, rt,
-                            rb, rb, lb, lb
-                    ))
+                    .borderRadius(lt, rt, rb, lb)
                     .build())
         }
     }

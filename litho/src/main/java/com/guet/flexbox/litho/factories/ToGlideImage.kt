@@ -1,6 +1,5 @@
 package com.guet.flexbox.litho.factories
 
-import com.bumptech.glide.Glide
 import com.facebook.litho.ComponentContext
 import com.guet.flexbox.build.AttributeSet
 import com.guet.flexbox.enums.ScaleType
@@ -25,15 +24,9 @@ internal object ToGlideImage : ToComponent<GlideImage.Builder>(CommonAssigns) {
         }
         register("url") { _, _, value: String ->
             url(value)
-            Glide.with(context!!.androidContext)
-                    .load(value)
-                    .preload()
         }
         register("internal:resId") { _, _, value: Int ->
             resId(value)
-            Glide.with(context!!.androidContext)
-                    .load(value)
-                    .preload()
         }
         register("borderLeftTopRadius") { _, _, value: Double ->
             leftTopRadius(value.toPxFloat())

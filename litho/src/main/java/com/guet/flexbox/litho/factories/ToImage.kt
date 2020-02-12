@@ -5,12 +5,14 @@ import android.graphics.drawable.GradientDrawable.Orientation
 import android.widget.ImageView
 import com.facebook.litho.Component
 import com.facebook.litho.ComponentContext
+import com.facebook.litho.Row
 import com.facebook.litho.widget.EmptyComponent
 import com.facebook.litho.widget.Image
 import com.guet.flexbox.build.AttributeSet
 import com.guet.flexbox.build.Child
 import com.guet.flexbox.build.RenderNodeFactory
 import com.guet.flexbox.litho.drawable.ColorDrawable
+import com.guet.flexbox.litho.drawable.lazyDrawable
 import com.guet.flexbox.litho.resolve.UrlType
 import com.guet.flexbox.litho.toPxFloat
 
@@ -52,16 +54,18 @@ object ToImage : RenderNodeFactory {
                 UrlType.GRADIENT -> {
                     val orientation = prams[0] as Orientation
                     val colors = prams[1] as IntArray
-                    val drawable= GradientDrawable(
-                            orientation, colors
-                    ).apply {
-                        if (needCorners) {
-                            if (isSameCorners) {
-                                cornerRadius = lb
-                            } else {
-                                cornerRadii = floatArrayOf(
-                                        lt, rt, rb, lb
-                                )
+                    val drawable = lazyDrawable {
+                        GradientDrawable(
+                                orientation, colors
+                        ).apply {
+                            if (needCorners) {
+                                if (isSameCorners) {
+                                    cornerRadius = lb
+                                } else {
+                                    cornerRadii = floatArrayOf(
+                                            lt, rt, rb, lb
+                                    )
+                                }
                             }
                         }
                     }
@@ -72,16 +76,18 @@ object ToImage : RenderNodeFactory {
                 }
                 UrlType.COLOR -> {
                     val color = prams[0] as Int
-                    val drawable = ColorDrawable(
-                            color
-                    ).apply {
-                        if (isSameCorners) {
-                            cornerRadius = lb
-                        } else {
-                            cornerRadii = floatArrayOf(
-                                    lt, lt, rt, rt,
-                                    rb, rb, lb, lb
-                            )
+                    val drawable = lazyDrawable {
+                        ColorDrawable(
+                                color
+                        ).apply {
+                            if (isSameCorners) {
+                                cornerRadius = lb
+                            } else {
+                                cornerRadii = floatArrayOf(
+                                        lt, lt, rt, rt,
+                                        rb, rb, lb, lb
+                                )
+                            }
                         }
                     }
                     return Image.create(c)
@@ -89,7 +95,9 @@ object ToImage : RenderNodeFactory {
                             .drawable(drawable)
                             .build()
                 }
-                UrlType.URL -> return ToGlideImage.toComponent(c, visibility, attrs, emptyList())
+                UrlType.URL -> {
+                    return ToGlideImage.toComponent(c, visibility, attrs, emptyList())
+                }
                 UrlType.RESOURCE -> {
                     val id = prams[0] as Int
                     return ToGlideImage.toComponent(c, visibility,
@@ -98,11 +106,9 @@ object ToImage : RenderNodeFactory {
                                 this["internal:resId"] = id
                             }, emptyList())
                 }
-                else -> {
-                    return EmptyComponent.create(c).build()
-                }
+                else -> Unit
             }
         }
-        return EmptyComponent.create(c).build()
+        return Row.create(c).build()
     }
 }
