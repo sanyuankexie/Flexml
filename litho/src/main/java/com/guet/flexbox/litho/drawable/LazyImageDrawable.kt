@@ -3,7 +3,6 @@ package com.guet.flexbox.litho.drawable
 import android.content.Context
 import android.graphics.Canvas
 import android.graphics.drawable.Drawable
-import android.graphics.drawable.TransitionDrawable
 import android.widget.ImageView.ScaleType
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.target.SizeReadyCallback
@@ -89,7 +88,7 @@ class LazyImageDrawable private constructor(
     override fun onResourceReady(
             resource: Drawable,
             transition: Transition<in Drawable>?) {
-        wrappedDrawable = wrappedToTransition(resource)
+        wrappedDrawable = resource
         invalidateSelf()
     }
 
@@ -102,12 +101,12 @@ class LazyImageDrawable private constructor(
         onLoadCleared(null)
     }
 
-    private fun wrappedToTransition(target: Drawable): Drawable {
-        val transitionDrawable = TransitionDrawable(arrayOf(cacheNoOpDrawable, target))
-        transitionDrawable.isCrossFadeEnabled = true
-        transitionDrawable.startTransition(200)
-        return transitionDrawable
-    }
+//    private fun wrappedToTransition(target: Drawable): Drawable {
+//        val transitionDrawable = TransitionDrawable(arrayOf(cacheNoOpDrawable, target))
+//        transitionDrawable.isCrossFadeEnabled = true
+//        transitionDrawable.startTransition(200)
+//        return transitionDrawable
+//    }
 
     @Throws(Throwable::class)
     protected fun finalize() {
