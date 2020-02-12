@@ -214,8 +214,8 @@ class FitScale(
                     val src = RectF()
                     val dest = RectF()
                     // Generate the required transform.
-                    src[0f, 0f, intrinsicWidth.toFloat()] = intrinsicHeight.toFloat()
-                    dest[0f, 0f, width.toFloat()] = height.toFloat()
+                    src.set(0f, 0f, intrinsicWidth.toFloat(), intrinsicHeight.toFloat())
+                    dest.set(0f, 0f, width.toFloat(), height.toFloat())
                     result.setRectToRect(src, dest, scaleTypeToScaleToFit(scaleType))
                 }
             }

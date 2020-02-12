@@ -6,7 +6,6 @@ import android.graphics.drawable.Drawable
 import android.graphics.drawable.TransitionDrawable
 import android.widget.ImageView.ScaleType
 import com.bumptech.glide.Glide
-import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.request.target.SizeReadyCallback
 import com.bumptech.glide.request.target.Target
 import com.bumptech.glide.request.transition.Transition
@@ -63,7 +62,8 @@ class GlideDrawable(
         this.height = height
         var request = Glide.with(context)
                 .load(model)
-                .diskCacheStrategy(DiskCacheStrategy.ALL)
+                .transform()
+
         val tf = OffScreenRender.Builder {
             this.blurRadius = blurRadius
             this.blurSampling = blurSampling

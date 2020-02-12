@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout
+<LinearLayout
     android:fitsSystemWindows="true"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:android="http://schemas.android.com/apk/res/android"
@@ -7,16 +7,18 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
     <ImageView
+        android:background="@color/gray"
         android:id="@+id/native_image"
         android:scaleType="fitXY"
         android:layout_weight="1"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
+        android:layout_height="0dp"/>
     <ImageView
+        android:background="@color/gray"
         android:layout_gravity="center"
         android:scaleType="fitXY"
         android:id="@+id/image"
         android:layout_weight="1"
-        android:layout_width="200dp"
-        android:layout_height="200dp"/>
-</FrameLayout>
+        android:layout_width="match_parent"
+        android:layout_height="0dp"/>
+</LinearLayout>
