@@ -135,7 +135,7 @@
                 marginRight="3"
                 flexGrow="1">
                 <Image
-                    blurSampling="3"
+                    blurSampling="8"
                     blurRadius="25"
                     borderRadius="10"
                     scaleType="fitXY"
