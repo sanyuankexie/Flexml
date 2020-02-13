@@ -14,7 +14,7 @@ object Constants {
             ExBitmapDrawable::class.java.name + ".scaleType",
             ScaleType.FIT_XY
     )
-    val cornerRadii = Option.memory<FloatArray>(
-            ExBitmapDrawable::class.java.name + ".cornerRadii"
+    val cornerRadius = Option.memory<CornerRadius>(
+            ExBitmapDrawable::class.java.name + ".cornerRadius"
     )
 }

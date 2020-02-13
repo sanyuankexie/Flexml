@@ -15,7 +15,7 @@ class LazyExBitmapDrawableResource(
 ) : Resource<ExBitmapDrawable>, Initializable {
 
     private val scaleType: ScaleType
-    private val cornerRadius: FloatArray
+    private val cornerRadius: CornerRadius
 
     init {
         var scaleType = options.get(Constants.scaleType)
@@ -23,7 +23,7 @@ class LazyExBitmapDrawableResource(
             scaleType = ScaleType.FIT_XY
         }
         this.scaleType = scaleType
-        cornerRadius = options.get(Constants.cornerRadii) ?: Constants.emptyArray
+        cornerRadius = options.get(Constants.cornerRadius) ?: CornerRadius.empty
     }
 
     override fun getResourceClass(): Class<ExBitmapDrawable> {
@@ -33,11 +33,11 @@ class LazyExBitmapDrawableResource(
     override fun get(): ExBitmapDrawable {
         val drawable = ExBitmapDrawable(bitmapResource.get())
         drawable.scaleType = scaleType
-        if (cornerRadius.isNotEmpty()) {
-            if (cornerRadius.size == 8) {
-                drawable.cornerRadii = cornerRadius
+        if (cornerRadius.hasRadius) {
+            if (cornerRadius.hasEqualRadius) {
+                drawable.cornerRadius = cornerRadius.radius
             } else {
-                drawable.cornerRadius = cornerRadius[0]
+                drawable.cornerRadii = cornerRadius.radii
             }
         }
         return drawable

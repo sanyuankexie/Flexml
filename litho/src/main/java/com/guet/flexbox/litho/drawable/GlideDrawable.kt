@@ -9,6 +9,7 @@ import com.bumptech.glide.request.target.SizeReadyCallback
 import com.bumptech.glide.request.target.Target
 import com.bumptech.glide.request.transition.Transition
 import com.guet.flexbox.litho.load.Constants
+import com.guet.flexbox.litho.load.CornerRadius
 import com.guet.flexbox.litho.transforms.FastBlur
 
 class GlideDrawable(
@@ -65,20 +66,12 @@ class GlideDrawable(
                 .load(model)
                 .transform()
                 .set(Constants.scaleType, scaleType)
-        if (leftTop + rightTop + rightBottom + leftBottom != 0f) {
-            request = if (leftTop == rightTop
-                    && leftTop == rightBottom
-                    && leftTop == leftBottom) {
-                request.set(Constants.cornerRadii, floatArrayOf(leftTop))
-            } else {
-                request.set(Constants.cornerRadii, floatArrayOf(
-                        leftTop, leftTop,
-                        rightTop, rightTop,
-                        rightBottom, rightBottom,
-                        leftBottom, leftBottom
+                .set(Constants.cornerRadius, CornerRadius(
+                        leftTop,
+                        rightTop,
+                        rightBottom,
+                        leftBottom
                 ))
-            }
-        }
         if (blurRadius > 0 && blurSampling >= 1) {
             request = request.transform(FastBlur(
                     blurRadius, blurSampling

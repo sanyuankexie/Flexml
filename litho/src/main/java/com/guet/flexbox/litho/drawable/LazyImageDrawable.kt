@@ -10,6 +10,7 @@ import com.bumptech.glide.request.target.Target
 import com.bumptech.glide.request.transition.Transition
 import com.facebook.litho.drawable.ComparableDrawable
 import com.guet.flexbox.litho.load.Constants
+import com.guet.flexbox.litho.load.CornerRadius
 import java.lang.ref.WeakReference
 import java.util.concurrent.atomic.AtomicBoolean
 
@@ -39,10 +40,10 @@ class LazyImageDrawable private constructor(
     ) : this(
             context, model,
             floatArrayOf(
-                    leftTop, leftTop,
-                    rightTop, rightTop,
-                    rightBottom, rightBottom,
-                    leftBottom, leftBottom
+                    leftTop,
+                    rightTop,
+                    rightBottom,
+                    leftBottom
             )
     )
 
@@ -74,7 +75,12 @@ class LazyImageDrawable private constructor(
                     .load(model)
                     .transform()
                     .set(Constants.scaleType, ScaleType.FIT_XY)
-                    .set(Constants.cornerRadii, radiusArray)
+                    .set(Constants.cornerRadius, CornerRadius(
+                            radiusArray[0],
+                            radiusArray[1],
+                            radiusArray[2],
+                            radiusArray[3]
+                    ))
                     .into(this as Target<ExBitmapDrawable>)
         } else {
             super.draw(canvas)

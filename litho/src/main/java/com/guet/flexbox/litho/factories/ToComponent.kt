@@ -73,6 +73,14 @@ abstract class ToComponent<C : Component.Builder<*>>(
                 }
             }
         }
+        val borderWidth = attrs["borderWidth"] as? Double
+        if (borderWidth != null) {
+            for (edge in arrayOf("Left", "Right", "Top", "Bottom")) {
+                val key = "margin${edge}"
+                val value = attrs[key] as? Double ?: 0.0
+                (attrs as MutableMap)[key] = value + borderWidth
+            }
+        }
     }
 
     private fun createBackground(c: C, attrs: AttributeSet) {
