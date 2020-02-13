@@ -26,6 +26,7 @@ class TransformRootLayout @JvmOverloads constructor(
     var animationDuration: Long = 500L
     var offset: Float = UIUtils.dp2px(context, 30f).toFloat()
     private var bitmap: Bitmap? = null
+    private var useRadius: Float = 0f
     private val canvas = Canvas()
     private val rectF = RectF()
     private val paint = Paint(Paint.FILTER_BITMAP_FLAG or Paint.ANTI_ALIAS_FLAG or Paint.DITHER_FLAG)
@@ -60,6 +61,7 @@ class TransformRootLayout @JvmOverloads constructor(
             addUpdateListener {
                 var value = it.animatedValue as Float
                 (foreground as ColorDrawable).alpha = ((255f / 2f) * (value / 2f)).toInt()
+                useRadius = (value / 2f) * cornerRadius
                 if (value <= 1) {
                     //lt-x
                     dst[0] = value * offset
@@ -116,6 +118,7 @@ class TransformRootLayout @JvmOverloads constructor(
                     dst[6] = offset
                     //lb-y
                     dst[7] = height - offset
+                    useRadius = cornerRadius.toFloat()
                     (foreground as ColorDrawable).alpha = 255 / 2
                     invalidate()
                 }
@@ -140,6 +143,7 @@ class TransformRootLayout @JvmOverloads constructor(
             addUpdateListener {
                 var value = it.animatedValue as Float
                 (foreground as ColorDrawable).alpha = ((255f / 2f) - (255f / 2f) * (value / 2f)).toInt()
+                useRadius = cornerRadius - (value / 2f) * cornerRadius
                 if (value <= 1) {
                     dst[0] = offset
                     dst[1] = offset
@@ -165,6 +169,7 @@ class TransformRootLayout @JvmOverloads constructor(
             addListener(object : AnimatorListenerAdapter() {
                 override fun onAnimationEnd(animation: Animator?) {
                     foreground = null
+                    useRadius = 0f
                     bitmap?.let { Glide.get(context).bitmapPool.put(it) }
                     paint.shader = null
                     bitmap = null
@@ -193,8 +198,8 @@ class TransformRootLayout @JvmOverloads constructor(
                     rectF.apply {
                         set(0f, 0f, width.toFloat(), height.toFloat())
                     },
-                    cornerRadius.toFloat(),
-                    cornerRadius.toFloat(),
+                    useRadius,
+                    useRadius,
                     paint
             )
             canvas.restore()
