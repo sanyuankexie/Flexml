@@ -51,6 +51,16 @@ class CornerRadius private constructor(
             }
         }
 
+        operator fun invoke(
+                value: Float
+        ): CornerRadius {
+            return if (value == 0f) {
+                empty
+            } else {
+                CornerRadius(floatArrayOf(value))
+            }
+        }
+
         val empty = CornerRadius(Constants.emptyArray)
     }
 }

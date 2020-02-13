@@ -67,7 +67,7 @@ internal object ELFunction {
     @Prefix("gradient")
     @JvmName("linear")
     @JvmStatic
-    fun gradient(orientation: String, vararg colors: String): String {
+    fun linear(orientation: String, vararg colors: String): String {
         return buildUri("gradient", "linear",
                 mutableListOf("orientation" to orientation)
                         .apply {

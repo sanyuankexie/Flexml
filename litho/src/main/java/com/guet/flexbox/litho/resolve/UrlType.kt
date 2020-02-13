@@ -34,26 +34,27 @@ enum class UrlType {
                 TextUtils.isEmpty(url) -> {
                     return ERROR to emptyArray()
                 }
+                url.startsWith("gradient://") -> {
+                    val uri = Uri.parse(url.toString())
+                    val type =
+                            uri.getQueryParameter(
+                                    "orientation"
+                            )?.run {
+                                orientations.getValue(this)
+                            }
+                    val colors = uri.getQueryParameters("color")?.map {
+                        Color.parseColor(it)
+                    }?.toIntArray()
+                    return if (type != null && colors != null
+                            && colors.isNotEmpty()) {
+                        GRADIENT to arrayOf(type, colors as Any)
+                    } else {
+                        ERROR to emptyArray()
+                    }
+                }
                 url.startsWith("res://") -> {
                     val uri = Uri.parse(url.toString())
                     when (uri.host) {
-                        "gradient" -> {
-                            val type =
-                                    uri.getQueryParameter(
-                                            "orientation"
-                                    )?.run {
-                                        orientations.getValue(this)
-                                    }
-                            val colors = uri.getQueryParameters("color")?.map {
-                                Color.parseColor(it)
-                            }?.toIntArray()
-                            return if (type != null && colors != null
-                                    && colors.isNotEmpty()) {
-                                GRADIENT to arrayOf(type, colors as Any)
-                            } else {
-                                ERROR to emptyArray()
-                            }
-                        }
                         "drawable" -> {
                             val name = uri.getQueryParameter("name")
                             if (name != null) {

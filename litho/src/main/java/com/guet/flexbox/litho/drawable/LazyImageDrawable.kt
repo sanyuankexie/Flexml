@@ -17,14 +17,10 @@ import java.util.concurrent.atomic.AtomicBoolean
 class LazyImageDrawable private constructor(
         context: Context,
         private val model: Any,
-        private val radiusArray: FloatArray
+        private val radius: CornerRadius
 ) : DrawableWrapper<Drawable>(NoOpDrawable()),
         Target<Drawable> by DelegateTarget(),
         ComparableDrawable {
-
-    private companion object {
-        private val emptyArray = FloatArray(0)
-    }
 
     private val cacheNoOpDrawable = wrappedDrawable
 
@@ -39,7 +35,7 @@ class LazyImageDrawable private constructor(
             leftBottom: Float
     ) : this(
             context, model,
-            floatArrayOf(
+            CornerRadius(
                     leftTop,
                     rightTop,
                     rightBottom,
@@ -51,19 +47,19 @@ class LazyImageDrawable private constructor(
             context: Context,
             model: Any,
             radius: Float
-    ) : this(context, model, floatArrayOf(radius))
+    ) : this(context, model, CornerRadius(radius))
 
     constructor(
             context: Context,
             model: Any
-    ) : this(context, model, emptyArray)
+    ) : this(context, model, 0f)
 
     private val isInit = AtomicBoolean(false)
 
     override fun isEquivalentTo(other: ComparableDrawable?): Boolean {
         return other is LazyImageDrawable
                 && model == other.model
-                && radiusArray.contentEquals(other.radiusArray)
+                && radius == other.radius
     }
 
     override fun draw(canvas: Canvas) {
@@ -75,12 +71,7 @@ class LazyImageDrawable private constructor(
                     .load(model)
                     .transform()
                     .set(Constants.scaleType, ScaleType.FIT_XY)
-                    .set(Constants.cornerRadius, CornerRadius(
-                            radiusArray[0],
-                            radiusArray[1],
-                            radiusArray[2],
-                            radiusArray[3]
-                    ))
+                    .set(Constants.cornerRadius, radius)
                     .into(this as Target<ExBitmapDrawable>)
         } else {
             super.draw(canvas)
