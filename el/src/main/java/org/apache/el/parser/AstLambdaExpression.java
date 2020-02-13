@@ -29,7 +29,6 @@ import java.util.List;
 
 public class AstLambdaExpression extends SimpleNode {
 
-    private Throwable lastSetNestedState = null;
     private NestedState nestedState = null;
 
     public AstLambdaExpression(int id) {
@@ -74,21 +73,13 @@ public class AstLambdaExpression extends SimpleNode {
 
 
     private NestedState getNestedState() {
-        if (nestedState == null) {
-            setNestedState(new NestedState());
-        }
+        nestedState = null;
+        setNestedState(new NestedState());
         return nestedState;
     }
 
 
     private void setNestedState(NestedState nestedState) {
-        if (this.nestedState != null) {
-            // Should never happen
-            lastSetNestedState.printStackTrace();
-            throw new IllegalStateException(MessageFactory.get("error.lambda.wrongNestedState"));
-        } else {
-            lastSetNestedState = new Throwable();
-        }
         this.nestedState = nestedState;
 
         // Increment the nesting count for the current expression

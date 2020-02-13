@@ -4,6 +4,7 @@ import android.content.ClipboardManager
 import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
+import android.os.AsyncTask
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextUtils
@@ -17,7 +18,6 @@ import android.widget.FrameLayout
 import android.widget.PopupWindow
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
-import com.guet.flexbox.AppExecutors
 import com.guet.flexbox.litho.HostingView
 import com.guet.flexbox.litho.TemplatePage
 import com.guet.flexbox.playground.model.TemplateCompiler
@@ -118,7 +118,7 @@ class SearchActivity : AppCompatActivity() {
     }
 
     private fun loadHistory() {
-        AppExecutors.threadPool.execute {
+        AsyncTask.THREAD_POOL_EXECUTOR.execute {
             val input = resources
                     .assets
                     .open("layout/search/history_list.flexml")

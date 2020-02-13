@@ -1,5 +1,6 @@
 package com.guet.flexbox.build
 
+import android.content.Context
 import com.guet.flexbox.EventContext
 import com.guet.flexbox.TemplateNode
 import com.guet.flexbox.el.ELContext
@@ -50,4 +51,6 @@ abstract class BuildTool {
             )
         }.flatten()
     }
+
+    open fun init(context: Context) {}
 }
