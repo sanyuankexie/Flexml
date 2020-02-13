@@ -1,7 +1,7 @@
 package com.guet.flexbox.intellij.action
 
-import com.guet.flexbox.intellij.res.Icons
 import com.guet.flexbox.intellij.fileType.FlexmlFileType
+import com.guet.flexbox.intellij.res.Icons
 import com.intellij.CommonBundle
 import com.intellij.ide.actions.CreateElementActionBase
 import com.intellij.ide.fileTemplates.FileTemplateManager
@@ -41,7 +41,7 @@ class NewPackageAction : CreateElementActionBase("", "", Icons.typeIcon) {
             packageText
         )
         val templateText = FileTemplateManager.getInstance(directory.project)
-            .getInternalTemplate("flexml_file").text
+            .getInternalTemplate("flexml-file").text
         val templateFile = factory.createFileFromText(
             "template.flexml",
                 FlexmlFileType, templateText)

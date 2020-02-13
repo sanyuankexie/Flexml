@@ -5,10 +5,11 @@ import android.content.DialogInterface
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Bundle
-import android.webkit.WebView
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
+import com.didichuxing.doraemonkit.DoraemonKit
+import com.facebook.soloader.SoLoader
 import com.guet.flexbox.playground.model.AppLoader
 
 class StartupActivity : AppCompatActivity() {
@@ -16,21 +17,17 @@ class StartupActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         val ctx = application
-        AppLoader.init(ctx) {
-            runOnUiThread {
-                ActivityCompat.requestPermissions(
-                        this,
-                        definedPermissions,
-                        REQUEST_CODE
-                )
-            }
+        AppLoader.loadWithCallback(ctx) {
+            ActivityCompat.requestPermissions(
+                    this,
+                    definedPermissions,
+                    REQUEST_CODE
+            )
         }
-        initWebView()
+        DoraemonKit.install(application)
+        SoLoader.init(this, false)
     }
 
-    private fun initWebView() {
-        WebView(this).destroy()
-    }
 
     override fun onRequestPermissionsResult(
             requestCode: Int,

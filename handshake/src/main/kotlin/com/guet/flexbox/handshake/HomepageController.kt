@@ -2,6 +2,7 @@ package com.guet.flexbox.handshake
 
 import com.google.gson.Gson
 import com.guet.flexbox.compiler.JsonCompiler
+import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.ApplicationArguments
 import org.springframework.boot.ApplicationRunner
 import org.springframework.boot.web.context.WebServerInitializedEvent
@@ -23,8 +24,6 @@ class HomepageController : ApplicationRunner,
     @Volatile
     private var focus: String? = null
 
-    private val gson = Gson()
-
     @RequestMapping(
             "/",
             method = [RequestMethod.GET]
@@ -38,7 +37,10 @@ class HomepageController : ApplicationRunner,
             "/datasource",
             method = [RequestMethod.GET]
     )
-    fun loadPackage(request: HttpServletRequest): ResponseEntity<String> {
+    fun loadPackage(
+            request: HttpServletRequest,
+            @Autowired gson: Gson
+    ): ResponseEntity<String> {
         val focus = focus
         if (focus != null) {
             val packageFile = File(focus)

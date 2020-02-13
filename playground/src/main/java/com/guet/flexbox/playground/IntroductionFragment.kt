@@ -12,7 +12,7 @@ import com.guet.flexbox.playground.model.Homepage
 class IntroductionFragment : Fragment() {
 
     private lateinit var host: HostingView
-    private val homepageInfo: Homepage by AppLoader.waitHomepage()
+    private val homepageInfo: Homepage by AppLoader.lockHomepage()
 
     override fun onCreateView(
             inflater: LayoutInflater,

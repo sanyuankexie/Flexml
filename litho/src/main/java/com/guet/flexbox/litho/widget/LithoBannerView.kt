@@ -29,8 +29,9 @@ class LithoBannerView(context: Context) : FrameLayout(context), HasLithoViewChil
     private var indicatorUnselectedColor: Int = BannerSpec.indicatorUnselectedColor
     private var indicatorEnable: Boolean = BannerSpec.indicatorEnable
     private var isCircular: Boolean = BannerSpec.isCircular
-    private val components = ArrayList<Component>()
     private var token: Runnable? = null
+    private val components = ArrayList<Component>()
+
 
     init {
         addView(viewPager2, ViewGroup.LayoutParams(-1, -1))
@@ -46,7 +47,6 @@ class LithoBannerView(context: Context) : FrameLayout(context), HasLithoViewChil
     private fun renderIndicators(position: Int): Component {
         val realPosition = getNormalizedPosition(position)
         val indicatorPx = 5.toPx()
-        val outline = CornerOutlineProvider(indicatorPx)
         val c = indicators.componentContext
         val cc = (components.indices).map { index ->
             Row.create(c)
@@ -54,7 +54,6 @@ class LithoBannerView(context: Context) : FrameLayout(context), HasLithoViewChil
                     .heightPx(indicatorPx)
                     .marginPx(YogaEdge.LEFT, indicatorPx / 2)
                     .marginPx(YogaEdge.RIGHT, indicatorPx / 2)
-                    .outlineProvider(outline)
                     .clipToOutline(true)
                     .apply {
                         if (index == realPosition) {

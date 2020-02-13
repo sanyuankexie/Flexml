@@ -26,6 +26,7 @@ public class ELManager {
 
     private StandardELContext context = null;
 
+    //single thread
     public static ExpressionFactory getExpressionFactory() {
         return Util.getExpressionFactory();
     }

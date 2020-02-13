@@ -1,6 +1,6 @@
 package com.guet.flexbox.build
 
-import com.guet.flexbox.HostContext
+import com.guet.flexbox.EventContext
 import com.guet.flexbox.TemplateNode
 import com.guet.flexbox.el.ELContext
 import com.guet.flexbox.el.scope
@@ -17,7 +17,7 @@ object For : Declaration() {
             attrs: AttributeSet,
             children: List<TemplateNode>,
             factory: RenderNodeFactory?,
-            hostContext: HostContext,
+            eventContext: EventContext,
             data: ELContext,
             upperVisibility: Boolean,
             other: Any
@@ -29,7 +29,7 @@ object For : Declaration() {
             data.scope(mapOf(name to index)) {
                 buildTool.buildAll(
                         children,
-                        hostContext,
+                        eventContext,
                         data,
                         upperVisibility,
                         other

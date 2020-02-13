@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <com.guet.flexbox.playground.widget.StatusBarPadding
+        android:background="@color/colorPrimary"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"/>
+    <androidx.coordinatorlayout.widget.CoordinatorLayout
+        android:id="@+id/coordinator"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+        <com.google.android.material.appbar.AppBarLayout
+            android:id="@+id/appbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize">
+            <LinearLayout
+                app:layout_scrollFlags="noScroll"
+                android:visibility="visible"
+                android:id="@+id/toolbar"
+                android:paddingTop="10dp"
+                android:paddingBottom="10dp"
+                android:background="@color/colorPrimary"
+                android:gravity="center"
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="60dp">
+                <ImageView
+                    android:id="@+id/qr_code"
+                    android:src="@drawable/ic_saoma"
+                    android:scaleType="fitXY"
+                    android:layout_marginLeft="15dp"
+                    android:layout_width="25dp"
+                    android:layout_height="25dp" />
+                <TextView
+                    android:transitionName="search"
+                    android:id="@+id/search"
+                    android:textSize="16dp"
+                    android:gravity="center_vertical"
+                    android:hint="模板链接"
+                    android:background="@drawable/ic_search_background"
+                    android:layout_marginLeft="15dp"
+                    android:layout_marginRight="15dp"
+                    android:layout_weight="1"
+                    android:layout_width="0dp"
+                    android:layout_height="36dp" />
+                <ImageView
+                    android:id="@+id/info"
+                    android:src="@drawable/ic_about"
+                    android:scaleType="fitXY"
+                    android:layout_marginRight="15dp"
+                    android:layout_width="25dp"
+                    android:layout_height="25dp" />
+            </LinearLayout>
+        </com.google.android.material.appbar.AppBarLayout>
+        <androidx.recyclerview.widget.RecyclerView
+            android:background="@color/whitesmoke"
+            app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior"
+            android:overScrollMode="never"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+            android:id="@+id/feed"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"/>
+    </androidx.coordinatorlayout.widget.CoordinatorLayout>
+</LinearLayout>
+

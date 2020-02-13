@@ -27,11 +27,13 @@ internal inline fun <T> ELContext.scope(
 
 @Throws(ELException::class)
 internal fun ELContext.getValue(expr: String, type: Class<*>): Any {
-    return expressionFactory.createValueExpression(
-            this,
-            expr,
-            type
-    ).getValue(this) ?: throw ELException("$expr out null")
+    return synchronized(this) {
+        expressionFactory.createValueExpression(
+                this,
+                expr,
+                type
+        ).getValue(this) ?: throw ELException("$expr out null")
+    }
 }
 
 @Throws(ELException::class)
@@ -54,6 +56,16 @@ internal fun ELContext.getColor(expr: String): Int {
             }
         }
     }
+}
+
+private fun ELContext.tryGetLambda(expr: String?): LambdaExpression? {
+    if (expr == null) {
+        return null
+    }
+    val trimExpr = expr.trim()
+    val safeExpr = "\${(_)->{${trimExpr.slice((2..trimExpr.length - 2))}}}"
+    tryGetValue<LambdaExpression>(safeExpr)
+    TODO()
 }
 
 internal inline fun <reified T> ELContext.tryGetValue(expr: String?, fallback: T? = null): T? {
@@ -82,10 +94,3 @@ internal fun ELContext.tryGetColor(expr: String?, @ColorInt fallback: Int?): Int
     }
 }
 
-internal fun ELContext.unWrap(): ELContext {
-    var ctx = this
-    while (ctx is ScopeELContext) {
-        ctx = ctx.target
-    }
-    return ctx as PropsELContext
-}

@@ -17,7 +17,7 @@ class PropsELContext(
         if (props != null) {
             standardResolver.add(props)
         }
-        standardResolver.add(stream)
+        standardResolver.add(expressionFactory.streamELResolver)
         standardResolver.add(staticField)
         standardResolver.add(map)
         standardResolver.add(resources)
@@ -26,6 +26,17 @@ class PropsELContext(
         standardResolver.add(bean)
         standardResolver.add(jsonObject)
         standardResolver.add(jsonArray)
+    }
+
+    @Throws(ELException::class)
+    internal fun ELContext.getValue(expr: String, type: Class<*>): Any {
+        return synchronized(expressionFactory) {
+            expressionFactory.createValueExpression(
+                    this,
+                    expr,
+                    type
+            ).getValue(this) ?: throw ELException("$expr out null")
+        }
     }
 
     override fun getELResolver(): ELResolver = standardResolver
@@ -85,7 +96,6 @@ class PropsELContext(
 
     private companion object {
 
-        private val stream = expressionFactory.streamELResolver
         private val array = ArrayELResolver(false)
         private val bean = BeanELResolver(false)
         private val map = MapELResolver(false)

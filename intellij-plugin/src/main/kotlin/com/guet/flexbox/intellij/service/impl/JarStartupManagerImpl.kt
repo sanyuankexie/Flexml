@@ -7,6 +7,7 @@ import com.intellij.execution.jar.JarApplicationCommandLineState
 import com.intellij.execution.jar.JarApplicationConfiguration
 import com.intellij.execution.jar.JarApplicationConfigurationType
 import com.intellij.execution.runners.ExecutionEnvironment
+import com.intellij.ide.ApplicationLoadListener
 import com.intellij.ide.plugins.PluginManager
 import com.intellij.ide.plugins.cl.PluginClassLoader
 import com.intellij.json.psi.JsonFile
@@ -14,6 +15,7 @@ import com.intellij.json.psi.JsonObject
 import com.intellij.json.psi.JsonStringLiteral
 import com.intellij.notification.Notification
 import com.intellij.notification.NotificationType
+import com.intellij.openapi.application.Application
 import com.intellij.openapi.fileEditor.FileEditorManagerEvent
 import com.intellij.openapi.fileEditor.FileEditorManagerListener
 import com.intellij.openapi.project.Project
@@ -30,9 +32,9 @@ class JarStartupManagerImpl(
 
     init {
         project.messageBus.connect().subscribe(
-                        FileEditorManagerListener.FILE_EDITOR_MANAGER,
-                        this
-                )
+                FileEditorManagerListener.FILE_EDITOR_MANAGER,
+                this
+        )
     }
 
     @Volatile
@@ -46,10 +48,14 @@ class JarStartupManagerImpl(
                 jar: String,
                 args: String
         ): RunProfileState {
+            val factory = JarApplicationConfigurationType
+                    .getInstance()
+                    .configurationFactories
+                    .first()
             return JarApplicationCommandLineState(
                     JarApplicationConfiguration(
                             project,
-                            JarApplicationConfigurationType.getInstance(),
+                            factory,
                             "Mock this package"
                     ).apply {
                         jarPath = jar
@@ -58,16 +64,6 @@ class JarStartupManagerImpl(
                     },
                     environment
             )
-        }
-
-        private fun findPluginRootPath(): File? {
-            return JarStartupManagerImpl::class.java
-                    .classLoader
-                    .run { this as? PluginClassLoader }
-                    ?.pluginId
-                    ?.let {
-                        PluginManager.getPlugin(it)
-                    }?.path
         }
 
         private val PsiElement.isPackageJson: Boolean
@@ -90,14 +86,25 @@ class JarStartupManagerImpl(
             }
 
         private const val GROUP_ID = "Flexml plugin"
-        private val compilerJarFile: File
-        private val mockJarFile: File
 
-        init {
+        private val compilerPath: String
+            get() = if (files.size == 2) {
+                files[0].absolutePath
+            } else {
+                throw InternalError()
+            }
+        private val mockServerPath: String
+            get() = if (files.size == 2) {
+                files[1].absolutePath
+            } else {
+                throw InternalError()
+            }
+
+        private val files: Array<File> by lazy {
             val root = findPluginRootPath()
-            if (root != null) {
-                compilerJarFile = File(root, "lib/flexmlc.jar")
-                mockJarFile = File(root, "lib/handshake.jar")
+            return@lazy if (root != null) {
+                arrayOf(File(root, "lib/flexmlc.jar"),
+                        File(root, "lib/handshake.jar"))
             } else {
                 Notification(
                         GROUP_ID,
@@ -106,8 +113,29 @@ class JarStartupManagerImpl(
                         NotificationType.ERROR,
                         null
                 ).notify(null)
-                throw AssertionError()
+                val cl = JarStartupManagerImpl::class.java
+                        .classLoader as PluginClassLoader
+                val pluginId = cl.pluginId.idString
+                PluginManager.disablePlugin(pluginId)
+                emptyArray()
             }
+        }
+
+        private fun findPluginRootPath(): File? {
+            val cl = JarStartupManagerImpl::class.java
+                    .classLoader as PluginClassLoader
+            return PluginManager.getPlugins().firstOrNull {
+                it.pluginId == cl.pluginId
+            }?.path
+        }
+
+    }
+
+    class Initializer : ApplicationLoadListener {
+        override fun beforeApplicationLoaded(
+                application: Application,
+                configPath: String) {
+            Companion::files.invoke()
         }
     }
 
@@ -145,7 +173,7 @@ class JarStartupManagerImpl(
         return runJar(
                 project,
                 environment,
-                compilerJarFile.absolutePath,
+                compilerPath,
                 "-i $input -o $output"
         )
     }
@@ -159,7 +187,7 @@ class JarStartupManagerImpl(
         return runJar(
                 project,
                 environment,
-                mockJarFile.absolutePath,
+                mockServerPath,
                 "--server.port=$port --package.focus=$focus"
         )
     }

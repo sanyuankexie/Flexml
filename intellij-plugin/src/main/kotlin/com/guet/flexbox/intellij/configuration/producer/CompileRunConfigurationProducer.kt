@@ -4,15 +4,21 @@ import com.guet.flexbox.intellij.configuration.CompileRunConfiguration
 import com.guet.flexbox.intellij.configuration.type.CompileConfigurationType
 import com.guet.flexbox.intellij.isOnFlexmlFile
 import com.intellij.execution.actions.ConfigurationContext
-import com.intellij.execution.actions.LazyRunConfigurationProducer
+import com.intellij.execution.actions.RunConfigurationProducer
 import com.intellij.execution.configurations.ConfigurationFactory
+import com.intellij.execution.configurations.ConfigurationType
 import com.intellij.execution.configurations.ConfigurationTypeUtil
 import com.intellij.openapi.util.Ref
 import com.intellij.psi.PsiElement
 import com.intellij.psi.xml.XmlFile
 import java.io.File
 
-class CompileRunConfigurationProducer : LazyRunConfigurationProducer<CompileRunConfiguration>() {
+class CompileRunConfigurationProducer
+    : RunConfigurationProducer<CompileRunConfiguration>(
+        ConfigurationTypeUtil.findConfigurationType(
+                CompileConfigurationType::class.java
+        ) as ConfigurationType
+) {
 
     override fun isConfigurationFromContext(
             configuration: CompileRunConfiguration,

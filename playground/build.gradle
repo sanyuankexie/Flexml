@@ -5,7 +5,7 @@ apply plugin: 'kotlin-android-extensions'
 android {
     compileSdkVersion 28
     defaultConfig {
-        applicationId "com.luke.flexbox.playground"
+        applicationId "com.guet.flexbox.playground"
         minSdkVersion 21
         targetSdkVersion 28
         versionCode 1
@@ -30,6 +30,7 @@ dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:${kotlinVersion}"
     implementation 'androidx.appcompat:appcompat:1.1.0'
+    implementation 'androidx.multidex:multidex:2.0.1'
     implementation 'androidx.recyclerview:recyclerview:1.1.0'
     implementation 'androidx.cardview:cardview:1.0.0'
     implementation 'androidx.coordinatorlayout:coordinatorlayout:1.1.0'
@@ -46,12 +47,12 @@ dependencies {
     implementation 'com.squareup.retrofit2:retrofit:2.6.2'
     implementation 'com.squareup.retrofit2:converter-gson:2.6.2'
     implementation 'com.blankj:utilcodex:1.26.0'
-    implementation 'thereisnospon.codeview:codeview:0.3.1'
+    implementation 'com.github.bumptech.glide:okhttp3-integration:4.11.0'
+
     implementation('com.didichuxing.doraemonkit:doraemonkit:1.2.1') {
         exclude group: 'com.google.zxing', module: 'core'
     }
     implementation 'ch.ielse:switchbutton:1.0.1'
-    implementation 'com.github.LukeXeon:blurlayout:0.0.1'
 
     implementation project(':litho')
     implementation project(':compiler')

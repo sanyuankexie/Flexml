@@ -13,7 +13,7 @@ android {
     compileSdkVersion 28
 
     defaultConfig {
-        minSdkVersion 21
+        minSdkVersion 19
         targetSdkVersion 28
         versionCode 1
         versionName "1.0"
@@ -45,7 +45,7 @@ dependencies {
     implementation 'androidx.recyclerview:recyclerview:1.1.0'
     implementation 'androidx.viewpager2:viewpager2:1.0.0'
 
-    implementation 'com.github.bumptech.glide:glide:4.10.0'
+    implementation 'com.github.bumptech.glide:glide:4.11.0'
 
     //implementation 'com.yqritc:android-scalablevideoview:1.0.4'
 
@@ -58,6 +58,7 @@ dependencies {
     api project(':core')
 
     kapt 'com.facebook.litho:litho-processor:0.33.0'
+    kapt 'com.github.bumptech.glide:compiler:4.11.0'
 
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'androidx.test:runner:1.2.0'

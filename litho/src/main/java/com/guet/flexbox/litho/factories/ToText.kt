@@ -10,19 +10,20 @@ import com.guet.flexbox.build.AttributeSet
 import com.guet.flexbox.enums.Horizontal
 import com.guet.flexbox.enums.TextStyle
 import com.guet.flexbox.enums.Vertical
+import com.guet.flexbox.litho.resolve.mapping
 import com.guet.flexbox.litho.toPx
 
 
-internal object ToText : ToComponent<Text.Builder>(Common) {
+internal object ToText : ToComponent<Text.Builder>(CommonAssigns) {
 
     private val invisibleColor = ColorStateList.valueOf(Color.TRANSPARENT)
 
     override val attributeAssignSet: AttributeAssignSet<Text.Builder> by create {
         register("verticalGravity") { _, _, value: Vertical ->
-            verticalGravity(value.mapToLithoValue())
+            verticalGravity(value.mapping())
         }
         register("horizontalGravity") { _, _, value: Horizontal ->
-            textAlignment(value.mapToLithoValue())
+            textAlignment(value.mapping())
         }
         register("text") { display, _, value: String ->
             text(value)
@@ -44,7 +45,7 @@ internal object ToText : ToComponent<Text.Builder>(Common) {
             textSizePx(value.toPx())
         }
         register("textStyle") { _, _, value: TextStyle ->
-            typeface(Typeface.defaultFromStyle(value.mapToLithoValue()))
+            typeface(Typeface.defaultFromStyle(value.mapping()))
         }
         register("ellipsize") { _, _, value: TruncateAt ->
             ellipsize(value)

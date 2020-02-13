@@ -3,7 +3,7 @@ package com.guet.flexbox.build
 import android.graphics.Color
 import com.guet.flexbox.enums.Orientation
 
-object Banner : Declaration(Common) {
+object Banner : Declaration(CommonProps) {
     override val attributeInfoSet: AttributeInfoSet by create {
         bool("isCircular")
         value("timeSpan", fallback = 3000.0)

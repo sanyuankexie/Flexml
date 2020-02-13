@@ -1,11 +1,10 @@
 package com.guet.flexbox.build
 
-import com.guet.flexbox.HostContext
+import com.guet.flexbox.EventContext
 import com.guet.flexbox.TemplateNode
 import com.guet.flexbox.build.attrsinfo.AttributeInfo
 import com.guet.flexbox.build.attrsinfo.AttrsInfoRegistry
 import com.guet.flexbox.el.ELContext
-import com.guet.flexbox.el.LambdaExpression
 
 internal inline val CharSequence.isExpr: Boolean
     get() = length > 3 && startsWith("\${") && endsWith('}')
@@ -20,7 +19,7 @@ internal inline fun create(crossinline action: AttrsInfoRegistry.() -> Unit): La
 
 typealias AttributeSet = Map<String, Any>
 
-internal typealias Converter<T> = (HostContext, ELContext, String) -> T?
+internal typealias Converter<T> = (EventContext, ELContext, String) -> T?
 
 typealias RenderNodeFactory = (
         visibility: Boolean,
@@ -36,7 +35,7 @@ typealias ToWidget = Pair<Declaration, RenderNodeFactory?>
 internal fun ToWidget.toWidget(
         bindings: BuildTool,
         template: TemplateNode,
-        pageContext: HostContext,
+        pageContext: EventContext,
         data: ELContext,
         upperVisibility: Boolean,
         other: Any
@@ -51,16 +50,5 @@ internal fun ToWidget.toWidget(
             upperVisibility,
             other
     )
-}
-
-internal fun LambdaExpression.execute(
-        elContext: ELContext,
-        vararg values: Any?
-) {
-    @Suppress("UNCHECKED_CAST")
-    this.invoke(elContext, values)?.run {
-        this as? Set<*>
-    }?.firstOrNull()?.run { this as? (ELContext) -> Unit }
-            ?.invoke(elContext)
 }
 

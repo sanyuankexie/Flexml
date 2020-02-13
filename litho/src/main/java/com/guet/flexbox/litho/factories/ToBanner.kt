@@ -7,7 +7,7 @@ import com.guet.flexbox.litho.ChildComponent
 import com.guet.flexbox.litho.toPx
 import com.guet.flexbox.litho.widget.Banner
 
-internal object ToBanner : ToComponent<Banner.Builder>(Common) {
+internal object ToBanner : ToComponent<Banner.Builder>(CommonAssigns) {
     override val attributeAssignSet: AttributeAssignSet<Banner.Builder> by create {
         register("isCircular") { _, _, value: Boolean ->
             isCircular(value)

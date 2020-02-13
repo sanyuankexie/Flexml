@@ -8,7 +8,7 @@ import com.guet.flexbox.build.AttributeSet
 import com.guet.flexbox.enums.Orientation
 import com.guet.flexbox.litho.ChildComponent
 
-internal object ToScroller : ToComponent<Component.Builder<*>>(Common) {
+internal object ToScroller : ToComponent<Component.Builder<*>>(CommonAssigns) {
 
     override val attributeAssignSet: AttributeAssignSet<Component.Builder<*>> by create {
         register("scrollBarEnable") { _, _, value: Boolean ->

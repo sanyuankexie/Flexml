@@ -1,15 +1,22 @@
 package com.guet.flexbox.handshake
 
+import com.google.gson.Gson
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
+import org.springframework.http.converter.HttpMessageConverter
+import org.springframework.http.converter.json.GsonHttpMessageConverter
+import org.springframework.web.context.ContextLoader
 import org.springframework.web.cors.CorsConfiguration
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource
 import org.springframework.web.filter.CorsFilter
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer
+
 
 @Configuration
 @SpringBootApplication
-open class MockServerApplication {
+open class MockServerApplication : WebMvcConfigurer {
+
     private fun buildConfig(): CorsConfiguration {
         val corsConfiguration = CorsConfiguration()
         //  你需要跨域的地址  注意这里的 127.0.0.1 != localhost
@@ -31,6 +38,26 @@ open class MockServerApplication {
         //配置 可以访问的地址
         source.registerCorsConfiguration("/**", buildConfig()) // 4
         return CorsFilter(source)
+    }
+
+    override fun configureMessageConverters(
+            converters: MutableList<HttpMessageConverter<*>?>
+    ) {
+        converters.add(customGsonHttpMessageConverter())
+        super.configureMessageConverters(converters)
+    }
+
+    @Bean
+    open fun gosn(): Gson {
+        return Gson()
+    }
+
+    private fun customGsonHttpMessageConverter(): GsonHttpMessageConverter? {
+        val gson = ContextLoader.getCurrentWebApplicationContext()
+                ?.getBean("gson") as? Gson ?: this.gosn()
+        val gsonMessageConverter = GsonHttpMessageConverter()
+        gsonMessageConverter.gson = gson
+        return gsonMessageConverter
     }
 }
 

@@ -10,21 +10,22 @@ import com.guet.flexbox.enums.FlexDirection
 import com.guet.flexbox.enums.FlexJustify
 import com.guet.flexbox.enums.FlexWrap
 import com.guet.flexbox.litho.ChildComponent
+import com.guet.flexbox.litho.resolve.mapping
 
-internal object ToFlex : ToComponent<Component.ContainerBuilder<*>>(Common) {
+internal object ToFlex : ToComponent<Component.ContainerBuilder<*>>(CommonAssigns) {
 
     override val attributeAssignSet: AttributeAssignSet<Component.ContainerBuilder<*>> by create {
         register("flexWrap") { _, _, value: FlexWrap ->
-            wrap(value.mapToLithoValue())
+            wrap(value.mapping())
         }
         register("justifyContent") { _, _, value: FlexJustify ->
-            justifyContent(value.mapToLithoValue())
+            justifyContent(value.mapping())
         }
         register("alignItems") { _, _, value: FlexAlign ->
-            alignItems(value.mapToLithoValue())
+            alignItems(value.mapping())
         }
         register("alignContent") { _, _, value: FlexAlign ->
-            alignContent(value.mapToLithoValue())
+            alignContent(value.mapping())
         }
     }
 

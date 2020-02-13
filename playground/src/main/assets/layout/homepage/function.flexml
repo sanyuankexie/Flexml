@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Stack>
+    <Flex
+        width="360"
+        height="100"
+        background="${gradient:linear('t2b','#7c4dff','#f5f5f5')}">
+    </Flex>
+    <Flex
+        width="360"
+        alignItems="center"
+        justifyContent="center">
+        <Flex
+            borderColor="red"
+            borderWidth="5"
+            marginTop="5"
+            marginBottom="5"
+            clickUrl="${url}"
+            background="WHITE"
+            borderRadius="15"
+            width="340"
+            flexDirection="column"
+            justifyContent="center"
+            alignItems="center">
+            <for var="i" from="0" to="1">
+                <Flex
+                    width="320"
+                    flexDirection="row"
+                    justifyContent="spaceAround">
+                    <for var="j" from="0" to="3">
+                        <Flex
+                            alignItems="center"
+                            marginTop="10"
+                            marginBottom="10"
+                            flexDirection="column">
+                            <Image
+                                url="${icons[i*2+j]}"
+                                height="40"
+                                width="40">
+                            </Image>
+                            <Text
+                                marginTop="5"
+                                text="${'测试标题'+(i*2+j+1)}">
+                            </Text>
+                        </Flex>
+                    </for>
+                </Flex>
+            </for>
+        </Flex>
+    </Flex>
+</Stack>

@@ -19,8 +19,9 @@ import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import com.guet.flexbox.AppExecutors
 import com.guet.flexbox.litho.HostingView
-import com.guet.flexbox.litho.LithoBuildTool
+import com.guet.flexbox.litho.TemplatePage
 import com.guet.flexbox.playground.model.TemplateCompiler
+import es.dmoral.toasty.Toasty
 import java.util.*
 import kotlin.collections.HashSet
 
@@ -48,7 +49,7 @@ class SearchActivity : AppCompatActivity() {
         setContentView(R.layout.activity_search)
         sharedPreferences = getSharedPreferences("history", Context.MODE_PRIVATE)
         list = findViewById(R.id.list)
-        list.setPageEventListener(handler)
+        list.pageEventListener = handler
         editText = findViewById(R.id.search)
         editText.apply {
             setOnFocusChangeListener { v, hasFocus ->
@@ -120,7 +121,7 @@ class SearchActivity : AppCompatActivity() {
         AppExecutors.threadPool.execute {
             val input = resources
                     .assets
-                    .open("layout/search/history_list.xml")
+                    .open("layout/search/history_list.flexml")
                     .use {
                         it.reader().readText()
                     }
@@ -138,15 +139,19 @@ class SearchActivity : AppCompatActivity() {
                     "list",
                     listData
             )
-            val content = LithoBuildTool.build(this, template, data)
+            val content = TemplatePage.create(application)
+                    .template(template)
+                    .data(data)
+                    .build()
             runOnUiThread {
-                list.setContentAsync(content)
+                list.templatePage = content
             }
         }
     }
 
     private fun handleEvent(key: String) {
-        if (key.isEmpty()) {
+        if (key.isEmpty() || key.startsWith("http://")) {
+            Toasty.warning(this, "地址格式错误，应该为http://开头").show()
             return
         }
         val set = HashSet<String>(sharedPreferences.getStringSet(
