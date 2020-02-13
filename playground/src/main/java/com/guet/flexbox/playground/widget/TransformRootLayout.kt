@@ -4,15 +4,15 @@ import android.animation.Animator
 import android.animation.AnimatorListenerAdapter
 import android.animation.ValueAnimator
 import android.content.Context
-import android.graphics.Canvas
-import android.graphics.Color
-import android.graphics.Matrix
-import android.graphics.RectF
+import android.graphics.*
+import android.graphics.Bitmap.Config
+import android.graphics.Shader.TileMode
 import android.graphics.drawable.ColorDrawable
 import android.util.AttributeSet
 import android.view.MotionEvent
 import android.view.animation.DecelerateInterpolator
 import android.widget.FrameLayout
+import com.bumptech.glide.Glide
 import com.didichuxing.doraemonkit.util.UIUtils
 
 class TransformRootLayout @JvmOverloads constructor(
@@ -21,11 +21,14 @@ class TransformRootLayout @JvmOverloads constructor(
         defStyleAttr: Int = 0
 ) : FrameLayout(context, attrs, defStyleAttr) {
 
-    private var inDraw: Boolean = false
     private val myMatrix = Matrix()
+    var cornerRadius = UIUtils.dp2px(context, 15f)
     var animationDuration: Long = 500L
     var offset: Float = UIUtils.dp2px(context, 30f).toFloat()
+    private var bitmap: Bitmap? = null
+    private val canvas = Canvas()
     private val rectF = RectF()
+    private val paint = Paint(Paint.FILTER_BITMAP_FLAG or Paint.ANTI_ALIAS_FLAG or Paint.DITHER_FLAG)
     private val src = FloatArray(8)
     private val dst = FloatArray(8)
 
@@ -34,7 +37,7 @@ class TransformRootLayout @JvmOverloads constructor(
     }
 
     override fun onInterceptTouchEvent(ev: MotionEvent?): Boolean {
-        return inDraw
+        return bitmap != null
     }
 
     override fun onTouchEvent(event: MotionEvent?): Boolean {
@@ -50,12 +53,10 @@ class TransformRootLayout @JvmOverloads constructor(
         src[5] = height.toFloat()
         src[6] = 0f
         src[7] = height.toFloat()
-        inDraw = true
         foreground = ColorDrawable(Color.BLACK).apply {
             alpha = 0
         }
-        //不能取边界值，硬件加速由bug会闪屏
-        ValueAnimator.ofFloat(0f, 1.88f).apply {
+        ValueAnimator.ofFloat(0f, 2f).apply {
             addUpdateListener {
                 var value = it.animatedValue as Float
                 (foreground as ColorDrawable).alpha = ((255f / 2f) * (value / 2f)).toInt()
@@ -122,11 +123,20 @@ class TransformRootLayout @JvmOverloads constructor(
             interpolator = DecelerateInterpolator()
             duration = animationDuration
         }.start()
+        val bitmap = Glide.get(context).bitmapPool[
+                width, height,
+                Config.ARGB_8888
+        ]
+        canvas.setBitmap(bitmap)
+        draw(canvas)
+        canvas.setBitmap(null)
+        val shader = BitmapShader(bitmap, TileMode.CLAMP, TileMode.CLAMP)
+        paint.shader = shader
+        this.bitmap = bitmap
     }
 
-    fun reset(callback: () -> Unit) {
-        //不能取边界值，硬件加速由bug会闪屏
-        ValueAnimator.ofFloat(0f, 1.88f).apply {
+    fun reset() {
+        ValueAnimator.ofFloat(0f, 2f).apply {
             addUpdateListener {
                 var value = it.animatedValue as Float
                 (foreground as ColorDrawable).alpha = ((255f / 2f) - (255f / 2f) * (value / 2f)).toInt()
@@ -155,17 +165,20 @@ class TransformRootLayout @JvmOverloads constructor(
             addListener(object : AnimatorListenerAdapter() {
                 override fun onAnimationEnd(animation: Animator?) {
                     foreground = null
-                    inDraw = false
-                    callback()
+                    bitmap?.let { Glide.get(context).bitmapPool.put(it) }
+                    paint.shader = null
+                    bitmap = null
                 }
             })
             interpolator = DecelerateInterpolator()
             duration = animationDuration
         }.start()
+
     }
 
     override fun dispatchDraw(canvas: Canvas) {
-        if (inDraw) {
+        val picture = this.bitmap
+        if (picture != null) {
             canvas.save()
             myMatrix.reset()
             myMatrix.setPolyToPoly(
@@ -176,7 +189,14 @@ class TransformRootLayout @JvmOverloads constructor(
                     src.size shr 1
             )
             canvas.concat(myMatrix)
-            super.dispatchDraw(canvas)
+            canvas.drawRoundRect(
+                    rectF.apply {
+                        set(0f, 0f, width.toFloat(), height.toFloat())
+                    },
+                    cornerRadius.toFloat(),
+                    cornerRadius.toFloat(),
+                    paint
+            )
             canvas.restore()
         } else {
             super.dispatchDraw(canvas)

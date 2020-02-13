@@ -2,7 +2,6 @@ package com.guet.flexbox.playground
 
 import android.os.Bundle
 import android.view.View
-import android.widget.FrameLayout
 import androidx.appcompat.app.AppCompatActivity
 import com.didichuxing.doraemonkit.util.UIUtils
 import com.facebook.litho.LithoView
@@ -32,19 +31,14 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var root: TransformRootLayout
 
-    private lateinit var clip: FrameLayout
-
     private lateinit var bottomSheetBehavior: BottomSheetBehavior<View>
 
     private fun move() {
         root.move()
-        clip.clipToOutline = true
     }
 
     private fun reset() {
-        root.reset{
-            clip.clipToOutline = false
-        }
+        root.reset()
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -74,10 +68,6 @@ class MainActivity : AppCompatActivity() {
                         .commit()
             }
         }
-        clip = findViewById(R.id.clip)
-        clip.outlineProvider = CornerOutlineProvider(
-                UIUtils.dp2px(this, 15f)
-        )
         initCodePanel()
     }
 

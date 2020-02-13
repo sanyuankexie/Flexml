@@ -66,9 +66,9 @@ class FastBlur(
             buffer.finalize()
         }
         rsBlur(context, input)
+        input.prepareToDraw()
         return resource
     }
-
 
     override fun toString(): String {
         return "${FastBlur::class.java.name}(radius=$radius, sampling=$sampling)"
