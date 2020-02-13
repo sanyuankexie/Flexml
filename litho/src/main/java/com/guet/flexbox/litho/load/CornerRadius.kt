@@ -60,7 +60,7 @@ class CornerRadius private constructor(
                 CornerRadius(floatArrayOf(value))
             }
         }
-
-        val empty = CornerRadius(Constants.emptyArray)
+        
+        val empty = CornerRadius(FloatArray(0))
     }
 }
