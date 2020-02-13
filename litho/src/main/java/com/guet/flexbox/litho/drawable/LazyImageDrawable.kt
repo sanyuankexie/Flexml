@@ -65,14 +65,11 @@ class LazyImageDrawable private constructor(
     override fun draw(canvas: Canvas) {
         val context = weakContext.get()
         if (context != null && isInit.compareAndSet(false, true)) {
-            @Suppress("UNCHECKED_CAST")
             Glide.with(context)
-                    .`as`(ExBitmapDrawable::class.java)
                     .load(model)
-                    .transform()
                     .set(Constants.scaleType, ScaleType.FIT_XY)
                     .set(Constants.cornerRadius, radius)
-                    .into(this as Target<ExBitmapDrawable>)
+                    .into(this)
         } else {
             super.draw(canvas)
         }

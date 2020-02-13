@@ -62,7 +62,6 @@ class GlideDrawable(
         this.width = width
         this.height = height
         var request = Glide.with(context)
-                .`as`(ExBitmapDrawable::class.java)
                 .load(model)
                 .transform()
                 .set(Constants.scaleType, scaleType)
@@ -72,13 +71,16 @@ class GlideDrawable(
                         rightBottom,
                         leftBottom
                 ))
-        if (blurRadius > 0 && blurSampling >= 1) {
-            request = request.transform(FastBlur(
-                    blurRadius, blurSampling
-            ))
+        if (blurSampling > 1) {
+            request = request.override(
+                    (width / blurSampling).toInt(),
+                    (height / blurSampling).toInt()
+            )
         }
-        @Suppress("UNCHECKED_CAST")
-        request.into(this as Target<ExBitmapDrawable>)
+        if (blurRadius > 0) {
+            request = request.transform(FastBlur(blurRadius))
+        }
+        request.into(this)
     }
 
     override fun getSize(cb: SizeReadyCallback) {

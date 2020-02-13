@@ -40,20 +40,20 @@ class ExBitmapDrawableLibraryModule : LibraryGlideModule() {
             byteBufferBitmapDecoder = ByteBufferBitmapDecoder(downSampler)
             streamBitmapDecoder = StreamBitmapDecoder(downSampler, arrayPool)
         }
-        registry.append(
+        registry.prepend(
                 Constants.BUCKET_EX_BITMAP_DRAWABLE,
                 ByteBuffer::class.java,
                 ExBitmapDrawable::class.java,
                 ExBitmapDrawableDecoder(byteBufferBitmapDecoder, resources)
-        ).append(Constants.BUCKET_EX_BITMAP_DRAWABLE,
+        ).prepend(Constants.BUCKET_EX_BITMAP_DRAWABLE,
                 InputStream::class.java,
                 ExBitmapDrawable::class.java,
                 ExBitmapDrawableDecoder(streamBitmapDecoder, resources)
-        ).append(Constants.BUCKET_EX_BITMAP_DRAWABLE,
+        ).prepend(Constants.BUCKET_EX_BITMAP_DRAWABLE,
                 ParcelFileDescriptor::class.java,
                 ExBitmapDrawable::class.java,
                 ExBitmapDrawableDecoder(parcelDecoder, resources)
-        ).append(
+        ).prepend(
                 ExBitmapDrawable::class.java,
                 ExBitmapDrawableEncoder(bitmapPool, bitmapEncoder)
         ).register(
@@ -63,7 +63,8 @@ class ExBitmapDrawableLibraryModule : LibraryGlideModule() {
         )
         if (VERSION.SDK_INT >= VERSION_CODES.M) {
             val byteBufferDecoder = VideoDecoder.byteBuffer(bitmapPool)
-            registry.append(
+            registry.prepend(
+                    Constants.BUCKET_EX_BITMAP_DRAWABLE,
                     ByteBuffer::class.java,
                     ExBitmapDrawable::class.java,
                     ExBitmapDrawableDecoder(byteBufferDecoder, resources)
@@ -71,8 +72,8 @@ class ExBitmapDrawableLibraryModule : LibraryGlideModule() {
         }
         registry.setResourceDecoderBucketPriorityList(listOf(
                 Registry.BUCKET_GIF,
-                Registry.BUCKET_BITMAP,
                 Constants.BUCKET_EX_BITMAP_DRAWABLE,
+                Registry.BUCKET_BITMAP,
                 Registry.BUCKET_BITMAP_DRAWABLE
         ))
     }
