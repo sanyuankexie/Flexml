@@ -12,6 +12,7 @@ import androidx.core.app.ActivityOptionsCompat
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.RecyclerView
 import com.blankj.utilcode.util.NetworkUtils
+import com.google.android.material.appbar.AppBarLayout
 import com.guet.flexbox.playground.model.AppLoader
 import com.guet.flexbox.playground.model.Homepage
 import com.guet.flexbox.playground.widget.FlexBoxAdapter
@@ -23,6 +24,7 @@ import es.dmoral.toasty.Toasty
 
 class HomepageFragment : Fragment() {
 
+    private lateinit var appBarLayout: AppBarLayout
     private lateinit var coordinator: CoordinatorLayout
     private lateinit var feed: RecyclerView
     private val feedAdapter = FlexBoxAdapter(this::handleEvent)
@@ -57,10 +59,17 @@ class HomepageFragment : Fragment() {
                             "search"
                     ).toBundle())
         }
+        appBarLayout = view.findViewById(R.id.appbar)
+
         coordinator = view.findViewById(R.id.coordinator)
         feed = view.findViewById(R.id.feed)
         feedAdapter.setNewData(homepageInfo.feed)
         feed.adapter = feedAdapter
+        feed.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                appBarLayout.invalidate()
+            }
+        })
         NetworkUtils.isAvailableAsync {
             if (!it) {
                 requireActivity().runOnUiThread {
