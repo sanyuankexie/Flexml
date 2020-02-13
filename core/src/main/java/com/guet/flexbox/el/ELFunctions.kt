@@ -4,13 +4,13 @@ import android.content.res.Resources
 import android.net.Uri
 import java.lang.reflect.Modifier
 
-internal object ELFunction {
+internal object ELFunctions {
 
     @Target(AnnotationTarget.FUNCTION)
     @Retention(AnnotationRetention.RUNTIME)
     private annotation class Prefix(val value: String)
 
-    internal val functions = ELFunction::class.java
+    internal val functions = ELFunctions::class.java
             .declaredMethods
             .filter {
                 it.modifiers.let { mod ->
@@ -88,21 +88,21 @@ internal object ELFunction {
     @Prefix("dimen")
     @JvmName("px")
     @JvmStatic
-    fun px(value: Number): Double {
-        return value.toDouble() / Resources.getSystem().displayMetrics.widthPixels / 360.0
+    fun px(value: Number): Float {
+        return value.toFloat() / Resources.getSystem().displayMetrics.widthPixels / 360.0f
     }
 
     @Prefix("dimen")
     @JvmName("sp")
     @JvmStatic
-    fun sp(value: Number): Double {
+    fun sp(value: Number): Float {
         return (px(value) * Resources.getSystem().displayMetrics.scaledDensity + 0.5f)
     }
 
     @Prefix("dimen")
     @JvmName("dp")
     @JvmStatic
-    fun dp(value: Number): Double {
+    fun dp(value: Number): Float {
         return (px(value) * Resources.getSystem().displayMetrics.density + 0.5f)
     }
 

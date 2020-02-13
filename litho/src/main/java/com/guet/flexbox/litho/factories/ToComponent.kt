@@ -2,13 +2,19 @@ package com.guet.flexbox.litho.factories
 
 import android.graphics.Color
 import android.graphics.drawable.GradientDrawable.Orientation
+import com.facebook.litho.Border
+import com.facebook.litho.Border.Corner
 import com.facebook.litho.Component
 import com.facebook.litho.ComponentContext
+import com.facebook.yoga.YogaEdge
 import com.guet.flexbox.build.AttributeSet
 import com.guet.flexbox.build.Child
 import com.guet.flexbox.build.RenderNodeFactory
 import com.guet.flexbox.litho.ChildComponent
-import com.guet.flexbox.litho.drawable.*
+import com.guet.flexbox.litho.drawable.ColorDrawable
+import com.guet.flexbox.litho.drawable.GradientDrawable
+import com.guet.flexbox.litho.drawable.LazyImageDrawable
+import com.guet.flexbox.litho.drawable.lazyDrawable
 import com.guet.flexbox.litho.resolve.UrlType
 import com.guet.flexbox.litho.toPx
 import com.guet.flexbox.litho.toPxFloat
@@ -75,6 +81,7 @@ abstract class ToComponent<C : Component.Builder<*>>(
         }
     }
 
+
     private fun createBackground(c: C, attrs: AttributeSet) {
         val background = attrs["background"] as? CharSequence
         val context = c.getContext()!!.androidContext
@@ -82,9 +89,7 @@ abstract class ToComponent<C : Component.Builder<*>>(
         val rt = attrs.getFloatValue("borderRightTopRadius").toPxFloat()
         val lb = attrs.getFloatValue("borderLeftBottomRadius").toPxFloat()
         val rb = attrs.getFloatValue("borderRightBottomRadius").toPxFloat()
-        val borderWidth = attrs.getFloatValue("borderWidth").toPx()
-        val borderColor = attrs["borderColor"] as? Int ?: Color.TRANSPARENT
-        val needBorder = borderWidth != 0 && borderColor != Color.TRANSPARENT
+
         val needCorners = lt != 0f || rb != 0f || lb != 0f || rt != 0f
         val isSameCorners = lt == rt && lt == rb && lt == lb
         if (background != null) {
@@ -111,17 +116,7 @@ abstract class ToComponent<C : Component.Builder<*>>(
                             }
                         }
                     }
-                    if (needBorder) {
-                        val border = ColorBorderDrawable.Builder()
-                                .borderColor(borderColor)
-                                .borderWidth(borderWidth)
-                                .borderRadius(lt, rt, rb, lb)
-                                .build()
-                        c.background(ComparableLayerDrawable(drawable, border))
-                    } else {
-                        c.background(drawable)
-                    }
-                    return
+                    c.background(drawable)
                 }
                 UrlType.COLOR -> {
                     val color = prams[0] as Int
@@ -139,17 +134,7 @@ abstract class ToComponent<C : Component.Builder<*>>(
                             }
                         }
                     }
-                    if (needBorder) {
-                        val border = ColorBorderDrawable.Builder()
-                                .borderColor(borderColor)
-                                .borderWidth(borderWidth)
-                                .borderRadius(lt, rt, rb, lb)
-                                .build()
-                        c.background(ComparableLayerDrawable(drawable, border))
-                    } else {
-                        c.background(drawable)
-                    }
-                    return
+                    c.background(drawable)
                 }
                 UrlType.URL, UrlType.RESOURCE -> {
                     val model = prams[0]
@@ -166,27 +151,33 @@ abstract class ToComponent<C : Component.Builder<*>>(
                     } else {
                         LazyImageDrawable(context, model)
                     }
-                    if (needBorder) {
-                        val border = ColorBorderDrawable.Builder()
-                                .borderColor(borderColor)
-                                .borderWidth(borderWidth)
-                                .borderRadius(lt, rt, rb, lb)
-                                .build()
-                        c.background(ComparableLayerDrawable(drawable, border))
-                    } else {
-                        c.background(drawable)
-                    }
-                    return
+                    c.background(drawable)
                 }
                 else -> Unit
             }
         }
+        val borderWidth = attrs.getFloatValue("borderWidth").toPx()
+        val borderColor = attrs["borderColor"] as? Int ?: Color.TRANSPARENT
+        val needBorder = borderWidth != 0
+                && borderColor != Color.TRANSPARENT
         if (needBorder) {
-            c.background(ColorBorderDrawable.Builder()
-                    .borderColor(borderColor)
-                    .borderWidth(borderWidth)
-                    .borderRadius(lt, rt, rb, lb)
-                    .build())
+            var width: Int = borderWidth
+            for (value in floatArrayOf(lt, rt, rb, lb)) {
+                if (!value.isNaN() && value < width) {
+                    width = value.toInt()
+                }
+            }
+            val padding = width / 2f
+            //borderRadius是外边框弧度
+            c.border(Border.create(c.getContext())
+                    .color(YogaEdge.ALL, borderColor)
+                    .widthPx(YogaEdge.ALL, width)
+                    .radiusPx(Corner.TOP_LEFT, (lt - padding).toInt())
+                    .radiusPx(Corner.TOP_RIGHT, (rt - padding).toInt())
+                    .radiusPx(Corner.BOTTOM_RIGHT, (rb - padding).toInt())
+                    .radiusPx(Corner.BOTTOM_LEFT, (lb - padding).toInt())
+                    .build()
+            )
         }
     }
 

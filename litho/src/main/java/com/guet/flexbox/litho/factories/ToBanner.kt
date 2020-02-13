@@ -12,13 +12,13 @@ internal object ToBanner : ToComponent<Banner.Builder>(CommonAssigns) {
         register("isCircular") { _, _, value: Boolean ->
             isCircular(value)
         }
-        register("timeSpan") { _, _, value: Double ->
+        register("timeSpan") { _, _, value: Float ->
             timeSpan(value.toLong())
         }
         register("orientation") { _, _, value: Orientation ->
             orientation(value)
         }
-        register("indicatorsHeight") { _, _, value: Double ->
+        register("indicatorsHeight") { _, _, value: Float ->
             indicatorHeightPx(value.toPx())
         }
         register("indicatorSelectedColor") { _, _, value: Int ->

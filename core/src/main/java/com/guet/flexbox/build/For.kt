@@ -23,8 +23,8 @@ object For : Declaration() {
             other: Any
     ): List<Child> {
         val name = attrs.getValue("var") as String
-        val from = (attrs.getValue("from") as Double).toInt()
-        val end = (attrs.getValue("to") as Double).toInt()
+        val from = (attrs.getValue("from") as Float).toInt()
+        val end = (attrs.getValue("to") as Float).toInt()
         return (from..end).map { index ->
             data.scope(mapOf(name to index)) {
                 buildTool.buildAll(

@@ -16,46 +16,46 @@ import java.util.*
 internal object CommonAssigns : ToComponent<Component.Builder<*>>() {
 
     override val attributeAssignSet: AttributeAssignSet<Component.Builder<*>> by create {
-        register("width") { _, _, value: Double ->
+        register("width") { _, _, value: Float ->
             widthPx(value.toPx())
         }
-        register("height") { _, _, value: Double ->
+        register("height") { _, _, value: Float ->
             heightPx(value.toPx())
         }
-        register("minWidth") { _, _, value: Double ->
+        register("minWidth") { _, _, value: Float ->
             minWidthPx(value.toPx())
         }
-        register("maxWidth") { _, _, value: Double ->
+        register("maxWidth") { _, _, value: Float ->
             maxWidthPx(value.toPx())
         }
-        register("minHeight") { _, _, value: Double ->
+        register("minHeight") { _, _, value: Float ->
             minHeightPx(value.toPx())
         }
-        register("maxWidth") { _, _, value: Double ->
+        register("maxWidth") { _, _, value: Float ->
             maxHeightPx(value.toPx())
         }
-        register("flexGrow") { _, _, value: Double ->
+        register("flexGrow") { _, _, value: Float ->
             flexGrow(value.toFloat())
         }
-        register("flexShrink") { _, _, value: Double ->
+        register("flexShrink") { _, _, value: Float ->
             flexShrink(value.toFloat())
         }
         register("alignSelf") { _, _, value: FlexAlign ->
             alignSelf(value.mapping())
         }
-        register("margin") { _, _, value: Double ->
+        register("margin") { _, _, value: Float ->
             marginPx(YogaEdge.ALL, value.toPx())
         }
-        register("padding") { _, _, value: Double ->
+        register("padding") { _, _, value: Float ->
             paddingPx(YogaEdge.ALL, value.toPx())
         }
         arrayOf("Left", "Right", "Top", "Bottom").map { edge ->
             edge to YogaEdge.valueOf(edge.toUpperCase(Locale.US))
         }.forEach { edge ->
-            register("margin${edge.first}") { _, _, value: Double ->
+            register("margin${edge.first}") { _, _, value: Float ->
                 marginPx(edge.second, value.toPx())
             }
-            register("padding${edge.first}") { _, _, value: Double ->
+            register("padding${edge.first}") { _, _, value: Float ->
                 paddingPx(edge.second, value.toPx())
             }
         }

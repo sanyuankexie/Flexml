@@ -6,11 +6,11 @@ import com.facebook.litho.Component
 val pt = Resources.getSystem().displayMetrics.widthPixels / 360f
 
 inline fun <reified T : Number> T.toPx(): Int {
-    return (this.toDouble() * pt).toInt()
+    return (this.toFloat() * pt).toInt()
 }
 
 inline fun <reified T : Number> T.toPxFloat(): Float {
-    return (this.toDouble() * pt).toFloat()
+    return (this.toFloat() * pt)
 }
 
 internal typealias ChildComponent = Component

@@ -12,13 +12,13 @@ import com.guet.flexbox.litho.resolve.mapping
 
 internal object ToTextInput : ToComponent<TextInput.Builder>(CommonAssigns) {
     override val attributeAssignSet: AttributeAssignSet<TextInput.Builder> by create {
-        register("maxLines") { _, _, value: Double ->
+        register("maxLines") { _, _, value: Float ->
             maxLines(value.toInt())
         }
-        register("minLines") { _, _, value: Double ->
+        register("minLines") { _, _, value: Float ->
             minLines(value.toInt())
         }
-        register("textSize") { _, _, value: Double ->
+        register("textSize") { _, _, value: Float ->
             textSizePx(value.toInt())
         }
         register("textStyle") { _, _, value: TextStyle ->

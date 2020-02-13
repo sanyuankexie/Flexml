@@ -2,8 +2,8 @@ package com.guet.flexbox.build.attrsinfo
 
 import android.graphics.Color
 import android.util.ArrayMap
-import com.guet.flexbox.EventHandler
 import com.guet.flexbox.EventContext
+import com.guet.flexbox.EventHandler
 import com.guet.flexbox.build.AttributeInfoSet
 import com.guet.flexbox.build.Converter
 import com.guet.flexbox.el.ELContext
@@ -29,8 +29,8 @@ internal class AttrsInfoRegistry {
 
     fun value(
             name: String,
-            scope: Map<String, Double> = emptyMap(),
-            fallback: Double = 0.0
+            scope: Map<String, Float> = emptyMap(),
+            fallback: Float = 0f
     ) {
         _value[name] = ValueAttributeInfo(scope, fallback)
     }
