@@ -10,10 +10,12 @@ import com.bumptech.glide.Registry
 import com.bumptech.glide.annotation.GlideModule
 import com.bumptech.glide.load.ResourceDecoder
 import com.bumptech.glide.load.resource.bitmap.*
+import com.bumptech.glide.load.resource.transcode.TranscoderRegistry
 import com.bumptech.glide.module.LibraryGlideModule
 import com.guet.flexbox.litho.drawable.ExBitmapDrawable
 import java.io.InputStream
 import java.nio.ByteBuffer
+
 
 @GlideModule
 class ExBitmapDrawableLibraryModule : LibraryGlideModule() {
@@ -56,11 +58,23 @@ class ExBitmapDrawableLibraryModule : LibraryGlideModule() {
         ).prepend(
                 ExBitmapDrawable::class.java,
                 ExBitmapDrawableEncoder(bitmapPool, bitmapEncoder)
-        ).register(
+        )
+
+        registry.register(
                 Bitmap::class.java,
                 ExBitmapDrawable::class.java,
                 ExBitmapDrawableTranscoder(resources)
         )
+
+        @Suppress("UNCHECKED_CAST")
+        val transcoders = TranscoderRegistry::class.java.getDeclaredField("transcoders").apply {
+            isAccessible = true
+        }.get(Registry::class.java.getDeclaredField("transcoderRegistry").apply {
+            isAccessible = true
+        }.get(registry)) as ArrayList<Any>
+        val tc = transcoders.removeAt(transcoders.size - 1)
+        transcoders.add(0, tc)
+
         if (VERSION.SDK_INT >= VERSION_CODES.M) {
             val byteBufferDecoder = VideoDecoder.byteBuffer(bitmapPool)
             registry.prepend(
@@ -72,10 +86,11 @@ class ExBitmapDrawableLibraryModule : LibraryGlideModule() {
         }
         registry.setResourceDecoderBucketPriorityList(listOf(
                 Registry.BUCKET_GIF,
-                Constants.BUCKET_EX_BITMAP_DRAWABLE,
                 Registry.BUCKET_BITMAP,
+                Constants.BUCKET_EX_BITMAP_DRAWABLE,
                 Registry.BUCKET_BITMAP_DRAWABLE
         ))
     }
+
 
 }
