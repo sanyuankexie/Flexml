@@ -17,4 +17,5 @@ object Constants {
     val cornerRadius = Option.memory<CornerRadius>(
             ExBitmapDrawable::class.java.name + ".cornerRadius"
     )
+
 }

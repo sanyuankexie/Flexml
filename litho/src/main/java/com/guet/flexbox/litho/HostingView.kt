@@ -9,12 +9,14 @@ import com.facebook.litho.LithoView
 import com.facebook.litho.SizeSpec
 import com.guet.flexbox.HttpClient
 import com.guet.flexbox.litho.event.EventTarget
+import com.guet.flexbox.litho.load.ExBitmapDrawableLibraryModule
 
 class HostingView @JvmOverloads constructor(
         context: Context, attrs: AttributeSet? = null
 ) : LithoView(context, attrs) {
 
     init {
+        ExBitmapDrawableLibraryModule.init(context)
         super.setClipChildren(false)
     }
 

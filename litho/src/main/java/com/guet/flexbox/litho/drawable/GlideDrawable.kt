@@ -63,7 +63,6 @@ class GlideDrawable(
         this.height = height
         var request = Glide.with(context)
                 .load(model)
-                .transform()
                 .set(Constants.scaleType, scaleType)
                 .set(Constants.cornerRadius, CornerRadius(
                         leftTop,
