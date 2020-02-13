@@ -14,6 +14,10 @@ class HostingView @JvmOverloads constructor(
         context: Context, attrs: AttributeSet? = null
 ) : LithoView(context, attrs) {
 
+    init {
+        clipChildren = false
+    }
+
     internal val target = EventTarget(this)
 
     var httpClient: HttpClient? = null

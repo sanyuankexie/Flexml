@@ -11,7 +11,6 @@ import com.guet.flexbox.enums.FlexAlign
 import com.guet.flexbox.litho.event.EventHandlerWrapper
 import com.guet.flexbox.litho.resolve.mapping
 import com.guet.flexbox.litho.toPx
-import com.guet.flexbox.litho.toPxFloat
 import java.util.*
 
 internal object CommonAssigns : ToComponent<Component.Builder<*>>() {
@@ -63,16 +62,15 @@ internal object CommonAssigns : ToComponent<Component.Builder<*>>() {
         register("clickUrl") { _, other, value: EventHandler ->
             if (!other.containsKey("onClick")) {
                 clickHandler(EventHandlerWrapper<ClickEvent>(value))
+                clipChildren(false)
             }
         }
         register("onClick") { _, _, value: EventHandler ->
             clickHandler(EventHandlerWrapper<ClickEvent>(value))
+            clipChildren(false)
         }
         register("onVisible") { _, _, value: EventHandler ->
             visibleHandler(EventHandlerWrapper<VisibleEvent>(value))
-        }
-        register("shadowElevation") { _, _, value: Double ->
-            shadowElevationPx(value.toPxFloat())
         }
     }
 
