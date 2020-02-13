@@ -12,6 +12,7 @@ import com.bumptech.glide.util.Util
 import java.lang.reflect.Method
 import java.nio.ByteBuffer
 import java.security.MessageDigest
+import java.util.concurrent.atomic.AtomicBoolean
 import kotlin.math.max
 import kotlin.math.min
 
@@ -46,23 +47,23 @@ class FastBlur(
         if (sampling != 1f) {
             val scaledWidth = (width / sampling).toInt()
             val scaledHeight = (height / sampling).toInt()
-            val picture = Picture()
+            val buffer = Buffer()
             val paint = Paint(DEFAULT_PAINT_FLAGS)
-            val canvas = picture.beginRecording(scaledWidth, scaledHeight)
+            val canvas = buffer.beginRecording(scaledWidth, scaledHeight)
             canvas.drawBitmap(
                     input,
                     Rect(0, 0, input.width, input.height),
                     Rect(0, 0, scaledWidth, scaledHeight),
                     paint
             )
-            picture.endRecording()
+            buffer.endRecording()
             input.reconfigure(scaledWidth, scaledHeight, input.config)
             val canvas2 = Canvas(input)
-            canvas2.drawPicture(picture)
+            canvas2.drawPicture(buffer)
             canvas2.setBitmap(null)
             canvas2.release()
             canvas.release()
-            picture.finalize()
+            buffer.finalize()
         }
         rsBlur(context, input)
         return resource
@@ -122,11 +123,20 @@ class FastBlur(
         return result
     }
 
+    private class Buffer : Picture() {
+
+        private val isFinalize = AtomicBoolean(false)
+
+        public override fun finalize() {
+            if (isFinalize.compareAndSet(false, true)) {
+                super.finalize()
+            }
+        }
+    }
+
     private companion object {
 
         private const val DEFAULT_PAINT_FLAGS = Paint.FILTER_BITMAP_FLAG or Paint.DITHER_FLAG or Paint.ANTI_ALIAS_FLAG
-
-        private val finalize by buildMethod<Picture>("finalize")
 
         private val release by buildMethod<Canvas>("release")
 

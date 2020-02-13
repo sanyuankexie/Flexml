@@ -30,7 +30,7 @@ class ExBitmapDrawable : Drawable {
     }
 
     private val state: ExBitmapState
-    private var needClipInner: Boolean = true
+    private var shouldClipInner: Boolean = true
     private var pathIsDirty: Boolean = true
     private var scaleTypeIsDirty: Boolean = true
     private lateinit var path: Path
@@ -202,7 +202,7 @@ class ExBitmapDrawable : Drawable {
             height: Int
     ) {
         result.reset()
-        needClipInner = scaleType != ScaleType.FIT_XY
+        shouldClipInner = scaleType != ScaleType.FIT_XY
         //var shouldClipRect = false
         when (scaleType) {
             ScaleType.CENTER -> {
@@ -241,7 +241,7 @@ class ExBitmapDrawable : Drawable {
             }
             else -> {
                 if (intrinsicWidth == width && intrinsicHeight == height) {
-                    needClipInner = false
+                    shouldClipInner = false
                 } else {
                     val src = RectF()
                     val dest = RectF()
@@ -293,20 +293,22 @@ class ExBitmapDrawable : Drawable {
         val sc = canvas.save()
 
         canvas.translate(bounds.left.toFloat(), bounds.top.toFloat())
-        
+
         if (this::srcRect.isInitialized) {
             srcRect.set(0f, 0f, bounds.width().toFloat(), bounds.height().toFloat())
         } else {
             srcRect = RectF(0f, 0f, bounds.width().toFloat(), bounds.height().toFloat())
         }
-        canvas.clipRect(srcRect)
-        if (needClipInner) {
+
+        if (shouldClipInner) {
             if (!this::dstRect.isInitialized) {
                 dstRect = RectF(bounds)
             }
             dstRect.set(0f, 0f, bm.width.toFloat(), bm.height.toFloat())
             matrix.mapRect(dstRect)
             canvas.clipRect(dstRect)
+        } else {
+            canvas.clipRect(srcRect)
         }
 
         val radii = state.radiiArray
