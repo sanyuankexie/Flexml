@@ -35,10 +35,10 @@ internal object CommonAssigns : ToComponent<Component.Builder<*>>() {
             maxHeightPx(value.toPx())
         }
         register("flexGrow") { _, _, value: Float ->
-            flexGrow(value.toFloat())
+            flexGrow(value)
         }
         register("flexShrink") { _, _, value: Float ->
-            flexShrink(value.toFloat())
+            flexShrink(value)
         }
         register("alignSelf") { _, _, value: FlexAlign ->
             alignSelf(value.mapping())
