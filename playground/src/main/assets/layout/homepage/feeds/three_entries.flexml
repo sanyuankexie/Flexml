@@ -26,7 +26,7 @@
                 marginTop="2"
                 paddingLeft="4"
                 paddingRight="4"
-                background="${res:gradient('l2r','red','#EE9611','#F7C709')}"
+                background="${gradient:linear('l2r','red','#EE9611','#F7C709')}"
                 borderRadius="3"
                 marginLeft="12"
                 text="Game"
@@ -71,7 +71,7 @@
                 paddingLeft="4"
                 paddingRight="4"
                 textSize="10"
-                background="${res:gradient('l2r','#F70909','#FF6600')}"
+                background="${gradient:linear('l2r','#F70909','#FF6600')}"
                 textColor="WHITE"
                 text="优惠">
             </Text>

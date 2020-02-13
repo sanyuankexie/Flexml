@@ -38,7 +38,7 @@
                         verticalGravity="center"
                         borderRadius="7"
                         textSize="12"
-                        background="${res:gradient('l2r','#6200ea','#d500f9')}"
+                        background="${gradient:linear('l2r','#6200ea','#d500f9')}"
                         marginLeft="10"
                         text="  直播中  ">
                     </Text>

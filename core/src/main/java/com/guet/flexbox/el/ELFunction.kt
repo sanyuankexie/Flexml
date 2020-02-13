@@ -47,12 +47,13 @@ internal object ELFunction {
         return flags
     }
 
-    private fun resUri(
+    private fun buildUri(
+            scheme: String,
             type: String,
             map: (List<Pair<String, String>>) = emptyList()
     ): String {
         return Uri.Builder()
-                .scheme("res")
+                .scheme(scheme)
                 .authority(type)
                 .apply {
                     map.forEach {
@@ -63,11 +64,11 @@ internal object ELFunction {
                 .toString()
     }
 
-    @Prefix("res")
-    @JvmName("gradient")
+    @Prefix("gradient")
+    @JvmName("linear")
     @JvmStatic
     fun gradient(orientation: String, vararg colors: String): String {
-        return resUri("gradient",
+        return buildUri("gradient", "linear",
                 mutableListOf("orientation" to orientation)
                         .apply {
                             addAll(colors.map {
@@ -81,7 +82,7 @@ internal object ELFunction {
     @JvmName("drawable")
     @JvmStatic
     fun drawable(name: String): String {
-        return resUri("drawable", listOf("name" to name))
+        return buildUri("res", "drawable", listOf("name" to name))
     }
 
     @Prefix("dimen")
