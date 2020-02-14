@@ -106,11 +106,13 @@ object BannerSpec {
                         }
                     }
                     if (componentTrees.size <= size) {
-                        componentTrees.add(ComponentTree.create(c)
-                                .layoutThreadHandler(LayoutThreadHandler)
-                                .isReconciliationEnabled(false)
-                                .build()
-                        )
+                        (1..size - componentTrees.size).forEach { _ ->
+                            componentTrees.add(ComponentTree.create(c)
+                                    .layoutThreadHandler(LayoutThreadHandler)
+                                    .isReconciliationEnabled(false)
+                                    .build()
+                            )
+                        }
                     }
                 }
             }
@@ -126,20 +128,22 @@ object BannerSpec {
     ) {
         val size = Size()
         if (!children.isNullOrEmpty()) {
-            (children.indices).forEach {
-                val com = children[it]
-                componentTrees[it].setRootAndSizeSpec(
-                        com,
-                        SizeSpec.makeSizeSpec(width, SizeSpec.EXACTLY),
-                        SizeSpec.makeSizeSpec(height, SizeSpec.EXACTLY),
-                        size
-                )
-                com.measure(
-                        c,
-                        SizeSpec.makeSizeSpec(width, SizeSpec.EXACTLY),
-                        SizeSpec.makeSizeSpec(height, SizeSpec.EXACTLY),
-                        size
-                )
+            synchronized(componentTrees) {
+                (children.indices).forEach {
+                    val com = children[it]
+                    componentTrees[it].setRootAndSizeSpec(
+                            com,
+                            SizeSpec.makeSizeSpec(width, SizeSpec.EXACTLY),
+                            SizeSpec.makeSizeSpec(height, SizeSpec.EXACTLY),
+                            size
+                    )
+                    com.measure(
+                            c,
+                            SizeSpec.makeSizeSpec(width, SizeSpec.EXACTLY),
+                            SizeSpec.makeSizeSpec(height, SizeSpec.EXACTLY),
+                            size
+                    )
+                }
             }
         }
     }
@@ -228,10 +232,17 @@ object BannerSpec {
         private var indicatorHeightPx = 0
         private var isCircular: Boolean = false
         private var componentTrees: ArrayList<ComponentTree>? = null
+
+
         private val viewPager2 = ViewPager2(context)
         private val adapter = ComponentTreeAdapter()
         private val selectedDrawable = IndicatorDrawable()
         private val unselectedDrawable = IndicatorDrawable()
+
+        init {
+            addView(viewPager2, LayoutParams(-1, -1))
+            viewPager2.adapter = adapter
+        }
 
         fun mount(
                 @Prop(optional = true) orientation: Orientation,
@@ -340,7 +351,12 @@ object BannerSpec {
             override fun onBindViewHolder(holder: LithoViewHolder, position: Int) {
                 val trees = componentTrees
                 if (trees != null) {
-                    val tree = trees[position]
+                    val pos = if (isCircular) {
+                        position % trees.size
+                    } else {
+                        position
+                    }
+                    val tree = trees[pos]
                     holder.lithoView.componentTree = tree
                 }
             }
