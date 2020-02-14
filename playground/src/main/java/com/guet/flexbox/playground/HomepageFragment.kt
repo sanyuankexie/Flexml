@@ -6,12 +6,14 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Space
 import android.widget.Toast
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.app.ActivityOptionsCompat
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.RecyclerView
 import com.blankj.utilcode.util.NetworkUtils
+import com.didichuxing.doraemonkit.util.UIUtils
 import com.google.android.material.appbar.AppBarLayout
 import com.guet.flexbox.playground.model.AppLoader
 import com.guet.flexbox.playground.model.Homepage
@@ -63,6 +65,9 @@ class HomepageFragment : Fragment() {
 
         coordinator = view.findViewById(R.id.coordinator)
         feed = view.findViewById(R.id.feed)
+        feedAdapter.addFooterView(Space(requireContext()).apply {
+            layoutParams = ViewGroup.LayoutParams(-1, UIUtils.dp2px(requireContext(), 55f))
+        })
         feedAdapter.setNewData(homepageInfo.feed)
         feed.adapter = feedAdapter
         feed.addOnScrollListener(object : RecyclerView.OnScrollListener() {

@@ -21,12 +21,6 @@ internal object ToBanner : ToComponent<Banner.Builder>(CommonAssigns) {
         register("indicatorsHeight") { _, _, value: Float ->
             indicatorHeightPx(value.toPx())
         }
-        register("indicatorSelectedColor") { _, _, value: Int ->
-            indicatorSelectedColor(value)
-        }
-        register("indicatorUnselectedColor") { _, _, value: Int ->
-            indicatorUnselectedColor(value)
-        }
         register("indicatorEnable") { _, _, value: Boolean ->
             indicatorEnable(value)
         }
