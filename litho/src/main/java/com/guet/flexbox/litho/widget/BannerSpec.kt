@@ -296,6 +296,9 @@ object BannerSpec {
                 if (position.value < 100) {
                     position.value = (position.value % componentTrees.size) * 100
                 }
+                if (position.value == 0) {
+                    position.value = componentTrees.size * 100
+                }
             }
             viewPager2.setCurrentItem(position.value, false)
         }
@@ -346,6 +349,10 @@ object BannerSpec {
                 } else {
                     trees.size
                 }
+            }
+
+            override fun onViewAttachedToWindow(holder: LithoViewHolder) {
+                holder.lithoView.performIncrementalMount()
             }
 
             override fun onBindViewHolder(holder: LithoViewHolder, position: Int) {
