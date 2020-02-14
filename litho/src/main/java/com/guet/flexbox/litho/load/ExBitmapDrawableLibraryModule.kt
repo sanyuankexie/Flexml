@@ -51,6 +51,11 @@ class ExBitmapDrawableLibraryModule : LibraryGlideModule() {
 
         private val isInit = AtomicBoolean(false)
 
+        internal fun init(context: Context) {
+            val glide = Glide.get(context)
+            init(context, glide, glide.registry)
+        }
+
         internal fun init(
                 context: Context,
                 glide: Glide,
@@ -115,10 +120,6 @@ class ExBitmapDrawableLibraryModule : LibraryGlideModule() {
             ))
         }
 
-        fun init(context: Context) {
-            val glide = Glide.get(context)
-            init(context, glide, glide.registry)
-        }
     }
 
     override fun registerComponents(

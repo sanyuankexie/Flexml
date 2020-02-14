@@ -5,6 +5,7 @@
       <w>datasource</w>
       <w>gson</w>
       <w>qrcode</w>
+      <w>rewinder</w>
       <w>transcoder</w>
     </words>
   </dictionary>

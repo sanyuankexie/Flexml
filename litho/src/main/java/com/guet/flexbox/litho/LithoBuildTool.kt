@@ -5,6 +5,7 @@ import android.util.ArrayMap
 import com.facebook.soloader.SoLoader
 import com.guet.flexbox.build.*
 import com.guet.flexbox.litho.factories.*
+import com.guet.flexbox.litho.load.ExBitmapDrawableLibraryModule
 
 object LithoBuildTool : BuildTool() {
 
@@ -27,6 +28,7 @@ object LithoBuildTool : BuildTool() {
     }
 
     override fun init(context: Context){
+        ExBitmapDrawableLibraryModule.init(context)
         SoLoader.init(context, false)
     }
 }
