@@ -9,7 +9,7 @@ import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import com.didichuxing.doraemonkit.DoraemonKit
-import com.facebook.soloader.SoLoader
+import com.guet.flexbox.litho.LithoBuildTool
 import com.guet.flexbox.playground.model.AppLoader
 
 class StartupActivity : AppCompatActivity() {
@@ -25,7 +25,7 @@ class StartupActivity : AppCompatActivity() {
             )
         }
         DoraemonKit.install(application)
-        SoLoader.init(this, false)
+        LithoBuildTool.init(this)
     }
 
 

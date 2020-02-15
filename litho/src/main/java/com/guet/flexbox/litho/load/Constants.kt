@@ -6,8 +6,6 @@ import com.guet.flexbox.litho.drawable.ExBitmapDrawable
 
 object Constants {
 
-    val emptyArray = FloatArray(0)
-
     const val BUCKET_EX_BITMAP_DRAWABLE = "ExBitmapDrawable"
 
     val scaleType = Option.memory(
@@ -17,4 +15,5 @@ object Constants {
     val cornerRadius = Option.memory<CornerRadius>(
             ExBitmapDrawable::class.java.name + ".cornerRadius"
     )
+
 }

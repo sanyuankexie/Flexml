@@ -13,14 +13,14 @@ internal object ToGlideImage : ToComponent<GlideImage.Builder>(CommonAssigns) {
         register("scaleType") { _, _, value: ScaleType ->
             scaleType(value.mapping())
         }
-        register("blurRadius") { _, _, value: Double ->
-            blurRadius(value.toFloat())
+        register("blurRadius") { _, _, value: Float ->
+            blurRadius(value)
         }
-        register("blurSampling") { _, _, value: Double ->
-            blurSampling(value.toFloat())
+        register("blurSampling") { _, _, value: Float ->
+            blurSampling(value)
         }
-        register("aspectRatio") { _, _, value: Double ->
-            imageAspectRatio(value.toFloat())
+        register("aspectRatio") { _, _, value: Float ->
+            imageAspectRatio(value)
         }
         register("url") { _, _, value: String ->
             url(value)
@@ -28,16 +28,16 @@ internal object ToGlideImage : ToComponent<GlideImage.Builder>(CommonAssigns) {
         register("internal:resId") { _, _, value: Int ->
             resId(value)
         }
-        register("borderLeftTopRadius") { _, _, value: Double ->
+        register("borderLeftTopRadius") { _, _, value: Float ->
             leftTopRadius(value.toPxFloat())
         }
-        register("borderRightTopRadius") { _, _, value: Double ->
+        register("borderRightTopRadius") { _, _, value: Float ->
             rightTopRadius(value.toPxFloat())
         }
-        register("borderRightBottomRadius") { _, _, value: Double ->
+        register("borderRightBottomRadius") { _, _, value: Float ->
             rightBottomRadius(value.toPxFloat())
         }
-        register("borderLeftBottomRadius") { _, _, value: Double ->
+        register("borderLeftBottomRadius") { _, _, value: Float ->
             leftBottomRadius(value.toPxFloat())
         }
     }

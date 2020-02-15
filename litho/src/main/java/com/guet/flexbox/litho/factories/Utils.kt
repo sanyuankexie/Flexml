@@ -16,5 +16,5 @@ internal inline fun <T : Component.Builder<*>> create(
 }
 
 internal fun AttributeSet.getFloatValue(name: String): Float {
-    return (this[name] as? Double)?.toFloat() ?: 0f
+    return (this[name] as? Float) ?: 0f
 }

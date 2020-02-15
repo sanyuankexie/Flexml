@@ -15,7 +15,10 @@ class HostingView @JvmOverloads constructor(
 ) : LithoView(context, attrs) {
 
     init {
-        clipChildren = false
+        super.setClipChildren(false)
+    }
+
+    override fun setClipChildren(clipChildren: Boolean) {
     }
 
     internal val target = EventTarget(this)

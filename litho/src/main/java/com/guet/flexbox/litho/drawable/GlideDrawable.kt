@@ -15,7 +15,7 @@ import com.guet.flexbox.litho.transforms.FastBlur
 class GlideDrawable(
         private val context: Context
 ) : DrawableWrapper<Drawable>(NoOpDrawable()),
-        Target<Drawable> by DelegateTarget() {
+        Target<ExBitmapDrawable> by DelegateTarget() {
     private val cacheNoOpDrawable = wrappedDrawable
     private var width: Int = 0
     private var height: Int = 0
@@ -64,7 +64,6 @@ class GlideDrawable(
         var request = Glide.with(context)
                 .`as`(ExBitmapDrawable::class.java)
                 .load(model)
-                .transform()
                 .set(Constants.scaleType, scaleType)
                 .set(Constants.cornerRadius, CornerRadius(
                         leftTop,
@@ -72,13 +71,16 @@ class GlideDrawable(
                         rightBottom,
                         leftBottom
                 ))
-        if (blurRadius > 0 && blurSampling >= 1) {
-            request = request.transform(FastBlur(
-                    blurRadius, blurSampling
-            ))
+        if (blurSampling > 1) {
+            request = request.override(
+                    (width / blurSampling).toInt(),
+                    (height / blurSampling).toInt()
+            )
         }
-        @Suppress("UNCHECKED_CAST")
-        request.into(this as Target<ExBitmapDrawable>)
+        if (blurRadius > 0) {
+            request = request.transform(FastBlur(blurRadius))
+        }
+        request.into(this)
     }
 
     override fun getSize(cb: SizeReadyCallback) {
@@ -86,8 +88,8 @@ class GlideDrawable(
     }
 
     override fun onResourceReady(
-            resource: Drawable,
-            transition: Transition<in Drawable>?
+            resource: ExBitmapDrawable,
+            transition: Transition<in ExBitmapDrawable>?
     ) {
         wrappedDrawable = resource
         invalidateSelf()

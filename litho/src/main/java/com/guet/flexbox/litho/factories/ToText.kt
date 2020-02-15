@@ -35,13 +35,13 @@ internal object ToText : ToComponent<Text.Builder>(CommonAssigns) {
         register("clipToBounds") { _, _, value: Boolean ->
             clipToBounds(value)
         }
-        register("maxLines") { _, _, value: Double ->
+        register("maxLines") { _, _, value: Float ->
             maxLines(value.toInt())
         }
-        register("minLines") { _, _, value: Double ->
+        register("minLines") { _, _, value: Float ->
             minLines(value.toInt())
         }
-        register("textSize") { _, _, value: Double ->
+        register("textSize") { _, _, value: Float ->
             textSizePx(value.toPx())
         }
         register("textStyle") { _, _, value: TextStyle ->

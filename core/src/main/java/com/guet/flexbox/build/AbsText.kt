@@ -25,9 +25,9 @@ internal object AbsText : Declaration(CommonProps) {
                 "middle" to TextUtils.TruncateAt.MIDDLE,
                 "marquee" to TextUtils.TruncateAt.MARQUEE
         ))
-        value("maxLines", fallback = Int.MAX_VALUE.toDouble())
-        value("minLines", fallback = Int.MIN_VALUE.toDouble())
-        value("textSize", fallback = 13.0)
+        value("maxLines", fallback = Int.MAX_VALUE.toFloat())
+        value("minLines", fallback = Int.MIN_VALUE.toFloat())
+        value("textSize", fallback = 13.0f)
         enum("textStyle", mapOf(
                 "normal" to TextStyle.NORMAL,
                 "bold" to TextStyle.BOLD

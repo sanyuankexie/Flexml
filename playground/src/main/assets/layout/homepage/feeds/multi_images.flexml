@@ -109,7 +109,7 @@
                     verticalGravity="center"
                     textSize="12"
                     marginRight="2.5"
-                    text="试试点赞👉">
+                    text="试试点赞→">
                 </Text>
                 <Flex
                     alignItems="center"

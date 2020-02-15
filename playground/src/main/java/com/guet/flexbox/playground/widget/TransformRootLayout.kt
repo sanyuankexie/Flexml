@@ -135,6 +135,7 @@ class TransformRootLayout @JvmOverloads constructor(
         canvas.setBitmap(null)
         val shader = BitmapShader(bitmap, TileMode.CLAMP, TileMode.CLAMP)
         paint.shader = shader
+        bitmap.prepareToDraw()
         this.bitmap = bitmap
     }
 

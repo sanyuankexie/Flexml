@@ -11,7 +11,7 @@ import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import com.didichuxing.doraemonkit.DoraemonKit
-import com.facebook.soloader.SoLoader
+import com.guet.flexbox.litho.LithoBuildTool
 import com.yzq.zxinglibrary.android.CaptureActivity
 import com.yzq.zxinglibrary.bean.ZxingConfig
 import com.yzq.zxinglibrary.common.Constant
@@ -27,7 +27,7 @@ class FastStartupActivity : AppCompatActivity() {
                 definedPermissions,
                 REQUEST_CODE1
         )
-        SoLoader.init(this, false)
+        LithoBuildTool.init(this)
     }
 
     override fun onRequestPermissionsResult(

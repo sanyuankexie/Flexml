@@ -4,6 +4,7 @@ import android.app.Application
 import android.content.Context
 import android.content.res.Resources
 import android.graphics.*
+import android.os.AsyncTask
 import android.renderscript.Allocation
 import android.renderscript.Element
 import android.renderscript.RenderScript
@@ -14,7 +15,6 @@ import android.view.ViewGroup
 import android.view.ViewTreeObserver.OnPreDrawListener
 import android.widget.FrameLayout
 import com.bumptech.glide.Glide
-import com.guet.flexbox.AppExecutors
 import com.guet.flexbox.playground.R
 import java.lang.reflect.Method
 import kotlin.math.max
@@ -233,7 +233,7 @@ class BlurLayout @JvmOverloads constructor(
         canvas.release()
         val mySampling = this.sampling
         val myBlurRadius = this.blurRadius
-        AppExecutors.threadPool.execute {
+        AsyncTask.THREAD_POOL_EXECUTOR.execute {
             // 获取新的Bitmap，但是不用这么大，越大性能越差
             // 所以默认的sampling=4，也就是只有原图1/4的像素量
             val scaledWidth = (width / mySampling).toInt()
