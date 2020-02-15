@@ -63,7 +63,7 @@ class QrCodeWindow : JFrame() {
     fun start(port: Int) {
         Timer().schedule(0, 2000) {
             val host = HostAddressFinder.findHostAddress()
-            if (host != null && host != lastHostAddress) {
+            if (host != lastHostAddress) {
                 lastHostAddress = host
                 val url = "http://$host:${port}"
                 logger.info("Network changed: $url")

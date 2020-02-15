@@ -125,7 +125,7 @@ object BannerSpec {
         }
     }
 
-    //ViewPager2如果无限循环，小于3的话个会显示异常
+    //ViewPager2如果无限循环，小于3的话会显示异常
     private fun getCompatCountChildren(
             @Prop(optional = true) isCircular: Boolean,
             @Prop(optional = true, varArg = "child") children: List<Component>?
@@ -137,10 +137,7 @@ object BannerSpec {
             isCircular -> {
                 val output = LinkedList<Component>(children)
                 do {
-                    val oldSize = output.size
-                    (0 until oldSize).forEach {
-                        output.add(output[it])
-                    }
+                    output.addAll(output)
                 } while (output.size < 4)
                 output
             }
@@ -388,7 +385,7 @@ object BannerSpec {
         }
 
         override fun onLayout(changed: Boolean, l: Int, t: Int, r: Int, b: Int) {
-            viewPager2.layout(0, 0, width, height)
+            viewPager2.layout(0, 0, measuredWidth, measuredHeight)
         }
 
         override fun obtainLithoViewChildren(lithoViews: MutableList<LithoView>) {

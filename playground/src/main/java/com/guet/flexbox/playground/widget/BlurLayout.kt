@@ -256,6 +256,7 @@ class BlurLayout @JvmOverloads constructor(
             // 在Android平台上这是最快的做法
             processBitmap(myBlurRadius, bitmap)
             // 完成
+            bitmap.prepareToDraw()
             finishWork(bitmap)
         }
     }
@@ -270,7 +271,6 @@ class BlurLayout @JvmOverloads constructor(
         var blur: ScriptIntrinsicBlur? = null
         try {
             rs = RenderScript.create(application)
-            rs.messageHandler = RenderScript.RSMessageHandler()
             input = Allocation.createFromBitmap(
                     rs, bitmap, Allocation.MipmapControl.MIPMAP_NONE,
                     Allocation.USAGE_SCRIPT

@@ -108,11 +108,9 @@ class HomepageController : ApplicationRunner,
     )
     fun qrcode(): ResponseEntity<String> {
         val host = HostAddressFinder.findHostAddress()
-        return if (host != null) {
+        return run {
             val port = this.port
             ResponseEntity.ok("http://$host:${port}")
-        } else {
-            ResponseEntity.notFound().build()
         }
     }
 

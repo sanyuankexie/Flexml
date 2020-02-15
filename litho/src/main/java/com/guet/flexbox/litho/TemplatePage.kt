@@ -121,8 +121,6 @@ class TemplatePage @WorkerThread internal constructor(
                 message = "framework use default thread pool",
                 level = DeprecationLevel.HIDDEN
         )
-        @Suppress("DEPRECATED_JAVA_ANNOTATION")
-        @java.lang.Deprecated
         @RestrictTo(RestrictTo.Scope.LIBRARY)
         override fun layoutThreadLooper(looper: Looper?): ComponentTree.Builder {
             throw IllegalStateException("framework use default thread pool")
