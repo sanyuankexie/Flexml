@@ -388,7 +388,7 @@ object BannerSpec {
         }
 
         override fun onLayout(changed: Boolean, l: Int, t: Int, r: Int, b: Int) {
-            viewPager2.layout(0, 0, width, height)
+            viewPager2.layout(0, 0, measuredWidth, measuredHeight)
         }
 
         override fun obtainLithoViewChildren(lithoViews: MutableList<LithoView>) {
