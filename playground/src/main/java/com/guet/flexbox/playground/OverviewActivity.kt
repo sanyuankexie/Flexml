@@ -98,6 +98,9 @@ class OverviewActivity : AppCompatActivity() {
                         .template(layout)
                         .build()
                 mainThread.post {
+                    hostingView.unmountAllItems()
+                    val last = hostingView.templatePage
+                    last?.release()
                     hostingView.templatePage = page
                 }
             } catch (e: Exception) {
