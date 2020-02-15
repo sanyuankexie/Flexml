@@ -5,7 +5,6 @@ import android.graphics.Canvas
 import android.graphics.drawable.Drawable
 import android.util.AttributeSet
 import android.view.ViewGroup
-import androidx.core.math.MathUtils
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager2.widget.ViewPager2
 import com.bumptech.glide.Glide
@@ -19,6 +18,10 @@ import com.guet.flexbox.litho.drawable.DelegateTarget
 import com.guet.flexbox.litho.drawable.DrawableWrapper
 import com.guet.flexbox.litho.drawable.NoOpDrawable
 import com.guet.flexbox.litho.toPx
+import java.util.*
+import kotlin.collections.ArrayList
+import kotlin.math.max
+import kotlin.math.min
 
 @MountSpec(isPureRender = true, hasChildLithoViews = true)
 object BannerSpec {
@@ -67,12 +70,14 @@ object BannerSpec {
             view: BannerLithoView,
             @Prop(optional = true) orientation: Orientation,
             @Prop(optional = true) isCircular: Boolean,
+            @Prop(optional = true) indicatorSizePx: Int,
             @Prop(optional = true) indicatorHeightPx: Int,
             @Prop(optional = true) indicatorSelected: Any?,
             @Prop(optional = true) indicatorUnselected: Any?,
             @Prop(optional = true) indicatorEnable: Boolean,
             @FromBoundsDefined componentWidth: Int,
             @FromBoundsDefined componentHeight: Int,
+            @FromBoundsDefined realChildrenCount: Int,
             @State onPageChangeCallback: ViewPager2.OnPageChangeCallback,
             @State componentTrees: ArrayList<ComponentTree>,
             @State position: PagePosition
@@ -82,6 +87,8 @@ object BannerSpec {
                 isCircular,
                 componentWidth,
                 componentHeight,
+                realChildrenCount,
+                indicatorSizePx,
                 indicatorHeightPx,
                 indicatorSelected,
                 indicatorUnselected,
@@ -92,7 +99,7 @@ object BannerSpec {
         )
     }
 
-    private fun adjustComponentTrees(
+    private fun adjustTreesCount(
             c: ComponentContext,
             @State componentTrees: ArrayList<ComponentTree>,
             size: Int
@@ -115,6 +122,31 @@ object BannerSpec {
                         }
                     }
                 }
+            }
+        }
+    }
+
+    //ViewPager2如果无限循环，小于3的话个会显示异常
+    private fun getCompatCountChildren(
+            @Prop(optional = true) isCircular: Boolean,
+            @Prop(optional = true, varArg = "child") children: List<Component>?
+    ): List<Component>? {
+        return when {
+            children.isNullOrEmpty() -> {
+                null
+            }
+            isCircular -> {
+                val output = LinkedList<Component>(children)
+                do {
+                    val oldSize = output.size
+                    (0 until oldSize).forEach {
+                        output.add(output[it])
+                    }
+                } while (output.size < 4)
+                output
+            }
+            else -> {
+                children
             }
         }
     }
@@ -148,6 +180,19 @@ object BannerSpec {
         }
     }
 
+    private fun computeLayout(
+            c: ComponentContext,
+            @Prop(optional = true) isCircular: Boolean,
+            @State componentTrees: ArrayList<ComponentTree>,
+            @Prop(optional = true, varArg = "child") children: List<Component>?,
+            width: Int,
+            height: Int
+    ) {
+        val myChildren = getCompatCountChildren(isCircular, children)
+        adjustTreesCount(c, componentTrees, myChildren?.size ?: 0)
+        measureAll(c, componentTrees, myChildren, width, height)
+    }
+
     @OnMeasure
     fun onMeasure(
             c: ComponentContext,
@@ -155,15 +200,15 @@ object BannerSpec {
             widthSpec: Int,
             heightSpec: Int,
             size: Size,
-            @State componentTrees: ArrayList<ComponentTree>,
+            @Prop(optional = true) isCircular: Boolean,
             @Prop(optional = true, varArg = "child") children: List<Component>?,
+            @State componentTrees: ArrayList<ComponentTree>,
             width: Output<Int?>,
             height: Output<Int?>
     ) {
-        val w = SizeSpec.getSize(widthSpec)
-        val h = SizeSpec.getSize(heightSpec)
-        adjustComponentTrees(c, componentTrees, children?.size ?: 0)
-        measureAll(c, componentTrees, children, w, h)
+        val w = layout.width
+        val h = layout.height
+        computeLayout(c, isCircular, componentTrees, children, w, h)
         size.width = w
         size.height = h
         width.set(w)
@@ -175,11 +220,13 @@ object BannerSpec {
             c: ComponentContext,
             layout: ComponentLayout,
             @Prop(optional = true, varArg = "child") children: List<Component>?,
+            @Prop(optional = true) isCircular: Boolean,
             @State componentTrees: ArrayList<ComponentTree>,
             @FromMeasure width: Int?,
             @FromMeasure height: Int?,
             componentWidth: Output<Int>,
-            componentHeight: Output<Int>
+            componentHeight: Output<Int>,
+            realChildrenCount: Output<Int>
     ) {
         // If onMeasure() has been called, this means the content component already
         // has a defined size, no need to calculate it again.
@@ -189,11 +236,11 @@ object BannerSpec {
         } else {
             val w = layout.width
             val h = layout.height
-            adjustComponentTrees(c, componentTrees, children?.size ?: 0)
-            measureAll(c, componentTrees, children, w, h)
+            computeLayout(c, isCircular, componentTrees, children, w, h)
             componentWidth.set(w)
             componentHeight.set(h)
         }
+        realChildrenCount.set(children?.size ?: 0)
     }
 
     @OnUnmount
@@ -211,7 +258,7 @@ object BannerSpec {
             view: BannerLithoView,
             @Prop(optional = true) timeSpan: Long
     ) {
-
+        view.bind(timeSpan)
     }
 
     @OnUnbind
@@ -219,6 +266,7 @@ object BannerSpec {
             c: ComponentContext,
             view: BannerLithoView
     ) {
+        view.unbind()
     }
 
     class PagePosition(var value: Int)
@@ -231,13 +279,32 @@ object BannerSpec {
         private var componentHeight = 0
         private var indicatorHeightPx = 0
         private var isCircular: Boolean = false
+        private var realChildrenCount: Int = 0
         private var componentTrees: ArrayList<ComponentTree>? = null
+        private var indicatorSizePx: Int = 0
+        private var timeSpan: Long = 0
 
 
         private val viewPager2 = ViewPager2(context)
         private val adapter = ComponentTreeAdapter()
         private val selectedDrawable = IndicatorDrawable()
         private val unselectedDrawable = IndicatorDrawable()
+        private val autoNextPosition = object : Runnable {
+            override fun run() {
+                if (timeSpan <= 0 || componentTrees.isNullOrEmpty()
+                        || realChildrenCount == 0) {
+                    return
+                }
+                val next = if (isCircular) {
+                    viewPager2.currentItem + 1
+                } else {
+                    (viewPager2.currentItem + 1) % realChildrenCount
+                }
+                viewPager2.currentItem = next
+                removeCallbacks(this)
+                postDelayed(this, timeSpan)
+            }
+        }
 
         init {
             addView(viewPager2, LayoutParams(-1, -1))
@@ -247,8 +314,10 @@ object BannerSpec {
         fun mount(
                 @Prop(optional = true) orientation: Orientation,
                 @Prop(optional = true) isCircular: Boolean,
-                @FromMeasure width: Int,
-                @FromMeasure height: Int,
+                @FromBoundsDefined width: Int,
+                @FromBoundsDefined height: Int,
+                @FromBoundsDefined realChildrenCount: Int,
+                @Prop(optional = true) indicatorSizePx: Int,
                 @Prop(optional = true) indicatorHeightPx: Int,
                 @Prop(optional = true) indicatorSelected: Any?,
                 @Prop(optional = true) indicatorUnselected: Any?,
@@ -257,6 +326,8 @@ object BannerSpec {
                 @State componentTrees: ArrayList<ComponentTree>,
                 @State position: PagePosition
         ) {
+            this.indicatorSizePx = indicatorSizePx
+            this.realChildrenCount = realChildrenCount
             this.indicatorHeightPx = indicatorHeightPx
             this.isCircular = isCircular
             this.indicatorEnable = indicatorEnable
@@ -279,7 +350,7 @@ object BannerSpec {
             if (componentTrees.isNullOrEmpty()) {
                 this.componentTrees = null
             } else {
-                this.componentTrees = componentTrees
+                this.componentTrees = ArrayList(componentTrees)
             }
             adapter.notifyDataSetChanged()
             viewPager2.registerOnPageChangeCallback(onPageChangeCallback)
@@ -288,9 +359,9 @@ object BannerSpec {
                 return
             }
             if (!isCircular) {
-                position.value = MathUtils.clamp(0,
+                position.value = min(
                         componentTrees.size - 1,
-                        position.value
+                        max(0, position.value)
                 )
             } else {
                 if (position.value < 100) {
@@ -318,7 +389,7 @@ object BannerSpec {
         }
 
         override fun onLayout(changed: Boolean, l: Int, t: Int, r: Int, b: Int) {
-            viewPager2.layout(l, t, r, b)
+            viewPager2.layout(0, 0, width, height)
         }
 
         override fun obtainLithoViewChildren(lithoViews: MutableList<LithoView>) {
@@ -336,6 +407,20 @@ object BannerSpec {
 
         }
 
+        fun bind(@Prop(optional = true) timeSpan: Long) {
+            this.timeSpan = timeSpan
+            if (timeSpan <= 0 || componentTrees.isNullOrEmpty()
+                    || realChildrenCount == 0) {
+                return
+            }
+            removeCallbacks(autoNextPosition)
+            postDelayed(autoNextPosition, timeSpan)
+        }
+
+        fun unbind() {
+            removeCallbacks(autoNextPosition)
+        }
+
         private inner class ComponentTreeAdapter : RecyclerView.Adapter<LithoViewHolder>() {
 
             override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): LithoViewHolder {
@@ -349,10 +434,6 @@ object BannerSpec {
                 } else {
                     trees.size
                 }
-            }
-
-            override fun onViewAttachedToWindow(holder: LithoViewHolder) {
-                holder.lithoView.performIncrementalMount()
             }
 
             override fun onBindViewHolder(holder: LithoViewHolder, position: Int) {
