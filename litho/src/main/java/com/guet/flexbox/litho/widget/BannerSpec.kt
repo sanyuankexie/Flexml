@@ -309,6 +309,11 @@ object BannerSpec {
         init {
             addView(viewPager2, LayoutParams(-1, -1))
             viewPager2.adapter = adapter
+            viewPager2.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
+                override fun onPageSelected(position: Int) {
+
+                }
+            })
         }
 
         fun mount(

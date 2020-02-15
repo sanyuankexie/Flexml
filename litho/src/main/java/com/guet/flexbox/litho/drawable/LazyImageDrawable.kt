@@ -19,7 +19,7 @@ class LazyImageDrawable private constructor(
         private val model: Any,
         private val radius: CornerRadius
 ) : DrawableWrapper<Drawable>(NoOpDrawable()),
-        Target<Drawable> by DelegateTarget(),
+        Target<ExBitmapDrawable> by DelegateTarget(),
         ComparableDrawable {
 
     private val cacheNoOpDrawable = wrappedDrawable
@@ -66,6 +66,7 @@ class LazyImageDrawable private constructor(
         val context = weakContext.get()
         if (context != null && isInit.compareAndSet(false, true)) {
             Glide.with(context)
+                    .`as`(ExBitmapDrawable::class.java)
                     .load(model)
                     .set(Constants.scaleType, ScaleType.FIT_XY)
                     .set(Constants.cornerRadius, radius)
@@ -80,8 +81,8 @@ class LazyImageDrawable private constructor(
     }
 
     override fun onResourceReady(
-            resource: Drawable,
-            transition: Transition<in Drawable>?) {
+            resource: ExBitmapDrawable,
+            transition: Transition<in ExBitmapDrawable>?) {
         wrappedDrawable = resource
         invalidateSelf()
     }

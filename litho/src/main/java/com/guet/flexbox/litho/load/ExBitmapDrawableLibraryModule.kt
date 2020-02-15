@@ -9,12 +9,9 @@ import com.bumptech.glide.Registry
 import com.bumptech.glide.annotation.GlideModule
 import com.bumptech.glide.load.ResourceDecoder
 import com.bumptech.glide.load.resource.bitmap.*
-import com.bumptech.glide.load.resource.transcode.ResourceTranscoder
-import com.bumptech.glide.load.resource.transcode.TranscoderRegistry
 import com.bumptech.glide.module.LibraryGlideModule
 import com.guet.flexbox.litho.drawable.ExBitmapDrawable
 import java.io.InputStream
-import java.lang.reflect.Field
 import java.nio.ByteBuffer
 import java.util.concurrent.atomic.AtomicBoolean
 
@@ -23,38 +20,8 @@ import java.util.concurrent.atomic.AtomicBoolean
 class ExBitmapDrawableLibraryModule : LibraryGlideModule() {
 
     companion object {
-        private inline fun <reified T> lockFieldByType(name: String): Field {
-            return T::class.java.getDeclaredField(name).apply {
-                isAccessible = true
-            }
-        }
-
-        private fun <TResource, Transcode> Registry.prepend(
-                resourceClass: Class<TResource>,
-                transcodeClass: Class<Transcode>,
-                transcoder: ResourceTranscoder<TResource, Transcode>
-        ): Registry {
-            this.register(
-                    resourceClass,
-                    transcodeClass,
-                    transcoder
-            )
-            val transcoderRegistryField = lockFieldByType<Registry>("transcoderRegistry")
-            val transcodersField = lockFieldByType<TranscoderRegistry>("transcoders")
-            val transcoderRegistry = transcoderRegistryField.get(this)
-            @Suppress("UNCHECKED_CAST")
-            val transcoders = transcodersField.get(transcoderRegistry) as ArrayList<Any>
-            val tc = transcoders.removeAt(transcoders.size - 1)
-            transcoders.add(0, tc)
-            return this
-        }
 
         private val isInit = AtomicBoolean(false)
-
-        internal fun init(context: Context) {
-            val glide = Glide.get(context)
-            init(context, glide, glide.registry)
-        }
 
         internal fun init(
                 context: Context,
@@ -81,45 +48,45 @@ class ExBitmapDrawableLibraryModule : LibraryGlideModule() {
                 byteBufferBitmapDecoder = ByteBufferBitmapDecoder(downSampler)
                 streamBitmapDecoder = StreamBitmapDecoder(downSampler, arrayPool)
             }
-            registry.prepend(
+            registry.append(
                     Constants.BUCKET_EX_BITMAP_DRAWABLE,
                     ByteBuffer::class.java,
                     ExBitmapDrawable::class.java,
                     ExBitmapDrawableDecoder(byteBufferBitmapDecoder, resources)
-            ).prepend(Constants.BUCKET_EX_BITMAP_DRAWABLE,
+            ).append(Constants.BUCKET_EX_BITMAP_DRAWABLE,
                     InputStream::class.java,
                     ExBitmapDrawable::class.java,
                     ExBitmapDrawableDecoder(streamBitmapDecoder, resources)
-            ).prepend(Constants.BUCKET_EX_BITMAP_DRAWABLE,
+            ).append(Constants.BUCKET_EX_BITMAP_DRAWABLE,
                     ParcelFileDescriptor::class.java,
                     ExBitmapDrawable::class.java,
                     ExBitmapDrawableDecoder(parcelDecoder, resources)
-            ).prepend(
+            ).append(
                     ExBitmapDrawable::class.java,
                     ExBitmapDrawableEncoder(bitmapPool, bitmapEncoder)
-            ).prepend(
+            ).register(
                     Bitmap::class.java,
                     ExBitmapDrawable::class.java,
                     ExBitmapDrawableTranscoder(resources)
             )
-
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                 val byteBufferDecoder = VideoDecoder.byteBuffer(bitmapPool)
-                registry.prepend(
+                registry.append(
                         Constants.BUCKET_EX_BITMAP_DRAWABLE,
                         ByteBuffer::class.java,
                         ExBitmapDrawable::class.java,
                         ExBitmapDrawableDecoder(byteBufferDecoder, resources)
                 )
             }
-            registry.setResourceDecoderBucketPriorityList(listOf(
-                    Registry.BUCKET_GIF,
-                    Registry.BUCKET_BITMAP,
-                    Constants.BUCKET_EX_BITMAP_DRAWABLE,
-                    Registry.BUCKET_BITMAP_DRAWABLE
-            ))
         }
 
+        internal fun init(context: Context) {
+            if (isInit.get()) {
+                return
+            }
+            val glide = Glide.get(context)
+            init(context, glide, glide.registry)
+        }
     }
 
     override fun registerComponents(
@@ -129,6 +96,5 @@ class ExBitmapDrawableLibraryModule : LibraryGlideModule() {
     ) {
         init(context, glide, registry)
     }
-
 
 }
