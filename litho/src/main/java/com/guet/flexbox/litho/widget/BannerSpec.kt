@@ -1,7 +1,6 @@
 package com.guet.flexbox.litho.widget
 
 import android.content.Context
-import android.graphics.Canvas
 import android.graphics.drawable.Drawable
 import android.util.AttributeSet
 import android.view.ViewGroup
@@ -309,11 +308,6 @@ object BannerSpec {
         init {
             addView(viewPager2, LayoutParams(-1, -1))
             viewPager2.adapter = adapter
-            viewPager2.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
-                override fun onPageSelected(position: Int) {
-
-                }
-            })
         }
 
         fun mount(
@@ -405,11 +399,6 @@ object BannerSpec {
                     lithoViews.add(v)
                 }
             }
-        }
-
-        override fun dispatchDraw(canvas: Canvas) {
-            super.dispatchDraw(canvas)
-
         }
 
         fun bind(@Prop(optional = true) timeSpan: Long) {
