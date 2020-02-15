@@ -1,11 +1,14 @@
 package com.guet.flexbox.playground.widget
 
 import android.graphics.Outline
+import android.os.Build
 import android.view.View
 import android.view.ViewOutlineProvider
 import androidx.annotation.Px
+import androidx.annotation.RequiresApi
 import kotlin.math.max
 
+@RequiresApi(Build.VERSION_CODES.LOLLIPOP)
 class CornerOutlineProvider(
         @Px private val borderRadius: Int
 ) : ViewOutlineProvider() {

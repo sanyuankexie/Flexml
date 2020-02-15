@@ -1,5 +1,6 @@
 package com.guet.flexbox.playground
 
+import android.os.Build
 import android.os.Bundle
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
@@ -25,7 +26,7 @@ class MainActivity : AppCompatActivity() {
         )
     }
 
-    private lateinit var bottomHost:View
+    private lateinit var bottomHost: View
 
     private lateinit var codeView: LithoView
 
@@ -73,12 +74,13 @@ class MainActivity : AppCompatActivity() {
 
     private fun initCodePanel() {
         codeView = findViewById(R.id.code)
-        val outline = CornerOutlineProvider(
-                UIUtils.dp2px(this, 15f)
-        )
         codeView.apply {
-            outlineProvider = outline
-            clipToOutline = true
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                outlineProvider = CornerOutlineProvider(
+                        UIUtils.dp2px(this@MainActivity, 15f)
+                )
+                clipToOutline = true
+            }
         }
         bottomSheetBehavior = BottomSheetBehavior.from(findViewById<View>(R.id.design_bottom_sheet))
         bottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
