@@ -1,9 +1,3 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.guet.flexbox.litho">
-    <application>
-        <service
-            android:exported="false"
-            android:enabled="true"
-            android:name="com.guet.flexbox.litho.bitmap.remote.RemoteGlideService" />
-    </application>
 </manifest>
