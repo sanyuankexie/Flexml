@@ -103,9 +103,9 @@ class HomepageController {
             method = [RequestMethod.GET]
     )
     @ResponseBody
-    fun qrcode(): ResponseEntity<String> {
+    fun qrcode(): String {
         val host = HostAddressFinder.findHostAddress()
         val port = attributes["port"]
-        return ResponseEntity.ok("http://$host:${port}")
+        return "http://$host:${port}"
     }
 }
