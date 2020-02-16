@@ -2,27 +2,23 @@ package com.guet.flexbox.handshake
 
 import com.google.gson.Gson
 import com.guet.flexbox.compiler.JsonCompiler
+import com.guet.flexbox.handshake.utils.HostAddressFinder
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.boot.ApplicationArguments
-import org.springframework.boot.ApplicationRunner
-import org.springframework.boot.web.context.WebServerInitializedEvent
-import org.springframework.context.ApplicationListener
 import org.springframework.http.ResponseEntity
 import org.springframework.stereotype.Controller
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestMethod
+import org.springframework.web.bind.annotation.ResponseBody
 import java.io.File
+import java.util.concurrent.ConcurrentHashMap
 import javax.servlet.http.HttpServletRequest
 
 @Controller
-class HomepageController : ApplicationRunner,
-        ApplicationListener<WebServerInitializedEvent> {
+class HomepageController {
 
-    @Volatile
-    private var port: Int = 8080
-    @Volatile
-    private var focus: String? = null
+    @Autowired
+    private lateinit var attributes: ConcurrentHashMap<String, Any>
 
     @RequestMapping(
             "/",
@@ -41,7 +37,7 @@ class HomepageController : ApplicationRunner,
             request: HttpServletRequest,
             @Autowired gson: Gson
     ): ResponseEntity<String> {
-        val focus = focus
+        val focus = attributes["focus"] as? String
         if (focus != null) {
             val packageFile = File(focus)
             if (packageFile.exists()) {
@@ -95,7 +91,7 @@ class HomepageController : ApplicationRunner,
         if (url != null) {
             if (File(url).run { exists() && isFile }
                     && url.endsWith("package.json")) {
-                focus = url
+                attributes["focus"] = url
             }
             return ResponseEntity.ok().build()
         }
@@ -106,21 +102,10 @@ class HomepageController : ApplicationRunner,
             "/qrcode",
             method = [RequestMethod.GET]
     )
+    @ResponseBody
     fun qrcode(): ResponseEntity<String> {
         val host = HostAddressFinder.findHostAddress()
-        return run {
-            val port = this.port
-            ResponseEntity.ok("http://$host:${port}")
-        }
-    }
-
-    override fun run(args: ApplicationArguments) {
-        if (args.containsOption("package.focus")) {
-            focus = args.getOptionValues("package.focus").first()
-        }
-    }
-
-    override fun onApplicationEvent(event: WebServerInitializedEvent) {
-        port = event.webServer.port
+        val port = attributes["port"]
+        return ResponseEntity.ok("http://$host:${port}")
     }
 }

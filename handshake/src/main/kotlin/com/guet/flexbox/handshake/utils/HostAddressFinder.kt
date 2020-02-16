@@ -1,4 +1,4 @@
-package com.guet.flexbox.handshake
+package com.guet.flexbox.handshake.utils
 
 import java.net.DatagramSocket
 import java.net.InetAddress
@@ -18,4 +18,6 @@ object HostAddressFinder {
             socket.localAddress.hostAddress
         }
     }
+
+
 }

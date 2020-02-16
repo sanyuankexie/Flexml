@@ -8,6 +8,7 @@ import android.view.View
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.ActivityCompat
 import ch.ielse.view.SwitchView
 import com.facebook.litho.LithoView
 import com.guet.flexbox.litho.HostingView
@@ -44,7 +45,7 @@ class OverviewActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         val url = intent?.extras?.getString("url")
         if (url.isNullOrEmpty() || !url.startsWith("http://")) {
-            finishAfterTransition()
+            ActivityCompat.finishAfterTransition(this)
             Toasty.error(applicationContext, "url格式不对").show()
         } else {
             setContentView(R.layout.activity_overview)
