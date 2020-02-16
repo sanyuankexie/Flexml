@@ -104,7 +104,7 @@ object BannerSpec {
                     }
                     if (componentTrees.size <= size) {
                         (1..size - componentTrees.size).forEach { _ ->
-                            componentTrees.add(LithoPoolsManager.obtainTree(c))
+                            componentTrees.add(LithoPoolsManager.obtainTree())
                         }
                     }
                 }
@@ -305,7 +305,7 @@ object BannerSpec {
                 isFocusableInTouchMode = false
                 isFocusable = false
             }
-            rv.setRecycledViewPool(LithoPoolsManager.recycledLithoViewPool)
+            LithoPoolsManager.attachPool(rv)
             val manager = rv.layoutManager as? LinearLayoutManager
             manager?.apply {
                 recycleChildrenOnDetach = true

@@ -12,7 +12,7 @@ import com.guet.flexbox.litho.event.EventTarget
 
 class HostingView @JvmOverloads constructor(
         context: Context, attrs: AttributeSet? = null
-) : LithoView(context.applicationContext, attrs) {
+) : LithoView(context, attrs) {
 
     init {
         super.setClipChildren(false)

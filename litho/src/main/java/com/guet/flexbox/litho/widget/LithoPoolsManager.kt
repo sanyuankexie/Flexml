@@ -13,40 +13,48 @@ import com.facebook.litho.LithoView
 import com.guet.flexbox.build.Kit
 import com.guet.flexbox.litho.LayoutThreadHandler
 import java.util.*
-import java.util.concurrent.atomic.AtomicBoolean
+import java.util.concurrent.atomic.AtomicReference
 
 internal object LithoPoolsManager : ComponentCallbacks, Kit {
 
     override fun onConfigurationChanged(newConfig: Configuration?) {}
 
+    @MainThread
     override fun onLowMemory() {
-        recycledLithoViewPool.clear()
+        lithoViewPool.clear()
         synchronized(componentTreePool) {
-            componentTreePool.clear()
+            while (!componentTreePool.isEmpty()) {
+                componentTreePool.pop().release()
+            }
         }
     }
 
-    private val isInit = AtomicBoolean(false)
+    private val application = AtomicReference<Application>(null)
 
     val LITHO_VIEW_TYPE = LithoView::class.java.name.hashCode()
 
-    @get:MainThread
-    val recycledLithoViewPool = RecyclerView.RecycledViewPool()
+    private val lithoViewPool = RecyclerView.RecycledViewPool()
 
     private val componentTreePool = LinkedList<ComponentTree>()
 
+    @MainThread
+    fun attachPool(recyclerView: RecyclerView) {
+        recyclerView.setRecycledViewPool(lithoViewPool)
+    }
+
     override fun init(c: Context) {
-        if (isInit.compareAndSet(false, true)) {
-            val application = c.applicationContext as Application
-            application.registerComponentCallbacks(this)
+        val app = c.applicationContext as Application
+        if (application.compareAndSet(null, app)) {
+            app.registerComponentCallbacks(this)
         }
     }
 
+    //可回收的内容ctx必须是app
     @MainThread
-    fun obtainViewHolder(c: Context): LithoViewHolder {
-        return recycledLithoViewPool.getRecycledView(LITHO_VIEW_TYPE)
+    fun obtainViewHolder(): LithoViewHolder {
+        return lithoViewPool.getRecycledView(LITHO_VIEW_TYPE)
                 as? LithoViewHolder
-                ?: LithoViewHolder(c)
+                ?: LithoViewHolder(application.get())
     }
 
     @AnyThread
@@ -60,12 +68,15 @@ internal object LithoPoolsManager : ComponentCallbacks, Kit {
         }
     }
 
+    //可回收的内容ctx必须是app
     @AnyThread
-    fun obtainTree(c: ComponentContext): ComponentTree {
+    fun obtainTree(): ComponentTree {
         return synchronized(componentTreePool) {
             if (componentTreePool.isEmpty()) {
-                ComponentTree.create(c)
-                        .layoutThreadHandler(LayoutThreadHandler)
+                //必须使用Application创建tree
+                ComponentTree.create(
+                        ComponentContext(application.get())
+                ).layoutThreadHandler(LayoutThreadHandler)
                         .isReconciliationEnabled(false)
                         .build()
             } else {
