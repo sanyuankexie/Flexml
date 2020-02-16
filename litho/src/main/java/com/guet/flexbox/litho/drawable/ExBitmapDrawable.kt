@@ -300,6 +300,8 @@ class ExBitmapDrawable : Drawable {
             srcRect = RectF(0f, 0f, bounds.width().toFloat(), bounds.height().toFloat())
         }
 
+        canvas.clipRect(srcRect)
+
         if (shouldClipInner) {
             if (!this::dstRect.isInitialized) {
                 dstRect = RectF(bounds)
@@ -307,8 +309,6 @@ class ExBitmapDrawable : Drawable {
             dstRect.set(0f, 0f, bm.width.toFloat(), bm.height.toFloat())
             matrix.mapRect(dstRect)
             canvas.clipRect(dstRect)
-        } else {
-            canvas.clipRect(srcRect)
         }
 
         val radii = state.radiiArray

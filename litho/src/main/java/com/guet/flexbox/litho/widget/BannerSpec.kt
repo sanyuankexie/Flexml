@@ -125,7 +125,7 @@ object BannerSpec {
                 val output = LinkedList<Component>(children)
                 do {
                     output.addAll(output)
-                } while (output.size < 4)
+                } while (output.size <= 4)
                 output
             }
             else -> {
@@ -309,7 +309,7 @@ object BannerSpec {
             val manager = rv.layoutManager as? LinearLayoutManager
             manager?.apply {
                 recycleChildrenOnDetach = true
-                initialPrefetchItemCount = 4
+                initialPrefetchItemCount = 3
             }
         }
 
