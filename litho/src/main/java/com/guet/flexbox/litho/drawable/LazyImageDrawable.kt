@@ -11,11 +11,10 @@ import com.bumptech.glide.request.transition.Transition
 import com.facebook.litho.drawable.ComparableDrawable
 import com.guet.flexbox.litho.bitmap.CornerRadius
 import com.guet.flexbox.litho.bitmap.GlideConstants
-import java.lang.ref.WeakReference
 import java.util.concurrent.atomic.AtomicBoolean
 
 class LazyImageDrawable private constructor(
-        context: Context,
+        private val context: Context,
         private val model: Any,
         private val radius: CornerRadius
 ) : DrawableWrapper<Drawable>(NoOpDrawable()),
@@ -23,8 +22,6 @@ class LazyImageDrawable private constructor(
         ComparableDrawable {
 
     private val cacheNoOpDrawable = wrappedDrawable
-
-    private val weakContext = WeakReference<Context>(context)
 
     constructor(
             context: Context,
@@ -63,8 +60,7 @@ class LazyImageDrawable private constructor(
     }
 
     override fun draw(canvas: Canvas) {
-        val context = weakContext.get()
-        if (context != null && isInit.compareAndSet(false, true)) {
+        if (isInit.compareAndSet(false, true)) {
             Glide.with(context)
                     .`as`(ExBitmapDrawable::class.java)
                     .load(model)
@@ -105,13 +101,6 @@ class LazyImageDrawable private constructor(
 
     @Throws(Throwable::class)
     protected fun finalize() {
-        val context = weakContext.get()
-        if (context != null) {
-            try {
-                Glide.with(context).clear(this)
-            } catch (e: Throwable) {
-                e.printStackTrace()
-            }
-        }
+        Glide.with(context).clear(this)
     }
 }

@@ -76,6 +76,7 @@ class TemplatePage @WorkerThread internal constructor(
                 SizeSpec.makeSizeSpec(0, SizeSpec.UNSPECIFIED),
                 size
         )
+        release()
         if (oldWidth != width || oldHeight != height) {
             val hostingView = lithoView as? HostingView ?: return
             hostingView.post { hostingView.requestLayout() }
@@ -157,7 +158,8 @@ class TemplatePage @WorkerThread internal constructor(
     companion object {
         @JvmStatic
         fun create(context: Context): Builder {
-            return Builder(ComponentContext(context))
+            //必须用applicationContext
+            return Builder(ComponentContext(context.applicationContext))
         }
     }
 }

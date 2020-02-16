@@ -21,11 +21,7 @@ class GlideDrawable(
     private var height: Int = 0
 
     fun unmount() {
-        try {
-            Glide.with(context).clear(this)
-        } catch (e: Throwable) {
-            e.printStackTrace()
-        }
+        Glide.with(context).clear(this)
         wrappedDrawable = cacheNoOpDrawable
     }
 

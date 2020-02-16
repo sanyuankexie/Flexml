@@ -384,16 +384,8 @@ object BannerSpec {
                 viewPager2.unregisterOnPageChangeCallback(pos)
                 position = null
             }
-            try {
-                Glide.with(this).clear(selectedDrawable)
-            } catch (e: Throwable) {
-                e.printStackTrace()
-            }
-            try {
-                Glide.with(this).clear(unselectedDrawable)
-            } catch (e: Throwable) {
-                e.printStackTrace()
-            }
+            Glide.with(this).clear(selectedDrawable)
+            Glide.with(this).clear(unselectedDrawable)
         }
 
         override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
