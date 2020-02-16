@@ -1,9 +1,14 @@
 package com.guet.flexbox.litho.widget
 
+import android.app.Application
+import android.content.ComponentCallbacks
 import android.content.Context
+import android.content.res.Configuration
 import android.graphics.drawable.Drawable
 import android.util.AttributeSet
 import android.view.ViewGroup
+import androidx.annotation.MainThread
+import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager2.widget.ViewPager2
 import com.bumptech.glide.Glide
@@ -18,6 +23,7 @@ import com.guet.flexbox.litho.drawable.DrawableWrapper
 import com.guet.flexbox.litho.drawable.NoOpDrawable
 import com.guet.flexbox.litho.toPx
 import java.util.*
+import java.util.concurrent.atomic.AtomicBoolean
 import kotlin.collections.ArrayList
 import kotlin.math.max
 import kotlin.math.min
@@ -43,6 +49,7 @@ object BannerSpec {
 
     @OnCreateMountContent
     fun onCreateMountContent(c: Context): BannerLithoView {
+        PoolManager.init(c)
         return BannerLithoView(c)
     }
 
@@ -50,17 +57,10 @@ object BannerSpec {
     fun onCreateInitialState(
             c: ComponentContext,
             position: StateValue<PagePosition>,
-            onPageChangeCallback: StateValue<ViewPager2.OnPageChangeCallback>,
             componentTrees: StateValue<ArrayList<ComponentTree>>
     ) {
-        val pagePosition = PagePosition(0)
-        onPageChangeCallback.set(object : ViewPager2.OnPageChangeCallback() {
-            override fun onPageSelected(position: Int) {
-                pagePosition.value = position
-            }
-        })
         componentTrees.set(ArrayList())
-        position.set(pagePosition)
+        position.set(PagePosition())
     }
 
     @OnMount
@@ -77,7 +77,6 @@ object BannerSpec {
             @FromBoundsDefined componentWidth: Int,
             @FromBoundsDefined componentHeight: Int,
             @FromBoundsDefined realChildrenCount: Int,
-            @State onPageChangeCallback: ViewPager2.OnPageChangeCallback,
             @State componentTrees: ArrayList<ComponentTree>,
             @State position: PagePosition
     ) {
@@ -92,7 +91,6 @@ object BannerSpec {
                 indicatorSelected,
                 indicatorUnselected,
                 indicatorEnable,
-                onPageChangeCallback,
                 componentTrees,
                 position
         )
@@ -108,16 +106,12 @@ object BannerSpec {
                 if (componentTrees.size != size) {
                     if (componentTrees.size > size) {
                         ((componentTrees.size - 1)..size).forEach {
-                            componentTrees.removeAt(it).release()
+                            PoolManager.releaseTree(componentTrees.removeAt(it))
                         }
                     }
                     if (componentTrees.size <= size) {
                         (1..size - componentTrees.size).forEach { _ ->
-                            componentTrees.add(ComponentTree.create(c)
-                                    .layoutThreadHandler(LayoutThreadHandler)
-                                    .isReconciliationEnabled(false)
-                                    .build()
-                            )
+                            componentTrees.add(PoolManager.obtainTree(c))
                         }
                     }
                 }
@@ -154,24 +148,22 @@ object BannerSpec {
             width: Int,
             height: Int
     ) {
-        val size = Size()
         if (!children.isNullOrEmpty()) {
-            synchronized(componentTrees) {
-                (children.indices).forEach {
-                    val com = children[it]
-                    componentTrees[it].setRootAndSizeSpec(
-                            com,
-                            SizeSpec.makeSizeSpec(width, SizeSpec.EXACTLY),
-                            SizeSpec.makeSizeSpec(height, SizeSpec.EXACTLY),
-                            size
-                    )
-                    com.measure(
-                            c,
-                            SizeSpec.makeSizeSpec(width, SizeSpec.EXACTLY),
-                            SizeSpec.makeSizeSpec(height, SizeSpec.EXACTLY),
-                            size
-                    )
-                }
+            val size = Size()
+            (children.indices).forEach {
+                val com = children[it]
+                componentTrees[it].setRootAndSizeSpec(
+                        com,
+                        SizeSpec.makeSizeSpec(width, SizeSpec.EXACTLY),
+                        SizeSpec.makeSizeSpec(height, SizeSpec.EXACTLY),
+                        size
+                )
+                com.measure(
+                        c,
+                        SizeSpec.makeSizeSpec(width, SizeSpec.EXACTLY),
+                        SizeSpec.makeSizeSpec(height, SizeSpec.EXACTLY),
+                        size
+                )
             }
         }
     }
@@ -242,10 +234,10 @@ object BannerSpec {
     @OnUnmount
     fun onUnmount(
             c: ComponentContext,
-            view: BannerLithoView,
-            @State onPageChangeCallback: ViewPager2.OnPageChangeCallback
+            view: BannerLithoView
+
     ) {
-        view.unmount(onPageChangeCallback)
+        view.unmount()
     }
 
     @OnBind
@@ -265,7 +257,60 @@ object BannerSpec {
         view.unbind()
     }
 
-    class PagePosition(var value: Int)
+    private object PoolManager : ComponentCallbacks {
+
+        override fun onConfigurationChanged(newConfig: Configuration?) {}
+
+        override fun onLowMemory() {
+            viewPool.clear()
+            synchronized(componentTreePool) {
+                componentTreePool.clear()
+            }
+        }
+
+        private val isInit = AtomicBoolean(false)
+
+        @get:MainThread
+        val viewPool = RecyclerView.RecycledViewPool()
+
+        private val componentTreePool = LinkedList<ComponentTree>()
+
+        fun init(c: Context) {
+            if (isInit.compareAndSet(false, true)) {
+                val application = c.applicationContext as Application
+                application.registerComponentCallbacks(this)
+            }
+        }
+
+        fun releaseTree(tree: ComponentTree) {
+            synchronized(componentTreePool) {
+                if (componentTreePool.size < 10) {
+                    componentTreePool.push(tree)
+                } else {
+                    tree.release()
+                }
+            }
+        }
+
+        fun obtainTree(c: ComponentContext): ComponentTree {
+            return synchronized(componentTreePool) {
+                if (componentTreePool.isEmpty()) {
+                    ComponentTree.create(c)
+                            .layoutThreadHandler(LayoutThreadHandler)
+                            .isReconciliationEnabled(false)
+                            .build()
+                } else {
+                    componentTreePool.pop()
+                }
+            }
+        }
+    }
+
+    class PagePosition(var value: Int = 0) : ViewPager2.OnPageChangeCallback() {
+        override fun onPageSelected(position: Int) {
+            value = position
+        }
+    }
 
     class BannerLithoView @JvmOverloads constructor(
             context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
@@ -279,7 +324,7 @@ object BannerSpec {
         private var componentTrees: ArrayList<ComponentTree>? = null
         private var indicatorSizePx: Int = 0
         private var timeSpan: Long = 0
-
+        private var position: PagePosition? = null
 
         private val viewPager2 = ViewPager2(context)
         private val adapter = ComponentTreeAdapter()
@@ -287,14 +332,16 @@ object BannerSpec {
         private val unselectedDrawable = IndicatorDrawable()
         private val autoNextPosition = object : Runnable {
             override fun run() {
-                if (timeSpan <= 0 || componentTrees.isNullOrEmpty()
+                val trees = componentTrees
+                if (timeSpan <= 0 || trees.isNullOrEmpty()
                         || realChildrenCount == 0) {
                     return
                 }
+                val current = viewPager2.currentItem
                 val next = if (isCircular) {
-                    viewPager2.currentItem + 1
+                    current + 1
                 } else {
-                    (viewPager2.currentItem + 1) % realChildrenCount
+                    (current + 1) % realChildrenCount
                 }
                 viewPager2.currentItem = next
                 removeCallbacks(this)
@@ -310,9 +357,16 @@ object BannerSpec {
 
                 }
             })
-            viewPager2.getChildAt(0).apply {
+            val rv = viewPager2.getChildAt(0) as RecyclerView
+            rv.apply {
                 isFocusableInTouchMode = false
                 isFocusable = false
+            }
+            rv.setRecycledViewPool(PoolManager.viewPool)
+            val manager = rv.layoutManager as? LinearLayoutManager
+            manager?.apply {
+                recycleChildrenOnDetach = true
+                initialPrefetchItemCount = 4
             }
         }
 
@@ -327,7 +381,6 @@ object BannerSpec {
                 @Prop(optional = true) indicatorSelected: Any?,
                 @Prop(optional = true) indicatorUnselected: Any?,
                 @Prop(optional = true) indicatorEnable: Boolean,
-                @State onPageChangeCallback: ViewPager2.OnPageChangeCallback,
                 @State componentTrees: ArrayList<ComponentTree>,
                 @State position: PagePosition
         ) {
@@ -358,7 +411,6 @@ object BannerSpec {
                 this.componentTrees = ArrayList(componentTrees)
             }
             adapter.notifyDataSetChanged()
-            viewPager2.registerOnPageChangeCallback(onPageChangeCallback)
             viewPager2.orientation = orientation.value
             if (componentTrees.isNullOrEmpty()) {
                 return
@@ -373,14 +425,21 @@ object BannerSpec {
                     position.value = (position.value % componentTrees.size) * 100
                 }
                 if (position.value == 0) {
-                    position.value = componentTrees.size * 100
+                    position.value = (componentTrees.size) * 100
                 }
             }
+            this.position = position
             viewPager2.setCurrentItem(position.value, false)
+            viewPager2.registerOnPageChangeCallback(position)
         }
 
-        fun unmount(onPageChangeCallback: ViewPager2.OnPageChangeCallback) {
-            viewPager2.unregisterOnPageChangeCallback(onPageChangeCallback)
+        fun unmount() {
+            val pos = position
+            if (pos != null) {
+                viewPager2.unregisterOnPageChangeCallback(pos)
+                position = null
+            }
+            this.componentTrees = null
             Glide.with(this).clear(selectedDrawable)
             Glide.with(this).clear(unselectedDrawable)
         }
@@ -438,7 +497,7 @@ object BannerSpec {
 
             override fun onBindViewHolder(holder: LithoViewHolder, position: Int) {
                 val trees = componentTrees
-                if (trees != null) {
+                if (!trees.isNullOrEmpty()) {
                     val pos = if (isCircular) {
                         position % trees.size
                     } else {
@@ -455,7 +514,6 @@ object BannerSpec {
             }
         }
     }
-
 
     private class LithoViewHolder(
             c: Context
