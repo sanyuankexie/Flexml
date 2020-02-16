@@ -325,7 +325,7 @@
                         text="Text标签">
                     </Text>
                     <Text
-                        text="也就是你现在正在看到的文字啦，不是TextView哦，还在这一个View上面。&lt;br&gt;这只是一段&lt;font color=&quot;red&quot;&gt;平平无奇&lt;font/&gt;的文字（其实支持基于html的图文混排&lt;img src=&gt;）">
+                        text="也就是你现在正在看到的文字啦，不是TextView哦，还在这一个View上面。&lt;br&gt;这只是一段&lt;font color=&quot;red&quot;&gt;平平无奇&lt;font/&gt;的文字（其实支持基于html的图文混排&lt;img src=&quot;res://drawable?name=ic_zan_black&quot;&gt;）">
                     </Text>
                 </Flex>
             </Flex>
