@@ -15,10 +15,8 @@ class HostingView @JvmOverloads constructor(
 ) : LithoView(context, attrs) {
 
     init {
+        super.suppressMeasureComponentTree(true)
         super.setClipChildren(false)
-    }
-
-    override fun setClipChildren(clipChildren: Boolean) {
     }
 
     internal val target = EventTarget(this)
@@ -37,6 +35,14 @@ class HostingView @JvmOverloads constructor(
         get() {
             return super.getComponentTree() as? TemplatePage
         }
+
+
+    override fun setClipChildren(clipChildren: Boolean) {
+    }
+
+    @Deprecated("", level = DeprecationLevel.HIDDEN)
+    override fun suppressMeasureComponentTree(suppress: Boolean) {
+    }
 
     @Deprecated(
             "use templatePage",

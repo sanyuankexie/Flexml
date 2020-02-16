@@ -45,7 +45,7 @@ class AboutFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         val viewPager2 = view as ViewPager2
-        AppExecutors.runOnAsyncThread {
+        AppExecutors.runOnAsyncThread(Runnable {
             val photo = Glide.with(this)
                     .asBitmap()
                     .load(R.drawable.ic_photo2)
@@ -174,6 +174,6 @@ class AboutFragment : Fragment() {
                     override fun getItemCount(): Int = 2
                 }
             }
-        }
+        })
     }
 }
