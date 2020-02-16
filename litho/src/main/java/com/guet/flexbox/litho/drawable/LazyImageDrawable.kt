@@ -9,8 +9,8 @@ import com.bumptech.glide.request.target.SizeReadyCallback
 import com.bumptech.glide.request.target.Target
 import com.bumptech.glide.request.transition.Transition
 import com.facebook.litho.drawable.ComparableDrawable
-import com.guet.flexbox.litho.bitmap.GlideConstants
 import com.guet.flexbox.litho.bitmap.CornerRadius
+import com.guet.flexbox.litho.bitmap.GlideConstants
 import java.lang.ref.WeakReference
 import java.util.concurrent.atomic.AtomicBoolean
 
@@ -107,7 +107,11 @@ class LazyImageDrawable private constructor(
     protected fun finalize() {
         val context = weakContext.get()
         if (context != null) {
-            Glide.with(context).clear(this)
+            try {
+                Glide.with(context).clear(this)
+            } catch (e: Throwable) {
+                e.printStackTrace()
+            }
         }
     }
 }

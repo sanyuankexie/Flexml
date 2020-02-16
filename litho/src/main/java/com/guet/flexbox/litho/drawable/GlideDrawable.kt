@@ -8,8 +8,8 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.request.target.SizeReadyCallback
 import com.bumptech.glide.request.target.Target
 import com.bumptech.glide.request.transition.Transition
-import com.guet.flexbox.litho.bitmap.GlideConstants
 import com.guet.flexbox.litho.bitmap.CornerRadius
+import com.guet.flexbox.litho.bitmap.GlideConstants
 import com.guet.flexbox.litho.transforms.FastBlur
 
 class GlideDrawable(
@@ -21,7 +21,11 @@ class GlideDrawable(
     private var height: Int = 0
 
     fun unmount() {
-        Glide.with(context).clear(this)
+        try {
+            Glide.with(context).clear(this)
+        } catch (e: Throwable) {
+            e.printStackTrace()
+        }
         wrappedDrawable = cacheNoOpDrawable
     }
 

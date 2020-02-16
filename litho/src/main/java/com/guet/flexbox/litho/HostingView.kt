@@ -100,6 +100,7 @@ class HostingView @JvmOverloads constructor(
                     )
             )
         } else {
+            //otherwise
             setMeasuredDimension(
                     View.getDefaultSize(
                             suggestedMinimumWidth,
