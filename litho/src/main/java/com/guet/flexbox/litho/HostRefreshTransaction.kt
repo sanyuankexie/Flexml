@@ -8,7 +8,7 @@ internal class HostRefreshTransaction(
         private val host: HostingView,
         private val source: View?
 ) : RefreshTransaction() {
-    override fun commit(){
+    override fun commit() {
         host.pageEventListener?.run {
             sends.forEach {
                 onEventDispatched(
@@ -22,8 +22,8 @@ internal class HostRefreshTransaction(
             it.invoke()
         }
         val page = host.templatePage ?: return
-        AppExecutors.runOnAsyncThread {
+        AppExecutors.runOnAsyncThread(Runnable {
             page.computeNewLayout()
-        }
+        })
     }
 }

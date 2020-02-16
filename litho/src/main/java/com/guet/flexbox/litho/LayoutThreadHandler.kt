@@ -6,7 +6,7 @@ import com.guet.flexbox.AppExecutors
 internal object LayoutThreadHandler : LithoHandler {
 
     override fun post(runnable: Runnable, tag: String?) {
-        AppExecutors.threadPool.execute(runnable)
+        AppExecutors.runOnAsyncThread(runnable)
     }
 
     override fun postAtFront(runnable: Runnable, tag: String?) {
@@ -16,6 +16,6 @@ internal object LayoutThreadHandler : LithoHandler {
     override fun isTracing(): Boolean = true
 
     override fun remove(runnable: Runnable) {
-        AppExecutors.threadPool.remove(runnable)
+        AppExecutors.removeAsyncCallback(runnable)
     }
 }

@@ -48,7 +48,8 @@ object StackSpec {
             val size = sizes[index]
             maxWidth = max(maxWidth, size.width)
             maxHeight = max(maxHeight, size.height)
-            owner.child(Row.create(c).positionType(YogaPositionType.ABSOLUTE)
+            owner.child(Row.create(c)
+                    .positionType(YogaPositionType.ABSOLUTE)
                     .positionPx(YogaEdge.LEFT, 0)
                     .positionPx(YogaEdge.TOP, 0)
                     .child(children[index])

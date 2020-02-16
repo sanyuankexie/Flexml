@@ -4,6 +4,7 @@
       <w>cors</w>
       <w>datasource</w>
       <w>gson</w>
+      <w>litho</w>
       <w>qrcode</w>
       <w>rewinder</w>
       <w>transcoder</w>

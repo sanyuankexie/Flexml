@@ -82,6 +82,7 @@ class TemplatePage @WorkerThread internal constructor(
         }
     }
 
+
     class Builder(
             private val context: ComponentContext
     ) : ComponentTree.Builder(context) {
@@ -157,7 +158,8 @@ class TemplatePage @WorkerThread internal constructor(
     companion object {
         @JvmStatic
         fun create(context: Context): Builder {
-            return Builder(ComponentContext(context))
+            //由于预加载时间点于使用时间点不同，所以ctx必须是app
+            return Builder(ComponentContext(context.applicationContext))
         }
     }
 }

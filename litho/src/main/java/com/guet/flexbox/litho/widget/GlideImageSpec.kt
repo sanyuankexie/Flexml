@@ -7,7 +7,11 @@ import com.facebook.litho.annotations.*
 import com.facebook.litho.utils.MeasureUtils
 import com.guet.flexbox.litho.drawable.GlideDrawable
 
-@MountSpec(isPureRender = true, poolSize = 30)
+@MountSpec(
+        isPureRender = true,
+        poolSize = 30,
+        canPreallocate = true
+)
 internal object GlideImageSpec {
 
     @PropDefault

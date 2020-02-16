@@ -9,7 +9,9 @@ abstract class BuildTool {
 
     protected abstract val widgets: Map<String, ToWidget>
 
-    companion object {
+    protected abstract val kits: List<Kit>
+
+    private companion object {
         private val default: ToWidget = CommonProps to null
     }
 
@@ -52,5 +54,9 @@ abstract class BuildTool {
         }.flatten()
     }
 
-    open fun init(context: Context) {}
+    fun init(context: Context) {
+        kits.forEach {
+            it.init(context)
+        }
+    }
 }

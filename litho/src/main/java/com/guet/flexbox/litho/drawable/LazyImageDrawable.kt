@@ -9,13 +9,12 @@ import com.bumptech.glide.request.target.SizeReadyCallback
 import com.bumptech.glide.request.target.Target
 import com.bumptech.glide.request.transition.Transition
 import com.facebook.litho.drawable.ComparableDrawable
-import com.guet.flexbox.litho.load.Constants
-import com.guet.flexbox.litho.load.CornerRadius
-import java.lang.ref.WeakReference
+import com.guet.flexbox.litho.bitmap.CornerRadius
+import com.guet.flexbox.litho.bitmap.GlideConstants
 import java.util.concurrent.atomic.AtomicBoolean
 
 class LazyImageDrawable private constructor(
-        context: Context,
+        private val context: Context,
         private val model: Any,
         private val radius: CornerRadius
 ) : DrawableWrapper<Drawable>(NoOpDrawable()),
@@ -23,8 +22,6 @@ class LazyImageDrawable private constructor(
         ComparableDrawable {
 
     private val cacheNoOpDrawable = wrappedDrawable
-
-    private val weakContext = WeakReference<Context>(context)
 
     constructor(
             context: Context,
@@ -63,13 +60,12 @@ class LazyImageDrawable private constructor(
     }
 
     override fun draw(canvas: Canvas) {
-        val context = weakContext.get()
-        if (context != null && isInit.compareAndSet(false, true)) {
+        if (isInit.compareAndSet(false, true)) {
             Glide.with(context)
                     .`as`(ExBitmapDrawable::class.java)
                     .load(model)
-                    .set(Constants.scaleType, ScaleType.FIT_XY)
-                    .set(Constants.cornerRadius, radius)
+                    .set(GlideConstants.scaleType, ScaleType.FIT_XY)
+                    .set(GlideConstants.cornerRadius, radius)
                     .into(this)
         } else {
             super.draw(canvas)
@@ -105,9 +101,6 @@ class LazyImageDrawable private constructor(
 
     @Throws(Throwable::class)
     protected fun finalize() {
-        val context = weakContext.get()
-        if (context != null) {
-            Glide.with(context).clear(this)
-        }
+        Glide.with(context).clear(this)
     }
 }

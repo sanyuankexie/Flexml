@@ -13,7 +13,9 @@ object AppExecutors {
 
     private val mainThreadLooper = Looper.getMainLooper()
 
-    val threadPool: ThreadPoolExecutor
+    private val threadPool: ThreadPoolExecutor
+
+    private val mainThreadHandler = Handler(mainThreadLooper)
 
     init {
         val count = AtomicInteger(0)
@@ -32,7 +34,13 @@ object AppExecutors {
         )
     }
 
-    val mainThreadHandler = Handler(mainThreadLooper)
+    fun removeAsyncCallback(a: Runnable) {
+        this.threadPool.remove(a)
+    }
+
+    fun removeUiCallback(a: Runnable) {
+        mainThreadHandler.removeCallbacks(a)
+    }
 
     fun runOnUiThread(run: () -> Unit) {
         if (Looper.myLooper() == mainThreadLooper) {
@@ -42,7 +50,7 @@ object AppExecutors {
         }
     }
 
-    fun runOnAsyncThread(a: () -> Unit) {
+    fun runOnAsyncThread(a: Runnable) {
         this.threadPool.execute(a)
     }
 }

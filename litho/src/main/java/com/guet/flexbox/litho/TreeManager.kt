@@ -8,6 +8,7 @@ import androidx.annotation.RestrictTo
 abstract class TreeManager internal constructor(
         builder: Builder?
 ) : ComponentTree(builder) {
+
     override fun attach() {
         super.attach()
     }

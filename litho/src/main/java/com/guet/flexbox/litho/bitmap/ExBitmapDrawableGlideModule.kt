@@ -1,4 +1,4 @@
-package com.guet.flexbox.litho.load
+package com.guet.flexbox.litho.bitmap
 
 import android.content.Context
 import com.bumptech.glide.Glide
