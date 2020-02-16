@@ -58,14 +58,37 @@ class HostingView @JvmOverloads constructor(
         super.setComponentTree(componentTree as TemplatePage?)
     }
 
+    override fun setClipToPadding(clipToPadding: Boolean) {
+    }
+
+    override fun setPaddingRelative(start: Int, top: Int, end: Int, bottom: Int) {}
+
+    override fun setPadding(left: Int, top: Int, right: Int, bottom: Int) {}
+
+    override fun getPaddingLeft(): Int {
+        return 0
+    }
+
+    override fun getPaddingBottom(): Int {
+        return 0
+    }
+
+    override fun getPaddingEnd(): Int {
+        return 0
+    }
+
+    override fun getPaddingRight(): Int {
+        return 0
+    }
+
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
-        super.onMeasure(
-                SizeSpec.makeSizeSpec(0, SizeSpec.UNSPECIFIED),
-                SizeSpec.makeSizeSpec(0, SizeSpec.UNSPECIFIED)
-        )
-        //fast path
         val page = templatePage
         if (page != null) {
+            //fast path
+            super.onMeasure(
+                    SizeSpec.makeSizeSpec(0, SizeSpec.UNSPECIFIED),
+                    SizeSpec.makeSizeSpec(0, SizeSpec.UNSPECIFIED)
+            )
             setMeasuredDimension(
                     View.getDefaultSize(
                             page.width,
