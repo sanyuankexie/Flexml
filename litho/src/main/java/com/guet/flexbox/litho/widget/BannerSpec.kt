@@ -351,7 +351,6 @@ object BannerSpec {
 
         init {
             addView(viewPager2, LayoutParams(-1, -1))
-            viewPager2.adapter = adapter
             viewPager2.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
                 override fun onPageSelected(position: Int) {
 
@@ -410,7 +409,7 @@ object BannerSpec {
             } else {
                 this.componentTrees = ArrayList(componentTrees)
             }
-            adapter.notifyDataSetChanged()
+            viewPager2.adapter = adapter
             viewPager2.orientation = orientation.value
             if (componentTrees.isNullOrEmpty()) {
                 return
@@ -434,12 +433,13 @@ object BannerSpec {
         }
 
         fun unmount() {
+            this.componentTrees = null
+            viewPager2.adapter = null
             val pos = position
             if (pos != null) {
                 viewPager2.unregisterOnPageChangeCallback(pos)
                 position = null
             }
-            this.componentTrees = null
             Glide.with(this).clear(selectedDrawable)
             Glide.with(this).clear(unselectedDrawable)
         }
