@@ -1,10 +1,10 @@
-package com.guet.flexbox.litho.load
+package com.guet.flexbox.litho.bitmap
 
 import android.widget.ImageView.ScaleType
 import com.bumptech.glide.load.Option
 import com.guet.flexbox.litho.drawable.ExBitmapDrawable
 
-object Constants {
+object GlideConstants {
 
     const val BUCKET_EX_BITMAP_DRAWABLE = "ExBitmapDrawable"
 

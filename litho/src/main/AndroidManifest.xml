@@ -4,6 +4,6 @@
         <service
             android:exported="false"
             android:enabled="true"
-            android:name="com.guet.flexbox.litho.load.remote.RemoteGlideService" />
+            android:name="com.guet.flexbox.litho.bitmap.remote.RemoteGlideService" />
     </application>
 </manifest>

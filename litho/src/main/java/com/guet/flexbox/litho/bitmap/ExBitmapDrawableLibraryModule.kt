@@ -1,4 +1,4 @@
-package com.guet.flexbox.litho.load
+package com.guet.flexbox.litho.bitmap
 
 import android.content.Context
 import android.graphics.Bitmap
@@ -10,6 +10,7 @@ import com.bumptech.glide.annotation.GlideModule
 import com.bumptech.glide.load.ResourceDecoder
 import com.bumptech.glide.load.resource.bitmap.*
 import com.bumptech.glide.module.LibraryGlideModule
+import com.guet.flexbox.build.Kit
 import com.guet.flexbox.litho.drawable.ExBitmapDrawable
 import java.io.InputStream
 import java.nio.ByteBuffer
@@ -19,7 +20,7 @@ import java.util.concurrent.atomic.AtomicBoolean
 @GlideModule
 class ExBitmapDrawableLibraryModule : LibraryGlideModule() {
 
-    companion object {
+    companion object : Kit {
 
         private val isInit = AtomicBoolean(false)
 
@@ -49,15 +50,15 @@ class ExBitmapDrawableLibraryModule : LibraryGlideModule() {
                 streamBitmapDecoder = StreamBitmapDecoder(downSampler, arrayPool)
             }
             registry.append(
-                    Constants.BUCKET_EX_BITMAP_DRAWABLE,
+                    GlideConstants.BUCKET_EX_BITMAP_DRAWABLE,
                     ByteBuffer::class.java,
                     ExBitmapDrawable::class.java,
                     ExBitmapDrawableDecoder(byteBufferBitmapDecoder, resources)
-            ).append(Constants.BUCKET_EX_BITMAP_DRAWABLE,
+            ).append(GlideConstants.BUCKET_EX_BITMAP_DRAWABLE,
                     InputStream::class.java,
                     ExBitmapDrawable::class.java,
                     ExBitmapDrawableDecoder(streamBitmapDecoder, resources)
-            ).append(Constants.BUCKET_EX_BITMAP_DRAWABLE,
+            ).append(GlideConstants.BUCKET_EX_BITMAP_DRAWABLE,
                     ParcelFileDescriptor::class.java,
                     ExBitmapDrawable::class.java,
                     ExBitmapDrawableDecoder(parcelDecoder, resources)
@@ -72,7 +73,7 @@ class ExBitmapDrawableLibraryModule : LibraryGlideModule() {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                 val byteBufferDecoder = VideoDecoder.byteBuffer(bitmapPool)
                 registry.append(
-                        Constants.BUCKET_EX_BITMAP_DRAWABLE,
+                        GlideConstants.BUCKET_EX_BITMAP_DRAWABLE,
                         ByteBuffer::class.java,
                         ExBitmapDrawable::class.java,
                         ExBitmapDrawableDecoder(byteBufferDecoder, resources)
@@ -80,12 +81,12 @@ class ExBitmapDrawableLibraryModule : LibraryGlideModule() {
             }
         }
 
-        internal fun init(context: Context) {
+        override fun init(c: Context) {
             if (isInit.get()) {
                 return
             }
-            val glide = Glide.get(context)
-            init(context, glide, glide.registry)
+            val glide = Glide.get(c)
+            init(c, glide, glide.registry)
         }
     }
 

@@ -4,9 +4,9 @@ import android.content.Context
 import android.util.ArrayMap
 import com.facebook.soloader.SoLoader
 import com.guet.flexbox.build.*
+import com.guet.flexbox.litho.bitmap.ExBitmapDrawableLibraryModule
 import com.guet.flexbox.litho.factories.*
-import com.guet.flexbox.litho.load.ExBitmapDrawableLibraryModule
-import com.guet.flexbox.litho.widget.PoolManager
+import com.guet.flexbox.litho.widget.LithoPoolsManager
 
 object LithoBuildTool : BuildTool() {
 
@@ -28,9 +28,17 @@ object LithoBuildTool : BuildTool() {
         arr.toMap(ArrayMap<String, ToWidget>(arr.size))
     }
 
-    override fun init(context: Context){
-        PoolManager.init(context)
-        ExBitmapDrawableLibraryModule.init(context)
-        SoLoader.init(context, false)
+    override val kits: List<Kit> by lazy {
+        return@lazy listOf(
+                YogaLoader,
+                ExBitmapDrawableLibraryModule,
+                LithoPoolsManager
+        )
+    }
+
+    private object YogaLoader : Kit {
+        override fun init(c: Context) {
+            SoLoader.init(c, false)
+        }
     }
 }

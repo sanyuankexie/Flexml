@@ -1,4 +1,4 @@
-package com.guet.flexbox.litho.load
+package com.guet.flexbox.litho.bitmap
 
 import android.content.res.Resources
 import android.graphics.Bitmap
@@ -18,12 +18,12 @@ class LazyExBitmapDrawableResource(
     private val cornerRadius: CornerRadius
 
     init {
-        var scaleType = options.get(Constants.scaleType)
+        var scaleType = options.get(GlideConstants.scaleType)
         if (scaleType == null || scaleType == ScaleType.MATRIX) {
             scaleType = ScaleType.FIT_XY
         }
         this.scaleType = scaleType
-        cornerRadius = options.get(Constants.cornerRadius) ?: CornerRadius.empty
+        cornerRadius = options.get(GlideConstants.cornerRadius) ?: CornerRadius.empty
     }
 
     override fun getResourceClass(): Class<ExBitmapDrawable> {

@@ -99,12 +99,12 @@ object BannerSpec {
                 if (componentTrees.size != size) {
                     if (componentTrees.size > size) {
                         ((componentTrees.size - 1)..size).forEach {
-                            PoolManager.releaseTree(componentTrees.removeAt(it))
+                            LithoPoolsManager.releaseTree(componentTrees.removeAt(it))
                         }
                     }
                     if (componentTrees.size <= size) {
                         (1..size - componentTrees.size).forEach { _ ->
-                            componentTrees.add(PoolManager.obtainTree(c))
+                            componentTrees.add(LithoPoolsManager.obtainTree(c))
                         }
                     }
                 }
@@ -271,7 +271,7 @@ object BannerSpec {
         private var position: PagePosition? = null
 
         private val viewPager2 = ViewPager2(context)
-        private val adapter = ComponentTreeAdapter()
+        private val adapter = InternalAdapter()
         private val selectedDrawable = IndicatorDrawable()
         private val unselectedDrawable = IndicatorDrawable()
         private val autoNextPosition = object : Runnable {
@@ -305,7 +305,7 @@ object BannerSpec {
                 isFocusableInTouchMode = false
                 isFocusable = false
             }
-            rv.setRecycledViewPool(PoolManager.lithoViewPool)
+            rv.setRecycledViewPool(LithoPoolsManager.recycledLithoViewPool)
             val manager = rv.layoutManager as? LinearLayoutManager
             manager?.apply {
                 recycleChildrenOnDetach = true
@@ -424,11 +424,7 @@ object BannerSpec {
             removeCallbacks(autoNextPosition)
         }
 
-        private inner class ComponentTreeAdapter : RecyclerView.Adapter<LithoViewHolder>() {
-
-            override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): LithoViewHolder {
-                return LithoViewHolder(parent.context)
-            }
+        private inner class InternalAdapter : LithoViewsAdapter() {
 
             override fun getItemCount(): Int {
                 val trees = componentTrees ?: return 0
@@ -439,7 +435,10 @@ object BannerSpec {
                 }
             }
 
-            override fun onBindViewHolder(holder: LithoViewHolder, position: Int) {
+            override fun onBindViewHolder(
+                    holder: LithoViewHolder,
+                    position: Int
+            ) {
                 val trees = componentTrees
                 if (!trees.isNullOrEmpty()) {
                     val pos = if (isCircular) {
@@ -457,15 +456,6 @@ object BannerSpec {
                 holder.lithoView.componentTree = null
             }
         }
-    }
-
-    private class LithoViewHolder(
-            c: Context
-    ) : RecyclerView.ViewHolder(LithoView(c).apply {
-        layoutParams = RecyclerView.LayoutParams(-1, -1)
-    }) {
-        val lithoView: LithoView
-            get() = itemView as LithoView
     }
 
     class IndicatorDrawable : DrawableWrapper<Drawable>(NoOpDrawable()),

@@ -9,8 +9,8 @@ import com.bumptech.glide.request.target.SizeReadyCallback
 import com.bumptech.glide.request.target.Target
 import com.bumptech.glide.request.transition.Transition
 import com.facebook.litho.drawable.ComparableDrawable
-import com.guet.flexbox.litho.load.Constants
-import com.guet.flexbox.litho.load.CornerRadius
+import com.guet.flexbox.litho.bitmap.GlideConstants
+import com.guet.flexbox.litho.bitmap.CornerRadius
 import java.lang.ref.WeakReference
 import java.util.concurrent.atomic.AtomicBoolean
 
@@ -68,8 +68,8 @@ class LazyImageDrawable private constructor(
             Glide.with(context)
                     .`as`(ExBitmapDrawable::class.java)
                     .load(model)
-                    .set(Constants.scaleType, ScaleType.FIT_XY)
-                    .set(Constants.cornerRadius, radius)
+                    .set(GlideConstants.scaleType, ScaleType.FIT_XY)
+                    .set(GlideConstants.cornerRadius, radius)
                     .into(this)
         } else {
             super.draw(canvas)

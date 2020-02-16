@@ -8,8 +8,8 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.request.target.SizeReadyCallback
 import com.bumptech.glide.request.target.Target
 import com.bumptech.glide.request.transition.Transition
-import com.guet.flexbox.litho.load.Constants
-import com.guet.flexbox.litho.load.CornerRadius
+import com.guet.flexbox.litho.bitmap.GlideConstants
+import com.guet.flexbox.litho.bitmap.CornerRadius
 import com.guet.flexbox.litho.transforms.FastBlur
 
 class GlideDrawable(
@@ -64,8 +64,8 @@ class GlideDrawable(
         var request = Glide.with(context)
                 .`as`(ExBitmapDrawable::class.java)
                 .load(model)
-                .set(Constants.scaleType, scaleType)
-                .set(Constants.cornerRadius, CornerRadius(
+                .set(GlideConstants.scaleType, scaleType)
+                .set(GlideConstants.cornerRadius, CornerRadius(
                         leftTop,
                         rightTop,
                         rightBottom,
