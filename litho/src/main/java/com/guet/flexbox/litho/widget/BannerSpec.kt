@@ -1,13 +1,9 @@
 package com.guet.flexbox.litho.widget
 
-import android.app.Application
-import android.content.ComponentCallbacks
 import android.content.Context
-import android.content.res.Configuration
 import android.graphics.drawable.Drawable
 import android.util.AttributeSet
 import android.view.ViewGroup
-import androidx.annotation.MainThread
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager2.widget.ViewPager2
@@ -17,13 +13,11 @@ import com.bumptech.glide.request.transition.Transition
 import com.facebook.litho.*
 import com.facebook.litho.annotations.*
 import com.guet.flexbox.enums.Orientation
-import com.guet.flexbox.litho.LayoutThreadHandler
 import com.guet.flexbox.litho.drawable.DelegateTarget
 import com.guet.flexbox.litho.drawable.DrawableWrapper
 import com.guet.flexbox.litho.drawable.NoOpDrawable
 import com.guet.flexbox.litho.toPx
 import java.util.*
-import java.util.concurrent.atomic.AtomicBoolean
 import kotlin.collections.ArrayList
 import kotlin.math.max
 import kotlin.math.min
@@ -49,7 +43,6 @@ object BannerSpec {
 
     @OnCreateMountContent
     fun onCreateMountContent(c: Context): BannerLithoView {
-        PoolManager.init(c)
         return BannerLithoView(c)
     }
 
@@ -257,55 +250,6 @@ object BannerSpec {
         view.unbind()
     }
 
-    private object PoolManager : ComponentCallbacks {
-
-        override fun onConfigurationChanged(newConfig: Configuration?) {}
-
-        override fun onLowMemory() {
-            viewPool.clear()
-            synchronized(componentTreePool) {
-                componentTreePool.clear()
-            }
-        }
-
-        private val isInit = AtomicBoolean(false)
-
-        @get:MainThread
-        val viewPool = RecyclerView.RecycledViewPool()
-
-        private val componentTreePool = LinkedList<ComponentTree>()
-
-        fun init(c: Context) {
-            if (isInit.compareAndSet(false, true)) {
-                val application = c.applicationContext as Application
-                application.registerComponentCallbacks(this)
-            }
-        }
-
-        fun releaseTree(tree: ComponentTree) {
-            synchronized(componentTreePool) {
-                if (componentTreePool.size < 10) {
-                    componentTreePool.push(tree)
-                } else {
-                    tree.release()
-                }
-            }
-        }
-
-        fun obtainTree(c: ComponentContext): ComponentTree {
-            return synchronized(componentTreePool) {
-                if (componentTreePool.isEmpty()) {
-                    ComponentTree.create(c)
-                            .layoutThreadHandler(LayoutThreadHandler)
-                            .isReconciliationEnabled(false)
-                            .build()
-                } else {
-                    componentTreePool.pop()
-                }
-            }
-        }
-    }
-
     class PagePosition(var value: Int = 0) : ViewPager2.OnPageChangeCallback() {
         override fun onPageSelected(position: Int) {
             value = position
@@ -361,7 +305,7 @@ object BannerSpec {
                 isFocusableInTouchMode = false
                 isFocusable = false
             }
-            rv.setRecycledViewPool(PoolManager.viewPool)
+            rv.setRecycledViewPool(PoolManager.lithoViewPool)
             val manager = rv.layoutManager as? LinearLayoutManager
             manager?.apply {
                 recycleChildrenOnDetach = true
