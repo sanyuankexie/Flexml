@@ -23,17 +23,18 @@ internal object ToGlideImage : ToComponent<GlideImage.Builder>(CommonAssigns) {
         register("aspectRatio") { _, _, value: Float ->
             imageAspectRatio(value)
         }
-        register("url") { _, _, value: String ->
-            url(value)
-            Glide.with(context!!.androidContext)
-                    .load(value)
-                    .preload()
-        }
-        register("internal:resId") { _, _, value: Int ->
-            resId(value)
-            Glide.with(context!!.androidContext)
-                    .load(value)
-                    .preload()
+        register("src") { _, _, value: Any ->
+            if (value is String) {
+                url(value)
+                Glide.with(context!!.androidContext)
+                        .load(value)
+                        .preload()
+            } else if (value is Int) {
+                resId(value)
+                Glide.with(context!!.androidContext)
+                        .load(value)
+                        .preload()
+            }
         }
         register("borderLeftTopRadius") { _, _, value: Float ->
             leftTopRadius(value.toPxFloat())

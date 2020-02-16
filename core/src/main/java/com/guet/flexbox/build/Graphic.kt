@@ -13,7 +13,7 @@ internal object Graphic : Declaration(CommonProps) {
                 "centerInside" to ScaleType.CENTER_INSIDE,
                 "centerCrop" to ScaleType.CENTER_CROP
         ))
-        text("url")
+        text("src")
         value("aspectRatio")
     }
 }
