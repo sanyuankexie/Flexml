@@ -23,6 +23,7 @@ class IntroductionFragment : Fragment() {
     ): View? {
         scroller = NestedScrollView(inflater.context)
         scroller.isFillViewport = true
+        scroller.isNestedScrollingEnabled = true
         host = HostingView(inflater.context)
         scroller.addView(host)
         return scroller

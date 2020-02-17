@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Flex
     width="360"
-    marginBottom="100"
+    paddingBottom="100"
     justifyContent="center"
     background="${gradient:linear('t2b','#7c4dff','#b388ff')}">
     <Flex
@@ -333,24 +333,24 @@
                     </Text>
                 </Flex>
             </Flex>
-<!--            <Flex marginLeft="10" marginRight="10">-->
-<!--                <Flex flexDirection="column">-->
-<!--                    <Text-->
-<!--                        marginTop="10"-->
-<!--                        marginBottom="10"-->
-<!--                        textSize="20"-->
-<!--                        textStyle="bold"-->
-<!--                        text="TextInput标签">-->
-<!--                    </Text>-->
-<!--                    <Text-->
-<!--                        text="输入框也是能用的啦，只是现在支持得还不够好。">-->
-<!--                    </Text>-->
-<!--                    <TextInput-->
+            <Flex marginLeft="10" marginRight="10">
+                <Flex flexDirection="column">
+                    <Text
+                        marginTop="10"
+                        marginBottom="10"
+                        textSize="20"
+                        textStyle="bold"
+                        text="TextInput标签">
+                    </Text>
+                    <Text
+                        text="输入框也是能用的啦，只是现在支持得还不够好。">
+                    </Text>
+                    <TextInput
 
-<!--                        flexGrow="1">-->
-<!--                    </TextInput>-->
-<!--                </Flex>-->
-<!--            </Flex>-->
+                        flexGrow="1">
+                    </TextInput>
+                </Flex>
+            </Flex>
             <Flex marginLeft="10" marginRight="10">
                 <Flex flexDirection="column">
                     <Text
@@ -433,7 +433,7 @@
                         text="支持横向和竖向，默认打开嵌套滑动。试试滑动下面的图片。">
                     </Text>
                     <Scroller
-                        orientation="horizontal"
+                        orientation="vertical"
                         height="150">
                         <Image
                             borderRadius="10"
