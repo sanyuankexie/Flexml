@@ -16,6 +16,7 @@ import com.guet.flexbox.playground.model.AppLoader
 import com.guet.flexbox.playground.widget.CornerOutlineProvider
 import com.guet.flexbox.playground.widget.TransformRootLayout
 
+
 class MainActivity : AppCompatActivity() {
 
     private val fragments by lazy {
@@ -71,6 +72,8 @@ class MainActivity : AppCompatActivity() {
         }
         initCodePanel()
     }
+
+
 
     private fun initCodePanel() {
         codeView = findViewById(R.id.code)
