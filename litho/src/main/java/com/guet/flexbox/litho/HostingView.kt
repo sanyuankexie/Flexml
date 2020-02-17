@@ -10,6 +10,7 @@ import com.facebook.litho.SizeSpec
 import com.guet.flexbox.HttpClient
 import com.guet.flexbox.litho.event.EventTarget
 
+
 class HostingView @JvmOverloads constructor(
         context: Context, attrs: AttributeSet? = null
 ) : LithoView(context, attrs) {
@@ -35,7 +36,6 @@ class HostingView @JvmOverloads constructor(
         get() {
             return super.getComponentTree() as? TemplatePage
         }
-
 
     override fun setClipChildren(clipChildren: Boolean) {
     }

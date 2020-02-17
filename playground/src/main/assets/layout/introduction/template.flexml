@@ -35,7 +35,7 @@
                 marginTop="10"
                 marginLeft="12"
                 marginRight="12"
-                text="Flexml是美团APP首页MTFlexbox动态化方案的开源版本，几乎实现了其100%的功能，例如异步布局测量，预加载，模板表达式解析等等。&lt;br&gt;&lt;br&gt;并且在某些方面做得更好，比如基于renderscript的高斯模糊，和支持抗锯齿的任意圆角并且最低兼容到API19。&lt;br&gt;&lt;br&gt;同时它不是MTFlexbox的兼容版本，是完全使用开放源代码软件编写的全新开源软件。">
+                text="Flexml是一个新的动态化业务容器，实现了诸如异步布局测量，预加载，模板解析等等。并且支持抗锯齿的任意圆角，最低兼容到API19。&lt;br&gt;&lt;br&gt;是完全使用开放源代码软件编写的全新开源软件。">
             </Text>
             <Text
                 marginTop="10"
