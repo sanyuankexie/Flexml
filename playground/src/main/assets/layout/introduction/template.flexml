@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
-<Scroller
+<Flex
     width="360"
+    marginBottom="100"
     justifyContent="center"
-    paddingBottom="100"
     background="${gradient:linear('t2b','#7c4dff','#b388ff')}">
     <Flex
         alignItems="center"
@@ -333,24 +333,24 @@
                     </Text>
                 </Flex>
             </Flex>
-            <Flex marginLeft="10" marginRight="10">
-                <Flex flexDirection="column">
-                    <Text
-                        marginTop="10"
-                        marginBottom="10"
-                        textSize="20"
-                        textStyle="bold"
-                        text="TextInput标签">
-                    </Text>
-                    <Text
-                        text="输入框也是能用的啦，只是现在支持得还不够好。">
-                    </Text>
-                    <TextInput
+<!--            <Flex marginLeft="10" marginRight="10">-->
+<!--                <Flex flexDirection="column">-->
+<!--                    <Text-->
+<!--                        marginTop="10"-->
+<!--                        marginBottom="10"-->
+<!--                        textSize="20"-->
+<!--                        textStyle="bold"-->
+<!--                        text="TextInput标签">-->
+<!--                    </Text>-->
+<!--                    <Text-->
+<!--                        text="输入框也是能用的啦，只是现在支持得还不够好。">-->
+<!--                    </Text>-->
+<!--                    <TextInput-->
 
-                        flexGrow="1">
-                    </TextInput>
-                </Flex>
-            </Flex>
+<!--                        flexGrow="1">-->
+<!--                    </TextInput>-->
+<!--                </Flex>-->
+<!--            </Flex>-->
             <Flex marginLeft="10" marginRight="10">
                 <Flex flexDirection="column">
                     <Text
@@ -434,7 +434,6 @@
                     </Text>
                     <Scroller
                         orientation="horizontal"
-                        fillViewport="true"
                         height="150">
                         <Image
                             borderRadius="10"
@@ -508,11 +507,42 @@
                             </Image>
                         </Flex>
                     </Flex>
-                    <Text text="同时还能结合布局的事件响应函数发送诸如http请求之类的动作。">
+                    <Text text="同时还能结合布局的事件响应函数发送诸如http请求之类的动作。其他逻辑标签就不再逐介绍了，后期会把文档补上。">
                     </Text>
-                    
+                    <Text
+                        marginTop="10"
+                        marginBottom="0"
+                        textSize="20"
+                        textStyle="bold"
+                        text="Flexml的优势">
+                    </Text>
+                    <Text
+                        marginTop="10"
+                        text="1. 耗时操作异步化，将原本View体系中的measure、layout搬到异步线程中去，解放主线程。"/>
+                    <Text marginTop="10"
+                        text="2. 干掉布局层级。直接使用轻量级的Drawable进行渲染，与WebView相比有更大的性能优势。并且基于广泛使用的flexbox布局模型，易于上手。"/>
+                    <Text
+                        marginTop="10"
+                        text="3. 全硬件加速渲染，最低限度的过度绘制，异步图片，完美无妥协的圆角支持。几乎重写了所有的Android Drawable。"/>
+                    <Text
+                        marginTop="10"
+                        text="4. 资源回收，画出屏幕的内容会被自动回收，多图顶多内存高点，但是也不会OOM。"/>
+                    <Text
+                        marginTop="10"
+                        text="5. 敏捷开发，随时上线，前后端分离。后端下发布局+数据的json，可集成在数据接口下发，本地自主解析渲染布局。"/>
+                    <Text
+                        marginTop="10"
+                        text="6. 内置的数据解析引擎非常强大，支持Java Bean、JSONObject、Map、List、数组等等，只要你不传奇怪的数据进来基本都能解析而无需依赖其他lib。"/>
+                    <Text marginTop="10"
+                        text="7. 真机调试和实时预览，Flexml有自己的intellij插件，可以给AS或者IDEA安装，之后就可以通过扫码的方式在真机上追踪IDE中正在编辑的布局来进行实时预览调试。"/>
+                    <Text marginTop="10"
+                        text="8. 单容器View接入，基本无入侵性。可用于替换现有的任意一个静态展示型的View，并支持曝光埋点、点击埋点、点击时间处理等事件。"/>
+                    <Text marginTop="10"
+                        text="9. 屏幕适配。布局使用的单位为是设备独立的pt，以设备屏幕宽度为基准，将屏幕分成360份，1pt=设备屏幕宽度/360。当然也留了sp和dp的转换函数。"/>
+                    <Text marginTop="10"
+                        text="10. 使用kotlin实现，拥抱未来，代码实现非常简洁，运用了大量设计模式，很适合阅读学习。"/>
                 </Flex>
             </Flex>
         </Flex>
     </Flex>
-</Scroller>
+</Flex>

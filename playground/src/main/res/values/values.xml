@@ -6,6 +6,9 @@
     <string name="function_path">
         <![CDATA[layout/homepage/function]]>
     </string>
+    <string name="introduction_path">
+        <![CDATA[layout/introduction/template]]>
+    </string>
     <string-array name="feed_paths">
         <item><![CDATA[layout/homepage/feeds/three_entries]]></item>
         <item><![CDATA[layout/homepage/feeds/multi_images]]></item>

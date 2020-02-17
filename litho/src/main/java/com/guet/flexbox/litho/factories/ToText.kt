@@ -35,17 +35,21 @@ internal object ToText : ToComponent<Text.Builder>(CommonAssigns) {
             textAlignment(value.mapping())
         }
         register("text") { display, _, value: String ->
-            val chars = try {
-                HtmlCompat.fromHtml(
-                        value,
-                        HtmlCompat.FROM_HTML_MODE_LEGACY,
-                        GlideImageGetter(context!!.androidContext),
-                        null
-                )
-            } catch (e: Throwable) {
+            val htmlText = if (value.contains('<')) {
+                try {
+                    HtmlCompat.fromHtml(
+                            value,
+                            HtmlCompat.FROM_HTML_MODE_COMPACT,
+                            GlideImageGetter(context!!.androidContext),
+                            null
+                    )
+                } catch (e: Throwable) {
+                    value
+                }
+            } else {
                 value
             }
-            text(chars)
+            text(htmlText)
             if (!display) {
                 textColor(Color.TRANSPARENT)
                 textColorStateList(invisibleColor)
