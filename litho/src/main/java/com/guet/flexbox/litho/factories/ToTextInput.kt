@@ -9,6 +9,7 @@ import com.guet.flexbox.build.AttributeSet
 import com.guet.flexbox.enums.TextStyle
 import com.guet.flexbox.litho.event.EventHandlerWrapper
 import com.guet.flexbox.litho.resolve.mapping
+import com.guet.flexbox.litho.toPx
 
 internal object ToTextInput : ToComponent<TextInput.Builder>(CommonAssigns) {
     override val attributeAssignSet: AttributeAssignSet<TextInput.Builder> by create {
@@ -19,7 +20,7 @@ internal object ToTextInput : ToComponent<TextInput.Builder>(CommonAssigns) {
             minLines(value.toInt())
         }
         register("textSize") { _, _, value: Float ->
-            textSizePx(value.toInt())
+            textSizePx(value.toPx())
         }
         register("textStyle") { _, _, value: TextStyle ->
             typeface(Typeface.defaultFromStyle(value.mapping()))
@@ -38,5 +39,6 @@ internal object ToTextInput : ToComponent<TextInput.Builder>(CommonAssigns) {
             attrs: AttributeSet
     ): TextInput.Builder {
         return TextInput.create(c)
+                .inputBackground(null)
     }
 }
