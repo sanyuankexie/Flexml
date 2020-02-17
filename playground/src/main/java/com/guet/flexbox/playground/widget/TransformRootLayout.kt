@@ -33,10 +33,6 @@ class TransformRootLayout @JvmOverloads constructor(
     private val src = FloatArray(8)
     private val dst = FloatArray(8)
 
-    init {
-        setBackgroundColor(Color.BLACK)
-    }
-
     override fun onInterceptTouchEvent(ev: MotionEvent?): Boolean {
         return bitmap != null
     }
@@ -186,6 +182,7 @@ class TransformRootLayout @JvmOverloads constructor(
         val picture = this.bitmap
         if (picture != null) {
             canvas.save()
+            canvas.drawColor(Color.BLACK)
             myMatrix.reset()
             myMatrix.setPolyToPoly(
                     src,

@@ -49,6 +49,10 @@
       ]
     },
     "borderRadius": null,
+    "borderLeftTopRadius": null,
+    "borderRightTopRadius": null,
+    "borderLeftBottomRadius": null,
+    "borderRightBottomRadius": null,
     "borderWidth": null,
     "background": {
       "support": [

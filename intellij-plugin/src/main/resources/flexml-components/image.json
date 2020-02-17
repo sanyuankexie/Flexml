@@ -18,7 +18,7 @@
     },
     "blurRadius": null,
     "blurSampling": null,
-    "url": {
+    "src": {
       "required": true
     },
     "aspectRatio": null
