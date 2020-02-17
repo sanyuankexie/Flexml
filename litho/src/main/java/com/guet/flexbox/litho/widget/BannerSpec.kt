@@ -305,10 +305,8 @@ object BannerSpec {
                 isFocusableInTouchMode = false
                 isFocusable = false
             }
-            LithoPoolsManager.attachPool(rv)
             val manager = rv.layoutManager as? LinearLayoutManager
             manager?.apply {
-                recycleChildrenOnDetach = true
                 initialPrefetchItemCount = 3
             }
         }

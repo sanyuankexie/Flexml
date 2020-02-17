@@ -6,10 +6,8 @@ import android.content.Context
 import android.content.res.Configuration
 import androidx.annotation.AnyThread
 import androidx.annotation.MainThread
-import androidx.recyclerview.widget.RecyclerView
 import com.facebook.litho.ComponentContext
 import com.facebook.litho.ComponentTree
-import com.facebook.litho.LithoView
 import com.guet.flexbox.build.Kit
 import com.guet.flexbox.litho.LayoutThreadHandler
 import java.util.*
@@ -21,7 +19,6 @@ internal object LithoPoolsManager : ComponentCallbacks, Kit {
 
     @MainThread
     override fun onLowMemory() {
-        lithoViewPool.clear()
         synchronized(componentTreePool) {
             while (!componentTreePool.isEmpty()) {
                 componentTreePool.pop().release()
@@ -31,30 +28,13 @@ internal object LithoPoolsManager : ComponentCallbacks, Kit {
 
     private val application = AtomicReference<Application>(null)
 
-    val LITHO_VIEW_TYPE = LithoView::class.java.name.hashCode()
-
-    private val lithoViewPool = RecyclerView.RecycledViewPool()
-
     private val componentTreePool = LinkedList<ComponentTree>()
-
-    @MainThread
-    fun attachPool(recyclerView: RecyclerView) {
-        recyclerView.setRecycledViewPool(lithoViewPool)
-    }
 
     override fun init(c: Context) {
         val app = c.applicationContext as Application
         if (application.compareAndSet(null, app)) {
             app.registerComponentCallbacks(this)
         }
-    }
-
-    //可回收的内容ctx必须是app
-    @MainThread
-    fun obtainViewHolder(): LithoViewHolder {
-        return lithoViewPool.getRecycledView(LITHO_VIEW_TYPE)
-                as? LithoViewHolder
-                ?: LithoViewHolder(application.get())
     }
 
     @AnyThread
