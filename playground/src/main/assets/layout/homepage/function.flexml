@@ -31,7 +31,7 @@
                             marginBottom="10"
                             flexDirection="column">
                             <Image
-                                url="${icons[i*2+j]}"
+                                src="${icons[i*2+j]}"
                                 height="40"
                                 width="40">
                             </Image>

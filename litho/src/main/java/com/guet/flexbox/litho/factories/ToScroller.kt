@@ -37,7 +37,7 @@ internal object ToScroller : ToComponent<Component.Builder<*>>(CommonAssigns) {
                 HorizontalScroll.create(c)
             }
             else -> {
-                VerticalScroll.create(c)
+                VerticalScroll.create(c).nestedScrollingEnabled(true)
             }
         }
     }

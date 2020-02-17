@@ -19,10 +19,10 @@
             width="340">
             <Flex marginTop="15">
                 <Image
-                    marginLeft="10"
-                    width="60"
-                    height="60"
-                    url="${res:drawable('ic_launcher')}">
+                    marginLeft="20"
+                    width="50"
+                    height="55"
+                    src="${res:drawable('ic_launcher')}">
                 </Image>
                 <Text
                     marginLeft="10"
@@ -45,7 +45,7 @@
                 textStyle="bold"
                 textSize="13.5"
                 textColor="black"
-                text="注：下面您将看到的所有内容，没有用RecycleView实现，甚至可能都不是View，您滑动的每一帧都不在MainThread测量，您划出屏幕的每一张图都会被Glide回收，不信您就辛苦自己抓一下吧。">
+                text="注：下面您将看到的所有内容。&lt;br&gt;1.都没有用RecycleView实现，甚至可能都不是View。&lt;br&gt;2.您滑动的每一帧都不在MainThread测量。&lt;br&gt;3.您划出屏幕的每一张图都会被Glide回收。&lt;br&gt;">
             </Text>
             <Flex marginLeft="10" marginRight="10">
                 <Flex flexDirection="column">
@@ -62,7 +62,7 @@
                             borderLeftTopRadius="15"
                             borderRightTopRadius="40"
                             borderRightBottomRadius="60"
-                            url="${res:drawable('ic_photo2')}"
+                            src="${res:drawable('ic_photo2')}"
                             width="120"
                             height="120">
                         </Image>
@@ -85,7 +85,7 @@
                             borderLeftTopRadius="15"
                             borderRightTopRadius="40"
                             borderRightBottomRadius="60"
-                            url="${res:drawable('ic_photo2')}"
+                            src="${res:drawable('ic_photo2')}"
                             width="120"
                             height="120">
                         </Image>
@@ -123,7 +123,7 @@
                                         background="${gradient:linear('t2b','#7c4dff','#d500f9')}"
                                         scaleType="fitXY"
                                         flexShrink="0"
-                                        url="${res:drawable('ic_tomcat')}"
+                                        src="${res:drawable('ic_tomcat')}"
                                         width="100"
                                         height="100"/>
                                     <Text
@@ -140,7 +140,7 @@
                                         background="${gradient:linear('t2b','#7c4dff','#d500f9')}"
                                         scaleType="fitCenter"
                                         flexShrink="0"
-                                        url="${res:drawable('ic_tomcat')}"
+                                        src="${res:drawable('ic_tomcat')}"
                                         width="100"
                                         height="100"/>
                                     <Text
@@ -157,7 +157,7 @@
                                         background="${gradient:linear('t2b','#7c4dff','#d500f9')}"
                                         scaleType="centerCrop"
                                         flexShrink="0"
-                                        url="${res:drawable('ic_tomcat')}"
+                                        src="${res:drawable('ic_tomcat')}"
                                         width="100"
                                         height="100"/>
                                     <Text
@@ -176,7 +176,7 @@
                                         background="${gradient:linear('t2b','#7c4dff','#d500f9')}"
                                         scaleType="fitStart"
                                         flexShrink="0"
-                                        url="${res:drawable('ic_tomcat')}"
+                                        src="${res:drawable('ic_tomcat')}"
                                         width="100"
                                         height="100"/>
                                     <Text
@@ -193,7 +193,7 @@
                                         background="${gradient:linear('t2b','#7c4dff','#d500f9')}"
                                         scaleType="fitEnd"
                                         flexShrink="0"
-                                        url="${res:drawable('ic_tomcat')}"
+                                        src="${res:drawable('ic_tomcat')}"
                                         width="100"
                                         height="100"/>
                                     <Text
@@ -210,7 +210,7 @@
                                         background="${gradient:linear('t2b','#7c4dff','#d500f9')}"
                                         scaleType="centerInside"
                                         flexShrink="0"
-                                        url="${res:drawable('ic_tomcat')}"
+                                        src="${res:drawable('ic_tomcat')}"
                                         width="100"
                                         height="100"/>
                                     <Text
@@ -295,17 +295,17 @@
                         height="150">
                         <Image
                             scaleType="centerCrop"
-                            url="${res:drawable('banner_test')}"
+                            src="${res:drawable('banner_test')}"
                             borderRadius="10">
                         </Image>
                         <Image
                             scaleType="centerCrop"
-                            url="${res:drawable('banner_test')}"
+                            src="${res:drawable('banner_test')}"
                             borderRadius="10">
                         </Image>
                         <Image
                             scaleType="centerCrop"
-                            url="${res:drawable('banner_test')}"
+                            src="${res:drawable('banner_test')}"
                             borderRadius="10">
                         </Image>
                     </Banner>
@@ -325,8 +325,192 @@
                         text="Text标签">
                     </Text>
                     <Text
-                        text="也就是你现在正在看到的文字啦，不是TextView哦，还在这一个View上面。&lt;br&gt;这只是一段&lt;font color=&quot;red&quot;&gt;平平无奇&lt;font/&gt;的文字（其实支持基于html的图文混排&lt;img src=&quot;res://drawable?name=ic_zan_black&quot;&gt;）">
+                        text="也就是你现在正在看到的文字啦，不是TextView哦，还在这一个View上面。">
                     </Text>
+                    <Text
+                        textStyle="bold"
+                        text="&lt;br&gt;这只是一段&lt;font color=&quot;red&quot;&gt;平平无奇&lt;font/&gt;的文字（支持基于html的&lt;font color=&quot;green&quot;&gt;的富文本&lt;font/&gt;）">
+                    </Text>
+                </Flex>
+            </Flex>
+            <Flex marginLeft="10" marginRight="10">
+                <Flex flexDirection="column">
+                    <Text
+                        marginTop="10"
+                        marginBottom="10"
+                        textSize="20"
+                        textStyle="bold"
+                        text="TextInput标签">
+                    </Text>
+                    <Text
+                        text="输入框也是能用的啦，只是现在支持得还不够好。">
+                    </Text>
+                    <TextInput
+
+                        flexGrow="1">
+                    </TextInput>
+                </Flex>
+            </Flex>
+            <Flex marginLeft="10" marginRight="10">
+                <Flex flexDirection="column">
+                    <Text
+                        marginTop="10"
+                        marginBottom="10"
+                        textSize="20"
+                        textStyle="bold"
+                        text="Flex标签">
+                    </Text>
+                    <Text
+                        text="当然，最常用的就是Flex标签了。Flex支持Flexbox中的所有属性。下面举几个例子。">
+                    </Text>
+                    <Flex
+                        background="black"
+                        borderRadius="10"
+                        height="150"
+                        alignItems="center"
+                        flexGrow="1"
+                        flexDirection="column">
+                        <Flex
+                            borderRadius="10"
+                            flexGrow="1"
+                            width="150"
+                            background="${gradient:linear('t2b','#7c4dff','#b388ff')}">
+                        </Flex>
+                    </Flex>
+                    <Text
+                        horizontalGravity="center"
+                        text="alignItems center">
+                    </Text>
+                    <Flex
+                        background="black"
+                        borderRadius="10"
+                        height="150"
+                        alignItems="flexStart"
+                        flexGrow="1"
+                        flexDirection="column">
+                        <Flex
+                            borderRadius="10"
+                            flexGrow="1"
+                            width="150"
+                            background="${gradient:linear('t2b','#7c4dff','#b388ff')}">
+                        </Flex>
+                    </Flex>
+                    <Text
+                        horizontalGravity="center"
+                        text="alignItems flexStart">
+                    </Text>
+                    <Flex
+                        background="black"
+                        borderRadius="10"
+                        height="150"
+                        alignItems="flexEnd"
+                        flexGrow="1"
+                        flexDirection="column">
+                        <Flex
+                            borderRadius="10"
+                            flexGrow="1"
+                            width="150"
+                            background="${gradient:linear('t2b','#7c4dff','#b388ff')}">
+                        </Flex>
+                    </Flex>
+                    <Text
+                        horizontalGravity="center"
+                        text="alignItems flexEnd">
+                    </Text>
+                </Flex>
+            </Flex>
+            <Flex marginLeft="10" marginRight="10">
+                <Flex flexDirection="column">
+                    <Text
+                        marginTop="10"
+                        marginBottom="0"
+                        textSize="20"
+                        textStyle="bold"
+                        text="Scroller标签">
+                    </Text>
+                    <Text
+                        marginBottom="5"
+                        text="支持横向和竖向，默认打开嵌套滑动。试试滑动下面的图片。">
+                    </Text>
+                    <Scroller
+                        orientation="horizontal"
+                        fillViewport="true"
+                        height="150">
+                        <Image
+                            borderRadius="10"
+                            src="${res:drawable('ic_photo2')}"
+                            height="300">
+                        </Image>
+                    </Scroller>
+                </Flex>
+            </Flex>
+            <Flex marginRight="10" marginLeft="10">
+                <Flex flexDirection="column">
+                    <Text
+                        marginTop="10"
+                        marginBottom="0"
+                        textSize="20"
+                        textStyle="bold"
+                        text="逻辑标签">
+                    </Text>
+                    <Text text="上面的标签其实都算是组件标签，Flexml还支持一些逻辑标签，比如for，if，when等。">
+                    </Text>
+                    <Text
+                        marginTop="10"
+                        marginBottom="0"
+                        textSize="20"
+                        textStyle="bold"
+                        text="for标签">
+                    </Text>
+                    <Text text="需要从数据构建列表时for标签非常有用。">
+                    </Text>
+                    <Flex
+                        marginTop="10"
+                        borderRadius="10"
+                        padding="10"
+                        flexDirection="column"
+                        background="gray">
+                        <for var="index" from="0" to="5">
+                            <Text
+                                textColor="white"
+                                text="${'文本'+index}">
+                            </Text>
+                        </for>
+                    </Flex>
+                    <Text
+                        marginTop="10"
+                        marginBottom="0"
+                        textSize="20"
+                        textStyle="bold"
+                        text="使用三元表达式">
+                    </Text>
+                    <Flex
+                        marginTop="10"
+                        marginBottom="10"
+                        flexDirection="row">
+                        <Text
+                            horizontalGravity="center"
+                            verticalGravity="center"
+                            textSize="12"
+                            marginRight="2.5"
+                            text="试试点赞→">
+                        </Text>
+                        <Flex
+                            alignItems="center"
+                            justifyContent="center"
+                            width="25"
+                            height="25"
+                            onClick="${()->{pageContext.refresh().with(()->{clicked=!clicked}).commit()}}">
+                            <Image
+                                width="18"
+                                height="18"
+                                src="${!clicked?res:drawable('ic_zan_w'):res:drawable('ic_zan_black')}">
+                            </Image>
+                        </Flex>
+                    </Flex>
+                    <Text text="同时还能结合布局的事件响应函数发送诸如http请求之类的动作。">
+                    </Text>
+                    
                 </Flex>
             </Flex>
         </Flex>

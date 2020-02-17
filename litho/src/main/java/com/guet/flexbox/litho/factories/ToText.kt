@@ -38,7 +38,7 @@ internal object ToText : ToComponent<Text.Builder>(CommonAssigns) {
             val chars = try {
                 HtmlCompat.fromHtml(
                         value,
-                        HtmlCompat.FROM_HTML_MODE_COMPACT,
+                        HtmlCompat.FROM_HTML_MODE_LEGACY,
                         GlideImageGetter(context!!.androidContext),
                         null
                 )
