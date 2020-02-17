@@ -35,7 +35,7 @@ internal object ToText : ToComponent<Text.Builder>(CommonAssigns) {
             textAlignment(value.mapping())
         }
         register("text") { display, _, value: String ->
-            val htmlText = if (value.contains('<') && value.contains("/>")) {
+            val htmlText = if (value.contains('<') && value.contains('>')) {
                 try {
                     HtmlCompat.fromHtml(
                             value,
