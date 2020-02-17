@@ -347,6 +347,7 @@
                         text="Flexml支持以总线的方式向布局外发送数据和事件，所以不用担心处理不了这些文字。">
                     </Text>
                     <Flex
+                        marginTop="10"
                         borderColor="fuchsia"
                         borderWidth="1"
                         borderRadius="5"
