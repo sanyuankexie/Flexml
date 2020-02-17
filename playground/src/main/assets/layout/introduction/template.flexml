@@ -20,7 +20,7 @@
             <Flex marginTop="15">
                 <Image
                     marginLeft="20"
-                    width="50"
+                    width="55"
                     height="55"
                     src="${res:drawable('ic_launcher')}">
                 </Image>
@@ -41,11 +41,10 @@
                 marginTop="10"
                 marginLeft="12"
                 width="300"
-                paddingBottom="10"
                 textStyle="bold"
                 textSize="13.5"
                 textColor="black"
-                text="注：下面您将看到的所有内容。&lt;br&gt;1.为了干掉局层级，所以可能都不是View（虽然部分还是会依赖Native）。&lt;br&gt;2.您滑动的每一帧都不在MainThread测量。&lt;br&gt;3.您划出屏幕的每一张图都会被Glide回收。&lt;br&gt;">
+                text="注：下面您将看到的所有内容。&lt;br&gt;1.为了干掉局层级，所以可能都不是View（虽然部分还是会依赖Native）。&lt;br&gt;2.您滑动的每一帧都不在MainThread测量。&lt;br&gt;3.您划出屏幕的每一张图都会被Glide回收。">
             </Text>
             <Flex marginLeft="10" marginRight="10">
                 <Flex flexDirection="column">
