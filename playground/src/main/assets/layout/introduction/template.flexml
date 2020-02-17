@@ -45,7 +45,7 @@
                 textStyle="bold"
                 textSize="13.5"
                 textColor="black"
-                text="注：下面您将看到的所有内容。&lt;br&gt;1.都没有用RecycleView实现，甚至可能都不是View。&lt;br&gt;2.您滑动的每一帧都不在MainThread测量。&lt;br&gt;3.您划出屏幕的每一张图都会被Glide回收。&lt;br&gt;">
+                text="注：下面您将看到的所有内容。&lt;br&gt;1.为了省布局层级，所以可能都不是View。&lt;br&gt;2.您滑动的每一帧都不在MainThread测量。&lt;br&gt;3.您划出屏幕的每一张图都会被Glide回收。&lt;br&gt;">
             </Text>
             <Flex marginLeft="10" marginRight="10">
                 <Flex flexDirection="column">
@@ -430,17 +430,8 @@
                     </Text>
                     <Text
                         marginBottom="5"
-                        text="支持横向和竖向，默认打开嵌套滑动。试试滑动下面的图片。">
+                        text="支持横向和竖向，但是暂时还未找到解决嵌套时滑动冲突问题，所以这里先不展示。（这里外面套了一层RecyclerView，所以出了点问题，单独使用是没问题的。）">
                     </Text>
-                    <Scroller
-                        orientation="vertical"
-                        height="150">
-                        <Image
-                            borderRadius="10"
-                            src="${res:drawable('ic_photo2')}"
-                            height="300">
-                        </Image>
-                    </Scroller>
                 </Flex>
             </Flex>
             <Flex marginRight="10" marginLeft="10">
