@@ -496,9 +496,11 @@
                         marginBottom="10"
                         flexDirection="row">
                         <Text
+                            textColor="red"
+                            textStyle="bold"
                             horizontalGravity="center"
                             verticalGravity="center"
-                            textSize="12"
+                            textSize="14"
                             marginRight="2.5"
                             text="试试点赞→">
                         </Text>
@@ -515,7 +517,7 @@
                             </Image>
                         </Flex>
                     </Flex>
-                    <Text text="同时还能结合布局的事件响应函数发送诸如http请求之类的动作。其他逻辑标签就不再逐介绍了，后期会把文档补上。">
+                    <Text text="点赞触发的同时还能结合布局的事件响应函数发送诸如http请求之类的动作。其他逻辑标签就不再逐介绍了，后期会把文档补上。">
                     </Text>
                     <Text
                         marginTop="10"
