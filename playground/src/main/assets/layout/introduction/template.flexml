@@ -469,7 +469,7 @@
                     </Text>
                     <Text
                         marginBottom="5"
-                        text="支持横向和竖向。内部基于RecyclerView。">
+                        text="支持横向和竖向。">
                     </Text>
                     <Scroller height="150">
                         <Image
