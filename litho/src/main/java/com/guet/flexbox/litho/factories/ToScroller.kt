@@ -8,7 +8,12 @@ import com.guet.flexbox.litho.widget.Scroller
 internal object ToScroller : ToComponent<Scroller.Builder>(CommonAssigns) {
 
     override val attributeAssignSet: AttributeAssignSet<Scroller.Builder> by create {
+        register("scrollBarEnable") { _, _, value: Boolean ->
 
+        }
+        register("fillViewport") { _, _, value: Boolean ->
+            fillViewport(value)
+        }
     }
 
     override fun create(

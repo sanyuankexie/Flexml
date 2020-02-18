@@ -17,7 +17,6 @@ open class HostingView @JvmOverloads constructor(
 
     init {
         super.suppressMeasureComponentTree(true)
-        super.setClipChildren(false)
     }
 
     internal val target = EventTarget(this)
@@ -127,5 +126,4 @@ open class HostingView @JvmOverloads constructor(
                 values: Array<out Any?>?
         )
     }
-
 }
