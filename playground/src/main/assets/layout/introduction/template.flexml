@@ -469,12 +469,11 @@
                     </Text>
                     <Text
                         marginBottom="5"
-                        text="支持横向和竖向。">
+                        text="支持横向和竖向。由于无法彻底解决滑动冲突的问题，所以不支持嵌套滑动，同时也不建议嵌套使用。">
                     </Text>
                     <Scroller height="150">
                         <Image
                             borderRadius="10"
-                            flexGrow="1"
                             src="${res:drawable('ic_photo2')}"
                             width="400">
                         </Image>

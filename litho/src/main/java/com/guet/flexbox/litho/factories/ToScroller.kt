@@ -33,7 +33,7 @@ internal object ToScroller : ToComponent<Component.Builder<*>>(CommonAssigns) {
         }
     }
 
-    object TouchInterceptHandler : HorizontalScrollSpec.OnInterceptTouchListener,
+    private object TouchInterceptHandler : HorizontalScrollSpec.OnInterceptTouchListener,
             VerticalScrollSpec.OnInterceptTouchListener {
 
         private fun onInterceptTouch(view: ViewGroup): Boolean {
