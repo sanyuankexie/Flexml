@@ -8,10 +8,7 @@ internal abstract class LithoViewsAdapter : RecyclerView.Adapter<LithoViewHolder
             parent: ViewGroup,
             viewType: Int
     ): LithoViewHolder {
-        return LithoPoolsManager.obtainViewHolder()
+        return LithoViewHolder(parent.context)
     }
 
-    final override fun getItemViewType(position: Int): Int {
-        return LithoPoolsManager.LITHO_VIEW_TYPE
-    }
 }

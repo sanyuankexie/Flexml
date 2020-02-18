@@ -58,16 +58,6 @@ internal fun ELContext.getColor(expr: String): Int {
     }
 }
 
-private fun ELContext.tryGetLambda(expr: String?): LambdaExpression? {
-    if (expr == null) {
-        return null
-    }
-    val trimExpr = expr.trim()
-    val safeExpr = "\${(_)->{${trimExpr.slice((2..trimExpr.length - 2))}}}"
-    tryGetValue<LambdaExpression>(safeExpr)
-    TODO()
-}
-
 internal inline fun <reified T> ELContext.tryGetValue(expr: String?, fallback: T? = null): T? {
     if (expr == null) {
         return fallback

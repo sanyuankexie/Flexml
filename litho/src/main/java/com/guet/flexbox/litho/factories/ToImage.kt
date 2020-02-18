@@ -39,7 +39,7 @@ object ToImage : RenderNodeFactory {
         if (!visibility) {
             return EmptyComponent.create(c).build()
         }
-        val url = attrs["url"] as? CharSequence
+        val url = attrs["src"] as? CharSequence
         val lt = attrs.getFloatValue("borderLeftTopRadius").toPxFloat()
         val rt = attrs.getFloatValue("borderRightTopRadius").toPxFloat()
         val lb = attrs.getFloatValue("borderLeftBottomRadius").toPxFloat()
@@ -102,8 +102,7 @@ object ToImage : RenderNodeFactory {
                     val id = prams[0] as Int
                     return ToGlideImage.toComponent(c, visibility,
                             (attrs as MutableMap).apply {
-                                this.remove("url")
-                                this["internal:resId"] = id
+                                this["src"] = id
                             }, emptyList())
                 }
                 else -> Unit

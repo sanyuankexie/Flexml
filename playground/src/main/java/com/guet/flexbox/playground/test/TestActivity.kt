@@ -3,11 +3,12 @@ package com.guet.flexbox.playground.test
 import android.os.Build
 import android.os.Bundle
 import android.os.MemoryFile
-import android.widget.ImageView
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import com.didichuxing.doraemonkit.DoraemonKit
-import com.guet.flexbox.playground.R
+import com.facebook.litho.ComponentContext
+import com.facebook.litho.LithoView
+import com.facebook.litho.Row
 
 class TestActivity : AppCompatActivity() {
 
@@ -18,9 +19,10 @@ class TestActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
 
         DoraemonKit.install(application)
+        val c = ComponentContext(this)
+        setContentView(LithoView.create(c, Row.create(c)
 
-        setContentView(R.layout.activity_test)
-        val imageView = findViewById<ImageView>(R.id.native_image)
+                .build()))
     }
 }
 

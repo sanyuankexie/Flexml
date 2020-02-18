@@ -9,6 +9,7 @@ import android.graphics.Bitmap.Config
 import android.graphics.Shader.TileMode
 import android.graphics.drawable.ColorDrawable
 import android.util.AttributeSet
+import android.view.Choreographer
 import android.view.MotionEvent
 import android.view.animation.DecelerateInterpolator
 import android.widget.FrameLayout
@@ -33,10 +34,6 @@ class TransformRootLayout @JvmOverloads constructor(
     private val src = FloatArray(8)
     private val dst = FloatArray(8)
 
-    init {
-        setBackgroundColor(Color.BLACK)
-    }
-
     override fun onInterceptTouchEvent(ev: MotionEvent?): Boolean {
         return bitmap != null
     }
@@ -46,86 +43,6 @@ class TransformRootLayout @JvmOverloads constructor(
     }
 
     fun move() {
-        src[0] = 0f
-        src[1] = 0f
-        src[2] = width.toFloat()
-        src[3] = 0f
-        src[4] = width.toFloat()
-        src[5] = height.toFloat()
-        src[6] = 0f
-        src[7] = height.toFloat()
-        foreground = ColorDrawable(Color.BLACK).apply {
-            alpha = 0
-        }
-        ValueAnimator.ofFloat(0f, 2f).apply {
-            addUpdateListener {
-                var value = it.animatedValue as Float
-                (foreground as ColorDrawable).alpha = ((255f / 2f) * (value / 2f)).toInt()
-                useRadius = (value / 2f) * cornerRadius
-                if (value <= 1) {
-                    //lt-x
-                    dst[0] = value * offset
-                    //lt-y
-                    dst[1] = value * offset
-                    //rt-x
-                    dst[2] = width - value * offset
-                    //rt-y
-                    dst[3] = value * offset
-                    //rb-x
-                    dst[4] = width.toFloat()
-                    //rb-y
-                    dst[5] = height.toFloat()
-                    //lb-x
-                    dst[6] = 0f
-                    //lb-y
-                    dst[7] = height.toFloat()
-                } else {
-                    value -= 1
-                    //lt-x
-                    dst[0] = offset
-                    //lt-y
-                    dst[1] = offset
-                    //rt-x
-                    dst[2] = width - offset
-                    //rt-y
-                    dst[3] = offset
-                    //rb-x
-                    dst[4] = width - value * offset
-                    //rb-y
-                    dst[5] = height - value * offset
-                    //lb-x
-                    dst[6] = value * offset
-                    //lb-y
-                    dst[7] = height - value * offset
-                }
-                invalidate()
-            }
-            addListener(object : AnimatorListenerAdapter() {
-                override fun onAnimationEnd(animation: Animator?) {
-                    //lt-x
-                    dst[0] = offset
-                    //lt-y
-                    dst[1] = offset
-                    //rt-x
-                    dst[2] = width - offset
-                    //rt-y
-                    dst[3] = offset
-                    //rb-x
-                    dst[4] = width - offset
-                    //rb-y
-                    dst[5] = height - offset
-                    //lb-x
-                    dst[6] = offset
-                    //lb-y
-                    dst[7] = height - offset
-                    useRadius = cornerRadius.toFloat()
-                    (foreground as ColorDrawable).alpha = 255 / 2
-                    invalidate()
-                }
-            })
-            interpolator = DecelerateInterpolator()
-            duration = animationDuration
-        }.start()
         val bitmap = Glide.get(context).bitmapPool[
                 width, height,
                 Config.ARGB_8888
@@ -137,6 +54,88 @@ class TransformRootLayout @JvmOverloads constructor(
         paint.shader = shader
         bitmap.prepareToDraw()
         this.bitmap = bitmap
+        Choreographer.getInstance().postFrameCallback {
+            src[0] = 0f
+            src[1] = 0f
+            src[2] = width.toFloat()
+            src[3] = 0f
+            src[4] = width.toFloat()
+            src[5] = height.toFloat()
+            src[6] = 0f
+            src[7] = height.toFloat()
+            foreground = ColorDrawable(Color.BLACK).apply {
+                alpha = 0
+            }
+            ValueAnimator.ofFloat(0f, 2f).apply {
+                addUpdateListener {
+                    var value = it.animatedValue as Float
+                    (foreground as ColorDrawable).alpha = ((255f / 2f) * (value / 2f)).toInt()
+                    useRadius = (value / 2f) * cornerRadius
+                    if (value <= 1) {
+                        //lt-x
+                        dst[0] = value * offset
+                        //lt-y
+                        dst[1] = value * offset
+                        //rt-x
+                        dst[2] = width - value * offset
+                        //rt-y
+                        dst[3] = value * offset
+                        //rb-x
+                        dst[4] = width.toFloat()
+                        //rb-y
+                        dst[5] = height.toFloat()
+                        //lb-x
+                        dst[6] = 0f
+                        //lb-y
+                        dst[7] = height.toFloat()
+                    } else {
+                        value -= 1
+                        //lt-x
+                        dst[0] = offset
+                        //lt-y
+                        dst[1] = offset
+                        //rt-x
+                        dst[2] = width - offset
+                        //rt-y
+                        dst[3] = offset
+                        //rb-x
+                        dst[4] = width - value * offset
+                        //rb-y
+                        dst[5] = height - value * offset
+                        //lb-x
+                        dst[6] = value * offset
+                        //lb-y
+                        dst[7] = height - value * offset
+                    }
+                    invalidate()
+                }
+                addListener(object : AnimatorListenerAdapter() {
+                    override fun onAnimationEnd(animation: Animator?) {
+                        //lt-x
+                        dst[0] = offset
+                        //lt-y
+                        dst[1] = offset
+                        //rt-x
+                        dst[2] = width - offset
+                        //rt-y
+                        dst[3] = offset
+                        //rb-x
+                        dst[4] = width - offset
+                        //rb-y
+                        dst[5] = height - offset
+                        //lb-x
+                        dst[6] = offset
+                        //lb-y
+                        dst[7] = height - offset
+                        useRadius = cornerRadius.toFloat()
+                        (foreground as ColorDrawable).alpha = 255 / 2
+                        invalidate()
+                    }
+                })
+                interpolator = DecelerateInterpolator()
+                duration = animationDuration
+            }.start()
+        }
     }
 
     fun reset() {
@@ -186,6 +185,7 @@ class TransformRootLayout @JvmOverloads constructor(
         val picture = this.bitmap
         if (picture != null) {
             canvas.save()
+            canvas.drawColor(Color.BLACK)
             myMatrix.reset()
             myMatrix.setPolyToPoly(
                     src,

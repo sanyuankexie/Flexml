@@ -62,12 +62,10 @@ internal object CommonAssigns : ToComponent<Component.Builder<*>>() {
         register("clickUrl") { _, other, value: EventHandler ->
             if (!other.containsKey("onClick")) {
                 clickHandler(EventHandlerWrapper<ClickEvent>(value))
-                clipChildren(false)
             }
         }
         register("onClick") { _, _, value: EventHandler ->
             clickHandler(EventHandlerWrapper<ClickEvent>(value))
-            clipChildren(false)
         }
         register("onVisible") { _, _, value: EventHandler ->
             visibleHandler(EventHandlerWrapper<VisibleEvent>(value))

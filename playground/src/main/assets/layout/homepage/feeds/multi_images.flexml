@@ -20,7 +20,7 @@
                 borderRadius="300"
                 width="35"
                 height="35"
-                url="https://i.loli.net/2020/02/10/rYamsN1LlOWK8nA.jpg">
+                src="https://i.loli.net/2020/02/10/rYamsN1LlOWK8nA.jpg">
             </Image>
             <Flex
                 marginLeft="10"
@@ -71,21 +71,21 @@
                             borderLeftBottomRadius="${(index*3)==(images.size()-3)?10:0}"
                             width="105"
                             height="105"
-                            url="${images[index*3]}">
+                            src="${images[index*3]}">
                         </Image>
                         <Image
                             marginRight="2"
                             marginLeft="2"
                             width="105"
                             height="105"
-                            url="${images[index*3+1]}">
+                            src="${images[index*3+1]}">
                         </Image>
                         <Image
                             borderRightTopRadius="${(index*3+2)==2?10:0}"
                             borderRightBottomRadius="${(index*3+2)==(images.size()-1)?10:0}"
                             width="105"
                             height="105"
-                            url="${images[index*3+2]}">
+                            src="${images[index*3+2]}">
                         </Image>
                     </Flex>
                 </for>
@@ -120,7 +120,7 @@
                     <Image
                         width="18"
                         height="18"
-                        url="${!clicked?res:drawable('ic_zan_w'):res:drawable('ic_zan_black')}">
+                        src="${!clicked?res:drawable('ic_zan_w'):res:drawable('ic_zan_black')}">
                     </Image>
                 </Flex>
                 <Text
@@ -133,7 +133,7 @@
                 <Image
                     width="18"
                     height="18"
-                    url="https://s2.ax1x.com/2019/12/29/luvbMn.png">
+                    src="https://s2.ax1x.com/2019/12/29/luvbMn.png">
                 </Image>
                 <Text
                     horizontalGravity="center"

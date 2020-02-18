@@ -32,6 +32,7 @@ object AppLoader {
                 appBundle = AppBundle.loadAppBundle(
                         c,
                         loaderExecutor,
+                        res.getString(R.string.introduction_path),
                         res.getString(R.string.banner_path),
                         res.getString(R.string.function_path),
                         *res.getStringArray(R.array.feed_paths)
@@ -44,6 +45,9 @@ object AppLoader {
                     Logger.d("load banner ${SystemClock.uptimeMillis() - start1}")
                     return@Callable page
                 })
+                val introductionTask = loaderExecutor.submit<TemplatePage> {
+                    return@submit loadPage(c, res.getString(R.string.introduction_path))
+                }
                 //功能区
                 val functionTask = loaderExecutor.submit(Callable<TemplatePage> {
                     val start1 = SystemClock.uptimeMillis()
@@ -56,7 +60,8 @@ object AppLoader {
                 feed.add(0, functionTask.get())
                 feed.add(0, bannerTask.get())
                 homepageCache = Homepage(
-                        feed
+                        feed,
+                        introductionTask.get()
                 )
                 val finish = (SystemClock.uptimeMillis() - start)
                 Logger.d("AppLoader: load time:$finish")
@@ -133,7 +138,7 @@ object AppLoader {
     @WorkerThread
     fun loadPage(c: Context, url: String, data: (Map<String, Any>) = emptyMap()): TemplatePage {
         val template = appBundle.templateNode.getValue(url)
-        val dataSource = appBundle.dataSource.getValue(url)
+        val dataSource = appBundle.dataSource[url] ?: emptyMap()
         val myData = HashMap(dataSource).apply {
             put("url", url)
             putAll(data)

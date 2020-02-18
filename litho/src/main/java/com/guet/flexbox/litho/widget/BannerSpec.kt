@@ -99,12 +99,12 @@ object BannerSpec {
                 if (componentTrees.size != size) {
                     if (componentTrees.size > size) {
                         ((componentTrees.size - 1)..size).forEach {
-                            LithoPoolsManager.releaseTree(componentTrees.removeAt(it))
+                            ComponentTreePool.releaseTree(componentTrees.removeAt(it))
                         }
                     }
                     if (componentTrees.size <= size) {
                         (1..size - componentTrees.size).forEach { _ ->
-                            componentTrees.add(LithoPoolsManager.obtainTree())
+                            componentTrees.add(ComponentTreePool.obtainTree())
                         }
                     }
                 }
@@ -125,7 +125,7 @@ object BannerSpec {
                 val output = LinkedList<Component>(children)
                 do {
                     output.addAll(output)
-                } while (output.size < 4)
+                } while (output.size <= 4)
                 output
             }
             else -> {
@@ -305,11 +305,9 @@ object BannerSpec {
                 isFocusableInTouchMode = false
                 isFocusable = false
             }
-            LithoPoolsManager.attachPool(rv)
             val manager = rv.layoutManager as? LinearLayoutManager
             manager?.apply {
-                recycleChildrenOnDetach = true
-                initialPrefetchItemCount = 4
+                initialPrefetchItemCount = 3
             }
         }
 

@@ -10,13 +10,13 @@ import com.facebook.litho.SizeSpec
 import com.guet.flexbox.HttpClient
 import com.guet.flexbox.litho.event.EventTarget
 
-class HostingView @JvmOverloads constructor(
+
+open class HostingView @JvmOverloads constructor(
         context: Context, attrs: AttributeSet? = null
 ) : LithoView(context, attrs) {
 
     init {
         super.suppressMeasureComponentTree(true)
-        super.setClipChildren(false)
     }
 
     internal val target = EventTarget(this)
@@ -36,12 +36,11 @@ class HostingView @JvmOverloads constructor(
             return super.getComponentTree() as? TemplatePage
         }
 
-
     override fun setClipChildren(clipChildren: Boolean) {
     }
 
     @Deprecated("", level = DeprecationLevel.HIDDEN)
-    override fun suppressMeasureComponentTree(suppress: Boolean) {
+    final override fun suppressMeasureComponentTree(suppress: Boolean) {
     }
 
     @Deprecated(
@@ -50,7 +49,7 @@ class HostingView @JvmOverloads constructor(
             DeprecationLevel.HIDDEN
     )
     @RestrictTo(RestrictTo.Scope.LIBRARY)
-    override fun getComponentTree(): TemplatePage? {
+    final override fun getComponentTree(): TemplatePage? {
         return super.getComponentTree() as TemplatePage?
     }
 
@@ -60,34 +59,34 @@ class HostingView @JvmOverloads constructor(
             DeprecationLevel.HIDDEN
     )
     @RestrictTo(RestrictTo.Scope.LIBRARY)
-    override fun setComponentTree(componentTree: ComponentTree?) {
+    final override fun setComponentTree(componentTree: ComponentTree?) {
         super.setComponentTree(componentTree as TemplatePage?)
     }
 
-    override fun setClipToPadding(clipToPadding: Boolean) {
+    final override fun setClipToPadding(clipToPadding: Boolean) {
     }
 
-    override fun setPaddingRelative(start: Int, top: Int, end: Int, bottom: Int) {}
+    final override fun setPaddingRelative(start: Int, top: Int, end: Int, bottom: Int) {}
 
-    override fun setPadding(left: Int, top: Int, right: Int, bottom: Int) {}
+    final override fun setPadding(left: Int, top: Int, right: Int, bottom: Int) {}
 
-    override fun getPaddingLeft(): Int {
+    final override fun getPaddingLeft(): Int {
         return 0
     }
 
-    override fun getPaddingBottom(): Int {
+    final override fun getPaddingBottom(): Int {
         return 0
     }
 
-    override fun getPaddingEnd(): Int {
+    final override fun getPaddingEnd(): Int {
         return 0
     }
 
-    override fun getPaddingRight(): Int {
+    final override fun getPaddingRight(): Int {
         return 0
     }
 
-    override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
+    final override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
         val page = templatePage
         if (page != null) {
             //fast path
@@ -127,5 +126,4 @@ class HostingView @JvmOverloads constructor(
                 values: Array<out Any?>?
         )
     }
-
 }

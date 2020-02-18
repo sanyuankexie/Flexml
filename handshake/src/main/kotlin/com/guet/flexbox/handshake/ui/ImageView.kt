@@ -1,4 +1,4 @@
-package com.guet.flexbox.handshake.gui
+package com.guet.flexbox.handshake.ui
 
 import java.awt.Graphics
 import java.awt.image.BufferedImage

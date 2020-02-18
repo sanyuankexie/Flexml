@@ -1,4 +1,4 @@
-package com.guet.flexbox.handshake.gui
+package com.guet.flexbox.handshake.utils
 
 import com.google.zxing.BarcodeFormat
 import com.google.zxing.EncodeHintType
@@ -9,8 +9,8 @@ import java.awt.Color
 import java.awt.Graphics2D
 import java.awt.image.BufferedImage
 
-object QrCodeImage {
-    fun generate(
+object QrcodeImageBuilder {
+    fun buildImage(
             content: String,
             size: Int
     ): BufferedImage {

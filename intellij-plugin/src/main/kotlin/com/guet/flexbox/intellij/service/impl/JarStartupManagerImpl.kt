@@ -174,7 +174,7 @@ class JarStartupManagerImpl(
                 project,
                 environment,
                 compilerPath,
-                "-i $input -o $output"
+                "-i \"$input\" -o \"$output\""
         )
     }
 
@@ -188,7 +188,7 @@ class JarStartupManagerImpl(
                 project,
                 environment,
                 mockServerPath,
-                "--server.port=$port --package.focus=$focus"
+                "--server.port=$port --package.focus=\"$focus\""
         )
     }
 }

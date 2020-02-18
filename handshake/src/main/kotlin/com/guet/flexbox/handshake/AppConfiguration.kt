@@ -1,7 +1,7 @@
 package com.guet.flexbox.handshake
 
 import com.google.gson.Gson
-import org.springframework.boot.autoconfigure.SpringBootApplication
+import com.guet.flexbox.handshake.ui.QrcodeForm
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.http.converter.HttpMessageConverter
@@ -11,10 +11,10 @@ import org.springframework.web.cors.CorsConfiguration
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource
 import org.springframework.web.filter.CorsFilter
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer
+import java.util.concurrent.ConcurrentHashMap
 
 @Configuration
-@SpringBootApplication
-open class MockServerApplication : WebMvcConfigurer {
+open class AppConfiguration : WebMvcConfigurer {
 
     private fun buildConfig(): CorsConfiguration {
         val corsConfiguration = CorsConfiguration()
@@ -39,18 +39,6 @@ open class MockServerApplication : WebMvcConfigurer {
         return CorsFilter(source)
     }
 
-    override fun configureMessageConverters(
-            converters: MutableList<HttpMessageConverter<*>?>
-    ) {
-        converters.add(customGsonHttpMessageConverter())
-        super.configureMessageConverters(converters)
-    }
-
-    @Bean
-    open fun gosn(): Gson {
-        return Gson()
-    }
-
     private fun customGsonHttpMessageConverter(): GsonHttpMessageConverter? {
         val gson = ContextLoader.getCurrentWebApplicationContext()
                 ?.getBean("gson") as? Gson ?: this.gosn()
@@ -58,5 +46,26 @@ open class MockServerApplication : WebMvcConfigurer {
         gsonMessageConverter.gson = gson
         return gsonMessageConverter
     }
-}
 
+    override fun configureMessageConverters(
+            converters: MutableList<HttpMessageConverter<*>?>
+    ) {
+        converters.add(customGsonHttpMessageConverter())
+    }
+
+    @Bean
+    open fun gosn(): Gson {
+        return Gson()
+    }
+
+    @Bean
+    open fun attributes(): ConcurrentHashMap<String, Any> {
+        return ConcurrentHashMap()
+    }
+
+    @Bean
+    open fun form(): QrcodeForm {
+        System.clearProperty("java.awt.headless")
+        return QrcodeForm()
+    }
+}
