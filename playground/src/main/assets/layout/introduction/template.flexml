@@ -539,7 +539,7 @@
                         </Image>
                         <Text
                             marginTop="10"
-                            text="1. 基于litho耗时操作异步化，将原本View体系中的measure、layout搬到异步线程中去，解放主线程。"/>
+                            text="1. 基于facebook的litho。耗时操作异步化，将原本View体系中的measure、layout搬到异步线程中去，解放主线程。"/>
                     </Flex>
                     <Flex
                         flexDirection="row"
