@@ -64,7 +64,7 @@ internal inline fun <reified T> ELContext.tryGetValue(expr: String?, fallback: T
     }
     return try {
         getValue(expr)
-    } catch (e: ELException) {
+    } catch (e: Exception) {
         if (BuildConfig.DEBUG) {
             e.printStackTrace()
         }
@@ -79,7 +79,7 @@ internal fun ELContext.tryGetColor(expr: String?, @ColorInt fallback: Int?): Int
     }
     return try {
         getColor(expr)
-    } catch (e: ELException) {
+    } catch (e: Exception) {
         fallback
     }
 }
