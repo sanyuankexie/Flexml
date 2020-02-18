@@ -27,7 +27,15 @@ object StackSpec {
         if (children.isNullOrEmpty()) {
             return owner.build()
         }
-        val sizes = children.map { child ->
+        //step 1 wrapper to apply margin
+        val wrappers = children.map {
+            Row.create(c).child(it)
+                    .positionType(YogaPositionType.ABSOLUTE)
+                    .positionPx(YogaEdge.ALL, 0)
+                    .build()
+        }
+        //step 2 measure
+        val sizes = wrappers.map { child ->
             val size = Size()
             val childWidthMeasureSpec = getChildMeasureSpec(
                     widthSpec,
@@ -42,18 +50,17 @@ object StackSpec {
             child.measure(c, childWidthMeasureSpec, childHeightMeasureSpec, size)
             size
         }
+        //step 3 find max
         var maxHeight = 0
         var maxWidth = 0
         for (index in children.indices) {
             val size = sizes[index]
             maxWidth = max(maxWidth, size.width)
             maxHeight = max(maxHeight, size.height)
-            owner.child(Row.create(c)
-                    .positionType(YogaPositionType.ABSOLUTE)
-                    .positionPx(YogaEdge.LEFT, 0)
-                    .positionPx(YogaEdge.TOP, 0)
-                    .child(children[index])
-                    .build())
+        }
+        //step 4 build
+        for (index in wrappers.indices) {
+            owner.child(wrappers[index])
         }
         return owner.widthPx(maxWidth)
                 .heightPx(maxHeight)

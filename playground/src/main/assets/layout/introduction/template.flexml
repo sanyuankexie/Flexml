@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Flex
     width="360"
-    paddingBottom="100"
+    paddingTop="20"
+    paddingBottom="80"
     justifyContent="center"
     background="${gradient:linear('t2b','#7c4dff','#b388ff')}">
     <Flex
@@ -255,16 +256,16 @@
                             </Flex>
                             <Flex
                                 borderRadius="5"
-                                marginLeft="10"
-                                marginTop="10"
+                                marginLeft="15"
+                                marginTop="15"
                                 background="${gradient:linear('t2b','#59a9ff','#d770a0')}"
                                 height="80"
                                 width="80">
                             </Flex>
                             <Flex
                                 borderRadius="5"
-                                marginLeft="20"
-                                marginTop="20"
+                                marginLeft="30"
+                                marginTop="30"
                                 background="${gradient:linear('t2b','#004dff','#ff7871')}"
                                 height="80"
                                 width="80">
@@ -273,7 +274,6 @@
                         <Text
                             alignSelf="center"
                             textSize="13"
-                            marginLeft="10"
                             text="FrameLayout这么好用的布局到这没得用不是很尴尬吗？当然它并不是Flexbox规范内的东西，所以这玩意是我撸FrameLayout的源码照着写的。">
                         </Text>
                     </Flex>
@@ -526,14 +526,69 @@
                         textStyle="bold"
                         text="Flexml的优势">
                     </Text>
-                    <Text
-                        marginTop="10"
-                        text="1. 耗时操作异步化，将原本View体系中的measure、layout搬到异步线程中去，解放主线程。"/>
-                    <Text marginTop="10"
-                        text="2. 干掉布局层级。直接使用轻量级的Drawable进行渲染，与WebView相比有更大的性能优势。并且基于广泛使用的flexbox布局模型，易于上手。"/>
-                    <Text
-                        marginTop="10"
-                        text="3. 全硬件加速渲染，最低限度的过度绘制，异步图片，完美无妥协的圆角支持。几乎重写了所有的Android Drawable。"/>
+                    <Flex
+                        flexDirection="row"
+                        paddingTop="10">
+                        <Image
+                            padding="5"
+                            marginRight="10"
+                            flexShrink="0"
+                            height="60"
+                            width="60"
+                            src="${res:drawable('litho')}">
+                        </Image>
+                        <Text
+                            marginTop="10"
+                            text="1. 基于litho耗时操作异步化，将原本View体系中的measure、layout搬到异步线程中去，解放主线程。"/>
+                    </Flex>
+                    <Flex
+                        flexDirection="row"
+                        marginTop="10">
+                        <Stack
+                            marginRight="10"
+                            flexShrink="0"
+                            width="60"
+                            height="60">
+                            <Flex
+                                borderRadius="2"
+                                background="${gradient:linear('t2b','#7c4dff','#d500f9')}"
+                                height="40"
+                                width="40">
+                            </Flex>
+                            <Flex
+                                borderRadius="2"
+                                marginLeft="10"
+                                marginTop="10"
+                                background="${gradient:linear('t2b','#59a9ff','#d770a0')}"
+                                height="40"
+                                width="40">
+                            </Flex>
+                            <Flex
+                                borderRadius="2"
+                                marginLeft="20"
+                                marginTop="20"
+                                background="${gradient:linear('t2b','#004dff','#ff7871')}"
+                                height="40"
+                                width="40">
+                            </Flex>
+                        </Stack>
+                        <Text
+                            text="2. 干掉布局层级。直接使用轻量级的Drawable进行渲染，与WebView相比有更大的性能优势。并且基于广泛使用的flexbox布局模型，易于上手。"/>
+                    </Flex>
+                    <Flex
+                        flexDirection="row"
+                        marginTop="10">
+                        <Image
+                            scaleType="centerCrop"
+                            marginRight="10"
+                            flexShrink="0"
+                            height="60"
+                            width="60"
+                            src="${res:drawable('gpu')}">
+                        </Image>
+                        <Text
+                            text="3. 全硬件加速渲染，最低限度的过度绘制，异步图片，以及完美无妥协的圆角支持。"/>
+                    </Flex>
                     <Text
                         marginTop="10"
                         text="4. 资源回收，画出屏幕的内容会被自动回收，多图顶多内存高点，但是也不会OOM。"/>
@@ -544,7 +599,7 @@
                         marginTop="10"
                         text="6. 内置的数据解析引擎非常强大，支持Java Bean、JSONObject、Map、List、数组等等，只要你不传奇怪的数据进来基本都能解析而无需依赖其他lib。"/>
                     <Text marginTop="10"
-                        text="7. 真机调试和实时预览，Flexml有自己的intellij插件，可以给AS或者IDEA安装，之后就可以通过扫码的方式在真机上追踪IDE中正在编辑的布局来进行实时预览调试。"/>
+                        text="7. intellij插件支援，AS安装后后就可以通过扫码的方式在真机上追踪IDE中正在编辑的布局来进行实时真机预览调试。"/>
                     <Text marginTop="10"
                         text="8. 单容器View接入，基本无入侵性。可用于替换现有的任意一个静态展示型的View，并支持曝光埋点、点击埋点、点击时间处理等事件。"/>
                     <Text marginTop="10"
