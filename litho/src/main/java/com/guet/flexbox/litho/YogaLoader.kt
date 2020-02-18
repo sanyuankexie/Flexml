@@ -30,8 +30,8 @@ internal object YogaLoader : Kit, NodeConfig.InternalYogaNodeFactory {
     }
 
     override fun init(c: Context) {
-        NodeConfig.sYogaNodeFactory = this
         SoLoader.init(c, false)
+        NodeConfig.sYogaNodeFactory = this
     }
 
     override fun create(config: YogaConfig): YogaNode {
