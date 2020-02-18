@@ -468,7 +468,7 @@
                     </Text>
                     <Text
                         marginBottom="5"
-                        text="支持横向和竖向。为防止滑动冲突，所以暂时不支持嵌套滑动。">
+                        text="支持横向和竖向。内部基于RecyclerView。">
                     </Text>
                     <Scroller height="150">
                         <Image

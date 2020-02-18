@@ -1,5 +1,7 @@
 package com.guet.flexbox.litho.widget
 
+import android.os.Handler
+import android.os.Looper
 import android.view.MotionEvent
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -79,7 +81,17 @@ object ScrollerSpec {
         return GenericRecycler.create(c)
                 .touchInterceptor(Callbacks)
                 .hasFixedSize(true)
-                .binder(binder)
+                .binder(SafeRecyclerBinder(binder))
                 .build()
+    }
+
+    private class SafeRecyclerBinder(
+            val binder: RecyclerBinder
+    ) : Handler(Looper.getMainLooper()), Binder<RecyclerView> by binder {
+        override fun unmount(view: RecyclerView?) {
+            postAtFrontOfQueue {
+                binder.unmount(view)
+            }
+        }
     }
 }

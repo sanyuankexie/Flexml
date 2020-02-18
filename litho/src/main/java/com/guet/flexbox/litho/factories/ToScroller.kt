@@ -12,7 +12,6 @@ internal object ToScroller : ToComponent<Scroller.Builder>(CommonAssigns) {
 
         }
         register("fillViewport") { _, _, value: Boolean ->
-            fillViewport(value)
         }
     }
 
