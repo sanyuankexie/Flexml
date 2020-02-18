@@ -1,12 +1,11 @@
 package com.guet.flexbox.litho
 
-import android.content.Context
 import android.util.ArrayMap
-import com.facebook.soloader.SoLoader
+import com.facebook.yoga.YogaLoader
 import com.guet.flexbox.build.*
 import com.guet.flexbox.litho.bitmap.ExBitmapDrawableLibraryModule
 import com.guet.flexbox.litho.factories.*
-import com.guet.flexbox.litho.widget.LithoPoolsManager
+import com.guet.flexbox.litho.widget.ComponentTreePool
 
 object LithoBuildTool : BuildTool() {
 
@@ -32,13 +31,8 @@ object LithoBuildTool : BuildTool() {
         return@lazy listOf(
                 YogaLoader,
                 ExBitmapDrawableLibraryModule,
-                LithoPoolsManager
+                ComponentTreePool
         )
     }
 
-    private object YogaLoader : Kit {
-        override fun init(c: Context) {
-            SoLoader.init(c, false)
-        }
-    }
 }

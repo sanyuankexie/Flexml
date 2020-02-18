@@ -99,12 +99,12 @@ object BannerSpec {
                 if (componentTrees.size != size) {
                     if (componentTrees.size > size) {
                         ((componentTrees.size - 1)..size).forEach {
-                            LithoPoolsManager.releaseTree(componentTrees.removeAt(it))
+                            ComponentTreePool.releaseTree(componentTrees.removeAt(it))
                         }
                     }
                     if (componentTrees.size <= size) {
                         (1..size - componentTrees.size).forEach { _ ->
-                            componentTrees.add(LithoPoolsManager.obtainTree())
+                            componentTrees.add(ComponentTreePool.obtainTree())
                         }
                     }
                 }

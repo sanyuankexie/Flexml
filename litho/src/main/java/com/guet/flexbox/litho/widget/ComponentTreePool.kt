@@ -13,7 +13,7 @@ import com.guet.flexbox.litho.LayoutThreadHandler
 import java.util.*
 import java.util.concurrent.atomic.AtomicReference
 
-internal object LithoPoolsManager : ComponentCallbacks, Kit {
+internal object ComponentTreePool : ComponentCallbacks, Kit {
 
     override fun onConfigurationChanged(newConfig: Configuration?) {}
 
