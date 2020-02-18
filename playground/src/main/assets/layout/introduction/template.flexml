@@ -66,6 +66,7 @@
             </Flex>
             <Text
                 marginLeft="12"
+                marginRight="12"
                 text="Flexml会把内容都拍平在一个View上，且该View不在主线程测量。您划出屏幕的每一张图都会被有效回收。">
             </Text>
             <Flex marginLeft="10" marginRight="10">
