@@ -48,5 +48,13 @@ class IntroductionFragment : Fragment() {
             }
         })
         host.templatePage = homepageInfo.introduction
+        host.pageEventListener = object : HostingView.PageEventListener {
+            override fun onEventDispatched(h: HostingView, source: View?, values: Array<out Any?>?) {
+                val url = values?.get(0) as? String
+                if (url != null) {
+                    (requireActivity() as MainActivity).showCodePanel(url)
+                }
+            }
+        }
     }
 }

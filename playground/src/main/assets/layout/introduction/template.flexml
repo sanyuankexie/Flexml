@@ -45,7 +45,28 @@
                 textStyle="bold"
                 textSize="13.5"
                 textColor="black"
-                text="注：下面您将看到的所有内容。&lt;br&gt;1.为了干掉局层级，所以可能都不是View（虽然部分还是会依赖Native）。&lt;br&gt;2.您滑动的每一帧都不在MainThread测量。&lt;br&gt;3.您划出屏幕的每一张图都会被Glide回收。">
+                text="注：下面您将看到的所有内容由Flexml生成。">
+            </Text>
+            <Flex
+                marginTop="2"
+                marginLeft="12">
+                <Text
+                    clickUrl="${url}"
+                    marginBottom="2"
+                    textStyle="bold"
+                    borderRadius="5"
+                    padding="5"
+                    textSize="13"
+                    textColor="#FFFFFF"
+                    background="red"
+                    text="不信点这看源码">
+                </Text>
+                <Flex flexGrow="1">
+                </Flex>
+            </Flex>
+            <Text
+                marginLeft="12"
+                text="Flexml会把内容都拍平在一个View上，且该View不在主线程测量。您划出屏幕的每一张图都会被有效回收。">
             </Text>
             <Flex marginLeft="10" marginRight="10">
                 <Flex flexDirection="column">
@@ -347,7 +368,7 @@
                     </Text>
                     <Flex
                         marginTop="10"
-                        borderColor="fuchsia"
+                        borderColor="red"
                         borderWidth="1"
                         borderRadius="5"
                         paddingTop="3"
@@ -527,6 +548,7 @@
                         text="Flexml的优势">
                     </Text>
                     <Flex
+                        justifyContent="center"
                         flexDirection="row"
                         paddingTop="10">
                         <Image
@@ -538,10 +560,10 @@
                             src="${res:drawable('litho')}">
                         </Image>
                         <Text
-                            marginTop="10"
                             text="1. 基于facebook的litho。耗时操作异步化，将原本View体系中的measure、layout搬到异步线程中去，解放主线程。"/>
                     </Flex>
                     <Flex
+                        justifyContent="center"
                         flexDirection="row"
                         marginTop="10">
                         <Stack
@@ -576,6 +598,7 @@
                             text="2. 干掉布局层级。直接使用轻量级的Drawable进行渲染，与WebView相比有更大的性能优势。并且基于广泛使用的flexbox布局模型，易于上手。"/>
                     </Flex>
                     <Flex
+                        justifyContent="center"
                         flexDirection="row"
                         marginTop="10">
                         <Image
@@ -589,23 +612,111 @@
                         <Text
                             text="3. 全硬件加速渲染，最低限度的过度绘制，异步图片，以及完美无妥协的圆角支持。"/>
                     </Flex>
-                    <Text
+                    <Flex
+                        justifyContent="center"
+                        marginTop="10">
+                        <Image
+                            scaleType="fitXY"
+                            flexShrink="0"
+                            src="${res:drawable('glide')}"
+                            width="90"
+                            height="60">
+                        </Image>
+                        <Text
+                            text="4. 基于Glide的资源回收，画出屏幕的内容会被自动回收。多图顶多内存高点，但是也不会OOM。"/>
+                    </Flex>
+                    <Flex
+                        justifyContent="center"
+                        marginTop="10">
+                        <Image
+                            marginRight="10"
+                            padding="10"
+                            width="60"
+                            height="60"
+                            src="${res:drawable('json')}"
+                            flexShrink="0"
+                            scaleType="fitXY"/>
+                        <Text
+                            text="5. 敏捷开发，随时上线，前后端分离。后端下发布局+数据的json，可集成在数据接口下发，本地自主解析渲染布局。"/>
+                    </Flex>
+                    <Flex
+                        justifyContent="center"
+                        flexDirection="row"
+                        marginTop="10">
+                        <Image
+                            marginRight="10"
+                            width="60"
+                            height="60"
+                            flexShrink="0"
+                            padding="10"
+                            scaleType="fitXY"
+                            src="${res:drawable('succeed')}" />
+                        <Text
+                            text="6. 内置的数据解析引擎非常强大，支持Java Bean、JSONObject、Map、List、数组等等，只要你不传奇怪的数据进来基本都能解析而无需依赖其他lib。"/>
+                    </Flex>
+                    <Flex
                         marginTop="10"
-                        text="4. 资源回收，画出屏幕的内容会被自动回收，多图顶多内存高点，但是也不会OOM。"/>
-                    <Text
+                        flexDirection="row"
+                        justifyContent="center">
+                        <Image
+                            flexShrink="0"
+                            marginRight="10"
+                            src="${res:drawable('idea')}"
+                            height="60"
+                            width="60"
+                            padding="5"
+                            scaleType="centerInside">
+                        </Image>
+                        <Text
+                            text="7. intellij插件支援，AS安装后就可以通过扫码的方式在真机上追踪IDE中正在编辑的布局来进行实时真机预览调试。"/>
+                    </Flex>
+                    <Flex
                         marginTop="10"
-                        text="5. 敏捷开发，随时上线，前后端分离。后端下发布局+数据的json，可集成在数据接口下发，本地自主解析渲染布局。"/>
-                    <Text
-                        marginTop="10"
-                        text="6. 内置的数据解析引擎非常强大，支持Java Bean、JSONObject、Map、List、数组等等，只要你不传奇怪的数据进来基本都能解析而无需依赖其他lib。"/>
-                    <Text marginTop="10"
-                        text="7. intellij插件支援，AS安装后后就可以通过扫码的方式在真机上追踪IDE中正在编辑的布局来进行实时真机预览调试。"/>
-                    <Text marginTop="10"
-                        text="8. 单容器View接入，基本无入侵性。可用于替换现有的任意一个静态展示型的View，并支持曝光埋点、点击埋点、点击时间处理等事件。"/>
-                    <Text marginTop="10"
-                        text="9. 屏幕适配。布局使用的单位为是设备独立的pt，以设备屏幕宽度为基准，将屏幕分成360份，1pt=设备屏幕宽度/360。当然也留了sp和dp的转换函数。"/>
-                    <Text marginTop="10"
-                        text="10. 使用kotlin实现，拥抱未来，代码实现非常简洁，运用了大量设计模式，很适合阅读学习。"/>
+                        justifyContent="center"
+                        flexDirection="row">
+                        <Image
+                            padding="5"
+                            marginRight="10"
+                            src="${res:drawable('view')}"
+                            height="60"
+                            width="60"
+                            scaleType="fitXY"
+                            flexShrink="0">
+                        </Image>
+                        <Text
+                            text="8. 单容器View接入，基本无入侵性。可用于替换现有的任意一个静态展示型的View，并支持曝光埋点、点击埋点、点击时间处理等事件。"/>
+                    </Flex>
+                    <Flex
+                        flexDirection="row"
+                        justifyContent="center"
+                        marginTop="10">
+                        <Image
+                            padding="5"
+                            scaleType="centerInside"
+                            marginRight="10"
+                            flexShrink="0"
+                            height="60"
+                            width="60"
+                            src="${res:drawable('phone')}">
+                        </Image>
+                        <Text
+                            text="9. 屏幕适配。布局使用的单位为是设备独立的pt，以设备屏幕宽度为基准，将屏幕分成360份，1pt=设备屏幕宽度/360。当然也留了sp和dp的转换函数。"/>
+                    </Flex>
+                    <Flex
+                        justifyContent="center"
+                        flexDirection="row"
+                        marginTop="10">
+                        <Image
+                            marginRight="10"
+                            flexShrink="0"
+                            height="60"
+                            width="60"
+                            padding="10"
+                            src="${res:drawable('kt')}">
+                        </Image>
+                        <Text
+                            text="10. 使用kotlin实现，拥抱未来，代码实现非常简洁，运用了大量设计模式，很适合阅读学习。"/>
+                    </Flex>
                 </Flex>
             </Flex>
         </Flex>
