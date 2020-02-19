@@ -75,10 +75,12 @@ class HomepageFragment : Fragment() {
         feedAdapter.registerAdapterDataObserver(object : RecyclerView.AdapterDataObserver() {
             override fun onItemRangeInserted(positionStart: Int, itemCount: Int) {
                 if (feedAdapter.itemCount - 1 >= 100) {
-                    val text = foot.findViewById<TextView>(R.id.text)
-                    text.text = "我也是有底线的。"
-                    val progress = foot.findViewById<View>(R.id.progress)
-                    progress.visibility = View.GONE
+                    feed.post {
+                        val text = foot.findViewById<TextView>(R.id.text)
+                        text.text = "我也是有底线的。"
+                        val progress = foot.findViewById<View>(R.id.progress)
+                        progress.visibility = View.GONE
+                    }
                 }
             }
         })

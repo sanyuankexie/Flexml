@@ -44,14 +44,29 @@ class TransformRootLayout @JvmOverloads constructor(
 
     fun move() {
         val bitmap = Glide.get(context).bitmapPool[
-                width, height,
-                Config.ARGB_8888
+                (width / 2f).toInt(), (height / 2f).toInt(),
+                Config.RGB_565
         ]
         canvas.setBitmap(bitmap)
+        canvas.scale(0.5f, 0.5f)
         draw(canvas)
         canvas.setBitmap(null)
         val shader = BitmapShader(bitmap, TileMode.CLAMP, TileMode.CLAMP)
         paint.shader = shader
+        val matrix = Matrix()
+        matrix.setRectToRect(
+                RectF(
+                        0f, 0f,
+                        bitmap.width.toFloat(),
+                        bitmap.height.toFloat()
+                ),
+                RectF(0f, 0f,
+                        width.toFloat(),
+                        height.toFloat()
+                ),
+                Matrix.ScaleToFit.FILL
+        )
+        shader.setLocalMatrix(matrix)
         bitmap.prepareToDraw()
         this.bitmap = bitmap
         Choreographer.getInstance().postFrameCallback {
