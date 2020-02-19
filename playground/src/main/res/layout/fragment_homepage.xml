@@ -32,18 +32,19 @@
                     android:id="@+id/qr_code"
                     android:src="@drawable/ic_saoma"
                     android:scaleType="fitXY"
-                    android:layout_marginLeft="15dp"
-                    android:layout_width="25dp"
-                    android:layout_height="25dp" />
+                    android:padding="10dp"
+                    android:layout_marginLeft="5dp"
+                    android:layout_width="45dp"
+                    android:layout_height="45dp" />
                 <TextView
                     android:transitionName="search"
                     android:id="@+id/search"
                     android:textSize="16dp"
                     android:gravity="center_vertical"
-                    android:hint="模板链接"
+                    android:hint="扫码或填入链接开始调试"
                     android:background="@drawable/ic_search_background"
-                    android:layout_marginLeft="15dp"
-                    android:layout_marginRight="15dp"
+                    android:layout_marginLeft="5dp"
+                    android:layout_marginRight="5dp"
                     android:layout_weight="1"
                     android:layout_width="0dp"
                     android:layout_height="36dp" />
@@ -51,9 +52,10 @@
                     android:id="@+id/info"
                     android:src="@drawable/ic_about"
                     android:scaleType="fitXY"
-                    android:layout_marginRight="15dp"
-                    android:layout_width="25dp"
-                    android:layout_height="25dp" />
+                    android:padding="10dp"
+                    android:layout_marginRight="5dp"
+                    android:layout_width="45dp"
+                    android:layout_height="45dp" />
             </LinearLayout>
         </com.google.android.material.appbar.AppBarLayout>
         <androidx.recyclerview.widget.RecyclerView

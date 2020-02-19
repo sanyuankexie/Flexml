@@ -1,144 +1,141 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.coordinatorlayout.widget.CoordinatorLayout
-    android:fitsSystemWindows="true"
+<LinearLayout
+    android:orientation="vertical"
+    xmlns:tools="http://schemas.android.com/tools"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
-    <com.google.android.material.appbar.AppBarLayout
-        android:fitsSystemWindows="true"
+    <com.guet.flexbox.playground.widget.StatusBarPadding
         android:background="@color/colorPrimary"
-        android:orientation="vertical"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-        <com.guet.flexbox.playground.widget.MarqueeText
-            app:layout_scrollFlags="scroll"
-            android:id="@+id/title"
-            android:layout_width="match_parent"
-            android:layout_height="?attr/actionBarSize"/>
-        <androidx.cardview.widget.CardView
-            app:layout_scrollFlags="noScroll"
-            android:layout_marginTop="10dp"
-            android:layout_marginRight="10dp"
+        android:layout_height="wrap_content"/>
+    <LinearLayout
+        android:background="@color/colorPrimary"
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize">
+        <TextView
+            android:background="@drawable/title_bg"
+            android:textColor="@android:color/white"
+            android:text="正在调试："
+            android:paddingTop="2.5dp"
+            android:paddingLeft="10dp"
+            android:paddingRight="2.5dp"
+            android:layout_marginRight="5dp"
+            android:paddingBottom="2.5dp"
             android:layout_marginLeft="10dp"
-            android:layout_marginBottom="10dp"
-            app:cardBackgroundColor="@android:color/white"
-            android:elevation="10dp"
-            app:cardCornerRadius="20dp"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-            <LinearLayout
-                android:layout_margin="5dp"
-                android:orientation="vertical"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent">
-                <LinearLayout
-                    android:background="@android:color/white"
-                    android:gravity="center_vertical"
-                    android:orientation="horizontal"
-                    android:layout_width="match_parent"
-                    android:layout_height="44dp">
-                    <TextView
-                        android:layout_marginLeft="12dp"
-                        android:gravity="left|center_vertical"
-                        android:textSize="18dp"
-                        android:textColor="@android:color/black"
-                        android:layout_weight="1"
-                        android:text="自动刷新"
-                        android:layout_width="0dp"
-                        android:layout_height="match_parent" />
-                    <ch.ielse.view.SwitchView
-                        app:isOpened="true"
-                        android:id="@+id/is_live_reload"
-                        android:layout_marginRight="12dp"
-                        android:layout_marginLeft="12dp"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"/>
-                </LinearLayout>
-                <View
-                    android:background="@color/gray"
-                    android:layout_marginLeft="10dp"
-                    android:layout_marginRight="10dp"
-                    android:layout_width="match_parent"
-                    android:layout_height="1px"/>
-                <LinearLayout
-                    android:background="@android:color/white"
-                    android:gravity="center_vertical"
-                    android:orientation="horizontal"
-                    android:layout_width="match_parent"
-                    android:layout_height="44dp">
-                    <TextView
-                        android:layout_marginLeft="12dp"
-                        android:gravity="left|center_vertical"
-                        android:textSize="18dp"
-                        android:textColor="@android:color/black"
-                        android:layout_weight="1"
-                        android:text="显示控制台"
-                        android:layout_width="0dp"
-                        android:layout_height="match_parent" />
-                    <ch.ielse.view.SwitchView
-                        app:isOpened="false"
-                        android:id="@+id/is_open_console"
-                        android:layout_marginRight="12dp"
-                        android:layout_marginLeft="12dp"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"/>
-                </LinearLayout>
-            </LinearLayout>
-        </androidx.cardview.widget.CardView>
-    </com.google.android.material.appbar.AppBarLayout>
-    <androidx.core.widget.NestedScrollView
-        app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior"
+            android:gravity="center_vertical"
+            android:textSize="15dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+        <com.guet.flexbox.playground.widget.MarqueeText
+            tools:text="test"
+            android:id="@+id/title"
+            android:textColor="@color/whitesmoke"
+            android:paddingRight="10dp"
+            android:gravity="center_vertical"
+            android:textSize="15dp"
+            android:layout_weight="1"
+            android:layout_width="0dp"
+            android:layout_height="?attr/actionBarSize"/>
+    </LinearLayout>
+    <io.iftech.android.library.slide.SlideLayout
+        app:widget_disable_slider_refresh="true"
+        android:id="@+id/slide_layout"
+        android:orientation="vertical"
+        android:background="@drawable/ic_background_transition"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
-        <com.guet.flexbox.litho.HostingView
-            android:id="@+id/host"
+        <!-- header -->
+        <io.iftech.android.library.slide.MinVerticalMarginFrameLayout
+            app:widget_min_vertical_margin="100dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
-        </com.guet.flexbox.litho.HostingView>
-    </androidx.core.widget.NestedScrollView>
-    <androidx.coordinatorlayout.widget.CoordinatorLayout
-        android:id="@+id/console_root"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
-        <View
-            android:id="@+id/touch_outside"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:importantForAccessibility="no"
-            android:soundEffectsEnabled="false"/>
-        <FrameLayout
-            app:behavior_hideable="false"
-            app:behavior_peekHeight="?attr/actionBarSize"
-            android:id="@+id/design_bottom_sheet"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal|top"
-            app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior">
-            <androidx.cardview.widget.CardView
-                app:cardCornerRadius="20dp"
-                app:cardBackgroundColor="@android:color/white"
+            <androidx.core.widget.NestedScrollView
+                android:id="@+id/header"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
-                <LinearLayout
-                    android:orientation="vertical"
+                <com.guet.flexbox.litho.HostingView
+                    android:id="@+id/host"
+                    android:minHeight="1000dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"/>
+            </androidx.core.widget.NestedScrollView>
+        </io.iftech.android.library.slide.MinVerticalMarginFrameLayout>
+        <!-- slider -->
+        <io.iftech.android.library.slide.MinVerticalMarginFrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical">
+                <io.iftech.android.library.slide.SlideBarLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content">
-                    <TextView
-                        android:gravity="center"
-                        android:textSize="23dp"
-                        android:text="上拉显示控制台"
-                        android:textColor="@android:color/black"
+
+                    <LinearLayout
+                        android:background="@drawable/slide_bar"
                         android:layout_width="match_parent"
-                        android:layout_height="?attr/actionBarSize">
-                    </TextView>
-                    <com.facebook.litho.LithoView
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical">
+                        <TextView
+                            android:textStyle="bold"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:gravity="center"
+                            android:padding="5dp"
+                            android:text="上滑显示控制台"
+                            android:textColor="@android:color/black"
+                            android:textSize="15dp" />
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="44dp"
+                            android:gravity="center_vertical"
+                            android:orientation="horizontal">
+                            <TextView
+                                android:layout_width="0dp"
+                                android:layout_height="match_parent"
+                                android:layout_marginLeft="12dp"
+                                android:layout_weight="1"
+                                android:gravity="left|center_vertical"
+                                android:text="自动刷新"
+                                android:textColor="@android:color/black"
+                                android:textSize="18dp" />
+
+                            <ch.ielse.view.SwitchView
+                                android:id="@+id/is_live_reload"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginLeft="12dp"
+                                android:layout_marginRight="12dp"
+                                app:isOpened="true" />
+                        </LinearLayout>
+                    </LinearLayout>
+                </io.iftech.android.library.slide.SlideBarLayout>
+                <FrameLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="@android:color/white"
+                    android:paddingLeft="10dp"
+                    android:paddingRight="10dp"
+                    android:paddingBottom="10dp">
+                    <androidx.recyclerview.widget.RecyclerView
                         android:id="@+id/console"
                         android:layout_width="match_parent"
-                        android:layout_height="300dp"/>
-                </LinearLayout>
-            </androidx.cardview.widget.CardView>
-        </FrameLayout>
-    </androidx.coordinatorlayout.widget.CoordinatorLayout>
-</androidx.coordinatorlayout.widget.CoordinatorLayout>
+                        android:layout_height="match_parent"
+                        android:background="@drawable/console_background"
+                        android:padding="10dp"
+                        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
+                </FrameLayout>
+            </LinearLayout>
+        </io.iftech.android.library.slide.MinVerticalMarginFrameLayout>
+        <io.iftech.android.library.refresh.RefreshViewLayout
+            android:id="@+id/refresh"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+        </io.iftech.android.library.refresh.RefreshViewLayout>
+    </io.iftech.android.library.slide.SlideLayout>
+</LinearLayout>
