@@ -10,7 +10,7 @@ import java.lang.ref.PhantomReference
 import java.lang.ref.ReferenceQueue
 import kotlin.concurrent.thread
 
-internal object YogaLoader : Kit, NodeConfig.InternalYogaNodeFactory {
+internal object YogaNodeManager : Kit, NodeConfig.InternalYogaNodeFactory {
 
     private val queue = ReferenceQueue<YogaNode>()
     private val entries = HashMap<PhantomReference<RefQueueFreeYogaNode>, Long>()
