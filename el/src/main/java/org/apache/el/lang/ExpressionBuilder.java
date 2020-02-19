@@ -40,6 +40,8 @@ import org.apache.el.util.MessageFactory;
 
 import java.io.StringReader;
 import java.lang.reflect.Method;
+import java.security.AccessController;
+import java.security.PrivilegedAction;
 
 /**
  * @author Jacob Hookom [jacob@hookom.net]
@@ -48,12 +50,26 @@ public final class ExpressionBuilder implements NodeVisitor {
 
     private static final SynchronizedStack<ELParser> parserCache = new SynchronizedStack<>();
 
+    private static final int CACHE_SIZE;
     private static final String CACHE_SIZE_PROP =
         "org.apache.el.ExpressionBuilder.CACHE_SIZE";
 
-    @SuppressWarnings("ConstantConditions")
-    private static final int CACHE_SIZE = Integer.parseInt(System.getProperty(CACHE_SIZE_PROP, "5000"));
+    static {
+        String cacheSizeStr;
+        if (System.getSecurityManager() == null) {
+            cacheSizeStr = System.getProperty(CACHE_SIZE_PROP, "5000");
+        } else {
+            cacheSizeStr = AccessController.doPrivileged(
+                    new PrivilegedAction<String>() {
 
+                    @Override
+                    public String run() {
+                        return System.getProperty(CACHE_SIZE_PROP, "5000");
+                    }
+                });
+        }
+        CACHE_SIZE = Integer.parseInt(cacheSizeStr);
+    }
 
     private static final ConcurrentCache<String, Node> expressionCache =
             new ConcurrentCache<>(CACHE_SIZE);

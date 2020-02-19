@@ -1,10 +1,10 @@
 package com.guet.flexbox.playground
 
-import androidx.multidex.MultiDexApplication
+import android.app.Application
 import com.orhanobut.logger.AndroidLogAdapter
 import com.orhanobut.logger.Logger
 
-class PlaygroundApplication : MultiDexApplication() {
+class PlaygroundApplication : Application() {
     override fun onCreate() {
         super.onCreate()
         Logger.addLogAdapter(AndroidLogAdapter())

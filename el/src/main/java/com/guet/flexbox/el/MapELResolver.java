@@ -17,8 +17,12 @@
 
 package com.guet.flexbox.el;
 
+import com.guet.flexbox.beans.FeatureDescriptor;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
@@ -29,7 +33,6 @@ public class MapELResolver extends ELResolver {
 
     private final boolean readOnly;
 
-    @SuppressWarnings("WeakerAccess")
     public MapELResolver() {
         this.readOnly = false;
     }
@@ -95,6 +98,24 @@ public class MapELResolver extends ELResolver {
         }
 
         return this.readOnly;
+    }
+
+    @Override
+    public Iterator<FeatureDescriptor> getFeatureDescriptors(ELContext context, Object base) {
+        if (base instanceof Map<?, ?>) {
+            Iterator<?> itr = ((Map<?, ?>) base).keySet().iterator();
+            List<FeatureDescriptor> feats = new ArrayList<>();
+            Object key;
+            FeatureDescriptor desc;
+            while (itr.hasNext()) {
+                key = itr.next();
+                desc = new FeatureDescriptor();
+                desc.setName(key.toString());
+                feats.add(desc);
+            }
+            return feats.iterator();
+        }
+        return null;
     }
 
     @Override

@@ -1,20 +1,23 @@
 package com.guet.flexbox.playground
 
 import android.app.Activity
+import android.content.Context
 import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
+import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Space
+import android.widget.TextView
 import android.widget.Toast
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.app.ActivityOptionsCompat
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.RecyclerView
 import com.blankj.utilcode.util.NetworkUtils
-import com.didichuxing.doraemonkit.util.UIUtils
 import com.google.android.material.appbar.AppBarLayout
+import com.guet.flexbox.AppExecutors
 import com.guet.flexbox.playground.model.AppLoader
 import com.guet.flexbox.playground.model.Homepage
 import com.guet.flexbox.playground.widget.FlexBoxAdapter
@@ -22,6 +25,8 @@ import com.yzq.zxinglibrary.android.CaptureActivity
 import com.yzq.zxinglibrary.bean.ZxingConfig
 import com.yzq.zxinglibrary.common.Constant
 import es.dmoral.toasty.Toasty
+import razerdp.basepopup.QuickPopupBuilder
+import razerdp.basepopup.QuickPopupConfig
 
 
 class HomepageFragment : Fragment() {
@@ -48,10 +53,25 @@ class HomepageFragment : Fragment() {
         view.findViewById<View>(R.id.qr_code).setOnClickListener {
             startQRCodeActivity()
         }
-        view.findViewById<View>(R.id.info).apply {
-            setOnClickListener {
-                Toasty.info(requireContext(), "这里暂时什么也没有").show()
-            }
+        val idea = view.findViewById<View>(R.id.idea)
+        idea.setOnClickListener {
+            val intent = Intent()
+            intent.action = "android.intent.action.VIEW"
+            val uri: Uri = Uri.parse("https://github.com/sanyuankexie/Flexml/tree/master/intellij-plugin")
+            intent.data = uri
+            startActivity(intent)
+        }
+        val sharedPreferences = requireActivity().getSharedPreferences("startup", Context.MODE_PRIVATE)
+        if (!sharedPreferences.contains("first") || BuildConfig.DEBUG) {
+            QuickPopupBuilder.with(requireContext())
+                    .contentView(R.layout.idea_popup_window)
+                    .config(QuickPopupConfig()
+                            .gravity(Gravity.CENTER)
+                            .blurBackground(true))
+                    .show(idea)
+            sharedPreferences.edit()
+                    .putInt("first", 0)
+                    .apply()
         }
         view.findViewById<View>(R.id.search).setOnClickListener {
             startActivity(Intent(requireContext(), SearchActivity::class.java),
@@ -62,17 +82,39 @@ class HomepageFragment : Fragment() {
                     ).toBundle())
         }
         appBarLayout = view.findViewById(R.id.appbar)
-
         coordinator = view.findViewById(R.id.coordinator)
         feed = view.findViewById(R.id.feed)
-        feedAdapter.addFooterView(Space(requireContext()).apply {
-            layoutParams = ViewGroup.LayoutParams(-1, UIUtils.dp2px(requireContext(), 55f))
-        })
+        val foot = layoutInflater.inflate(
+                R.layout.load_more,
+                feed,
+                false
+        )
+        feedAdapter.addFooterView(foot)
         feedAdapter.setNewData(homepageInfo.feed)
         feed.adapter = feedAdapter
+        feedAdapter.registerAdapterDataObserver(object : RecyclerView.AdapterDataObserver() {
+            override fun onItemRangeInserted(positionStart: Int, itemCount: Int) {
+                if (feedAdapter.itemCount - 1 >= 100) {
+                    feed.postDelayed({
+                        val text = foot.findViewById<TextView>(R.id.text)
+                        text.text = "我也是有底线的。"
+                        val progress = foot.findViewById<View>(R.id.progress)
+                        progress.visibility = View.GONE
+                    }, 200)
+                }
+            }
+        })
         feed.addOnScrollListener(object : RecyclerView.OnScrollListener() {
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
-                appBarLayout.invalidate()
+                if (!recyclerView.canScrollVertically(1) && feedAdapter.itemCount - 1 < 100) {
+                    val app = requireContext().applicationContext
+                    AppExecutors.runOnAsyncThread(Runnable {
+                        val list = AppLoader.loadMoreFeedItem(app, 10, false)
+                        AppExecutors.runOnUiThread {
+                            feedAdapter.addData(list)
+                        }
+                    })
+                }
             }
         })
         NetworkUtils.isAvailableAsync {
@@ -82,7 +124,6 @@ class HomepageFragment : Fragment() {
                 }
             }
         }
-
     }
 
 

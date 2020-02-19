@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    android:gravity="center"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="horizontal"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content">
+    <TextView
+        android:textColor="@android:color/white"
+        android:textStyle="bold"
+        android:textSize="12dp"
+        android:paddingLeft="7dp"
+        android:paddingRight="7dp"
+        android:paddingTop="3dp"
+        android:paddingBottom="3dp"
+        android:text="在Github上获取Intellij(AS)插件"
+        android:background="@drawable/console_background"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
+    <ImageView
+        android:layout_gravity="right"
+        android:id="@+id/idea"
+        android:src="@drawable/idea"
+        android:scaleType="fitXY"
+        android:padding="5dp"
+        android:layout_marginRight="5dp"
+        android:layout_width="45dp"
+        android:layout_height="45dp" />
+
+</LinearLayout>

@@ -16,15 +16,28 @@
  */
 package com.guet.flexbox.el;
 
+import com.guet.flexbox.beans.FeatureDescriptor;
+import java.util.Iterator;
+import java.util.NoSuchElementException;
 import java.util.Objects;
 
 public class CompositeELResolver extends ELResolver {
+
+    private static final Class<?> SCOPED_ATTRIBUTE_EL_RESOLVER;
+    static {
+        Class<?> clazz = null;
+        try {
+            clazz = Class.forName("javax.servlet.jsp.el.ScopedAttributeELResolver");
+        } catch (ClassNotFoundException e) {
+            // Ignore. This is expected if using the EL stand-alone
+        }
+        SCOPED_ATTRIBUTE_EL_RESOLVER = clazz;
+    }
 
     private int size;
 
     private ELResolver[] resolvers;
 
-    @SuppressWarnings("WeakerAccess")
     public CompositeELResolver() {
         this.size = 0;
         this.resolvers = new ELResolver[8];
@@ -78,6 +91,16 @@ public class CompositeELResolver extends ELResolver {
         for (int i = 0; i < sz; i++) {
             Class<?> type = this.resolvers[i].getType(context, base, property);
             if (context.isPropertyResolved()) {
+                if (SCOPED_ATTRIBUTE_EL_RESOLVER != null &&
+                        SCOPED_ATTRIBUTE_EL_RESOLVER.isAssignableFrom(resolvers[i].getClass())) {
+                    // Special case since
+                    // javax.servlet.jsp.el.ScopedAttributeELResolver will
+                    // always return Object.class for type
+                    Object value = resolvers[i].getValue(context, base, property);
+                    if (value != null) {
+                        return value.getClass();
+                    }
+                }
                 return type;
             }
         }
@@ -110,6 +133,11 @@ public class CompositeELResolver extends ELResolver {
     }
 
     @Override
+    public Iterator<FeatureDescriptor> getFeatureDescriptors(ELContext context, Object base) {
+        return new FeatureIterator(context, base, this.resolvers, this.size);
+    }
+
+    @Override
     public Class<?> getCommonPropertyType(ELContext context, Object base) {
         Class<?> commonType = null;
         int sz = this.size;
@@ -133,5 +161,73 @@ public class CompositeELResolver extends ELResolver {
             }
         }
         return null;
+    }
+
+    private static final class FeatureIterator implements Iterator<FeatureDescriptor> {
+
+        private final ELContext context;
+
+        private final Object base;
+
+        private final ELResolver[] resolvers;
+
+        private final int size;
+
+        private Iterator<FeatureDescriptor> itr;
+
+        private int idx;
+
+        private FeatureDescriptor next;
+
+        public FeatureIterator(ELContext context, Object base, ELResolver[] resolvers, int size) {
+            this.context = context;
+            this.base = base;
+            this.resolvers = resolvers;
+            this.size = size;
+
+            this.idx = 0;
+            this.guaranteeIterator();
+        }
+
+        private void guaranteeIterator() {
+            while (this.itr == null && this.idx < this.size) {
+                this.itr = this.resolvers[this.idx].getFeatureDescriptors(this.context, this.base);
+                this.idx++;
+            }
+        }
+
+        @Override
+        public boolean hasNext() {
+            if (this.next != null)
+                return true;
+            if (this.itr != null) {
+                while (this.next == null && itr.hasNext()) {
+                    this.next = itr.next();
+                }
+            } else {
+                return false;
+            }
+            if (this.next == null) {
+                this.itr = null;
+                this.guaranteeIterator();
+            }
+            return hasNext();
+        }
+
+        @Override
+        public FeatureDescriptor next() {
+            if (!hasNext()) {
+                throw new NoSuchElementException();
+            }
+            FeatureDescriptor result = this.next;
+            this.next = null;
+            return result;
+
+        }
+
+        @Override
+        public void remove() {
+            throw new UnsupportedOperationException();
+        }
     }
 }

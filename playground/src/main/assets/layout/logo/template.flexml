@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Flex
+    alignItems="center"
+    background="white"
+    width="360"
+    height="180">
+    <Stack
+        marginLeft="30"
+        marginBottom="30"
+        marginTop="20"
+        flexShrink="0"
+        width="120"
+        height="120">
+        <Flex
+            borderRadius="5"
+            background="${gradient:linear('t2b','#7c4dff','#d500f9')}"
+            height="80"
+            width="80">
+        </Flex>
+        <Flex
+            borderRadius="5"
+            marginLeft="15"
+            marginTop="15"
+            background="${gradient:linear('t2b','#59a9ff','#d770a0')}"
+            height="80"
+            width="80">
+        </Flex>
+        <Flex
+            borderRadius="5"
+            marginLeft="30"
+            marginTop="30"
+            background="${gradient:linear('t2b','#004dff','#ff7871')}"
+            height="80"
+            width="80">
+        </Flex>
+    </Stack>
+    <Text
+        marginLeft="20"
+        textSize="40"
+        textStyle="bold"
+        text="Flexml">
+    </Text>
+</Flex>

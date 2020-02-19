@@ -29,14 +29,13 @@ import java.util.concurrent.ConcurrentHashMap;
 /**
  * @since EL 3.0
  */
-@SuppressWarnings("WeakerAccess")
 public class ImportHandler {
 
     private static final Map<String,Set<String>> standardPackages = new HashMap<>();
 
     static {
         Set<String> javaLangClassNames = new HashSet<>();
-        // Taken from Java 11 EA18 Javadoc
+        // Taken from Java 14 EA27 Javadoc
         // Interfaces
         javaLangClassNames.add("Appendable");
         javaLangClassNames.add("AutoCloseable");
@@ -78,6 +77,7 @@ public class ImportHandler {
         javaLangClassNames.add("Process");
         javaLangClassNames.add("ProcessBuilder");
         javaLangClassNames.add("ProcessBuilder.Redirect");
+        javaLangClassNames.add("Record");
         javaLangClassNames.add("Runtime");
         javaLangClassNames.add("Runtime.Version");
         javaLangClassNames.add("RuntimePermission");
@@ -248,7 +248,7 @@ public class ImportHandler {
         }
 
         String unqualifiedName = name.substring(lastPeriodIndex + 1);
-        String currentName = Util.putIfAbsent(classNames, unqualifiedName, name);
+        String currentName = Util.putIfAbsent(classNames,unqualifiedName, name);
 
         if (currentName != null && !currentName.equals(name)) {
             // Conflict. Same unqualifiedName, different fully qualified names
@@ -363,10 +363,12 @@ public class ImportHandler {
             return null;
         }
 
-        // Class must be public, non-abstract and not an interface
+        // Class must be public, non-abstract, not an interface and (for
+        // Java 9+) in an exported package
+        JreCompat jreCompat = JreCompat.getInstance();
         int modifiers = clazz.getModifiers();
         if (!Modifier.isPublic(modifiers) || Modifier.isAbstract(modifiers) ||
-                Modifier.isInterface(modifiers)) {
+                Modifier.isInterface(modifiers) || !jreCompat.isExported(clazz)) {
             if (throwException) {
                 throw new ELException(Util.message(
                         null, "importHandler.invalidClass", name));

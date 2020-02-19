@@ -26,6 +26,8 @@ import org.apache.el.util.MessageFactory;
 import java.lang.reflect.Array;
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.security.AccessController;
+import java.security.PrivilegedAction;
 import java.util.Collections;
 import java.util.Map;
 import java.util.Set;
@@ -38,13 +40,27 @@ import java.util.Set;
  */
 public class ELSupport {
 
-    private static final Long ZERO = 0L;
+    private static final Long ZERO = Long.valueOf(0L);
 
     protected static final boolean COERCE_TO_ZERO;
 
     static {
-        COERCE_TO_ZERO = Boolean.parseBoolean(System.getProperty(
-                "org.apache.el.parser.COERCE_TO_ZERO", "false"));
+        String coerceToZeroStr;
+        if (System.getSecurityManager() != null) {
+            coerceToZeroStr = AccessController.doPrivileged(
+                    new PrivilegedAction<String>(){
+                        @Override
+                        public String run() {
+                            return System.getProperty(
+                                    "org.apache.el.parser.COERCE_TO_ZERO", "false");
+                        }
+                    }
+            );
+        } else {
+            coerceToZeroStr = System.getProperty(
+                    "org.apache.el.parser.COERCE_TO_ZERO", "false");
+        }
+        COERCE_TO_ZERO = Boolean.parseBoolean(coerceToZeroStr);
     }
 
 
@@ -221,8 +237,8 @@ public class ELSupport {
      * @return the Boolean value of the object
      * @throws ELException if object is not Boolean or String
      */
-    public static Boolean coerceToBoolean(final ELContext ctx, final Object obj,
-                                          boolean primitive) throws ELException {
+    public static final Boolean coerceToBoolean(final ELContext ctx, final Object obj,
+            boolean primitive) throws ELException {
 
         if (ctx != null) {
             boolean originalIsPropertyResolved = ctx.isPropertyResolved();

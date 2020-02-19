@@ -17,8 +17,10 @@
 
 package com.guet.flexbox.el;
 
+import com.guet.flexbox.beans.FeatureDescriptor;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
 
@@ -29,7 +31,6 @@ public class ListELResolver extends ELResolver {
     private static final Class<?> UNMODIFIABLE =
         Collections.unmodifiableList(new ArrayList<>()).getClass();
 
-    @SuppressWarnings("WeakerAccess")
     public ListELResolver() {
         this.readOnly = false;
     }
@@ -123,6 +124,11 @@ public class ListELResolver extends ELResolver {
     }
 
     @Override
+    public Iterator<FeatureDescriptor> getFeatureDescriptors(ELContext context, Object base) {
+        return null;
+    }
+
+    @Override
     public Class<?> getCommonPropertyType(ELContext context, Object base) {
         if (base instanceof List<?>) { // implies base != null
             return Integer.class;
@@ -130,15 +136,15 @@ public class ListELResolver extends ELResolver {
         return null;
     }
 
-    private static int coerce(Object property) {
+    private static final int coerce(Object property) {
         if (property instanceof Number) {
             return ((Number) property).intValue();
         }
         if (property instanceof Character) {
-            return (Character) property;
+            return ((Character) property).charValue();
         }
         if (property instanceof Boolean) {
-            return (Boolean) property ? 1 : 0;
+            return ((Boolean) property).booleanValue() ? 1 : 0;
         }
         if (property instanceof String) {
             return Integer.parseInt((String) property);

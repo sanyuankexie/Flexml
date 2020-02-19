@@ -14,37 +14,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.el.util;
 
-import java.text.MessageFormat;
-import java.util.Locale;
-import java.util.MissingResourceException;
-import java.util.ResourceBundle;
+package com.guet.flexbox.el;
 
-/**
- * @author Jacob Hookom [jacob@hookom.net]
- */
-public final class MessageFactory {
+import java.util.EventObject;
 
-    static final ResourceBundle bundle =
-            ResourceBundle.getBundle("org.apache.el.Messages");
+public class ELContextEvent extends EventObject {
 
-    public MessageFactory() {
-        super();
+    private static final long serialVersionUID = 1255131906285426769L;
+
+    /**
+     * @param source The EL context that was the source of this event
+     */
+    public ELContextEvent(ELContext source) {
+        super(source);
     }
 
-    public static String get(final String key) {
-        try {
-            return bundle.getString(key);
-        } catch (MissingResourceException e) {
-            return key;
-        }
+    public ELContext getELContext() {
+        return (ELContext) this.getSource();
     }
 
-    public static String get(final String key, final Object... args) {
-        String value = get(key);
-
-        MessageFormat mf = new MessageFormat(value);
-        return mf.format(args, new StringBuffer(), null).toString();
-    }
 }

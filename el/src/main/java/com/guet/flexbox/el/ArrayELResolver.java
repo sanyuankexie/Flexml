@@ -17,15 +17,15 @@
 
 package com.guet.flexbox.el;
 
+import com.guet.flexbox.beans.FeatureDescriptor;
 import java.lang.reflect.Array;
+import java.util.Iterator;
 import java.util.Objects;
-
 
 public class ArrayELResolver extends ELResolver {
 
     private final boolean readOnly;
 
-    @SuppressWarnings("WeakerAccess")
     public ArrayELResolver() {
         this.readOnly = false;
     }
@@ -83,12 +83,11 @@ public class ArrayELResolver extends ELResolver {
 
             int idx = coerce(property);
             checkBounds(base, idx);
-            Class componentType;
             if (value != null && !Util.isAssignableFrom(value.getClass(),
-                    componentType = base.getClass().getComponentType())) {
+                    base.getClass().getComponentType())) {
                 throw new ClassCastException(Util.message(context,
                         "objectNotAssignable", value.getClass().getName(),
-                        componentType == null ? "" : componentType.getName()));
+                        base.getClass().getComponentType().getName()));
             }
             Array.set(base, idx, value);
         }
@@ -112,6 +111,11 @@ public class ArrayELResolver extends ELResolver {
     }
 
     @Override
+    public Iterator<FeatureDescriptor> getFeatureDescriptors(ELContext context, Object base) {
+        return null;
+    }
+
+    @Override
     public Class<?> getCommonPropertyType(ELContext context, Object base) {
         if (base != null && base.getClass().isArray()) {
             return Integer.class;
@@ -119,22 +123,22 @@ public class ArrayELResolver extends ELResolver {
         return null;
     }
 
-    private static void checkBounds(Object base, int idx) {
+    private static final void checkBounds(Object base, int idx) {
         if (idx < 0 || idx >= Array.getLength(base)) {
             throw new PropertyNotFoundException(
                     new ArrayIndexOutOfBoundsException(idx).getMessage());
         }
     }
 
-    private static int coerce(Object property) {
+    private static final int coerce(Object property) {
         if (property instanceof Number) {
             return ((Number) property).intValue();
         }
         if (property instanceof Character) {
-            return (Character) property;
+            return ((Character) property).charValue();
         }
         if (property instanceof Boolean) {
-            return (Boolean) property ? 1 : 0;
+            return ((Boolean) property).booleanValue() ? 1 : 0;
         }
         if (property instanceof String) {
             return Integer.parseInt((String) property);
