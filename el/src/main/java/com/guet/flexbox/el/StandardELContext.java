@@ -36,7 +36,8 @@ public class StandardELContext extends ELContext {
     public StandardELContext(ExpressionFactory factory) {
         wrappedContext = null;
         variableMapper = new StandardVariableMapper();
-        functionMapper = new StandardFunctionMapper(factory.getInitFunctionMap());
+        functionMapper =
+                new StandardFunctionMapper(factory.getInitFunctionMap());
         standardResolver = new CompositeELResolver();
         customResolvers = new CompositeELResolver();
 
@@ -143,11 +144,11 @@ public class StandardELContext extends ELContext {
     }
 
 
-    static class StandardBeanNameResolver extends BeanNameResolver {
+    private static class StandardBeanNameResolver extends BeanNameResolver {
 
         private final Map<String,Object> beans;
 
-        StandardBeanNameResolver(Map<String, Object> beans) {
+        public StandardBeanNameResolver(Map<String,Object> beans) {
             this.beans = beans;
         }
 
@@ -179,7 +180,7 @@ public class StandardELContext extends ELContext {
     }
 
 
-    static class StandardFunctionMapper extends FunctionMapper {
+    private static class StandardFunctionMapper extends FunctionMapper {
 
         private final Map<String,Method> methods = new HashMap<>();
 

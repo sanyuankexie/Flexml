@@ -14,20 +14,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.guet.flexbox.el;
 
 /**
- * @since EL 3.0
+ * @author Jacob Hookom [jacob/hookom.net]
+ *
  */
-public class ELClass {
+public interface ELContextListener extends java.util.EventListener {
 
-    private final Class<?> clazz;
+    public void contextCreated(ELContextEvent event);
 
-    public ELClass(Class<?> clazz) {
-        this.clazz = clazz;
-    }
-
-    public Class<?> getKlass() {
-        return clazz;
-    }
 }

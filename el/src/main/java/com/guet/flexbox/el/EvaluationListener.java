@@ -19,7 +19,6 @@ package com.guet.flexbox.el;
 /**
  * @since EL 3.0
  */
-@SuppressWarnings("WeakerAccess")
 public abstract class EvaluationListener {
 
     /**

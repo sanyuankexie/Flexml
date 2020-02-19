@@ -16,6 +16,9 @@
  */
 package com.guet.flexbox.el;
 
+import com.guet.flexbox.beans.FeatureDescriptor;
+import java.util.Iterator;
+
 /**
  * @since EL 3.0
  */
@@ -40,6 +43,12 @@ public abstract class TypeConverter extends ELResolver {
     @Override
     public boolean isReadOnly(ELContext context, Object base, Object property) {
         return false;
+    }
+
+    @Override
+    public Iterator<FeatureDescriptor> getFeatureDescriptors(ELContext context,
+            Object base) {
+        return null;
     }
 
     @Override

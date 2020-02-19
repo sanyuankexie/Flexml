@@ -88,7 +88,7 @@ public final class EvaluationContext extends ELContext {
     @Override
     public Locale getLocale() {
         return elContext.getLocale();
-    }
+        }
 
     @Override
     public void setLocale(Locale locale) {

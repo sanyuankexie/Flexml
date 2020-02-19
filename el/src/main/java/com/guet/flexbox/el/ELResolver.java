@@ -16,6 +16,10 @@
  */
 package com.guet.flexbox.el;
 
+import com.guet.flexbox.beans.FeatureDescriptor;
+
+import java.util.Iterator;
+
 /**
  * @author Jacob Hookom [jacob/hookom.net]
  *
@@ -115,6 +119,10 @@ public abstract class ELResolver {
      */
     public abstract boolean isReadOnly(ELContext context, Object base,
             Object property);
+
+    public Iterator<FeatureDescriptor> getFeatureDescriptors(ELContext context, Object base){
+        return null;
+    }
 
     public abstract Class<?> getCommonPropertyType(ELContext context,
             Object base);

@@ -16,11 +16,13 @@
  */
 package com.guet.flexbox.el;
 
+import com.guet.flexbox.beans.FeatureDescriptor;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
+import java.util.Iterator;
 import java.util.Objects;
 
 /**
@@ -41,8 +43,10 @@ public class StaticFieldELResolver extends ELResolver {
             try {
                 Field field = clazz.getField(name);
                 int modifiers = field.getModifiers();
+                JreCompat jreCompat = JreCompat.getInstance();
                 if (Modifier.isStatic(modifiers) &&
-                        Modifier.isPublic(modifiers)) {
+                        Modifier.isPublic(modifiers) &&
+                        jreCompat.canAcccess(null, field)) {
                     return field.get(null);
                 }
             } catch (IllegalArgumentException | IllegalAccessException |
@@ -109,11 +113,13 @@ public class StaticFieldELResolver extends ELResolver {
                 return result;
 
             } else {
-                Method match =
-                        Util.findMethod(clazz, methodName, paramTypes, params);
+                // Static method so base should be null
+                Method match = Util.findMethod(clazz, null, methodName, paramTypes, params);
 
-                int modifiers = match.getModifiers();
-                if (!Modifier.isStatic(modifiers)) {
+                // Note: On Java 9 and above, the isStatic check becomes
+                // unnecessary because the canAccess() call in Util.findMethod()
+                // effectively performs the same check
+                if (match == null || !Modifier.isStatic(match.getModifiers())) {
                     throw new MethodNotFoundException(Util.message(context,
                             "staticFieldELResolver.methodNotFound", methodName,
                             clazz.getName()));
@@ -151,8 +157,10 @@ public class StaticFieldELResolver extends ELResolver {
             try {
                 Field field = clazz.getField(name);
                 int modifiers = field.getModifiers();
+                JreCompat jreCompat = JreCompat.getInstance();
                 if (Modifier.isStatic(modifiers) &&
-                        Modifier.isPublic(modifiers)) {
+                        Modifier.isPublic(modifiers) &&
+                        jreCompat.canAcccess(null, field)) {
                     return field.getType();
                 }
             } catch (IllegalArgumentException | NoSuchFieldException |
@@ -181,6 +189,15 @@ public class StaticFieldELResolver extends ELResolver {
         return true;
     }
 
+
+    /**
+     * Always returns <code>null</code>.
+     */
+    @Override
+    public Iterator<FeatureDescriptor> getFeatureDescriptors(ELContext context,
+            Object base) {
+        return null;
+    }
 
     /**
      * Always returns <code>String.class</code>.

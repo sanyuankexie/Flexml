@@ -58,14 +58,15 @@ public class LambdaExpression {
         if (formalParamCount > argCount) {
             throw new ELException(Util.message(context,
                     "lambdaExpression.tooFewArgs",
-                    argCount,
-                    formalParamCount));
+                    Integer.valueOf(argCount),
+                    Integer.valueOf(formalParamCount)));
         }
 
         // Build the argument map
         // Start with the arguments from any outer expressions so if there is
         // any overlap the local arguments have priority
-        Map<String, Object> lambdaArguments = new HashMap<>(nestedArguments);
+        Map<String,Object> lambdaArguments = new HashMap<>();
+        lambdaArguments.putAll(nestedArguments);
         for (int i = 0; i < formalParamCount; i++) {
             lambdaArguments.put(formalParameters.get(i), args[i]);
         }

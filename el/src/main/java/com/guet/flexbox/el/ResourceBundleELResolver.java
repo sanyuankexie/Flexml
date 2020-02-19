@@ -17,13 +17,17 @@
 
 package com.guet.flexbox.el;
 
+import com.guet.flexbox.beans.FeatureDescriptor;
+import java.util.ArrayList;
+import java.util.Enumeration;
+import java.util.Iterator;
+import java.util.List;
 import java.util.MissingResourceException;
 import java.util.Objects;
 import java.util.ResourceBundle;
 
 public class ResourceBundleELResolver extends ELResolver {
 
-    @SuppressWarnings("WeakerAccess")
     public ResourceBundleELResolver() {
         super();
     }
@@ -81,6 +85,25 @@ public class ResourceBundleELResolver extends ELResolver {
         }
 
         return false;
+    }
+
+    @Override
+    public Iterator<FeatureDescriptor> getFeatureDescriptors(
+            ELContext context, Object base) {
+        if (base instanceof ResourceBundle) {
+            List<FeatureDescriptor> feats = new ArrayList<>();
+            Enumeration<String> e = ((ResourceBundle) base).getKeys();
+            FeatureDescriptor feat;
+            String key;
+            while (e.hasMoreElements()) {
+                key = e.nextElement();
+                feat = new FeatureDescriptor();
+                feat.setName(key);;
+                feats.add(feat);
+            }
+            return feats.iterator();
+        }
+        return null;
     }
 
     @Override
