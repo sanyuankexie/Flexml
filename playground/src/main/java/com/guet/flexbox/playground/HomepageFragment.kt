@@ -1,8 +1,11 @@
 package com.guet.flexbox.playground
 
 import android.app.Activity
+import android.content.Context
 import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
+import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -22,6 +25,8 @@ import com.yzq.zxinglibrary.android.CaptureActivity
 import com.yzq.zxinglibrary.bean.ZxingConfig
 import com.yzq.zxinglibrary.common.Constant
 import es.dmoral.toasty.Toasty
+import razerdp.basepopup.QuickPopupBuilder
+import razerdp.basepopup.QuickPopupConfig
 
 
 class HomepageFragment : Fragment() {
@@ -48,10 +53,25 @@ class HomepageFragment : Fragment() {
         view.findViewById<View>(R.id.qr_code).setOnClickListener {
             startQRCodeActivity()
         }
-        view.findViewById<View>(R.id.info).apply {
-            setOnClickListener {
-                Toasty.info(requireContext(), "这里暂时什么也没有").show()
-            }
+        val idea = view.findViewById<View>(R.id.idea)
+        idea.setOnClickListener {
+            val intent = Intent()
+            intent.action = "android.intent.action.VIEW"
+            val uri: Uri = Uri.parse("https://github.com/sanyuankexie/Flexml/tree/master/intellij-plugin")
+            intent.data = uri
+            startActivity(intent)
+        }
+        val sharedPreferences = requireActivity().getSharedPreferences("startup", Context.MODE_PRIVATE)
+        if (!sharedPreferences.contains("first") || BuildConfig.DEBUG) {
+            QuickPopupBuilder.with(requireContext())
+                    .contentView(R.layout.idea_popup_window)
+                    .config(QuickPopupConfig()
+                            .gravity(Gravity.CENTER)
+                            .blurBackground(true))
+                    .show(idea)
+            sharedPreferences.edit()
+                    .putInt("first", 0)
+                    .apply()
         }
         view.findViewById<View>(R.id.search).setOnClickListener {
             startActivity(Intent(requireContext(), SearchActivity::class.java),

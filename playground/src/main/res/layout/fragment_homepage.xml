@@ -49,10 +49,10 @@
                     android:layout_width="0dp"
                     android:layout_height="36dp" />
                 <ImageView
-                    android:id="@+id/info"
-                    android:src="@drawable/ic_about"
+                    android:id="@+id/idea"
+                    android:src="@drawable/idea"
                     android:scaleType="fitXY"
-                    android:padding="10dp"
+                    android:padding="5dp"
                     android:layout_marginRight="5dp"
                     android:layout_width="45dp"
                     android:layout_height="45dp" />
