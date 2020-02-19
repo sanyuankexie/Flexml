@@ -31,7 +31,28 @@ Flexml使用最流行的Glide作为图片加载框架，所以拥有良好的资
 连你上面看到的logo都是自己画的，对应的源码在这[logo/template.flexml](https://github.com/sanyuankexie/Flexml/blob/master/playground/src/main/assets/layout/logo/template.flexml)。
 
 ### 4 提供Intellij插件
-同时提供Intellij（Android Studio）插件，配合playground app可以实时在真机上调试布局，插件您可以在[release](https://github.com/sanyuankexie/Flexml/releases)界面找到。
+提供Intellij（Android Studio）插件，配合playground app可以实时在真机上调试布局，插件您可以在[release](https://github.com/sanyuankexie/Flexml/releases)界面找到。
+### 4 使用jitpack集成
+
+添加到你的根build.gradle。
+
+```
+	allprojects {
+		repositories {
+			...
+			maven { url 'https://jitpack.io' }
+		}
+	}
+```
+
+添加到你所使用的模块。
+
+
+```
+	dependencies {
+	        implementation 'com.github.sanyuankexie.Flexml:litho:0.3.0'
+	}
+```
 ### 5 开源
 Gbox使用kotlin开发，在Apache 2.0开源协议下发布，是一个完全基于开源软件实现的开源软件。由[@LukeXeon](https://github.com/LukeXeon)维护（我不会跑路）。
 
