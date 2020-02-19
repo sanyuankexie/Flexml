@@ -6,15 +6,15 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Space
+import android.widget.TextView
 import android.widget.Toast
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.app.ActivityOptionsCompat
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.RecyclerView
 import com.blankj.utilcode.util.NetworkUtils
-import com.didichuxing.doraemonkit.util.UIUtils
 import com.google.android.material.appbar.AppBarLayout
+import com.guet.flexbox.AppExecutors
 import com.guet.flexbox.playground.model.AppLoader
 import com.guet.flexbox.playground.model.Homepage
 import com.guet.flexbox.playground.widget.FlexBoxAdapter
@@ -62,17 +62,37 @@ class HomepageFragment : Fragment() {
                     ).toBundle())
         }
         appBarLayout = view.findViewById(R.id.appbar)
-
         coordinator = view.findViewById(R.id.coordinator)
         feed = view.findViewById(R.id.feed)
-        feedAdapter.addFooterView(Space(requireContext()).apply {
-            layoutParams = ViewGroup.LayoutParams(-1, UIUtils.dp2px(requireContext(), 55f))
-        })
+        val foot = layoutInflater.inflate(
+                R.layout.load_more,
+                feed,
+                false
+        )
+        feedAdapter.addFooterView(foot)
         feedAdapter.setNewData(homepageInfo.feed)
         feed.adapter = feedAdapter
+        feedAdapter.registerAdapterDataObserver(object : RecyclerView.AdapterDataObserver() {
+            override fun onItemRangeInserted(positionStart: Int, itemCount: Int) {
+                if (feedAdapter.itemCount - 1 >= 100) {
+                    val text = foot.findViewById<TextView>(R.id.text)
+                    text.text = "我也是有底线的。"
+                    val progress = foot.findViewById<View>(R.id.progress)
+                    progress.visibility = View.GONE
+                }
+            }
+        })
         feed.addOnScrollListener(object : RecyclerView.OnScrollListener() {
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
-                appBarLayout.invalidate()
+                if (!recyclerView.canScrollVertically(1) && feedAdapter.itemCount - 1 < 100) {
+                    val app = requireContext().applicationContext
+                    AppExecutors.runOnAsyncThread(Runnable {
+                        val list = AppLoader.loadMoreFeedItem(app, 10, false)
+                        AppExecutors.runOnUiThread {
+                            feedAdapter.addData(list)
+                        }
+                    })
+                }
             }
         })
         NetworkUtils.isAvailableAsync {
@@ -82,7 +102,6 @@ class HomepageFragment : Fragment() {
                 }
             }
         }
-
     }
 
 
