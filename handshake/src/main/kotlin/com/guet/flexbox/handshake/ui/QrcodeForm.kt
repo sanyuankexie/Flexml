@@ -1,9 +1,10 @@
 package com.guet.flexbox.handshake.ui
 
-import com.guet.flexbox.handshake.utils.HostAddressFinder
-import com.guet.flexbox.handshake.utils.QrcodeImageBuilder
-import org.slf4j.LoggerFactory
+import com.guet.flexbox.handshake.NetworkChangedEvent
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.boot.web.context.WebServerInitializedEvent
+import org.springframework.context.event.EventListener
+import org.springframework.stereotype.Component
 import java.awt.Desktop
 import java.awt.EventQueue
 import java.awt.GraphicsEnvironment
@@ -11,24 +12,18 @@ import java.awt.Toolkit
 import java.awt.event.WindowAdapter
 import java.awt.event.WindowEvent
 import java.net.URI
-import java.util.*
 import java.util.concurrent.ConcurrentHashMap
 import javax.imageio.ImageIO
 import javax.swing.JFrame
-import kotlin.concurrent.schedule
 import kotlin.system.exitProcess
 
-class QrcodeForm : JFrame() {
+class QrcodeForm(
+        private val attributes: ConcurrentHashMap<String, Any>
+) : JFrame() {
 
     companion object {
         private const val WINDOW_SIZE: Int = 300
-        private val logger = LoggerFactory.getLogger(QrcodeForm::class.java)
     }
-
-    @Autowired
-    private lateinit var attributes: ConcurrentHashMap<String, Any>
-
-    private var lastHostAddress: String? = null
 
     private val imageView: ImageView
 
@@ -65,35 +60,53 @@ class QrcodeForm : JFrame() {
         isVisible = true
         isAlwaysOnTop = true
         EventQueue.invokeLater {
+            val port = attributes["port"] as? Int ?: 8080
+            if (Desktop.isDesktopSupported()) {
+                val desktop = Desktop.getDesktop()
+                if (desktop.isSupported(Desktop.Action.BROWSE)) {
+                    desktop.browse(URI("http://localhost:$port"))
+                }
+            }
             isAlwaysOnTop = false
         }
     }
 
-    fun start() {
-        if (GraphicsEnvironment.isHeadless()) {
-            return
-        } else {
-            val port = attributes["port"] as? Int ?: 8080
-            Timer().schedule(0, 2000) {
-                val host = HostAddressFinder.findHostAddress()
-                if (host != lastHostAddress) {
-                    lastHostAddress = host
-                    val url = "http://$host:${port}"
-                    logger.info("Network changed: $url")
-                    val image = QrcodeImageBuilder
-                            .buildImage(url, WINDOW_SIZE)
-                    EventQueue.invokeLater {
-                        imageView.image = image
-                    }
+    fun notifyChanged(host: String) {
+        val port = attributes["port"] as? Int ?: 8080
+        val url = "http://$host:${port}"
+        val image = QrcodeImageUtils
+                .buildImage(url, WINDOW_SIZE)
+        EventQueue.invokeLater {
+            imageView.image = image
+        }
+    }
+
+    @Component
+    class Loader {
+
+        @Volatile
+        private var qrcodeForm: QrcodeForm? = null
+
+        @Autowired
+        private lateinit var attributes: ConcurrentHashMap<String, Any>
+
+        @EventListener
+        fun onInitialized(event: WebServerInitializedEvent) {
+            attributes["port"] = event.webServer.port
+            System.clearProperty("java.awt.headless")
+            if (!GraphicsEnvironment.isHeadless()) {
+                EventQueue.invokeLater {
+                    val form = QrcodeForm(attributes)
+                    form.isVisible = true
+                    qrcodeForm = form
                 }
             }
+        }
+
+        @EventListener
+        fun onNetworkChanged(event: NetworkChangedEvent) {
             EventQueue.invokeLater {
-                if (Desktop.isDesktopSupported()) {
-                    val desktop = Desktop.getDesktop()
-                    if (desktop.isSupported(Desktop.Action.BROWSE)) {
-                        desktop.browse(URI("http://localhost:$port"))
-                    }
-                }
+                qrcodeForm?.notifyChanged(event.host)
             }
         }
     }

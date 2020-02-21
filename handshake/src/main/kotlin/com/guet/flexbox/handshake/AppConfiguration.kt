@@ -1,7 +1,6 @@
 package com.guet.flexbox.handshake
 
 import com.google.gson.Gson
-import com.guet.flexbox.handshake.ui.QrcodeForm
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.http.converter.HttpMessageConverter
@@ -63,9 +62,4 @@ open class AppConfiguration : WebMvcConfigurer {
         return ConcurrentHashMap()
     }
 
-    @Bean
-    open fun form(): QrcodeForm {
-        System.clearProperty("java.awt.headless")
-        return QrcodeForm()
-    }
 }
