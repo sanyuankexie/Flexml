@@ -1,5 +1,6 @@
 package com.guet.flexbox.handshake
 
+import com.guet.flexbox.handshake.event.PortHasSetEvent
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.ApplicationArguments
@@ -30,6 +31,7 @@ open class MockApplication : ApplicationRunner {
     @EventListener
     fun onInitialized(event: WebServerInitializedEvent) {
         attributes["port"] = event.webServer.port
+        event.applicationContext.publishEvent(PortHasSetEvent(this))
     }
 }
 

@@ -1,4 +1,4 @@
-package com.guet.flexbox.handshake
+package com.guet.flexbox.handshake.event
 
 import org.springframework.context.ApplicationEvent
 
