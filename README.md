@@ -3,7 +3,7 @@
 # Flexml  ![](https://img.shields.io/badge/language-kotlin%20%7C%20java-orange) ![](https://jitpack.io/v/LukeXeon/flexbox.svg) ![](https://img.shields.io/badge/platform-android-brightgreen) ![](https://img.shields.io/badge/license-Apache--2.0-blue) ![](https://img.shields.io/badge/email-imlkluo%40qq.com-green) ![](https://img.shields.io/badge/doc-%E6%8E%98%E9%87%91-blue) ![](https://img.shields.io/badge/API-19%2B-green)
 
 ### 0 注意
-**Gbox**已经被重命名为**Flexml**！目前SDK最新版本为**0.3.0**，插件最新版本为**0.3.1**，MacOS用户请一定使用0.3.1版本的插件。
+**Gbox**已经被重命名为**Flexml**！目前SDK最新版本为**0.3.0**，插件最新版本为**0.3.1**，**MacOS**用户请一定使用**0.3.1**版本的插件。
 
 ### 1 适用的业务范围
 
@@ -104,7 +104,9 @@ yourTemplatePage.release()
 ```
 如果你需要接入新的Native View，可以参考litho的官方文档[Mount Specs](https://fblitho.com/docs/mount-specs)，或者参考我为了ViewPager2写的[BannerSpec.kt](https://github.com/sanyuankexie/Flexml/blob/master/litho/src/main/java/com/guet/flexbox/litho/widget/BannerSpec.kt)进行接入。
 
-### 6 Dsl Wiki
+更多资料请看下面的wiki。
+
+### 6 Wiki
 TODO
 
 ### 7 展望
