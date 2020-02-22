@@ -59,6 +59,13 @@ Flexml提供一个**playground app**，**playground app**是一个集**样例代
 	        implementation 'com.github.sanyuankexie.Flexml:litho:0.3.0'
 	}
 ```
+ 
+然后找个地方初始化。
+```
+LithoBuildTool.init(context)
+//注：上面的代码是kt写的，如果是在java中,应该这么来
+LithoBuildTool.INSTANCE.init(context);
+```
 
 接下来你需要从json中解析得到`com.guet.flexbox.TemplateNode`，这玩意是未绑定数据的模板文件，由模板编译器编译得到（[模板编译器与Intellij插件一起发布，请参考插件页面](https://github.com/sanyuankexie/Flexml/blob/master/intellij-plugin/README.md)），使用Gson和FastJson都可以顺利完成解析。
 
