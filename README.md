@@ -33,90 +33,12 @@ Flexml提供一个**playground app**，**playground app**是一个集**样例代
 
 其实就连你在最开头看到的logo都是Flexml自绘制的，对应的源码在这[logo/template.flexml](https://github.com/sanyuankexie/Flexml/blob/master/playground/src/main/assets/layout/logo/template.flexml)。
 
-### 3 提供Intellij插件
-为了实现实时预览功能，需要扩展IDE能力的边界，为此开发了Intellij（Android Studio）插件并向大家提供，配合**playground app**可以实时在真机上调试布局。
+Flexml支持在真机上实时预览，为实现该功能，需要扩展IDE能力的边界，为此开发了Intellij（Android Studio）插件，配合**playground app**可以实时在真机上调试布局。
 
-进一步了解更多插件相关信息，请转到插件模块的[README.md](https://github.com/sanyuankexie/Flexml/blob/master/intellij-plugin/README.md)。
+### 3 Wiki
+集成、试用以及其他相关资料，请查看Github上的[wiki页面](https://github.com/sanyuankexie/Flexml/wiki)。
 
-插件的release版本你也可以在本仓库的[release](https://github.com/sanyuankexie/Flexml/releases)界面找到。
-### 4 使用jitpack集成SDK
-
-添加到你的根build.gradle。
-
-```
-	allprojects {
-		repositories {
-			...
-			maven { url 'https://jitpack.io' }
-		}
-	}
-```
-
-添加到你所使用的模块。
-
-```
-	dependencies {
-	        implementation 'com.github.sanyuankexie.Flexml:litho:0.3.0'
-	}
-```
- 
-然后找个地方初始化。
-```
-LithoBuildTool.init(context)
-//注：上面的代码是kt写的，如果是在java中,应该这么来
-LithoBuildTool.INSTANCE.init(context);
-```
-
-接下来你需要从json中解析得到`com.guet.flexbox.TemplateNode`，这玩意是未绑定数据的模板文件，由模板编译器编译得到（[模板编译器与Intellij插件一起发布，请参考插件页面](https://github.com/sanyuankexie/Flexml/blob/master/intellij-plugin/README.md)），使用Gson和FastJson都可以顺利完成解析。
-
-```kotlin
-package com.guet.flexbox
-
-class TemplateNode(
-        val type: String,
-        val attrs: Map<String, String>?,
-        val children: List<TemplateNode>?
-)
-```
-然后创建`com.guet.flexbox.litho.TemplatePage`，注意，此过程必须不在主线程执行，因为build函数会执行模板解析和数据绑定并完成布局测量，会占用大量的CPU时间。
-```kotlin
-TemplatePage.create(c)
-        .template(template)//也就是TemplateNode的实例。
-        .data(myData)//JSONObject，Map，标准JavaBean（有getter，setter的）都可以。
-        .build()
-```
-在TemplatePage实例化完成之后，将它赋值给`com.guet.flexbox.litho.HostingView`的`templatePage`，即可完成View的展示。
-```kotlin
-hostingView.templatePage = yourTemplatePage
-```
-注意，不要将TemplatePage同时给两个HostingView使用，当你不用某个TemplatePage时，记得将它`release`。
-```kotlin
-yourTemplatePage.release()
-```
-如果你要在RecyclerView中使用，你应该这么写。
-```kotlin
-            override fun onBindViewHolder(
-                    holder: HostingViewHolder,
-                    position: Int
-            ) {
-                val tree = trees[pos]
-                holder.hostingView.componentTree = tree
-            }
-
-            override fun onViewRecycled(holder: HostingViewHolder) {
-                //下面这两行很关键，涉及到资源的正确回收，一定不能不写
-                holder.hostingView.unmountAllItems()
-                holder.hostingView.componentTree = null
-            }
-```
-如果你需要接入新的Native View，可以参考litho的官方文档[Mount Specs](https://fblitho.com/docs/mount-specs)，或者参考我为了ViewPager2写的[BannerSpec.kt](https://github.com/sanyuankexie/Flexml/blob/master/litho/src/main/java/com/guet/flexbox/litho/widget/BannerSpec.kt)进行接入。
-
-更多资料请看下面的wiki。
-
-### 5 Wiki
-[Github上的wiki页面。](https://github.com/sanyuankexie/Flexml/wiki)
-
-### 6 展望
+### 4 展望
 未来，Flexml的目标是向iOS进军，在iOS设备上完成一套等价的SDK，得益于facebook和google强大的开源生态，所以这是可行的。
 
 * facebook [litho](https://github.com/facebook/litho)在iOS上的等价物是facebook [AsyncDisplayKit（现在又叫Texture）](https://github.com/texturegroup/texture/)。
@@ -124,7 +46,7 @@ yourTemplatePage.release()
 
 剩下的就是时间问题。
 
-### 7 关于开源
+### 5 关于开源
 Flexm使用kotlin开发，在Apache 2.0开源协议下发布，是一个完全基于开源软件实现的开源软件。由[@LukeXeon](https://github.com/LukeXeon)维护。
 
 Flexml是一个比较新的litho社区开源项目，有关其他其他facebook litho的社区开源项目，请在facebook的litho [Community Showcase](https://fblitho.com/docs/community-showcase)查找。
