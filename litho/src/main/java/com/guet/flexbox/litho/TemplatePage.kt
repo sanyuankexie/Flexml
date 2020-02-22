@@ -2,29 +2,49 @@ package com.guet.flexbox.litho
 
 import android.content.Context
 import android.os.Looper
+import androidx.annotation.AnyThread
 import androidx.annotation.RestrictTo
 import androidx.annotation.WorkerThread
 import com.facebook.litho.*
-import com.guet.flexbox.EventBridge
-import com.guet.flexbox.EventContext
 import com.guet.flexbox.TemplateNode
-import com.guet.flexbox.el.PropsELContext
 import com.guet.flexbox.litho.widget.ThreadChecker
+import com.guet.flexbox.transaction.action.ActionBridge
+import com.guet.flexbox.transaction.action.ActionTarget
 
 class TemplatePage @WorkerThread internal constructor(
         builder: Builder
 ) : TreeManager(builder) {
     private val template: TemplateNode = requireNotNull(builder.template)
     private val data: Any? = builder.data
-    private val eventBridge: EventBridge = builder.eventBridge
+    private val actionBridge: ActionBridge = builder.actionBridge
     private val size = Size()
+    private val computeRunnable = Runnable {
+        val oldWidth = size.width
+        val oldHeight = size.height
+        val com = LithoBuildTool.buildRoot(
+                template,
+                data,
+                actionBridge,
+                context
+        ) as Component
+        setRootAndSizeSpec(
+                com,
+                SizeSpec.makeSizeSpec(0, SizeSpec.UNSPECIFIED),
+                SizeSpec.makeSizeSpec(0, SizeSpec.UNSPECIFIED),
+                size
+        )
+        if (oldWidth != width || oldHeight != height) {
+            val hostingView = lithoView as? HostingView ?: return@Runnable
+            hostingView.post { hostingView.requestLayout() }
+        }
+    }
 
-    var eventTarget: EventContext?
+    internal var actionTarget: ActionTarget?
         set(value) {
-            eventBridge.target = value
+            actionBridge.target = value
         }
         get() {
-            return eventBridge.target
+            return actionBridge.target
         }
 
     val width: Int
@@ -44,44 +64,26 @@ class TemplatePage @WorkerThread internal constructor(
     override fun attach() {
         super.attach()
         val host = lithoView as? HostingView
-        eventBridge.target = null
+        actionBridge.target = null
         if (host != null) {
-            eventBridge.target = host.target
+            actionBridge.target = host.target
         }
     }
 
     override fun detach() {
-        eventBridge.target = null
+        actionBridge.target = null
         super.detach()
     }
 
     override fun release() {
-        eventBridge.target = null
+        actionBridge.target = null
         super.release()
     }
 
-    @WorkerThread
+    @AnyThread
     fun computeNewLayout() {
-        val oldWidth = size.width
-        val oldHeight = size.height
-        val com = LithoBuildTool.build(
-                template,
-                eventBridge,
-                PropsELContext(data),
-                context
-        ) as Component
-        setRootAndSizeSpec(
-                com,
-                SizeSpec.makeSizeSpec(0, SizeSpec.UNSPECIFIED),
-                SizeSpec.makeSizeSpec(0, SizeSpec.UNSPECIFIED),
-                size
-        )
-        if (oldWidth != width || oldHeight != height) {
-            val hostingView = lithoView as? HostingView ?: return
-            hostingView.post { hostingView.requestLayout() }
-        }
+        InternalThreads.runOnAsyncThread(computeRunnable)
     }
-
 
     class Builder(
             private val context: ComponentContext
@@ -89,7 +91,7 @@ class TemplatePage @WorkerThread internal constructor(
         @JvmSynthetic
         @JvmField
         @RestrictTo(RestrictTo.Scope.LIBRARY)
-        internal val eventBridge = EventBridge()
+        internal val actionBridge = ActionBridge()
 
         @JvmSynthetic
         @JvmField
@@ -140,10 +142,10 @@ class TemplatePage @WorkerThread internal constructor(
         @WorkerThread
         override fun build(): TemplatePage {
             super.layoutThreadHandler(LayoutThreadHandler)
-            val com = LithoBuildTool.build(
+            val com = LithoBuildTool.buildRoot(
                     requireNotNull(template),
-                    eventBridge,
-                    PropsELContext(data),
+                    data,
+                    actionBridge,
                     context
             ) as Component
             super.withRoot(ThreadChecker.create(context)

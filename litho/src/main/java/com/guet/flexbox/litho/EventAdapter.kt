@@ -1,16 +1,16 @@
-package com.guet.flexbox.litho.event
+package com.guet.flexbox.litho
 
 import com.facebook.litho.ClickEvent
 import com.facebook.litho.EventDispatcher
 import com.facebook.litho.HasEventDispatcher
 import com.facebook.litho.VisibleEvent
 import com.facebook.litho.widget.TextChangedEvent
-import com.guet.flexbox.EventHandler
+import com.guet.flexbox.build.event.EventHandler
 import com.facebook.litho.EventHandler as BaseEventHandler
 
-internal class EventHandlerWrapper<T>(
+internal class EventAdapter<T>(
         private val target: EventHandler
-) : BaseEventHandler<T>(EventHandlerWrapper, 0) {
+) : BaseEventHandler<T>(EventSystemAdapter, 0) {
 
     override fun dispatchEvent(event: T) {
         when (event) {
@@ -27,10 +27,10 @@ internal class EventHandlerWrapper<T>(
     }
 
     override fun isEquivalentTo(other: BaseEventHandler<*>?): Boolean {
-        return other is EventHandlerWrapper && target == other.target
+        return other is EventAdapter && target == other.target
     }
 
-    private companion object : HasEventDispatcher,
+    private companion object EventSystemAdapter : HasEventDispatcher,
             EventDispatcher {
 
         override fun getEventDispatcher(): EventDispatcher = this

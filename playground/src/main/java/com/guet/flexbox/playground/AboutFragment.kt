@@ -3,6 +3,7 @@ package com.guet.flexbox.playground
 import android.graphics.Color
 import android.graphics.Typeface
 import android.graphics.drawable.GradientDrawable
+import android.os.AsyncTask
 import android.os.Bundle
 import android.util.TypedValue
 import android.view.Gravity
@@ -18,7 +19,6 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager2.widget.ViewPager2
 import com.bumptech.glide.Glide
 import com.didichuxing.doraemonkit.util.UIUtils
-import com.guet.flexbox.AppExecutors
 import com.guet.flexbox.litho.toPx
 import com.vansuita.materialabout.builder.AboutBuilder
 import com.vansuita.materialabout.views.AboutView
@@ -45,7 +45,8 @@ class AboutFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         val viewPager2 = view as ViewPager2
-        AppExecutors.runOnAsyncThread(Runnable {
+        val activity = requireActivity()
+        AsyncTask.THREAD_POOL_EXECUTOR.execute {
             val photo = Glide.with(this)
                     .asBitmap()
                     .load(R.drawable.ic_photo2)
@@ -103,7 +104,10 @@ class AboutFragment : Fragment() {
                     .setLinksAnimated(true)
                     .setWrapScrollView(true)
                     .setShowAsCard(true)
-            AppExecutors.runOnUiThread {
+            if (activity.isFinishing) {
+                return@execute
+            }
+            activity.runOnUiThread {
                 val aboutView = builder.build().apply {
                     setPadding(
                             paddingLeft,
@@ -174,6 +178,6 @@ class AboutFragment : Fragment() {
                     override fun getItemCount(): Int = 2
                 }
             }
-        })
+        }
     }
 }

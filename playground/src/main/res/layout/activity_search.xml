@@ -24,7 +24,7 @@
             android:id="@+id/search"
             android:textSize="16dp"
             android:gravity="center_vertical"
-            android:hint="模板链接"
+            android:hint="扫码或填入链接开始调试"
             android:background="@drawable/ic_search_background"
             android:layout_marginLeft="15dp"
             android:layout_marginRight="15dp"

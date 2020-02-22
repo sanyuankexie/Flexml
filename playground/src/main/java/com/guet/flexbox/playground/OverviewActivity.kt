@@ -18,15 +18,18 @@ import com.guet.flexbox.litho.HostingView
 import com.guet.flexbox.litho.TemplatePage
 import com.guet.flexbox.playground.model.MockService
 import com.guet.flexbox.playground.widget.MyRefreshViewImpl
+import com.guet.flexbox.transaction.action.HttpAction
+import com.guet.flexbox.transaction.action.HttpClient
 import es.dmoral.toasty.Toasty
 import io.iftech.android.library.refresh.RefreshViewLayout
 import io.iftech.android.library.slide.SlideLayout
 import io.iftech.android.library.slide.configSlideChildTypeHeader
 import io.iftech.android.library.slide.configSlideChildTypeSlider
 import kotlinx.android.synthetic.main.activity_overview.*
-import okhttp3.OkHttpClient
+import okhttp3.*
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import java.io.IOException
 import java.util.*
 import java.util.concurrent.TimeUnit
 
@@ -41,6 +44,9 @@ class OverviewActivity : AppCompatActivity() {
     private lateinit var refresh: RefreshViewLayout
     private lateinit var title: TextView
     private var toast: Toast? = null
+    private val httpClient = OkHttpClient.Builder()
+            .connectTimeout(500, TimeUnit.MILLISECONDS)
+            .build()
     private val adapter = ConsoleAdapter()
     private val mainThread = Handler(Looper.getMainLooper())
     private val workThread = Handler(
@@ -77,7 +83,7 @@ class OverviewActivity : AppCompatActivity() {
             refresh.refreshInterface = MyRefreshViewImpl(this)
             slideLayout = findViewById(R.id.slide_layout)
             slideLayout.expandHeader()
-            slideLayout.setOnRefreshListener { byPull, isSliderExpand ->
+            slideLayout.setOnRefreshListener { _, _ ->
                 if (isLiveReload.isOpened) {
                     slideLayout.finishRefresh()
                     Toasty.warning(this, "自动刷新开关打开时禁止手动刷新").show()
@@ -103,6 +109,30 @@ class OverviewActivity : AppCompatActivity() {
             console.configSlideChildTypeSlider()
             console.adapter = adapter
             hostingView = findViewById(R.id.host)
+            hostingView.httpClient = object : HttpClient {
+                override fun enqueue(action: HttpAction) {
+                    val request = Request.Builder()
+                            .url(action.url)
+                            .method(action.method, FormBody.Builder()
+                                    .apply {
+                                        action.prams.forEach {
+                                            add(it.key, it.value)
+                                        }
+                                    }
+                                    .build())
+                            .build()
+                    httpClient.newCall(request).enqueue(object : Callback {
+                        override fun onFailure(call: Call, e: IOException) {
+                            action.callback.onError()
+                        }
+
+                        override fun onResponse(call: Call, response: Response) {
+                            action.callback.onResponse(response.body()?.string())
+                        }
+                    })
+                }
+            }
+
             hostingView.pageEventListener = object : HostingView.PageEventListener {
                 override fun onEventDispatched(
                         h: HostingView,
@@ -126,10 +156,7 @@ class OverviewActivity : AppCompatActivity() {
             }
             mockService = Retrofit.Builder()
                     .baseUrl(url)
-                    .client(OkHttpClient.Builder()
-                            .connectTimeout(500, TimeUnit.MILLISECONDS)
-                            .build()
-                    )
+                    .client(httpClient)
                     .addConverterFactory(GsonConverterFactory.create())
                     .build()
                     .create(MockService::class.java)

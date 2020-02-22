@@ -1,15 +1,16 @@
 package com.guet.flexbox.build.event
 
 import android.view.View
+import com.guet.flexbox.el.LambdaExpression
 import com.guet.flexbox.transaction.PageContext
 import com.guet.flexbox.transaction.impl.PageContextImpl
 
-internal class ClickUrlHandler(
+class LambdaHandler(
         pageContext: PageContext,
-        private val url: String
+        private val executable: LambdaExpression
 ) : EventHandler(pageContext) {
     override fun handleEvent(v: View?, args: Array<out Any?>?) {
-        pageContext.send(url)
+        executable.invoke(args)
         val impl = pageContext as PageContextImpl
         impl.dispatchWithScope(v)
     }

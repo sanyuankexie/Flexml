@@ -5,10 +5,10 @@ import com.facebook.litho.Component
 import com.facebook.litho.ComponentContext
 import com.facebook.litho.VisibleEvent
 import com.facebook.yoga.YogaEdge
-import com.guet.flexbox.EventHandler
+import com.guet.flexbox.build.event.EventHandler
 import com.guet.flexbox.build.AttributeSet
 import com.guet.flexbox.enums.FlexAlign
-import com.guet.flexbox.litho.event.EventHandlerWrapper
+import com.guet.flexbox.litho.EventAdapter
 import com.guet.flexbox.litho.resolve.mapping
 import com.guet.flexbox.litho.toPx
 import java.util.*
@@ -61,14 +61,14 @@ internal object CommonAssigns : ToComponent<Component.Builder<*>>() {
         }
         register("clickUrl") { _, other, value: EventHandler ->
             if (!other.containsKey("onClick")) {
-                clickHandler(EventHandlerWrapper<ClickEvent>(value))
+                clickHandler(EventAdapter<ClickEvent>(value))
             }
         }
         register("onClick") { _, _, value: EventHandler ->
-            clickHandler(EventHandlerWrapper<ClickEvent>(value))
+            clickHandler(EventAdapter<ClickEvent>(value))
         }
         register("onVisible") { _, _, value: EventHandler ->
-            visibleHandler(EventHandlerWrapper<VisibleEvent>(value))
+            visibleHandler(EventAdapter<VisibleEvent>(value))
         }
     }
 

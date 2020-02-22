@@ -1,7 +1,7 @@
 package com.guet.flexbox.build
 
 import android.util.ArrayMap
-import com.guet.flexbox.EventContext
+import com.guet.flexbox.transaction.PageContext
 import com.guet.flexbox.TemplateNode
 import com.guet.flexbox.build.attrsinfo.AttributeInfo
 import com.guet.flexbox.el.ELContext
@@ -25,7 +25,7 @@ abstract class Declaration(
 
     open fun onBind(
             rawAttrs: Map<String, String>?,
-            eventContext: EventContext,
+            pageContext: PageContext,
             data: ELContext
     ): AttributeSet {
         return if (rawAttrs.isNullOrEmpty()) {
@@ -33,7 +33,7 @@ abstract class Declaration(
         } else {
             ArrayMap<String, Any>(rawAttrs.size).also {
                 for ((key, raw) in rawAttrs) {
-                    val result = this[key]?.cast(eventContext, data, raw)
+                    val result = this[key]?.cast(pageContext, data, raw)
                     if (result != null) {
                         it[key] = result
                     }
@@ -47,7 +47,7 @@ abstract class Declaration(
             attrs: AttributeSet,
             children: List<TemplateNode>,
             factory: RenderNodeFactory?,
-            eventContext: EventContext,
+            pageContext: PageContext,
             data: ELContext,
             upperVisibility: Boolean,
             other: Any
@@ -57,7 +57,7 @@ abstract class Declaration(
                 attrs,
                 children,
                 factory,
-                eventContext,
+                pageContext,
                 data,
                 upperVisibility,
                 other
@@ -69,14 +69,14 @@ abstract class Declaration(
             rawAttrs: Map<String, String>,
             children: List<TemplateNode>,
             factory: RenderNodeFactory?,
-            eventContext: EventContext,
+            pageContext: PageContext,
             data: ELContext,
             upperVisibility: Boolean,
             other: Any
     ): List<Child> {
         val attrs = onBind(
                 rawAttrs,
-                eventContext,
+                pageContext,
                 data
         )
         return onBuild(
@@ -84,7 +84,7 @@ abstract class Declaration(
                 attrs,
                 children,
                 factory,
-                eventContext,
+                pageContext,
                 data,
                 upperVisibility,
                 other

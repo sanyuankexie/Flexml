@@ -1,11 +1,13 @@
 package com.guet.flexbox.el
 
+import com.guet.flexbox.transaction.PageContext
 import org.json.JSONArray
 import java.lang.reflect.Method
 import java.util.*
 
 class PropsELContext(
-        val data: Any?
+        val data: Any?,
+        val pageContext: PageContext
 ) : ELContext() {
 
     private val variableMapper = StandardVariableMapper()
@@ -26,6 +28,10 @@ class PropsELContext(
         standardResolver.add(bean)
         standardResolver.add(jsonObject)
         standardResolver.add(jsonArray)
+        val pageContextELResolver = BeanNameELResolver(
+                FromMapResolver(mapOf("pageContext" to pageContext))
+        )
+        standardResolver.add(pageContextELResolver)
     }
 
     @Throws(ELException::class)

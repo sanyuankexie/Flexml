@@ -2,8 +2,8 @@ package com.guet.flexbox.build.attrsinfo
 
 import android.graphics.Color
 import android.util.ArrayMap
-import com.guet.flexbox.EventContext
-import com.guet.flexbox.EventHandler
+import com.guet.flexbox.transaction.PageContext
+import com.guet.flexbox.build.event.EventHandler
 import com.guet.flexbox.build.AttributeInfoSet
 import com.guet.flexbox.build.Converter
 import com.guet.flexbox.el.ELContext
@@ -64,11 +64,11 @@ internal class AttrsInfoRegistry {
     ) {
         _value[name] = object : AttributeInfo<T>() {
             override fun cast(
-                    eventContext: EventContext,
+                    pageContext: PageContext,
                     data: ELContext,
                     raw: String
             ): T? {
-                return action(eventContext, data, raw)
+                return action(pageContext, data, raw)
             }
         }
     }

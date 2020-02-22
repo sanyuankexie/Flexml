@@ -1,4 +1,4 @@
-package com.guet.flexbox
+package com.guet.flexbox.litho
 
 import android.os.Handler
 import android.os.Looper
@@ -9,7 +9,8 @@ import java.util.concurrent.TimeUnit
 import java.util.concurrent.atomic.AtomicInteger
 import kotlin.math.max
 
-object AppExecutors {
+
+internal object InternalThreads {
 
     private val mainThreadLooper = Looper.getMainLooper()
 
@@ -35,7 +36,7 @@ object AppExecutors {
     }
 
     fun removeAsyncCallback(a: Runnable) {
-        this.threadPool.remove(a)
+        threadPool.remove(a)
     }
 
     fun removeUiCallback(a: Runnable) {
@@ -51,6 +52,7 @@ object AppExecutors {
     }
 
     fun runOnAsyncThread(a: Runnable) {
-        this.threadPool.execute(a)
+        threadPool.execute(a)
     }
+
 }

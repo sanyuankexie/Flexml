@@ -1,15 +1,14 @@
 package com.guet.flexbox.build
 
-import com.guet.flexbox.EventContext
 import com.guet.flexbox.TemplateNode
 import com.guet.flexbox.build.event.ClickUrlHandler
-import com.guet.flexbox.build.event.OnClickHandler
-import com.guet.flexbox.build.event.OnVisibleHandler
+import com.guet.flexbox.build.event.LambdaHandler
 import com.guet.flexbox.el.ELContext
 import com.guet.flexbox.el.LambdaExpression
 import com.guet.flexbox.el.tryGetValue
 import com.guet.flexbox.enums.FlexAlign
 import com.guet.flexbox.enums.Visibility
+import com.guet.flexbox.transaction.PageContext
 
 object CommonProps : Declaration() {
 
@@ -54,17 +53,17 @@ object CommonProps : Declaration() {
         event("clickUrl") { hostContext, elContext, raw ->
             val url = elContext.tryGetValue<String>(raw)
             url?.let {
-                return@let ClickUrlHandler(elContext, hostContext, url)
+                return@let ClickUrlHandler(hostContext, url)
             }
         }
         event("onClick") { hostContext, elContext, raw ->
             elContext.tryGetValue<LambdaExpression>(raw)?.let { executable ->
-                return@let OnClickHandler(elContext, hostContext, executable)
+                return@let LambdaHandler(hostContext, executable)
             }
         }
         event("onVisible") { hostContext, elContext, raw ->
             elContext.tryGetValue<LambdaExpression>(raw)?.let { executable ->
-                return@let OnVisibleHandler(elContext, hostContext, executable)
+                return@let LambdaHandler(hostContext, executable)
             }
         }
     }
@@ -74,7 +73,7 @@ object CommonProps : Declaration() {
             attrs: AttributeSet,
             children: List<TemplateNode>,
             factory: RenderNodeFactory?,
-            eventContext: EventContext,
+            pageContext: PageContext,
             data: ELContext,
             upperVisibility: Boolean,
             other: Any
@@ -92,7 +91,7 @@ object CommonProps : Declaration() {
         } else {
             buildTool.buildAll(
                     children,
-                    eventContext,
+                    pageContext,
                     data,
                     visibility,
                     other

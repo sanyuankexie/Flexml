@@ -1,7 +1,7 @@
 package com.guet.flexbox.build.attrsinfo
 
 import android.graphics.Color
-import com.guet.flexbox.EventContext
+import com.guet.flexbox.transaction.PageContext
 import com.guet.flexbox.build.isExpr
 import com.guet.flexbox.el.ELContext
 import com.guet.flexbox.el.scope
@@ -9,7 +9,7 @@ import com.guet.flexbox.el.tryGetColor
 
 internal class ColorAttributeInfo(scope: Map<String, Int>, fallback: Int?) : AttributeInfo<Int>(scope, fallback) {
     override fun cast(
-            eventContext: EventContext,
+            pageContext: PageContext,
             data: ELContext,
             raw: String
     ): Int? {

@@ -1,6 +1,6 @@
 package com.guet.flexbox.build
 
-import com.guet.flexbox.EventContext
+import com.guet.flexbox.transaction.PageContext
 import com.guet.flexbox.TemplateNode
 import com.guet.flexbox.el.ELContext
 import com.guet.flexbox.el.scope
@@ -20,7 +20,7 @@ object ForEach : Declaration() {
             attrs: AttributeSet,
             children: List<TemplateNode>,
             factory: RenderNodeFactory?,
-            eventContext: EventContext,
+            pageContext: PageContext,
             data: ELContext,
             upperVisibility: Boolean,
             other: Any
@@ -32,7 +32,7 @@ object ForEach : Declaration() {
             data.scope(mapOf(name to item)) {
                 buildTool.buildAll(
                         children,
-                        eventContext,
+                        pageContext,
                         data,
                         upperVisibility,
                         other

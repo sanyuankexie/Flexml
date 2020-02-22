@@ -1,9 +1,10 @@
 package com.guet.flexbox.playground.model
 
 import android.content.Context
+import android.os.Handler
+import android.os.Looper
 import android.os.SystemClock
 import androidx.annotation.WorkerThread
-import com.guet.flexbox.AppExecutors
 import com.guet.flexbox.litho.TemplatePage
 import com.guet.flexbox.playground.R
 import com.orhanobut.logger.Logger
@@ -22,6 +23,7 @@ object AppLoader {
             SynchronousQueue())
     private lateinit var appBundle: AppBundle
     private lateinit var homepageCache: Homepage
+    private val handler = Handler(Looper.getMainLooper())
 
     fun loadWithCallback(ctx: Context, callback: () -> Unit) {
         val c = ctx.applicationContext
@@ -65,7 +67,7 @@ object AppLoader {
                 )
                 val finish = (SystemClock.uptimeMillis() - start)
                 Logger.d("AppLoader: load time:$finish")
-                AppExecutors.runOnUiThread {
+                handler.post {
                     Toasty.info(c, "load time:${finish}").show()
                     callback()
                 }

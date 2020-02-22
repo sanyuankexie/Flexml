@@ -1,9 +1,12 @@
 package com.guet.flexbox.build
 
 import android.content.Context
-import com.guet.flexbox.EventContext
+import androidx.annotation.RestrictTo
 import com.guet.flexbox.TemplateNode
 import com.guet.flexbox.el.ELContext
+import com.guet.flexbox.el.PropsELContext
+import com.guet.flexbox.transaction.PageContext
+import com.guet.flexbox.transaction.action.ActionBridge
 
 abstract class BuildTool {
 
@@ -15,24 +18,27 @@ abstract class BuildTool {
         private val default: ToWidget = CommonProps to null
     }
 
-    fun build(
+    @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
+    fun buildRoot(
             templateNode: TemplateNode,
-            eventContext: EventContext,
-            data: ELContext,
-            c: Any
+            data: Any?,
+            bridge: ActionBridge,
+            other: Any
     ): Child {
+        val pageContextImpl = bridge.newPageContext()
+        val elContext = PropsELContext(data, pageContextImpl.newWrapper())
         return buildAll(
                 listOf(templateNode),
-                eventContext,
-                data,
+                pageContextImpl,
+                elContext,
                 true,
-                c
+                other
         ).single()
     }
 
     internal fun buildAll(
             templates: List<TemplateNode>,
-            eventContext: EventContext,
+            pageContext: PageContext,
             data: ELContext,
             upperVisibility: Boolean,
             other: Any
@@ -46,7 +52,7 @@ abstract class BuildTool {
             toWidget.toWidget(
                     this@BuildTool,
                     templateNode,
-                    eventContext,
+                    pageContext,
                     data,
                     upperVisibility,
                     other

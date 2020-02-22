@@ -1,6 +1,6 @@
 package com.guet.flexbox.build
 
-import com.guet.flexbox.EventContext
+import com.guet.flexbox.transaction.PageContext
 import com.guet.flexbox.TemplateNode
 import com.guet.flexbox.el.ELContext
 
@@ -14,7 +14,7 @@ object When : Declaration() {
             attrs: AttributeSet,
             children: List<TemplateNode>,
             factory: RenderNodeFactory?,
-            eventContext: EventContext,
+            pageContext: PageContext,
             data: ELContext,
             upperVisibility: Boolean,
             other: Any
@@ -28,13 +28,13 @@ object When : Declaration() {
                 val itemAttrs = item.attrs
                 if (itemAttrs != null && If.onBind(
                                 itemAttrs,
-                                eventContext,
+                                pageContext,
                                 data
                         )["test"] == true) {
                     return item.children?.let {
                         buildTool.buildAll(
                                 children,
-                                eventContext,
+                                pageContext,
                                 data,
                                 upperVisibility,
                                 other
@@ -47,7 +47,7 @@ object When : Declaration() {
         }
         return elseItem?.children?.let {
             buildTool.buildAll(it,
-                    eventContext,
+                    pageContext,
                     data,
                     upperVisibility,
                     other

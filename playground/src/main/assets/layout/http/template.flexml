@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Flex>
+    <Text
+        background="red"
+        width="360"
+        height="800"
+        text="${html}"
+        onClick="${()->{pageContext.http().method('get').url('https://www.baidu.com').success((htmlData)->{pageContext.send(htmlData)}).commit()}}">
+    </Text>
+</Flex>

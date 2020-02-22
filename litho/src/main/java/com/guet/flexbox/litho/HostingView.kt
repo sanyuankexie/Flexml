@@ -7,8 +7,10 @@ import androidx.annotation.RestrictTo
 import com.facebook.litho.ComponentTree
 import com.facebook.litho.LithoView
 import com.facebook.litho.SizeSpec
-import com.guet.flexbox.HttpClient
-import com.guet.flexbox.litho.event.EventTarget
+import com.guet.flexbox.transaction.ActionKey
+import com.guet.flexbox.transaction.action.ActionTarget
+import com.guet.flexbox.transaction.action.HttpAction
+import com.guet.flexbox.transaction.action.HttpClient
 
 
 open class HostingView @JvmOverloads constructor(
@@ -19,7 +21,7 @@ open class HostingView @JvmOverloads constructor(
         super.suppressMeasureComponentTree(true)
     }
 
-    internal val target = EventTarget(this)
+    internal val target = ActionTargetImpl()
 
     var httpClient: HttpClient? = null
 
@@ -27,8 +29,8 @@ open class HostingView @JvmOverloads constructor(
 
     var templatePage: TemplatePage?
         set(value) {
-            templatePage?.eventTarget = null
-            value?.eventTarget = target
+            templatePage?.actionTarget = null
+            value?.actionTarget = target
             super.setComponentTree(value)
             requestLayout()
         }
@@ -126,4 +128,30 @@ open class HostingView @JvmOverloads constructor(
                 values: Array<out Any?>?
         )
     }
+
+    internal inner class ActionTargetImpl : ActionTarget {
+
+        override fun dispatchActions(
+                key: ActionKey,
+                source: View?,
+                args: Array<out Any?>?
+        ) {
+            when (key) {
+                ActionKey.SendObjects -> {
+                    pageEventListener?.onEventDispatched(
+                            this@HostingView,
+                            source,
+                            args
+                    )
+                }
+                ActionKey.RefreshPage -> {
+                    templatePage?.computeNewLayout()
+                }
+                ActionKey.HttpRequest -> {
+                    httpClient?.enqueue(args!![0] as HttpAction)
+                }
+            }
+        }
+    }
+
 }

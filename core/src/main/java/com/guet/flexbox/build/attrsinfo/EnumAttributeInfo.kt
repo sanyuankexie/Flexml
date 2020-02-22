@@ -1,6 +1,6 @@
 package com.guet.flexbox.build.attrsinfo
 
-import com.guet.flexbox.EventContext
+import com.guet.flexbox.transaction.PageContext
 import com.guet.flexbox.build.isExpr
 import com.guet.flexbox.el.ELContext
 import com.guet.flexbox.el.scope
@@ -11,7 +11,7 @@ internal class EnumAttributeInfo<V : Enum<V>>(
         fallback: Enum<V>?
 ) : AttributeInfo<Enum<V>>(scope, fallback) {
     override fun cast(
-            eventContext: EventContext,
+            pageContext: PageContext,
             data: ELContext,
             raw: String
     ): Enum<V>? {

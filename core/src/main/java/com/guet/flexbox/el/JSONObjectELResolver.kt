@@ -40,4 +40,17 @@ internal class JSONObjectELResolver(private val isReadOnly: Boolean = false) : E
         }
         return null
     }
+
+    override fun convertToType(context: ELContext, obj: Any?, type: Class<*>): Any? {
+        if (obj is String && type == JSONObject::class.java) {
+            try {
+                val json = JSONObject(obj)
+                context.isPropertyResolved = true
+                return json
+            } catch (e: Throwable) {
+                e.printStackTrace()
+            }
+        }
+        return null
+    }
 }
