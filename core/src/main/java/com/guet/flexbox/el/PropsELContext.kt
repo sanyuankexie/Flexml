@@ -19,6 +19,9 @@ class PropsELContext(
         if (props != null) {
             standardResolver.add(props)
         }
+        val pageContextELResolver = BeanNameELResolver(
+                FromMapResolver(mapOf("pageContext" to pageContext))
+        )
         standardResolver.add(expressionFactory.streamELResolver)
         standardResolver.add(staticField)
         standardResolver.add(map)
@@ -28,9 +31,6 @@ class PropsELContext(
         standardResolver.add(bean)
         standardResolver.add(jsonObject)
         standardResolver.add(jsonArray)
-        val pageContextELResolver = BeanNameELResolver(
-                FromMapResolver(mapOf("pageContext" to pageContext))
-        )
         standardResolver.add(pageContextELResolver)
     }
 
