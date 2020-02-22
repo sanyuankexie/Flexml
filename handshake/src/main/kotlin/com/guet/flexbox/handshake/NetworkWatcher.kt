@@ -1,16 +1,12 @@
 package com.guet.flexbox.handshake
 
-import com.guet.flexbox.handshake.event.NetworkChangedEvent
-import com.guet.flexbox.handshake.event.PortHasSetEvent
+import com.guet.flexbox.handshake.lan.LANAddressProvider
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.boot.web.context.WebServerInitializedEvent
 import org.springframework.context.ApplicationContext
 import org.springframework.context.event.EventListener
 import org.springframework.stereotype.Component
-import java.net.InetAddress
-import java.net.InetSocketAddress
-import java.net.ServerSocket
-import java.net.Socket
 import java.util.concurrent.ConcurrentHashMap
 
 /***
@@ -22,35 +18,31 @@ class NetworkWatcher : Thread() {
     private val logger = LoggerFactory.getLogger(NetworkWatcher::class.java)
 
     @Autowired
+    private lateinit var addressProvider: LANAddressProvider
+
+    @Autowired
     private lateinit var context: ApplicationContext
 
     @Autowired
     private lateinit var attributes: ConcurrentHashMap<String, Any>
 
-    private val watcherService = ServerSocket(10086)
+    private var last: String? = null
 
     override fun run() {
         while (true) {
-            val inSocket = Socket()
-            inSocket.connect(InetSocketAddress(InetAddress.getLocalHost(), 10086))
-            val outSocket = watcherService.accept()
-            val outAddress = outSocket.localAddress.hostAddress
-            inSocket.close()
-            if (!outAddress.isNullOrEmpty() && outAddress != attributes["host"]) {
-                attributes["host"] = outAddress
-                val port = attributes["port"] as? Int ?: 8080
-                val url = "http://$outAddress:${port}"
-                logger.info("Network changed: $url")
-                context.publishEvent(
-                        NetworkChangedEvent(this, outAddress)
-                )
+            val host = addressProvider.get()?.hostAddress
+            if (!host.isNullOrEmpty() && host != attributes["host"]) {
+                attributes["host"] = host
+                logger.info("now host:${host}")
+                context.publishEvent(NetworkChangedEvent(this, host))
             }
             sleep(1000)
         }
     }
 
     @EventListener
-    fun onInitialized(event: PortHasSetEvent) {
+    fun onInitialized(event: WebServerInitializedEvent) {
         start()
     }
+
 }

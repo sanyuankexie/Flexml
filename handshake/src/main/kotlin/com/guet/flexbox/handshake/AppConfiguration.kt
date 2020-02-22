@@ -1,6 +1,10 @@
 package com.guet.flexbox.handshake
 
 import com.google.gson.Gson
+import com.guet.flexbox.handshake.lan.LANAddressProvider
+import com.guet.flexbox.handshake.lan.MacOsLANAddressProvider
+import com.guet.flexbox.handshake.lan.OtherLANAddressProvider
+import com.guet.flexbox.handshake.ui.QrcodeForm
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.http.converter.HttpMessageConverter
@@ -10,6 +14,7 @@ import org.springframework.web.cors.CorsConfiguration
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource
 import org.springframework.web.filter.CorsFilter
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer
+import java.awt.GraphicsEnvironment
 import java.util.concurrent.ConcurrentHashMap
 
 @Configuration
@@ -62,4 +67,23 @@ open class AppConfiguration : WebMvcConfigurer {
         return ConcurrentHashMap()
     }
 
+    @Bean
+    open fun qrcodeForm(): QrcodeForm? {
+        System.clearProperty("java.awt.headless")
+        return if (!GraphicsEnvironment.isHeadless()) {
+            QrcodeForm()
+        } else {
+            null
+        }
+    }
+
+    @Bean
+    open fun addressProvider(): LANAddressProvider {
+        return if ((System.getProperty("os.name") ?: "")
+                        .contains("mac", ignoreCase = true)) {
+            MacOsLANAddressProvider()
+        } else {
+            OtherLANAddressProvider()
+        }
+    }
 }
