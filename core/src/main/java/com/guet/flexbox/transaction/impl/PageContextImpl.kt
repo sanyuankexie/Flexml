@@ -6,8 +6,6 @@ import com.guet.flexbox.transaction.HttpTransaction
 import com.guet.flexbox.transaction.PageContext
 import com.guet.flexbox.transaction.RefreshTransaction
 import com.guet.flexbox.transaction.action.ActionTarget
-import java.lang.reflect.InvocationHandler
-import java.lang.reflect.Method
 import java.lang.reflect.Proxy
 
 internal class PageContextImpl(
@@ -37,20 +35,20 @@ internal class PageContextImpl(
     fun newWrapper(): PageContext {
         return Proxy.newProxyInstance(
                 PageContext::class.java.classLoader,
-                arrayOf(PageContext::class.java),
-                object : InvocationHandler {
-                    override fun invoke(
-                            proxy: Any,
-                            method: Method,
-                            args: Array<out Any>
-                    ): Any {
-                        if (method.declaringClass == Any::class.java) {
-                            return method.invoke(proxy, args)
-                        }
-                        return method.invoke(this@PageContextImpl, args)
-                    }
+                arrayOf(PageContext::class.java)
+        ) { proxy, method, args ->
+            when {
+                method.declaringClass == Any::class.java -> {
+                    method.invoke(proxy, args)
                 }
-        ) as PageContext
+                args.isNullOrEmpty() -> {
+                    method.invoke(this@PageContextImpl)
+                }
+                else -> {
+                    method.invoke(this@PageContextImpl, *args)
+                }
+            }
+        } as PageContext
     }
 
     fun dispatchWithScope(view: View?) {
