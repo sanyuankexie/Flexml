@@ -33,7 +33,7 @@ Flexml提供一个**playground app**，**playground app**是一个集**样例代
 
 其实就连你在最开头看到的logo都是Flexml自绘制的，对应的源码在这[logo/template.flexml](https://github.com/sanyuankexie/Flexml/blob/master/playground/src/main/assets/layout/logo/template.flexml)。
 
-### 4 提供Intellij插件
+### 3 提供Intellij插件
 为了实现实时预览功能，需要扩展IDE能力的边界，为此开发了Intellij（Android Studio）插件并向大家提供，配合**playground app**可以实时在真机上调试布局。
 
 进一步了解更多插件相关信息，请转到插件模块的[README.md](https://github.com/sanyuankexie/Flexml/blob/master/intellij-plugin/README.md)。
@@ -106,10 +106,10 @@ yourTemplatePage.release()
 
 更多资料请看下面的wiki。
 
-### 6 Wiki
+### 5 Wiki
 [Github上的wiki页面。](https://github.com/sanyuankexie/Flexml/wiki)
 
-### 7 展望
+### 6 展望
 未来，Flexml的目标是向iOS进军，在iOS设备上完成一套等价的SDK，得益于facebook和google强大的开源生态，所以这是可行的。
 
 * facebook [litho](https://github.com/facebook/litho)在iOS上的等价物是facebook [AsyncDisplayKit（现在又叫Texture）](https://github.com/texturegroup/texture/)。
@@ -117,7 +117,7 @@ yourTemplatePage.release()
 
 剩下的就是时间问题。
 
-### 8 关于开源
+### 7 关于开源
 Flexm使用kotlin开发，在Apache 2.0开源协议下发布，是一个完全基于开源软件实现的开源软件。由[@LukeXeon](https://github.com/LukeXeon)维护。
 
 Flexml时一个比较新的litho社区开源项目，有关其他其他facebook litho的社区开源项目，请在facebook的litho [Community Showcase](https://fblitho.com/docs/community-showcase)查找。
