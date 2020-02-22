@@ -36,7 +36,7 @@ Flexml提供一个**playground app**，**playground app**是一个集**样例代
 ### 4 提供Intellij插件
 为了实现实时预览功能，需要扩展IDE能力的边界，为此开发了Intellij（Android Studio）插件并向大家提供，配合**playground app**可以实时在真机上调试布局。
 
-进一步了解更多插件相关信息，请转到插件模块的[README.md](https://github.com/sanyuankexie/Flexml/blob/master/intellij-plugin/README.md)（一起写这就太长了）。
+进一步了解更多插件相关信息，请转到插件模块的[README.md](https://github.com/sanyuankexie/Flexml/blob/master/intellij-plugin/README.md)。
 
 插件的release版本你也可以在本仓库的[release](https://github.com/sanyuankexie/Flexml/releases)界面找到。
 ### 4 使用jitpack集成SDK
