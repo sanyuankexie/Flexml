@@ -107,7 +107,7 @@ yourTemplatePage.release()
 更多资料请看下面的wiki。
 
 ### 6 Wiki
-[Github上的wiki页面](https://github.com/sanyuankexie/Flexml/wiki)
+[Github上的wiki页面。](https://github.com/sanyuankexie/Flexml/wiki)
 
 ### 7 展望
 未来，Flexml的目标是向iOS进军，在iOS设备上完成一套等价的SDK，得益于facebook和google强大的开源生态，所以这是可行的。
