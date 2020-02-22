@@ -2,14 +2,13 @@ package com.guet.flexbox.handshake
 
 import com.google.gson.Gson
 import com.guet.flexbox.compiler.JsonCompiler
-import com.guet.flexbox.handshake.utils.HostAddressFinder
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.core.env.Environment
 import org.springframework.http.ResponseEntity
 import org.springframework.stereotype.Controller
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestMethod
-import org.springframework.web.bind.annotation.ResponseBody
 import java.io.File
 import java.util.concurrent.ConcurrentHashMap
 import javax.servlet.http.HttpServletRequest
@@ -19,6 +18,9 @@ class HomepageController {
 
     @Autowired
     private lateinit var attributes: ConcurrentHashMap<String, Any>
+
+    @Autowired
+    private lateinit var environment: Environment
 
     @RequestMapping(
             "/",
@@ -102,10 +104,9 @@ class HomepageController {
             "/qrcode",
             method = [RequestMethod.GET]
     )
-    @ResponseBody
-    fun qrcode(): String {
-        val host = HostAddressFinder.findHostAddress()
-        val port = attributes["port"]
-        return "http://$host:${port}"
+    fun qrcode(): ResponseEntity<String> {
+        val host = attributes["host"] ?: return ResponseEntity.notFound().build()
+        val port = environment.getProperty("local.server.port")
+        return ResponseEntity.ok("http://$host:${port}")
     }
 }
