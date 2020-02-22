@@ -27,19 +27,19 @@ class MacOsLANAddressProvider : LANAddressProvider {
                     tokenizer.nextToken()
                     // interface name
                     val name = tokenizer.nextToken()
-                    Iterable {
+                    return Iterable {
                         Iterable {
                             NetworkInterface.getNetworkInterfaces().iterator()
                         }.first {
                             it.name == name
                         }.inetAddresses.iterator()
-                    }.mapNotNull {
-                        it as? Inet4Address
+                    }.first {
+                        it is Inet4Address
                     }
                 }
             } while (line != null)
         } catch (e: Throwable) {
-
+            e.printStackTrace()
         } finally {
             net?.destroy()
         }

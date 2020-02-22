@@ -24,17 +24,21 @@ class NetworkWatcher : Thread() {
     private lateinit var context: ApplicationContext
 
     @Autowired
-    private lateinit var attributes: ConcurrentHashMap<String, Any>
+    private lateinit var attributes: ConcurrentHashMap<String, Any?>
 
     private var last: String? = null
 
     override fun run() {
         while (true) {
             val host = addressProvider.get()?.hostAddress
-            if (!host.isNullOrEmpty() && host != attributes["host"]) {
-                attributes["host"] = host
-                logger.info("now host:${host}")
-                context.publishEvent(NetworkChangedEvent(this, host))
+            if (host.isNullOrEmpty()) {
+                logger.error("No suitable \"host\" address was found, please check your LAN connection or use ifconfig / ipconfig to retrieve a useful local IP address.")
+            } else {
+                if (host != attributes["host"]) {
+                    attributes["host"] = host
+                    logger.info("now host:${host}")
+                    context.publishEvent(NetworkChangedEvent(this, host))
+                }
             }
             sleep(1000)
         }
