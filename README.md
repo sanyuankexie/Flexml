@@ -1,4 +1,4 @@
-<img src="https://i.loli.net/2020/02/20/MnxSy9cOAaJQrpX.jpg" width="70%" align="middle"/>
+<img src="https://i.loli.net/2020/02/20/MnxSy9cOAaJQrpX.jpg" width="100%" align="middle"/>
 
 # Flexml  ![](https://img.shields.io/badge/language-kotlin%20%7C%20java-orange) ![](https://jitpack.io/v/LukeXeon/flexbox.svg) ![](https://img.shields.io/badge/platform-android-brightgreen) ![](https://img.shields.io/badge/license-Apache--2.0-blue) ![](https://img.shields.io/badge/email-imlkluo%40qq.com-green) ![](https://img.shields.io/badge/doc-%E6%8E%98%E9%87%91-blue) ![](https://img.shields.io/badge/API-19%2B-green)
 
