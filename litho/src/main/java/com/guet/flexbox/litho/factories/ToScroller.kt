@@ -11,13 +11,13 @@ import com.facebook.litho.widget.VerticalScrollSpec
 import com.guet.flexbox.build.AttributeSet
 import com.guet.flexbox.enums.Orientation
 import com.guet.flexbox.litho.ChildComponent
-import com.guet.flexbox.litho.resolve.createProvider
+import com.guet.flexbox.litho.resolve.AttributeAssignSet
 import com.guet.flexbox.litho.widget.HorizontalScroll
 import com.guet.flexbox.litho.widget.HorizontalScrollSpec
 
 internal object ToScroller : ToComponent<Component.Builder<*>>(CommonAssigns) {
 
-    override val matcherProvider = createProvider<Component.Builder<*>> {
+    override val attributeAssignSet: AttributeAssignSet<Component.Builder<*>> by com.guet.flexbox.litho.resolve.create {
         register("scrollBarEnable") { _, _, value: Boolean ->
             if (this is HorizontalScroll.Builder) {
                 scrollbarEnabled(value)

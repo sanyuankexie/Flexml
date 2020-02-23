@@ -5,18 +5,18 @@ import com.facebook.litho.Component
 import com.facebook.litho.ComponentContext
 import com.facebook.litho.VisibleEvent
 import com.facebook.yoga.YogaEdge
-import com.guet.flexbox.build.AttributeSet
 import com.guet.flexbox.build.event.EventHandler
+import com.guet.flexbox.build.AttributeSet
 import com.guet.flexbox.enums.FlexAlign
 import com.guet.flexbox.litho.EventAdapter
-import com.guet.flexbox.litho.resolve.createProvider
+import com.guet.flexbox.litho.resolve.AttributeAssignSet
 import com.guet.flexbox.litho.resolve.mapping
 import com.guet.flexbox.litho.toPx
 import java.util.*
 
 internal object CommonAssigns : ToComponent<Component.Builder<*>>() {
 
-    override val matcherProvider = createProvider<Component.Builder<*>> {
+    override val attributeAssignSet: AttributeAssignSet<Component.Builder<*>> by com.guet.flexbox.litho.resolve.create {
         register("width") { _, _, value: Float ->
             widthPx(value.toPx())
         }

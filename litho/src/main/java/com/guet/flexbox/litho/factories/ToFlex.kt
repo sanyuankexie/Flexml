@@ -10,12 +10,12 @@ import com.guet.flexbox.enums.FlexDirection
 import com.guet.flexbox.enums.FlexJustify
 import com.guet.flexbox.enums.FlexWrap
 import com.guet.flexbox.litho.ChildComponent
-import com.guet.flexbox.litho.resolve.createProvider
+import com.guet.flexbox.litho.resolve.AttributeAssignSet
 import com.guet.flexbox.litho.resolve.mapping
 
 internal object ToFlex : ToComponent<Component.ContainerBuilder<*>>(CommonAssigns) {
 
-    override val matcherProvider = createProvider<Component.ContainerBuilder<*>> {
+    override val attributeAssignSet: AttributeAssignSet<Component.ContainerBuilder<*>> by com.guet.flexbox.litho.resolve.create {
         register("flexWrap") { _, _, value: FlexWrap ->
             wrap(value.mapping())
         }

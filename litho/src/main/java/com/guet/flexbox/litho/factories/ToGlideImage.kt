@@ -4,14 +4,14 @@ import com.bumptech.glide.Glide
 import com.facebook.litho.ComponentContext
 import com.guet.flexbox.build.AttributeSet
 import com.guet.flexbox.enums.ScaleType
-import com.guet.flexbox.litho.resolve.createProvider
+import com.guet.flexbox.litho.resolve.AttributeAssignSet
 import com.guet.flexbox.litho.resolve.mapping
 import com.guet.flexbox.litho.toPxFloat
 import com.guet.flexbox.litho.widget.GlideImage
 
 internal object ToGlideImage : ToComponent<GlideImage.Builder>(CommonAssigns) {
 
-    override val matcherProvider = createProvider<GlideImage.Builder> {
+    override val attributeAssignSet: AttributeAssignSet<GlideImage.Builder> by com.guet.flexbox.litho.resolve.create {
         register("scaleType") { _, _, value: ScaleType ->
             scaleType(value.mapping())
         }

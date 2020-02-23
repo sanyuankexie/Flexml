@@ -18,8 +18,8 @@ import com.guet.flexbox.enums.Vertical
 import com.guet.flexbox.litho.drawable.ColorDrawable
 import com.guet.flexbox.litho.drawable.LazyImageDrawable
 import com.guet.flexbox.litho.drawable.lazyDrawable
+import com.guet.flexbox.litho.resolve.AttributeAssignSet
 import com.guet.flexbox.litho.resolve.UrlType
-import com.guet.flexbox.litho.resolve.createProvider
 import com.guet.flexbox.litho.resolve.mapping
 import com.guet.flexbox.litho.toPx
 import java.util.regex.Pattern
@@ -31,7 +31,7 @@ internal object ToText : ToComponent<Text.Builder>(CommonAssigns) {
 
     private val htmlTester = Pattern.compile(".*<(.*)>.*")
 
-    override val matcherProvider = createProvider<Text.Builder> {
+    override val attributeAssignSet: AttributeAssignSet<Text.Builder> by com.guet.flexbox.litho.resolve.create {
         register("verticalGravity") { _, _, value: Vertical ->
             verticalGravity(value.mapping())
         }
