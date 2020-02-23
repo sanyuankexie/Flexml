@@ -18,8 +18,8 @@ import com.guet.flexbox.litho.HostingView
 import com.guet.flexbox.litho.TemplatePage
 import com.guet.flexbox.playground.model.MockService
 import com.guet.flexbox.playground.widget.MyRefreshViewImpl
-import com.guet.flexbox.transaction.action.HttpAction
-import com.guet.flexbox.transaction.action.HttpClient
+import com.guet.flexbox.transaction.dispatch.HttpAction
+import com.guet.flexbox.transaction.dispatch.HttpClient
 import es.dmoral.toasty.Toasty
 import io.iftech.android.library.refresh.RefreshViewLayout
 import io.iftech.android.library.slide.SlideLayout

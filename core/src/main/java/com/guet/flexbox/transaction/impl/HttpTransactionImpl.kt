@@ -4,11 +4,11 @@ import android.os.Handler
 import android.os.Looper
 import android.util.ArrayMap
 import com.guet.flexbox.el.LambdaExpression
-import com.guet.flexbox.transaction.ActionKey
-import com.guet.flexbox.transaction.Dispatcher
 import com.guet.flexbox.transaction.HttpTransaction
 import com.guet.flexbox.transaction.PageTransaction
-import com.guet.flexbox.transaction.action.HttpAction
+import com.guet.flexbox.transaction.dispatch.ActionKey
+import com.guet.flexbox.transaction.dispatch.Dispatcher
+import com.guet.flexbox.transaction.dispatch.HttpAction
 
 internal class HttpTransactionImpl(
         contextImpl: PageContextImpl
@@ -63,7 +63,7 @@ internal class HttpTransactionImpl(
         } else {
             emptyMap<String, String>()
         }
-        dispatcher.dispatchActions(
+        dispatcher.dispatchAction(
                 ActionKey.HttpRequest,
                 arrayOf(HttpAction(
                         url,

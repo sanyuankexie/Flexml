@@ -1,8 +1,7 @@
-package com.guet.flexbox.transaction.action
+package com.guet.flexbox.transaction.dispatch
 
 import android.util.Log
 import android.view.View
-import com.guet.flexbox.transaction.ActionKey
 import com.guet.flexbox.transaction.impl.PageContextImpl
 import java.lang.ref.WeakReference
 
@@ -27,12 +26,12 @@ class ActionBridge : ActionTarget {
             return targetImpl?.get()
         }
 
-    override fun dispatchActions(
+    override fun dispatchAction(
             key: ActionKey,
             source: View?,
             args: Array<out Any?>?
     ) {
-        target?.dispatchActions(key, source, args)
+        target?.dispatchAction(key, source, args)
     }
 
     internal fun newPageContext(): PageContextImpl {

@@ -1,8 +1,8 @@
 package com.guet.flexbox.transaction.impl
 
 import androidx.annotation.CallSuper
-import com.guet.flexbox.transaction.Dispatcher
 import com.guet.flexbox.transaction.PageTransaction
+import com.guet.flexbox.transaction.dispatch.Dispatcher
 import java.lang.reflect.InvocationHandler
 import java.lang.reflect.Method
 import java.lang.reflect.Proxy
@@ -17,11 +17,11 @@ internal abstract class PageTransactionImpl(
 
     protected abstract val outerType: Class<out PageTransaction>
 
-    private val wrapperInstance by lazy(WrapperLoader())
+    private val wrapper0 by lazy(WrapperLoader())
 
     protected fun <T> getWrapper(): T {
         @Suppress("UNCHECKED_CAST")
-        return wrapperInstance as T
+        return wrapper0 as T
     }
 
     private inner class WrapperLoader : () -> Any, InvocationHandler {

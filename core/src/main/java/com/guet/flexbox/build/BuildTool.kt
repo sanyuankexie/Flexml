@@ -6,7 +6,7 @@ import com.guet.flexbox.TemplateNode
 import com.guet.flexbox.el.ELContext
 import com.guet.flexbox.el.PropsELContext
 import com.guet.flexbox.transaction.PageContext
-import com.guet.flexbox.transaction.action.ActionBridge
+import com.guet.flexbox.transaction.dispatch.ActionBridge
 
 abstract class BuildTool {
 

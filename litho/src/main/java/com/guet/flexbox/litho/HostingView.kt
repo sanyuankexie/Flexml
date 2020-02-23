@@ -7,10 +7,10 @@ import androidx.annotation.RestrictTo
 import com.facebook.litho.ComponentTree
 import com.facebook.litho.LithoView
 import com.facebook.litho.SizeSpec
-import com.guet.flexbox.transaction.ActionKey
-import com.guet.flexbox.transaction.action.ActionTarget
-import com.guet.flexbox.transaction.action.HttpAction
-import com.guet.flexbox.transaction.action.HttpClient
+import com.guet.flexbox.transaction.dispatch.ActionKey
+import com.guet.flexbox.transaction.dispatch.ActionTarget
+import com.guet.flexbox.transaction.dispatch.HttpAction
+import com.guet.flexbox.transaction.dispatch.HttpClient
 
 
 open class HostingView @JvmOverloads constructor(
@@ -131,7 +131,7 @@ open class HostingView @JvmOverloads constructor(
 
     internal inner class ActionTargetImpl : ActionTarget {
 
-        override fun dispatchActions(
+        override fun dispatchAction(
                 key: ActionKey,
                 source: View?,
                 args: Array<out Any?>?

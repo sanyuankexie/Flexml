@@ -2,7 +2,7 @@ package com.guet.flexbox
 
 import com.guet.flexbox.el.ELProcessor
 import com.guet.flexbox.el.LambdaExpression
-import com.guet.flexbox.transaction.action.ActionBridge
+import com.guet.flexbox.transaction.dispatch.ActionBridge
 import org.junit.Assert
 import org.junit.Test
 

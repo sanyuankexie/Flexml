@@ -1,4 +1,4 @@
-package com.guet.flexbox.transaction
+package com.guet.flexbox.transaction.dispatch
 
 enum class ActionKey {
     SendObjects,

@@ -1,10 +1,9 @@
-package com.guet.flexbox.transaction.action
+package com.guet.flexbox.transaction.dispatch
 
 import android.view.View
-import com.guet.flexbox.transaction.ActionKey
 
 interface ActionTarget {
-    fun dispatchActions(
+    fun dispatchAction(
             key: ActionKey,
             source: View?,
             args: Array<out Any?>?

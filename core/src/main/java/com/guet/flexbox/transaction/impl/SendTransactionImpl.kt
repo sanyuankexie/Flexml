@@ -1,8 +1,8 @@
 package com.guet.flexbox.transaction.impl
 
 import androidx.annotation.CallSuper
-import com.guet.flexbox.transaction.ActionKey
-import com.guet.flexbox.transaction.Dispatcher
+import com.guet.flexbox.transaction.dispatch.ActionKey
+import com.guet.flexbox.transaction.dispatch.Dispatcher
 import com.guet.flexbox.transaction.PageTransaction
 import com.guet.flexbox.transaction.SendTransaction
 import java.util.*
@@ -28,7 +28,7 @@ internal open class SendTransactionImpl(
         super.dispatch(dispatcher)
         if (this::pendingEvents.isInitialized) {
             pendingEvents.forEach {
-                dispatcher.dispatchActions(
+                dispatcher.dispatchAction(
                         ActionKey.SendObjects,
                         it
                 )

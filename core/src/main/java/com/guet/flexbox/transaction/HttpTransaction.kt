@@ -13,4 +13,6 @@ interface HttpTransaction : SendTransaction {
     fun error(lambdaExpression: LambdaExpression): HttpTransaction
 
     fun success(lambdaExpression: LambdaExpression): HttpTransaction
+
+    override fun send(vararg values: Any?): HttpTransaction
 }

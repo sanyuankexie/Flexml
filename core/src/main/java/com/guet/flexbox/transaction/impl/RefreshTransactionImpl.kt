@@ -1,8 +1,8 @@
 package com.guet.flexbox.transaction.impl
 
 import com.guet.flexbox.el.LambdaExpression
-import com.guet.flexbox.transaction.ActionKey
-import com.guet.flexbox.transaction.Dispatcher
+import com.guet.flexbox.transaction.dispatch.ActionKey
+import com.guet.flexbox.transaction.dispatch.Dispatcher
 import com.guet.flexbox.transaction.PageTransaction
 import com.guet.flexbox.transaction.RefreshTransaction
 import java.util.*
@@ -33,11 +33,11 @@ internal class RefreshTransactionImpl(
                 it.invoke()
             }
             paddingModify.clear()
-            dispatcher.dispatchActions(
+            dispatcher.dispatchAction(
                     ActionKey.RefreshPage
             )
         } else {
-            dispatcher.dispatchActions(
+            dispatcher.dispatchAction(
                     ActionKey.RefreshPage
             )
         }

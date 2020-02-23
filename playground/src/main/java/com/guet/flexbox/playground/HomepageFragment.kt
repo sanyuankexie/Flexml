@@ -57,7 +57,7 @@ class HomepageFragment : Fragment() {
         idea.setOnClickListener {
             val intent = Intent()
             intent.action = "android.intent.action.VIEW"
-            val uri: Uri = Uri.parse("https://github.com/sanyuankexie/Flexml/tree/master/intellij-plugin")
+            val uri: Uri = Uri.parse("https://github.com/sanyuankexie/Flexml/wiki/环境配置")
             intent.data = uri
             startActivity(intent)
         }

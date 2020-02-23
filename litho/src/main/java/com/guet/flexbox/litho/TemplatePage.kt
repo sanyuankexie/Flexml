@@ -8,8 +8,8 @@ import androidx.annotation.WorkerThread
 import com.facebook.litho.*
 import com.guet.flexbox.TemplateNode
 import com.guet.flexbox.litho.widget.ThreadChecker
-import com.guet.flexbox.transaction.action.ActionBridge
-import com.guet.flexbox.transaction.action.ActionTarget
+import com.guet.flexbox.transaction.dispatch.ActionBridge
+import com.guet.flexbox.transaction.dispatch.ActionTarget
 
 class TemplatePage @WorkerThread internal constructor(
         builder: Builder

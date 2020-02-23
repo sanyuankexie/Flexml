@@ -1,7 +1,7 @@
-package com.guet.flexbox.transaction
+package com.guet.flexbox.transaction.dispatch
 
 interface Dispatcher {
-    fun dispatchActions(
+    fun dispatchAction(
             key: ActionKey,
             args: Array<out Any?>? = null
     )

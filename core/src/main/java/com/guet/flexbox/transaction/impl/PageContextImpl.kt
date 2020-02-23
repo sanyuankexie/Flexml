@@ -1,11 +1,11 @@
 package com.guet.flexbox.transaction.impl
 
 import android.view.View
-import com.guet.flexbox.transaction.Dispatcher
 import com.guet.flexbox.transaction.HttpTransaction
 import com.guet.flexbox.transaction.PageContext
 import com.guet.flexbox.transaction.RefreshTransaction
-import com.guet.flexbox.transaction.action.ActionTarget
+import com.guet.flexbox.transaction.dispatch.ActionTarget
+import com.guet.flexbox.transaction.dispatch.Dispatcher
 import java.lang.reflect.Proxy
 
 internal class PageContextImpl(
