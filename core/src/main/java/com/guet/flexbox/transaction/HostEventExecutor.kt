@@ -3,13 +3,11 @@ package com.guet.flexbox.transaction
 import android.view.View
 import com.guet.flexbox.event.ActionKey
 import com.guet.flexbox.event.ActionTarget
-import org.apache.commons.jexl3.JexlContext
 
 internal class HostEventExecutor(
         private val target: ActionTarget,
-        private val scope: View?,
-        dataContext: JexlContext
-) : ScriptExecutor(dataContext) {
+        private val scope: View?
+) : ActionExecutor {
 
     override fun execute(
             key: ActionKey,
@@ -25,9 +23,7 @@ internal class HostEventExecutor(
                         args
                 )
             }
-            ActionKey.ExecuteActions -> {
-                super.execute(key, args)
-            }
+            else -> Unit
         }
     }
 }

@@ -22,7 +22,7 @@ open class SendTransaction(
 
     @NoJexl
     @CallSuper
-    override fun execute(executor: TransactionExecutor) {
+    override fun execute(executor: ActionExecutor) {
         super.execute(executor)
         if (this::pendingEvents.isInitialized) {
             pendingEvents.forEach {

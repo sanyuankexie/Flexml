@@ -1,7 +1,9 @@
 package com.guet.flexbox.build
 
-object Scroller : Declaration(CommonProps) {
-    val ATTRIBUTE_RESOLVER_SET: DataBinding by create {
+import com.guet.flexbox.enums.Orientation
+
+object Scroller : Declaration() {
+    override val dataBinding: DataBinding by DataBinding.create(CommonProps.dataBinding) {
         bool("scrollBarEnable")
         enum("orientation", mapOf(
                 "vertical" to Orientation.VERTICAL,

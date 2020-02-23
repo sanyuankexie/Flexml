@@ -1,7 +1,7 @@
 package com.guet.flexbox.build
 
-object Text : Declaration(AbsText) {
-    val ATTRIBUTE_RESOLVER_SET: DataBinding by create {
+object Text : Declaration() {
+    override val dataBinding by DataBinding.create(AbsText.dataBinding) {
         text("text")
         bool("clipToBounds")
         color("textColor")

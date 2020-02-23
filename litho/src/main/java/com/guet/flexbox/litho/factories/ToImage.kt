@@ -8,7 +8,6 @@ import com.facebook.litho.ComponentContext
 import com.facebook.litho.Row
 import com.facebook.litho.widget.Image
 import com.guet.flexbox.build.AttributeSet
-import com.guet.flexbox.build.Child
 import com.guet.flexbox.build.RenderNodeFactory
 import com.guet.flexbox.litho.drawable.ColorDrawable
 import com.guet.flexbox.litho.drawable.lazyDrawable
@@ -16,14 +15,14 @@ import com.guet.flexbox.litho.resolve.UrlType
 import com.guet.flexbox.litho.resolve.getFloatValue
 import com.guet.flexbox.litho.toPxFloat
 
-object ToImage : RenderNodeFactory {
+object ToImage : RenderNodeFactory<Component> {
 
-    override fun invoke(
+    override fun create(
             visibility: Boolean,
             attrs: AttributeSet,
-            children: List<Child>,
-            other: Any
-    ): Any {
+            children: List<Component>,
+            other: Any?
+    ): Component {
         return toComponent(
                 other as ComponentContext,
                 attrs,

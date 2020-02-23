@@ -8,7 +8,9 @@ internal class ClickUrlHandler(
         private val url: String
 ) : EventHandler {
     override fun handleEvent(v: View?, args: Array<out Any?>?) {
-        pageContext.send(url)
-        pageContext.dispatchWithViewScope(v)
+        pageContext.newHostEventExecutor(v).execute(
+                ActionKey.SendObjects,
+                arrayOf(url)
+        )
     }
 }

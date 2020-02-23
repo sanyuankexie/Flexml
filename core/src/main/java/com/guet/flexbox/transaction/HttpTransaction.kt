@@ -49,7 +49,7 @@ class HttpTransaction(
     }
 
     @NoJexl
-    override fun execute(executor: TransactionExecutor) {
+    override fun execute(executor: ActionExecutor) {
         super.execute(executor)
         val prams = if (this::prams.isInitialized) {
             this.prams
@@ -67,7 +67,7 @@ class HttpTransaction(
         )
     }
 
-    private fun newCallback(executor: TransactionExecutor): HttpAction.Callback {
+    private fun newCallback(executor: ActionExecutor): HttpAction.Callback {
         return CallbackImpl(
                 context,
                 executor,
@@ -78,7 +78,7 @@ class HttpTransaction(
 
     private class CallbackImpl(
             private val context: PageContext,
-            private val executor: TransactionExecutor,
+            private val executor: ActionExecutor,
             private val success: JexlScript?,
             private val error: JexlScript?
     ) : Handler(Looper.getMainLooper()), HttpAction.Callback {

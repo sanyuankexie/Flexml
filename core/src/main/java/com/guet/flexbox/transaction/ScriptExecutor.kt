@@ -6,7 +6,7 @@ import org.apache.commons.jexl3.JexlScript
 
 open class ScriptExecutor(
         private val dataContext: JexlContext
-) : TransactionExecutor {
+) : ActionExecutor {
     override fun execute(
             key: ActionKey,
             args: Array<out Any?>?

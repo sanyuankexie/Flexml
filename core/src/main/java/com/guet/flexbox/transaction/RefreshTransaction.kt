@@ -21,7 +21,7 @@ class RefreshTransaction(
     }
 
     @NoJexl
-    override fun execute(executor: TransactionExecutor) {
+    override fun execute(executor: ActionExecutor) {
         super.execute(executor)
         if (this::paddingModify.isInitialized) {
             executor.execute(

@@ -11,18 +11,18 @@ object LithoBuildTool : BuildTool() {
 
     override val widgets: Map<String, ToWidget> by lazy {
         val arr = arrayOf(
-                "Empty" to (Empty to ToEmpty),
-                "Flex" to (Flex to ToFlex),
-                "Banner" to (Banner to ToBanner),
-                "Image" to (Image to ToImage),
-                "Scroller" to (Scroller to ToScroller),
-                "TextInput" to (TextInput to ToTextInput),
-                "Text" to (Text to ToText),
-                "Stack" to (CommonProps to ToStack),
-                "for" to (For to null),
-                "foreach" to (ForEach to null),
-                "when" to (When to null),
-                "if" to (If to null)
+                "Empty" to ToWidget(Empty, ToEmpty),
+                "Flex" to ToWidget(Flex, ToFlex),
+                "Banner" to ToWidget(Banner, ToBanner),
+                "Image" to ToWidget(Image, ToImage),
+                "Scroller" to ToWidget(Scroller, ToScroller),
+                "TextInput" to ToWidget(TextInput, ToTextInput),
+                "Text" to ToWidget(Text, ToText),
+                "Stack" to ToWidget(CommonProps, ToStack),
+                "for" to ToWidget(For, null),
+                "foreach" to ToWidget(ForEach, null),
+                "when" to ToWidget(When, null),
+                "if" to ToWidget(If, null)
         )
         arr.toMap(ArrayMap<String, ToWidget>(arr.size))
     }

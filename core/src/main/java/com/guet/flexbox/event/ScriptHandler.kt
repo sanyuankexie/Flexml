@@ -2,6 +2,8 @@ package com.guet.flexbox.event
 
 import android.view.View
 import com.guet.flexbox.PageContext
+import com.guet.flexbox.transaction.ComposeExecutor
+import com.guet.flexbox.transaction.ScriptExecutor
 import org.apache.commons.jexl3.JexlContext
 import org.apache.commons.jexl3.JexlScript
 
@@ -12,5 +14,9 @@ internal class ScriptHandler(
 ) : EventHandler {
     override fun handleEvent(v: View?, args: Array<out Any?>?) {
         script.execute(dataContext, args)
+        pageContext.executeTransaction(ComposeExecutor(
+                pageContext.newHostEventExecutor(v),
+                ScriptExecutor(dataContext)
+        ))
     }
 }
