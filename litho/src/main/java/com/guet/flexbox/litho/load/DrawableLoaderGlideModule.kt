@@ -1,4 +1,4 @@
-package com.guet.flexbox.litho.bitmap
+package com.guet.flexbox.litho.load
 
 import android.content.Context
 import com.bumptech.glide.Glide
@@ -7,7 +7,7 @@ import com.bumptech.glide.Registry
 import com.bumptech.glide.module.GlideModule
 
 @Deprecated("")
-class ExBitmapDrawableGlideModule : GlideModule {
+class DrawableLoaderGlideModule : GlideModule {
 
     override fun applyOptions(context: Context, builder: GlideBuilder) {
     }
@@ -17,6 +17,6 @@ class ExBitmapDrawableGlideModule : GlideModule {
             glide: Glide,
             registry: Registry
     ) {
-        ExBitmapDrawableLibraryModule.init(context, glide, registry)
+        DrawableLoaderModule.init(registry)
     }
 }

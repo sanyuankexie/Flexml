@@ -2,15 +2,17 @@ package com.guet.flexbox.el
 
 import android.content.res.Resources
 import android.net.Uri
+import androidx.annotation.RestrictTo
 import java.lang.reflect.Modifier
 
-internal object ELFunctions {
+@RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
+object InternalFunctions {
 
     @Target(AnnotationTarget.FUNCTION)
     @Retention(AnnotationRetention.RUNTIME)
     private annotation class Prefix(val value: String)
 
-    internal val functions = ELFunctions::class.java
+    internal val functions = InternalFunctions::class.java
             .declaredMethods
             .filter {
                 it.modifiers.let { mod ->
@@ -105,6 +107,5 @@ internal object ELFunctions {
     fun dp(value: Number): Float {
         return (px(value) * Resources.getSystem().displayMetrics.density + 0.5f)
     }
-
 
 }

@@ -1,4 +1,4 @@
-package com.guet.flexbox.litho.drawable
+package com.guet.flexbox.litho.load
 
 import com.bumptech.glide.request.target.BaseTarget
 import com.bumptech.glide.request.target.SizeReadyCallback

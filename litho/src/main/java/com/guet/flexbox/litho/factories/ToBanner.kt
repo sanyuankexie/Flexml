@@ -5,7 +5,6 @@ import com.guet.flexbox.build.AttributeSet
 import com.guet.flexbox.enums.Orientation
 import com.guet.flexbox.litho.ChildComponent
 import com.guet.flexbox.litho.resolve.AttributeAssignSet
-import com.guet.flexbox.litho.toPx
 import com.guet.flexbox.litho.widget.Banner
 
 internal object ToBanner : ToComponent<Banner.Builder>(CommonAssigns) {
@@ -18,12 +17,6 @@ internal object ToBanner : ToComponent<Banner.Builder>(CommonAssigns) {
         }
         register("orientation") { _, _, value: Orientation ->
             orientation(value)
-        }
-        register("indicatorsHeight") { _, _, value: Float ->
-            indicatorHeightPx(value.toPx())
-        }
-        register("indicatorEnable") { _, _, value: Boolean ->
-            indicatorEnable(value)
         }
     }
 
@@ -41,8 +34,7 @@ internal object ToBanner : ToComponent<Banner.Builder>(CommonAssigns) {
             attrs: AttributeSet,
             children: List<ChildComponent>
     ) {
-        owner.children(children.map {
-            it
-        })
+        owner.children(children)
     }
+    
 }

@@ -3,8 +3,8 @@ package com.guet.flexbox.litho
 import android.util.ArrayMap
 import com.facebook.yoga.YogaNodeManager
 import com.guet.flexbox.build.*
-import com.guet.flexbox.litho.bitmap.ExBitmapDrawableLibraryModule
 import com.guet.flexbox.litho.factories.*
+import com.guet.flexbox.litho.load.DrawableLoaderModule
 import com.guet.flexbox.litho.widget.ComponentTreePool
 
 object LithoBuildTool : BuildTool() {
@@ -30,7 +30,7 @@ object LithoBuildTool : BuildTool() {
     override val kits: List<Kit> by lazy {
         return@lazy listOf(
                 YogaNodeManager,
-                ExBitmapDrawableLibraryModule,
+                DrawableLoaderModule,
                 ComponentTreePool
         )
     }

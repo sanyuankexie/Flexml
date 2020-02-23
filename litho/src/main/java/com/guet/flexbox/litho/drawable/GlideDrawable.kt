@@ -8,14 +8,15 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.request.target.SizeReadyCallback
 import com.bumptech.glide.request.target.Target
 import com.bumptech.glide.request.transition.Transition
-import com.guet.flexbox.litho.bitmap.CornerRadius
-import com.guet.flexbox.litho.bitmap.GlideConstants
+import com.guet.flexbox.litho.load.CornerRadius
+import com.guet.flexbox.litho.load.DelegateTarget
+import com.guet.flexbox.litho.load.DrawableLoaderModule
 import com.guet.flexbox.litho.transforms.FastBlur
 
 class GlideDrawable(
         private val context: Context
 ) : DrawableWrapper<Drawable>(NoOpDrawable()),
-        Target<ExBitmapDrawable> by DelegateTarget() {
+        Target<BitmapDrawable> by DelegateTarget() {
     private val cacheNoOpDrawable = wrappedDrawable
     private var width: Int = 0
     private var height: Int = 0
@@ -62,10 +63,10 @@ class GlideDrawable(
         this.width = width
         this.height = height
         var request = Glide.with(context)
-                .`as`(ExBitmapDrawable::class.java)
+                .`as`(BitmapDrawable::class.java)
                 .load(model)
-                .set(GlideConstants.scaleType, scaleType)
-                .set(GlideConstants.cornerRadius, CornerRadius(
+                .set(DrawableLoaderModule.scaleType, scaleType)
+                .set(DrawableLoaderModule.cornerRadius, CornerRadius(
                         leftTop,
                         rightTop,
                         rightBottom,
@@ -88,8 +89,8 @@ class GlideDrawable(
     }
 
     override fun onResourceReady(
-            resource: ExBitmapDrawable,
-            transition: Transition<in ExBitmapDrawable>?
+            resource: BitmapDrawable,
+            transition: Transition<in BitmapDrawable>?
     ) {
         wrappedDrawable = resource
         invalidateSelf()

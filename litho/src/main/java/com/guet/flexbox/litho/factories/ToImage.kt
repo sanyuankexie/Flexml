@@ -5,7 +5,7 @@ import android.graphics.drawable.GradientDrawable.Orientation
 import android.widget.ImageView
 import com.facebook.litho.Component
 import com.facebook.litho.ComponentContext
-import com.facebook.litho.widget.EmptyComponent
+import com.facebook.litho.Row
 import com.facebook.litho.widget.Image
 import com.guet.flexbox.build.AttributeSet
 import com.guet.flexbox.build.Child
@@ -26,18 +26,18 @@ object ToImage : RenderNodeFactory {
     ): Any {
         return toComponent(
                 other as ComponentContext,
-                visibility,
-                attrs
+                attrs,
+                visibility
         )
     }
 
-    private fun toComponent(
+    internal fun toComponent(
             c: ComponentContext,
-            visibility: Boolean,
-            attrs: AttributeSet
+            attrs: AttributeSet,
+            visibility: Boolean = true
     ): Component {
         if (!visibility) {
-            return EmptyComponent.create(c).build()
+            return Row.create(c).build()
         }
         val url = attrs["src"] as? CharSequence
         val lt = attrs.getFloatValue("borderLeftTopRadius").toPxFloat()
@@ -108,7 +108,7 @@ object ToImage : RenderNodeFactory {
                 else -> Unit
             }
         }
-        return EmptyComponent.create(c)
+        return Row.create(c)
                 .build()
     }
 

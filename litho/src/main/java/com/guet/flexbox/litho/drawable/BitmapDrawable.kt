@@ -9,7 +9,7 @@ import android.widget.ImageView.ScaleType
 import kotlin.math.min
 import kotlin.math.round
 
-class ExBitmapDrawable : Drawable {
+class BitmapDrawable : Drawable {
 
     private companion object {
 
@@ -29,7 +29,7 @@ class ExBitmapDrawable : Drawable {
         private const val DEFAULT_PAINT_FLAGS = Paint.FILTER_BITMAP_FLAG or Paint.DITHER_FLAG or Paint.ANTI_ALIAS_FLAG
     }
 
-    private val state: ExBitmapState
+    private val state: BitmapState
     private var shouldClipInner: Boolean = true
     private var pathIsDirty: Boolean = true
     private var scaleTypeIsDirty: Boolean = true
@@ -39,13 +39,13 @@ class ExBitmapDrawable : Drawable {
     private lateinit var matrix: Matrix
     private lateinit var shader: BitmapShader
 
-    constructor(bitmap: Bitmap) : this(ExBitmapState(bitmap))
+    constructor(bitmap: Bitmap) : this(BitmapState(bitmap))
 
-    private constructor(state: ExBitmapState) : super() {
+    private constructor(state: BitmapState) : super() {
         this.state = state
     }
 
-    private class ExBitmapState : ConstantState {
+    private class BitmapState : ConstantState {
         val paint: Paint
         var radiiArray: FloatArray? = null
         var scaleType: ScaleType = ScaleType.FIT_XY
@@ -56,7 +56,7 @@ class ExBitmapDrawable : Drawable {
             this.paint = Paint(DEFAULT_PAINT_FLAGS)
         }
 
-        constructor(state: ExBitmapState) {
+        constructor(state: BitmapState) {
             paint = Paint(state.paint)
             radiiArray = state.radiiArray
             scaleType = state.scaleType
@@ -64,7 +64,7 @@ class ExBitmapDrawable : Drawable {
         }
 
         override fun newDrawable(): Drawable {
-            return ExBitmapDrawable(this)
+            return BitmapDrawable(this)
         }
 
         override fun getChangingConfigurations(): Int {

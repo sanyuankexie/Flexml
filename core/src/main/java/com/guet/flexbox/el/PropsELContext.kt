@@ -77,7 +77,7 @@ class PropsELContext(
 
     private class StandardFunctionMapper : FunctionMapper() {
 
-        private val methods = HashMap<String, Method>(ELFunctions.functions)
+        private val methods = HashMap<String, Method>(InternalFunctions.functions)
 
         override fun resolveFunction(
                 prefix: String,

@@ -9,8 +9,9 @@ import com.bumptech.glide.request.target.SizeReadyCallback
 import com.bumptech.glide.request.target.Target
 import com.bumptech.glide.request.transition.Transition
 import com.facebook.litho.drawable.ComparableDrawable
-import com.guet.flexbox.litho.bitmap.CornerRadius
-import com.guet.flexbox.litho.bitmap.GlideConstants
+import com.guet.flexbox.litho.load.CornerRadius
+import com.guet.flexbox.litho.load.DelegateTarget
+import com.guet.flexbox.litho.load.DrawableLoaderModule
 import java.util.concurrent.atomic.AtomicBoolean
 
 class LazyImageDrawable private constructor(
@@ -18,7 +19,7 @@ class LazyImageDrawable private constructor(
         private val model: Any,
         private val radius: CornerRadius
 ) : DrawableWrapper<Drawable>(NoOpDrawable()),
-        Target<ExBitmapDrawable> by DelegateTarget(),
+        Target<BitmapDrawable> by DelegateTarget(),
         ComparableDrawable {
 
     private val cacheNoOpDrawable = wrappedDrawable
@@ -62,10 +63,10 @@ class LazyImageDrawable private constructor(
     override fun draw(canvas: Canvas) {
         if (isInit.compareAndSet(false, true)) {
             Glide.with(context)
-                    .`as`(ExBitmapDrawable::class.java)
+                    .`as`(BitmapDrawable::class.java)
                     .load(model)
-                    .set(GlideConstants.scaleType, ScaleType.FIT_XY)
-                    .set(GlideConstants.cornerRadius, radius)
+                    .set(DrawableLoaderModule.scaleType, ScaleType.FIT_XY)
+                    .set(DrawableLoaderModule.cornerRadius, radius)
                     .into(this)
         } else {
             super.draw(canvas)
@@ -77,8 +78,8 @@ class LazyImageDrawable private constructor(
     }
 
     override fun onResourceReady(
-            resource: ExBitmapDrawable,
-            transition: Transition<in ExBitmapDrawable>?) {
+            resource: BitmapDrawable,
+            transition: Transition<in BitmapDrawable>?) {
         wrappedDrawable = resource
         invalidateSelf()
     }
@@ -99,8 +100,4 @@ class LazyImageDrawable private constructor(
 //        return transitionDrawable
 //    }
 
-    @Throws(Throwable::class)
-    protected fun finalize() {
-        Glide.with(context).clear(this)
-    }
 }

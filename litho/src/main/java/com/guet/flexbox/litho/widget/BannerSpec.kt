@@ -1,25 +1,34 @@
 package com.guet.flexbox.litho.widget
 
 import android.content.Context
-import android.graphics.Color
+import android.graphics.drawable.Drawable
 import android.util.AttributeSet
 import android.view.ViewGroup
+import android.widget.ImageView.ScaleType
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager2.widget.ViewPager2
+import com.bumptech.glide.Glide
+import com.bumptech.glide.request.target.Target
 import com.facebook.litho.*
 import com.facebook.litho.annotations.*
 import com.facebook.litho.widget.EmptyComponent
+import com.facebook.litho.widget.Image
 import com.facebook.yoga.YogaAlign
 import com.facebook.yoga.YogaEdge
 import com.facebook.yoga.YogaJustify
+import com.guet.flexbox.el.InternalFunctions
 import com.guet.flexbox.enums.Orientation
-import com.guet.flexbox.litho.BuildConfig
+import com.guet.flexbox.litho.drawable.ColorDrawable
+import com.guet.flexbox.litho.drawable.GradientDrawable
+import com.guet.flexbox.litho.drawable.LazyImageDrawable
+import com.guet.flexbox.litho.resolve.UrlType
 import com.guet.flexbox.litho.toPx
 import java.util.*
 import kotlin.collections.ArrayList
 import kotlin.math.max
 import kotlin.math.min
+import android.graphics.drawable.GradientDrawable.Orientation as GradientOrientation
 
 @MountSpec(isPureRender = true, hasChildLithoViews = true)
 object BannerSpec {
@@ -32,19 +41,25 @@ object BannerSpec {
     val isCircular: Boolean = true
 
     @PropDefault
-    val indicatorHeightPx: Int = 5.toPx()
-
-    @PropDefault
     val orientation = Orientation.HORIZONTAL
 
     @PropDefault
     val indicatorEnable: Boolean = true
 
     @PropDefault
-    val indicatorSizePx: Int = 5.toPx()
+    val indicatorHeight = 5.toPx()
 
     @PropDefault
-    val indicatorMarginPx: Int = 2.5f.toPx()
+    val indicatorMargin = 2.5f.toPx()
+
+    @PropDefault
+    val indicatorSize = 5.toPx()
+
+    @PropDefault
+    val indicatorSelected = InternalFunctions.drawable("indicator_light")
+
+    @PropDefault
+    val indicatorUnselected = InternalFunctions.drawable("indicator_black")
 
     @OnCreateMountContent
     fun onCreateMountContent(c: Context): BannerLithoView {
@@ -61,39 +76,29 @@ object BannerSpec {
         position.set(PagePosition())
     }
 
-    @OnMount
-    fun onMount(
-            c: ComponentContext,
-            view: BannerLithoView,
-            @Prop(optional = true) orientation: Orientation,
-            @Prop(optional = true) isCircular: Boolean,
-            @Prop(optional = true) indicatorSizePx: Int,
-            @Prop(optional = true) indicatorHeightPx: Int,
-            @Prop(optional = true) indicatorMarginPx: Int,
-            @Prop(optional = true) indicatorSelected: Any?,
-            @Prop(optional = true) indicatorUnselected: Any?,
-            @Prop(optional = true) indicatorEnable: Boolean,
-            @FromBoundsDefined componentWidth: Int,
-            @FromBoundsDefined componentHeight: Int,
-            @FromBoundsDefined realChildrenCount: Int,
-            @State componentTrees: ArrayList<ComponentTree>,
-            @State position: PagePosition
-    ) {
-        view.mount(
-                orientation,
-                isCircular,
-                componentWidth,
-                componentHeight,
-                realChildrenCount,
-                indicatorSizePx,
-                indicatorHeightPx,
-                indicatorMarginPx,
-                indicatorSelected,
-                indicatorUnselected,
-                indicatorEnable,
-                componentTrees,
-                position
-        )
+    private fun loadDrawable(c: Context, url: String?): Drawable? {
+        if (url.isNullOrEmpty()) {
+            return null
+        } else {
+            val (type, args) = UrlType.parseUrl(c, url)
+            when (type) {
+                UrlType.COLOR -> {
+                    return ColorDrawable(args[0] as Int)
+                }
+                UrlType.GRADIENT -> {
+                    return GradientDrawable(
+                            args[0] as GradientOrientation,
+                            args[1] as IntArray
+                    )
+                }
+                UrlType.URL, UrlType.RESOURCE -> {
+                    return LazyImageDrawable(c, args[0])
+                }
+                else -> {
+                    return null
+                }
+            }
+        }
     }
 
     private fun adjustTreesCount(
@@ -119,6 +124,7 @@ object BannerSpec {
         }
     }
 
+
     //ViewPager2如果无限循环，小于3的话会显示异常
     private fun getCompatCountChildren(
             @Prop(optional = true) isCircular: Boolean,
@@ -141,7 +147,63 @@ object BannerSpec {
         }
     }
 
-    private fun measureAll(
+    @OnPrepare
+    fun onPrepare(
+            c: ComponentContext,
+            @Prop(optional = true) indicatorSelected: String?,
+            @Prop(optional = true) indicatorUnselected: String?,
+            @Prop(optional = true) isCircular: Boolean,
+            @Prop(optional = true, varArg = "child") children: List<Component>?,
+            @State componentTrees: ArrayList<ComponentTree>,
+            selectedDrawable: Output<Drawable?>,
+            unselectedDrawable: Output<Drawable?>,
+            toDisplayChildren: Output<List<@JvmWildcard Component>?>,
+            realChildrenCount: Output<Int>
+    ) {
+        selectedDrawable.set(loadDrawable(c.androidContext, indicatorSelected))
+        unselectedDrawable.set(loadDrawable(c.androidContext, indicatorUnselected))
+        val myChildren = getCompatCountChildren(isCircular, children)
+        adjustTreesCount(c, componentTrees, myChildren?.size ?: 0)
+        toDisplayChildren.set(myChildren)
+        realChildrenCount.set(children?.size ?: 0)
+    }
+
+    @OnMount
+    fun onMount(
+            c: ComponentContext,
+            view: BannerLithoView,
+            @Prop(optional = true) orientation: Orientation,
+            @Prop(optional = true) isCircular: Boolean,
+            @Prop(optional = true, resType = ResType.DIMEN_SIZE) indicatorHeight: Int,
+            @Prop(optional = true, resType = ResType.DIMEN_SIZE) indicatorMargin: Int,
+            @Prop(optional = true, resType = ResType.DIMEN_SIZE) indicatorSize: Int,
+            @Prop(optional = true) indicatorEnable: Boolean,
+            @FromPrepare selectedDrawable: Drawable?,
+            @FromPrepare unselectedDrawable: Drawable?,
+            @FromPrepare realChildrenCount: Int,
+            @FromBoundsDefined componentWidth: Int,
+            @FromBoundsDefined componentHeight: Int,
+            @State componentTrees: ArrayList<ComponentTree>,
+            @State position: PagePosition
+    ) {
+        view.mount(
+                orientation,
+                isCircular,
+                componentWidth,
+                componentHeight,
+                realChildrenCount,
+                indicatorHeight,
+                indicatorMargin,
+                indicatorSize,
+                selectedDrawable,
+                unselectedDrawable,
+                indicatorEnable,
+                componentTrees,
+                position
+        )
+    }
+
+    private fun computeLayout(
             c: ComponentContext,
             @State componentTrees: ArrayList<ComponentTree>,
             @Prop(optional = true, varArg = "child") children: List<Component>?,
@@ -168,19 +230,6 @@ object BannerSpec {
         }
     }
 
-    private fun computeLayout(
-            c: ComponentContext,
-            @Prop(optional = true) isCircular: Boolean,
-            @State componentTrees: ArrayList<ComponentTree>,
-            @Prop(optional = true, varArg = "child") children: List<Component>?,
-            width: Int,
-            height: Int
-    ) {
-        val myChildren = getCompatCountChildren(isCircular, children)
-        adjustTreesCount(c, componentTrees, myChildren?.size ?: 0)
-        measureAll(c, componentTrees, myChildren, width, height)
-    }
-
     @OnMeasure
     fun onMeasure(
             c: ComponentContext,
@@ -188,15 +237,14 @@ object BannerSpec {
             widthSpec: Int,
             heightSpec: Int,
             size: Size,
-            @Prop(optional = true) isCircular: Boolean,
-            @Prop(optional = true, varArg = "child") children: List<Component>?,
+            @FromPrepare toDisplayChildren: List<Component>?,
             @State componentTrees: ArrayList<ComponentTree>,
             width: Output<Int?>,
             height: Output<Int?>
     ) {
         val w = layout.width
         val h = layout.height
-        computeLayout(c, isCircular, componentTrees, children, w, h)
+        computeLayout(c, componentTrees, toDisplayChildren, w, h)
         size.width = w
         size.height = h
         width.set(w)
@@ -207,14 +255,12 @@ object BannerSpec {
     fun onBoundsDefined(
             c: ComponentContext,
             layout: ComponentLayout,
-            @Prop(optional = true, varArg = "child") children: List<Component>?,
-            @Prop(optional = true) isCircular: Boolean,
+            @FromPrepare toDisplayChildren: List<Component>?,
             @State componentTrees: ArrayList<ComponentTree>,
             @FromMeasure width: Int?,
             @FromMeasure height: Int?,
             componentWidth: Output<Int>,
-            componentHeight: Output<Int>,
-            realChildrenCount: Output<Int>
+            componentHeight: Output<Int>
     ) {
         // If onMeasure() has been called, this means the content component already
         // has a defined size, no need to calculate it again.
@@ -224,20 +270,27 @@ object BannerSpec {
         } else {
             val w = layout.width
             val h = layout.height
-            computeLayout(c, isCircular, componentTrees, children, w, h)
+            computeLayout(c, componentTrees, toDisplayChildren, w, h)
             componentWidth.set(w)
             componentHeight.set(h)
         }
-        realChildrenCount.set(children?.size ?: 0)
     }
 
     @OnUnmount
     fun onUnmount(
             c: ComponentContext,
-            view: BannerLithoView
+            view: BannerLithoView,
+            @FromPrepare selectedDrawable: Drawable?,
+            @FromPrepare unselectedDrawable: Drawable?
 
     ) {
         view.unmount()
+        if (selectedDrawable is Target<*>) {
+            Glide.with(c.androidContext).clear(selectedDrawable)
+        }
+        if (unselectedDrawable is Target<*>) {
+            Glide.with(c.androidContext).clear(unselectedDrawable)
+        }
     }
 
     @OnBind
@@ -261,22 +314,22 @@ object BannerSpec {
     fun shouldUpdate(
             @Prop(optional = true) orientation: Diff<Orientation>,
             @Prop(optional = true) isCircular: Diff<Boolean>,
-            @Prop(optional = true) indicatorSizePx: Diff<Int>,
-            @Prop(optional = true) indicatorHeightPx: Diff<Int>,
-            @Prop(optional = true) indicatorMarginPx: Diff<Int>,
-            @Prop(optional = true) indicatorSelected: Diff<Any?>,
-            @Prop(optional = true) indicatorUnselected: Diff<Any?>,
+            @Prop(optional = true) indicatorSelected: Diff<String?>,
+            @Prop(optional = true) indicatorUnselected: Diff<String?>,
+            @Prop(optional = true, resType = ResType.DIMEN_SIZE) indicatorHeight: Diff<Int>,
+            @Prop(optional = true, resType = ResType.DIMEN_SIZE) indicatorMargin: Diff<Int>,
+            @Prop(optional = true, resType = ResType.DIMEN_SIZE) indicatorSize: Diff<Int>,
             @Prop(optional = true) indicatorEnable: Diff<Boolean>,
             @Prop(optional = true, varArg = "child") children: Diff<List<@JvmWildcard Component>?>
     ): Boolean {
         return fastDiff(
                 orientation,
                 isCircular,
-                indicatorSizePx,
-                indicatorHeightPx,
-                indicatorMarginPx,
                 indicatorSelected,
                 indicatorUnselected,
+                indicatorHeight,
+                indicatorMargin,
+                indicatorSize,
                 indicatorEnable,
                 children
         )
@@ -302,11 +355,11 @@ object BannerSpec {
         private var componentHeight = 0
 
         private var indicatorEnable: Boolean = false
-        private var indicatorSizePx: Int = 0
-        private var indicatorMarginPx: Int = 0
-        private var indicatorHeightPx = 0
-        private var indicatorSelected: Any? = null
-        private var indicatorUnselected: Any? = null
+        private var indicatorHeight: Int = 0
+        private var indicatorMargin: Int = 0
+        private var indicatorSize: Int = 0
+        private var selectedDrawable: Drawable? = null
+        private var unselectedDrawable: Drawable? = null
 
         private var isCircular: Boolean = false
         private var timeSpan: Long = 0
@@ -314,6 +367,7 @@ object BannerSpec {
         private var realChildrenCount: Int = 0
         private var componentTrees: ArrayList<ComponentTree>? = null
         private var position: PagePosition? = null
+
 
         private val indicators = LithoView(context)
         private val viewPager2 = ViewPager2(context)
@@ -342,7 +396,7 @@ object BannerSpec {
                 val c = indicators.componentContext
                 val trees = componentTrees
                 if (!indicatorEnable || trees.isNullOrEmpty()
-                        || realChildrenCount <= 0 || indicatorSizePx <= 0) {
+                        || realChildrenCount <= 0) {
                     indicators.setComponent(
                             EmptyComponent.create(c).build()
                     )
@@ -353,54 +407,28 @@ object BannerSpec {
                 } else {
                     position
                 }
-                val indicatorSelected = this@BannerLithoView
-                        .indicatorSelected
-                val indicatorUnselected = this@BannerLithoView
-                        .indicatorUnselected
                 val rowBuilder = Row.create(c)
                         .justifyContent(YogaJustify.CENTER)
                         .alignItems(YogaAlign.CENTER)
-                        .marginPx(YogaEdge.BOTTOM, indicatorHeightPx)
+                        .marginPx(YogaEdge.BOTTOM, indicatorHeight)
                         .justifyContent(YogaJustify.CENTER)
                 (0 until realChildrenCount).forEach {
                     if (it == realPosition) {
-                        if (indicatorSelected != null) {
-                            rowBuilder.child(GlideImage.create(c)
-                                    .marginPx(YogaEdge.HORIZONTAL, indicatorMarginPx)
-                                    .model(indicatorSelected)
-                                    .widthPx(indicatorSizePx)
-                                    .heightPx(indicatorSizePx)
-                            )
-                        } else {
-                            rowBuilder.child(Row.create(c)
-                                    .marginPx(YogaEdge.HORIZONTAL, indicatorMarginPx)
-                                    .widthPx(indicatorSizePx)
-                                    .heightPx(indicatorSizePx)
-                                    .apply {
-                                        if (BuildConfig.DEBUG) {
-                                            backgroundColor(Color.RED)
-                                        }
-                                    })
-                        }
+                        rowBuilder.child(Image.create(c)
+                                .marginPx(YogaEdge.HORIZONTAL, indicatorMargin)
+                                .widthPx(indicatorSize)
+                                .heightPx(indicatorSize)
+                                .scaleType(ScaleType.FIT_XY)
+                                .drawable(selectedDrawable)
+                        )
                     } else {
-                        if (indicatorUnselected != null) {
-                            rowBuilder.child(GlideImage.create(c)
-                                    .marginPx(YogaEdge.HORIZONTAL, indicatorMarginPx)
-                                    .model(indicatorUnselected)
-                                    .widthPx(indicatorSizePx)
-                                    .heightPx(indicatorSizePx)
-                            )
-                        } else {
-                            rowBuilder.child(Row.create(c)
-                                    .marginPx(YogaEdge.HORIZONTAL, indicatorMarginPx)
-                                    .widthPx(indicatorSizePx)
-                                    .heightPx(indicatorSizePx)
-                                    .apply {
-                                        if (BuildConfig.DEBUG) {
-                                            backgroundColor(Color.BLUE)
-                                        }
-                                    })
-                        }
+                        rowBuilder.child(Image.create(c)
+                                .marginPx(YogaEdge.HORIZONTAL, indicatorMargin)
+                                .widthPx(indicatorSize)
+                                .heightPx(indicatorSize)
+                                .scaleType(ScaleType.FIT_XY)
+                                .drawable(unselectedDrawable)
+                        )
                     }
                 }
                 indicators.setComponent(Row.create(c)
@@ -408,7 +436,7 @@ object BannerSpec {
                         .justifyContent(YogaJustify.CENTER)
                         .alignItems(YogaAlign.FLEX_END)
                         .child(Row.create(c)
-                                .marginPx(YogaEdge.BOTTOM, indicatorHeightPx)
+                                .marginPx(YogaEdge.BOTTOM, 0)
                                 .justifyContent(YogaJustify.CENTER)
                                 .child(rowBuilder)
                                 .build())
@@ -438,27 +466,34 @@ object BannerSpec {
                 @FromBoundsDefined width: Int,
                 @FromBoundsDefined height: Int,
                 @FromBoundsDefined realChildrenCount: Int,
-                @Prop(optional = true) indicatorSizePx: Int,
-                @Prop(optional = true) indicatorHeightPx: Int,
-                @Prop(optional = true) indicatorMarginPx: Int,
-                @Prop(optional = true) indicatorSelected: Any?,
-                @Prop(optional = true) indicatorUnselected: Any?,
+                @Prop(optional = true, resType = ResType.DIMEN_SIZE) indicatorHeight: Int,
+                @Prop(optional = true, resType = ResType.DIMEN_SIZE) indicatorMargin: Int,
+                @Prop(optional = true, resType = ResType.DIMEN_SIZE) indicatorSize: Int,
+                @FromPrepare selectedDrawable: Drawable?,
+                @FromPrepare unselectedDrawable: Drawable?,
                 @Prop(optional = true) indicatorEnable: Boolean,
                 @State componentTrees: ArrayList<ComponentTree>,
                 @State position: PagePosition
         ) {
-            this.indicatorSizePx = indicatorSizePx
+
             this.realChildrenCount = realChildrenCount
-            this.indicatorHeightPx = indicatorHeightPx
-            this.indicatorMarginPx = indicatorMarginPx
             this.isCircular = isCircular
-            this.indicatorEnable = indicatorEnable
+
             this.componentWidth = width
             this.componentHeight = height
+
+            this.indicatorEnable = indicatorEnable
+            this.indicatorHeight = indicatorHeight
+            this.indicatorMargin = indicatorMargin
+            this.indicatorSize = indicatorSize
             if (indicatorEnable) {
-                this.indicatorSelected = indicatorSelected
-                this.indicatorUnselected = indicatorUnselected
+                this.selectedDrawable = selectedDrawable
+                this.unselectedDrawable = unselectedDrawable
+            } else {
+                this.selectedDrawable = null
+                this.unselectedDrawable = null
             }
+
             if (componentTrees.isNullOrEmpty()) {
                 this.componentTrees = null
             } else {
@@ -488,6 +523,8 @@ object BannerSpec {
         }
 
         fun unmount() {
+            this.selectedDrawable = null
+            this.unselectedDrawable = null
             this.componentTrees = null
             viewPager2.adapter = null
             val pos = position
