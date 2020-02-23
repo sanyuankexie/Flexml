@@ -5,7 +5,7 @@ import com.facebook.litho.EventDispatcher
 import com.facebook.litho.HasEventDispatcher
 import com.facebook.litho.VisibleEvent
 import com.facebook.litho.widget.TextChangedEvent
-import com.guet.flexbox.build.event.EventHandler
+import com.guet.flexbox.event.EventHandler
 import com.facebook.litho.EventHandler as BaseEventHandler
 
 internal class EventAdapter<T>(

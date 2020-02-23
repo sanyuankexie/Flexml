@@ -3,7 +3,7 @@ package com.guet.flexbox.build.attrsinfo
 import android.graphics.Color
 import android.util.ArrayMap
 import com.guet.flexbox.transaction.PageContext
-import com.guet.flexbox.build.event.EventHandler
+import com.guet.flexbox.event.EventHandler
 import com.guet.flexbox.build.AttributeInfoSet
 import com.guet.flexbox.build.Converter
 import com.guet.flexbox.el.ELContext

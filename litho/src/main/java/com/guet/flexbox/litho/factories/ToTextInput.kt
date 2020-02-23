@@ -4,7 +4,7 @@ import android.graphics.Typeface
 import android.text.TextUtils.TruncateAt
 import com.facebook.litho.ComponentContext
 import com.facebook.litho.widget.TextInput
-import com.guet.flexbox.build.event.EventHandler
+import com.guet.flexbox.event.EventHandler
 import com.guet.flexbox.build.AttributeSet
 import com.guet.flexbox.enums.TextStyle
 import com.guet.flexbox.litho.EventAdapter

@@ -1,4 +1,4 @@
-package com.guet.flexbox.build.event
+package com.guet.flexbox.event
 
 import android.view.View
 import com.guet.flexbox.el.LambdaExpression
