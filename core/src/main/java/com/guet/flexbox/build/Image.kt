@@ -1,8 +1,9 @@
 package com.guet.flexbox.build
 
-object Image : Declaration(Graphic) {
-    override val attributeInfoSet: AttributeInfoSet by create {
-        value("blurRadius")
-        value("blurSampling")
-    }
+object Image : Declaration() {
+    override val dataBinding by DataBinding
+            .create(Graphic.dataBinding) {
+                value("blurRadius")
+                value("blurSampling")
+            }
 }

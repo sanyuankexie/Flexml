@@ -7,10 +7,10 @@ import androidx.annotation.RestrictTo
 import com.facebook.litho.ComponentTree
 import com.facebook.litho.LithoView
 import com.facebook.litho.SizeSpec
-import com.guet.flexbox.transaction.dispatch.ActionKey
-import com.guet.flexbox.transaction.dispatch.ActionTarget
-import com.guet.flexbox.transaction.dispatch.HttpAction
-import com.guet.flexbox.transaction.dispatch.HttpClient
+import com.guet.flexbox.HttpClient
+import com.guet.flexbox.event.ActionKey
+import com.guet.flexbox.event.ActionTarget
+import com.guet.flexbox.event.HttpAction
 
 
 open class HostingView @JvmOverloads constructor(
@@ -150,6 +150,7 @@ open class HostingView @JvmOverloads constructor(
                 ActionKey.HttpRequest -> {
                     httpClient?.enqueue(args!![0] as HttpAction)
                 }
+                else -> Unit
             }
         }
     }

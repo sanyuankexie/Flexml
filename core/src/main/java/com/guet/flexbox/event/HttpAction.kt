@@ -1,4 +1,4 @@
-package com.guet.flexbox.transaction.dispatch
+package com.guet.flexbox.event
 
 class HttpAction(
         val url: String,

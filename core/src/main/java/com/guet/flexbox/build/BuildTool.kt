@@ -2,11 +2,11 @@ package com.guet.flexbox.build
 
 import android.content.Context
 import androidx.annotation.RestrictTo
+import com.guet.flexbox.PageContext
 import com.guet.flexbox.TemplateNode
-import com.guet.flexbox.el.ELContext
-import com.guet.flexbox.el.PropsELContext
-import com.guet.flexbox.transaction.PageContext
-import com.guet.flexbox.transaction.dispatch.ActionBridge
+import org.apache.commons.jexl3.JexlBuilder
+import org.apache.commons.jexl3.JexlContext
+import org.apache.commons.jexl3.JexlEngine
 
 abstract class BuildTool {
 
@@ -15,34 +15,35 @@ abstract class BuildTool {
     protected abstract val kits: List<Kit>
 
     private companion object {
-        private val default: ToWidget = CommonProps to null
+        private val default = ToWidget(CommonProps, null)
     }
 
     @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
     fun buildRoot(
             templateNode: TemplateNode,
-            data: Any?,
-            bridge: ActionBridge,
-            other: Any
-    ): Child {
-        val pageContextImpl = bridge.newPageContext()
-        val elContext = PropsELContext(data, pageContextImpl.newWrapper())
+            dataContext: JexlContext,
+            pageContext: PageContext,
+            other: Any?
+    ): Any {
         return buildAll(
                 listOf(templateNode),
-                pageContextImpl,
-                elContext,
-                true,
+                dataContext,
+                pageContext,
                 other
         ).single()
     }
 
+    open val engine: JexlEngine by lazy {
+        JexlBuilder().create()
+    }
+
     internal fun buildAll(
             templates: List<TemplateNode>,
+            dataContext: JexlContext,
             pageContext: PageContext,
-            data: ELContext,
-            upperVisibility: Boolean,
-            other: Any
-    ): List<Child> {
+            other: Any?,
+            upperVisibility: Boolean = true
+    ): List<Any> {
         if (templates.isEmpty()) {
             return emptyList()
         }
@@ -52,10 +53,10 @@ abstract class BuildTool {
             toWidget.toWidget(
                     this@BuildTool,
                     templateNode,
+                    dataContext,
                     pageContext,
-                    data,
-                    upperVisibility,
-                    other
+                    other,
+                    upperVisibility
             )
         }.flatten()
     }

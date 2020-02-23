@@ -1,10 +1,36 @@
 package com.guet.flexbox.transaction
 
-import com.guet.flexbox.el.LambdaExpression
+import com.guet.flexbox.PageContext
+import com.guet.flexbox.event.ActionKey
+import org.apache.commons.jexl3.JexlScript
+import org.apache.commons.jexl3.annotations.NoJexl
+import java.util.*
 
-interface RefreshTransaction : SendTransaction {
+class RefreshTransaction(
+        context: PageContext
+) : SendTransaction(context) {
 
-    fun with(l: LambdaExpression): RefreshTransaction
+    private lateinit var paddingModify: LinkedList<JexlScript>
 
-    override fun send(vararg values: Any?): RefreshTransaction
+    fun with(l: JexlScript): RefreshTransaction {
+        if (!this::paddingModify.isInitialized) {
+            paddingModify = LinkedList()
+        }
+        paddingModify.add(l)
+        return this
+    }
+
+    @NoJexl
+    override fun execute(executor: TransactionExecutor) {
+        super.execute(executor)
+        if (this::paddingModify.isInitialized) {
+            executor.execute(
+                    ActionKey.ExecuteActions,
+                    paddingModify.toTypedArray()
+            )
+            executor.execute(
+                    ActionKey.RefreshPage
+            )
+        }
+    }
 }

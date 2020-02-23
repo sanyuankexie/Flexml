@@ -6,10 +6,12 @@ import androidx.annotation.AnyThread
 import androidx.annotation.RestrictTo
 import androidx.annotation.WorkerThread
 import com.facebook.litho.*
+import com.guet.flexbox.PageContext
 import com.guet.flexbox.TemplateNode
+import com.guet.flexbox.event.ActionBridge
+import com.guet.flexbox.event.ActionTarget
 import com.guet.flexbox.litho.widget.ThreadChecker
-import com.guet.flexbox.transaction.dispatch.ActionBridge
-import com.guet.flexbox.transaction.dispatch.ActionTarget
+import org.apache.commons.jexl3.ObjectContext
 
 class TemplatePage @WorkerThread internal constructor(
         builder: Builder
@@ -23,8 +25,8 @@ class TemplatePage @WorkerThread internal constructor(
         val oldHeight = size.height
         val com = LithoBuildTool.buildRoot(
                 template,
-                data,
-                actionBridge,
+                ObjectContext<Any>(LithoBuildTool.engine, data),
+                PageContext(actionBridge),
                 context
         ) as Component
         setRootAndSizeSpec(
@@ -144,8 +146,8 @@ class TemplatePage @WorkerThread internal constructor(
             super.layoutThreadHandler(LayoutThreadHandler)
             val com = LithoBuildTool.buildRoot(
                     requireNotNull(template),
-                    data,
-                    actionBridge,
+                    ObjectContext<Any>(LithoBuildTool.engine, data),
+                    PageContext(actionBridge),
                     context
             ) as Component
             super.withRoot(ThreadChecker.create(context)

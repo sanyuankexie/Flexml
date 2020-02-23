@@ -1,32 +1,33 @@
 package com.guet.flexbox.build
 
-import com.guet.flexbox.transaction.PageContext
+import com.guet.flexbox.PageContext
 import com.guet.flexbox.TemplateNode
-import com.guet.flexbox.el.ELContext
+import org.apache.commons.jexl3.JexlContext
 
-object Empty : Declaration(CommonProps) {
-    override val attributeInfoSet: AttributeInfoSet
-        get() = emptyMap()
+object Empty : Declaration() {
 
-    override fun onBuild(
+    override val dataBinding: DataBinding
+        get() = CommonProps.dataBinding
+
+    override fun onBuildWidget(
             buildTool: BuildTool,
             attrs: AttributeSet,
             children: List<TemplateNode>,
-            factory: RenderNodeFactory?,
+            factory: RenderNodeFactory<*>?,
+            dataContext: JexlContext,
             pageContext: PageContext,
-            data: ELContext,
-            upperVisibility: Boolean,
-            other: Any
-    ): List<Child> {
-        return super.onBuild(
+            other: Any?,
+            upperVisibility: Boolean
+    ): List<Any> {
+        return super.onBuildWidget(
                 buildTool,
                 attrs,
                 children,
                 factory,
+                dataContext,
                 pageContext,
-                data,
-                false,
-                other
+                other,
+                false
         )
     }
 }

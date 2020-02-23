@@ -5,7 +5,6 @@ import android.graphics.drawable.GradientDrawable.Orientation
 import com.facebook.litho.Component
 import com.facebook.litho.ComponentContext
 import com.guet.flexbox.build.AttributeSet
-import com.guet.flexbox.build.Child
 import com.guet.flexbox.build.RenderNodeFactory
 import com.guet.flexbox.litho.ChildComponent
 import com.guet.flexbox.litho.drawable.*
@@ -18,7 +17,7 @@ import com.guet.flexbox.litho.toPxFloat
 
 abstract class ToComponent<C : Component.Builder<*>>(
         private val parent: ToComponent<in C>? = null
-) : RenderNodeFactory {
+) : RenderNodeFactory<Component> {
 
     protected abstract val attributeAssignSet: AttributeAssignSet<C>
 
@@ -38,18 +37,19 @@ abstract class ToComponent<C : Component.Builder<*>>(
         }
     }
 
-    @Suppress("UNCHECKED_CAST")
-    override fun invoke(
+    override fun create(
             visibility: Boolean,
             attrs: AttributeSet,
-            children: List<Child>,
-            other: Any
-    ): Any = toComponent(
-            other as ComponentContext,
-            visibility,
-            attrs,
-            children as List<ChildComponent>
-    )
+            children: List<Component>,
+            other: Any?
+    ): Component {
+        return toComponent(
+                other as ComponentContext,
+                visibility,
+                attrs,
+                children
+        )
+    }
 
     fun toComponent(
             c: ComponentContext,

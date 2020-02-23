@@ -1,93 +1,83 @@
 package com.guet.flexbox.build
 
-import android.util.ArrayMap
-import com.guet.flexbox.transaction.PageContext
+import com.guet.flexbox.PageContext
 import com.guet.flexbox.TemplateNode
-import com.guet.flexbox.build.attrsinfo.AttributeInfo
-import com.guet.flexbox.el.ELContext
+import com.guet.flexbox.enums.Visibility
+import org.apache.commons.jexl3.JexlContext
 
-abstract class Declaration(
-        private val parent: Declaration? = null
-) {
+abstract class Declaration {
 
-    internal abstract val attributeInfoSet: AttributeInfoSet
+    internal abstract val dataBinding: DataBinding
 
-    private operator fun get(name: String): AttributeInfo<*>? {
-        val v = attributeInfoSet[name]
-        if (v != null) {
-            return v
-        }
-        if (parent != null) {
-            return parent[name]
-        }
-        return null
-    }
-
-    open fun onBind(
-            rawAttrs: Map<String, String>?,
-            pageContext: PageContext,
-            data: ELContext
-    ): AttributeSet {
-        return if (rawAttrs.isNullOrEmpty()) {
-            emptyMap()
-        } else {
-            ArrayMap<String, Any>(rawAttrs.size).also {
-                for ((key, raw) in rawAttrs) {
-                    val result = this[key]?.cast(pageContext, data, raw)
-                    if (result != null) {
-                        it[key] = result
-                    }
-                }
-            }
-        }
-    }
-
-    open fun onBuild(
+    open fun onBuildWidget(
             buildTool: BuildTool,
             attrs: AttributeSet,
             children: List<TemplateNode>,
-            factory: RenderNodeFactory?,
+            factory: RenderNodeFactory<*>?,
+            dataContext: JexlContext,
             pageContext: PageContext,
-            data: ELContext,
-            upperVisibility: Boolean,
-            other: Any
-    ): List<Child> {
-        return parent?.onBuild(
-                buildTool,
+            other: Any?,
+            upperVisibility: Boolean = true
+    ): List<Any> {
+        if (factory == null) {
+            return emptyList()
+        }
+        val selfVisibility = attrs["visibility"]
+                ?: Visibility.VISIBLE
+        if (selfVisibility == Visibility.GONE) {
+            return emptyList()
+        }
+        val visibility = selfVisibility == Visibility.VISIBLE
+                && upperVisibility
+        val components = if (children.isEmpty()) {
+            emptyList()
+        } else {
+            buildTool.buildAll(
+                    children,
+                    dataContext,
+                    pageContext,
+                    other,
+                    visibility
+            )
+        }
+        @Suppress("UNCHECKED_CAST")
+        return listOf(factory.create(
+                visibility,
                 attrs,
-                children,
-                factory,
-                pageContext,
-                data,
-                upperVisibility,
+                components as List<Nothing>,
                 other
-        ) ?: throw UnsupportedOperationException()
+        ))
     }
 
     fun transform(
             bindings: BuildTool,
             rawAttrs: Map<String, String>,
             children: List<TemplateNode>,
-            factory: RenderNodeFactory?,
+            factory: RenderNodeFactory<*>?,
+            dataContext: JexlContext,
             pageContext: PageContext,
-            data: ELContext,
-            upperVisibility: Boolean,
-            other: Any
-    ): List<Child> {
-        val attrs = onBind(
-                rawAttrs,
-                pageContext,
-                data
-        )
-        return onBuild(
+            other: Any?,
+            upperVisibility: Boolean = true
+    ): List<Any> {
+        val attrs = if (rawAttrs.isNullOrEmpty()) {
+            emptyMap()
+        } else {
+            dataBinding.bind(
+                    bindings.engine,
+                    dataContext,
+                    pageContext,
+                    rawAttrs
+            )
+        }
+        return onBuildWidget(
                 bindings,
                 attrs,
                 children,
                 factory,
+                dataContext,
                 pageContext,
-                data,
-                upperVisibility,
-                other
+                other,
+                upperVisibility
         )
     }
 }

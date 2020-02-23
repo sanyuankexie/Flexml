@@ -1,24 +1,24 @@
 package com.guet.flexbox.build
 
-import com.guet.flexbox.transaction.PageContext
+import com.guet.flexbox.PageContext
 import com.guet.flexbox.TemplateNode
-import com.guet.flexbox.el.ELContext
+import org.apache.commons.jexl3.JexlContext
 
 object When : Declaration() {
 
-    override val attributeInfoSet: AttributeInfoSet
-        get() = emptyMap()
+    override val dataBinding: DataBinding
+        get() = DataBinding.empty
 
-    override fun onBuild(
+    override fun onBuildWidget(
             buildTool: BuildTool,
             attrs: AttributeSet,
             children: List<TemplateNode>,
-            factory: RenderNodeFactory?,
+            factory: RenderNodeFactory<*>?,
+            dataContext: JexlContext,
             pageContext: PageContext,
-            data: ELContext,
-            upperVisibility: Boolean,
-            other: Any
-    ): List<Child> {
+            other: Any?,
+            upperVisibility: Boolean
+    ): List<Any> {
         var elseItem: TemplateNode? = null
         if (children.isNullOrEmpty()) {
             return emptyList()
@@ -26,18 +26,19 @@ object When : Declaration() {
         for (item in children) {
             if (item.type == "case") {
                 val itemAttrs = item.attrs
-                if (itemAttrs != null && If.onBind(
-                                itemAttrs,
+                if (itemAttrs != null && If.dataBinding.bind(
+                                buildTool.engine,
+                                dataContext,
                                 pageContext,
-                                data
+                                itemAttrs
                         )["test"] == true) {
                     return item.children?.let {
                         buildTool.buildAll(
                                 children,
+                                dataContext,
                                 pageContext,
-                                data,
-                                upperVisibility,
-                                other
+                                other,
+                                upperVisibility
                         )
                     } ?: emptyList()
                 }
@@ -46,11 +47,12 @@ object When : Declaration() {
             }
         }
         return elseItem?.children?.let {
-            buildTool.buildAll(it,
+            buildTool.buildAll(
+                    it,
+                    dataContext,
                     pageContext,
-                    data,
-                    upperVisibility,
-                    other
+                    other,
+                    upperVisibility
             )
         } ?: emptyList()
     }

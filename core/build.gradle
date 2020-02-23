@@ -34,11 +34,9 @@ dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
 
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:${kotlinVersion}"
-    implementation 'org.apache.commons:commons-jexl3:3.1'
+    api 'org.apache.commons:commons-jexl3:3.1'
 
     api 'androidx.annotation:annotation:1.1.0'
-
-    //api project(':el')
 
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'androidx.test:runner:1.2.0'

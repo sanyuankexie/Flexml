@@ -1,34 +1,35 @@
 package com.guet.flexbox.build
 
-import com.guet.flexbox.transaction.PageContext
+import com.guet.flexbox.PageContext
 import com.guet.flexbox.TemplateNode
-import com.guet.flexbox.el.ELContext
+import org.apache.commons.jexl3.JexlContext
 
 object If : Declaration() {
 
-    override val attributeInfoSet: AttributeInfoSet by create {
-        bool("test")
-    }
+    override val dataBinding by DataBinding
+            .create {
+                bool("test")
+            }
 
-    override fun onBuild(
+    override fun onBuildWidget(
             buildTool: BuildTool,
             attrs: AttributeSet,
             children: List<TemplateNode>,
-            factory: RenderNodeFactory?,
+            factory: RenderNodeFactory<*>?,
+            dataContext: JexlContext,
             pageContext: PageContext,
-            data: ELContext,
-            upperVisibility: Boolean,
-            other: Any
-    ): List<Child> {
+            other: Any?,
+            upperVisibility: Boolean
+    ): List<Any> {
         return if (attrs.getValue("test") as? Boolean != true) {
             emptyList()
         } else {
             buildTool.buildAll(
                     children,
+                    dataContext,
                     pageContext,
-                    data,
-                    upperVisibility,
-                    other
+                    other,
+                    upperVisibility
             )
         }
     }

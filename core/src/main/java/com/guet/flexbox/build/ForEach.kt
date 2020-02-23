@@ -1,43 +1,80 @@
 package com.guet.flexbox.build
 
-import com.guet.flexbox.transaction.PageContext
+import com.guet.flexbox.PageContext
 import com.guet.flexbox.TemplateNode
-import com.guet.flexbox.el.ELContext
-import com.guet.flexbox.el.scope
-import com.guet.flexbox.el.tryGetValue
+import com.guet.flexbox.el.ScopeContext
+import org.apache.commons.jexl3.JexlContext
+import org.apache.commons.jexl3.JexlEngine
+import org.apache.commons.jexl3.MapContext
+import java.lang.reflect.Array as RArray
 
 object ForEach : Declaration() {
 
-    override val attributeInfoSet: AttributeInfoSet by create {
+    override val dataBinding by DataBinding.create {
         text("var")
-        typed("items") { _, props, raw ->
-            props.tryGetValue<List<Any>>(raw)
+        typed("items", TextToItems)
+    }
+
+    private object TextToItems : TextToAttribute<Any> {
+        override fun cast(
+                engine: JexlEngine,
+                dataContext: JexlContext,
+                pageContext: PageContext,
+                raw: String
+        ): Any? {
+            val trim = raw.trim()
+            return if (raw.isExpr) {
+                val expr = engine.createExpression(raw.innerExpr)
+                val o = expr.evaluate(dataContext)
+                if (o != null && (o.javaClass.isArray || o is Collection<*>)) {
+                    o
+                } else {
+                    null
+                }
+            } else if (trim.startsWith("[") && trim.endsWith("]")) {
+                engine.createExpression(trim).evaluate(MapContext()) as Array<*>
+            } else {
+                null
+            }
         }
     }
 
-    override fun onBuild(
+    override fun onBuildWidget(
             buildTool: BuildTool,
             attrs: AttributeSet,
             children: List<TemplateNode>,
-            factory: RenderNodeFactory?,
+            factory: RenderNodeFactory<*>?,
+            dataContext: JexlContext,
             pageContext: PageContext,
-            data: ELContext,
-            upperVisibility: Boolean,
-            other: Any
-    ): List<Child> {
+            other: Any?,
+            upperVisibility: Boolean
+    ): List<Any> {
         val name = attrs.getValue("var") as String
-        @Suppress("UNCHECKED_CAST")
-        val items = attrs.getValue("items") as List<Any>
-        return items.map { item ->
-            data.scope(mapOf(name to item)) {
+        val items = attrs.getValue("items")
+        return if (items.javaClass.isArray) {
+            (0 until RArray.getLength(items)).map {
+                val item = RArray.get(items, it)
+                val scope = ScopeContext(mapOf(name to item), dataContext)
                 buildTool.buildAll(
                         children,
+                        scope,
                         pageContext,
-                        data,
-                        upperVisibility,
-                        other
+                        other,
+                        upperVisibility
                 )
-            }
-        }.flatten()
+            }.flatten()
+        } else {
+            val collection = items as Collection<*>
+            collection.map {
+                val scope = ScopeContext(mapOf(name to it), dataContext)
+                buildTool.buildAll(
+                        children,
+                        scope,
+                        pageContext,
+                        other,
+                        upperVisibility
+                )
+            }.flatten()
+        }
     }
 }
