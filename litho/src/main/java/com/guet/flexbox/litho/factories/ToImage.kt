@@ -5,7 +5,6 @@ import android.graphics.drawable.GradientDrawable.Orientation
 import android.widget.ImageView
 import com.facebook.litho.Component
 import com.facebook.litho.ComponentContext
-import com.facebook.litho.Row
 import com.facebook.litho.widget.EmptyComponent
 import com.facebook.litho.widget.Image
 import com.guet.flexbox.build.AttributeSet
@@ -109,6 +108,9 @@ object ToImage : RenderNodeFactory {
                 else -> Unit
             }
         }
-        return Row.create(c).build()
+        return EmptyComponent.create(c)
+                .build()
     }
+
+
 }

@@ -1,21 +1,20 @@
 package com.guet.flexbox.litho.widget
 
 import android.content.Context
-import android.graphics.drawable.Drawable
+import android.graphics.Color
 import android.util.AttributeSet
 import android.view.ViewGroup
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager2.widget.ViewPager2
-import com.bumptech.glide.Glide
-import com.bumptech.glide.request.target.Target
-import com.bumptech.glide.request.transition.Transition
 import com.facebook.litho.*
 import com.facebook.litho.annotations.*
+import com.facebook.litho.widget.EmptyComponent
+import com.facebook.yoga.YogaAlign
+import com.facebook.yoga.YogaEdge
+import com.facebook.yoga.YogaJustify
 import com.guet.flexbox.enums.Orientation
-import com.guet.flexbox.litho.drawable.DelegateTarget
-import com.guet.flexbox.litho.drawable.DrawableWrapper
-import com.guet.flexbox.litho.drawable.NoOpDrawable
+import com.guet.flexbox.litho.BuildConfig
 import com.guet.flexbox.litho.toPx
 import java.util.*
 import kotlin.collections.ArrayList
@@ -41,6 +40,12 @@ object BannerSpec {
     @PropDefault
     val indicatorEnable: Boolean = true
 
+    @PropDefault
+    val indicatorSizePx: Int = 5.toPx()
+
+    @PropDefault
+    val indicatorMarginPx: Int = 2.5f.toPx()
+
     @OnCreateMountContent
     fun onCreateMountContent(c: Context): BannerLithoView {
         return BannerLithoView(c)
@@ -64,6 +69,7 @@ object BannerSpec {
             @Prop(optional = true) isCircular: Boolean,
             @Prop(optional = true) indicatorSizePx: Int,
             @Prop(optional = true) indicatorHeightPx: Int,
+            @Prop(optional = true) indicatorMarginPx: Int,
             @Prop(optional = true) indicatorSelected: Any?,
             @Prop(optional = true) indicatorUnselected: Any?,
             @Prop(optional = true) indicatorEnable: Boolean,
@@ -81,6 +87,7 @@ object BannerSpec {
                 realChildrenCount,
                 indicatorSizePx,
                 indicatorHeightPx,
+                indicatorMarginPx,
                 indicatorSelected,
                 indicatorUnselected,
                 indicatorEnable,
@@ -250,6 +257,37 @@ object BannerSpec {
         view.unbind()
     }
 
+    @ShouldUpdate
+    fun shouldUpdate(
+            @Prop(optional = true) orientation: Diff<Orientation>,
+            @Prop(optional = true) isCircular: Diff<Boolean>,
+            @Prop(optional = true) indicatorSizePx: Diff<Int>,
+            @Prop(optional = true) indicatorHeightPx: Diff<Int>,
+            @Prop(optional = true) indicatorMarginPx: Diff<Int>,
+            @Prop(optional = true) indicatorSelected: Diff<Any?>,
+            @Prop(optional = true) indicatorUnselected: Diff<Any?>,
+            @Prop(optional = true) indicatorEnable: Diff<Boolean>,
+            @Prop(optional = true, varArg = "child") children: Diff<List<@JvmWildcard Component>?>
+    ): Boolean {
+        return fastDiff(
+                orientation,
+                isCircular,
+                indicatorSizePx,
+                indicatorHeightPx,
+                indicatorMarginPx,
+                indicatorSelected,
+                indicatorUnselected,
+                indicatorEnable,
+                children
+        )
+    }
+
+    private fun fastDiff(vararg diff: Diff<out Any?>): Boolean {
+        return diff.all {
+            Objects.deepEquals(it.next, it.previous)
+        }
+    }
+
     class PagePosition(var value: Int = 0) : ViewPager2.OnPageChangeCallback() {
         override fun onPageSelected(position: Int) {
             value = position
@@ -259,21 +297,28 @@ object BannerSpec {
     class BannerLithoView @JvmOverloads constructor(
             context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
     ) : ViewGroup(context, attrs, defStyleAttr), HasLithoViewChildren {
-        private var indicatorEnable: Boolean = false
+
         private var componentWidth = 0
         private var componentHeight = 0
+
+        private var indicatorEnable: Boolean = false
+        private var indicatorSizePx: Int = 0
+        private var indicatorMarginPx: Int = 0
         private var indicatorHeightPx = 0
+        private var indicatorSelected: Any? = null
+        private var indicatorUnselected: Any? = null
+
         private var isCircular: Boolean = false
+        private var timeSpan: Long = 0
+
         private var realChildrenCount: Int = 0
         private var componentTrees: ArrayList<ComponentTree>? = null
-        private var indicatorSizePx: Int = 0
-        private var timeSpan: Long = 0
         private var position: PagePosition? = null
 
+        private val indicators = LithoView(context)
         private val viewPager2 = ViewPager2(context)
         private val adapter = InternalAdapter()
-        private val selectedDrawable = IndicatorDrawable()
-        private val unselectedDrawable = IndicatorDrawable()
+
         private val autoNextPosition = object : Runnable {
             override fun run() {
                 val trees = componentTrees
@@ -292,14 +337,88 @@ object BannerSpec {
                 postDelayed(this, timeSpan)
             }
         }
+        private val onPageChanged = object : ViewPager2.OnPageChangeCallback() {
+            override fun onPageSelected(position: Int) {
+                val c = indicators.componentContext
+                val trees = componentTrees
+                if (!indicatorEnable || trees.isNullOrEmpty()
+                        || realChildrenCount <= 0 || indicatorSizePx <= 0) {
+                    indicators.setComponent(
+                            EmptyComponent.create(c).build()
+                    )
+                    return
+                }
+                val realPosition = if (isCircular) {
+                    position % realChildrenCount
+                } else {
+                    position
+                }
+                val indicatorSelected = this@BannerLithoView
+                        .indicatorSelected
+                val indicatorUnselected = this@BannerLithoView
+                        .indicatorUnselected
+                val rowBuilder = Row.create(c)
+                        .justifyContent(YogaJustify.CENTER)
+                        .alignItems(YogaAlign.CENTER)
+                        .marginPx(YogaEdge.BOTTOM, indicatorHeightPx)
+                        .justifyContent(YogaJustify.CENTER)
+                (0 until realChildrenCount).forEach {
+                    if (it == realPosition) {
+                        if (indicatorSelected != null) {
+                            rowBuilder.child(GlideImage.create(c)
+                                    .marginPx(YogaEdge.HORIZONTAL, indicatorMarginPx)
+                                    .model(indicatorSelected)
+                                    .widthPx(indicatorSizePx)
+                                    .heightPx(indicatorSizePx)
+                            )
+                        } else {
+                            rowBuilder.child(Row.create(c)
+                                    .marginPx(YogaEdge.HORIZONTAL, indicatorMarginPx)
+                                    .widthPx(indicatorSizePx)
+                                    .heightPx(indicatorSizePx)
+                                    .apply {
+                                        if (BuildConfig.DEBUG) {
+                                            backgroundColor(Color.RED)
+                                        }
+                                    })
+                        }
+                    } else {
+                        if (indicatorUnselected != null) {
+                            rowBuilder.child(GlideImage.create(c)
+                                    .marginPx(YogaEdge.HORIZONTAL, indicatorMarginPx)
+                                    .model(indicatorUnselected)
+                                    .widthPx(indicatorSizePx)
+                                    .heightPx(indicatorSizePx)
+                            )
+                        } else {
+                            rowBuilder.child(Row.create(c)
+                                    .marginPx(YogaEdge.HORIZONTAL, indicatorMarginPx)
+                                    .widthPx(indicatorSizePx)
+                                    .heightPx(indicatorSizePx)
+                                    .apply {
+                                        if (BuildConfig.DEBUG) {
+                                            backgroundColor(Color.BLUE)
+                                        }
+                                    })
+                        }
+                    }
+                }
+                indicators.setComponent(Row.create(c)
+                        .flexGrow(1f)
+                        .justifyContent(YogaJustify.CENTER)
+                        .alignItems(YogaAlign.FLEX_END)
+                        .child(Row.create(c)
+                                .marginPx(YogaEdge.BOTTOM, indicatorHeightPx)
+                                .justifyContent(YogaJustify.CENTER)
+                                .child(rowBuilder)
+                                .build())
+                        .build())
+                indicators.performIncrementalMount()
+            }
+        }
 
         init {
             addView(viewPager2, LayoutParams(-1, -1))
-            viewPager2.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
-                override fun onPageSelected(position: Int) {
-
-                }
-            })
             val rv = viewPager2.getChildAt(0) as RecyclerView
             rv.apply {
                 isFocusableInTouchMode = false
@@ -309,6 +428,8 @@ object BannerSpec {
             manager?.apply {
                 initialPrefetchItemCount = 3
             }
+            addView(indicators, LayoutParams(-1, -1))
+            viewPager2.registerOnPageChangeCallback(onPageChanged)
         }
 
         fun mount(
@@ -319,6 +440,7 @@ object BannerSpec {
                 @FromBoundsDefined realChildrenCount: Int,
                 @Prop(optional = true) indicatorSizePx: Int,
                 @Prop(optional = true) indicatorHeightPx: Int,
+                @Prop(optional = true) indicatorMarginPx: Int,
                 @Prop(optional = true) indicatorSelected: Any?,
                 @Prop(optional = true) indicatorUnselected: Any?,
                 @Prop(optional = true) indicatorEnable: Boolean,
@@ -328,23 +450,14 @@ object BannerSpec {
             this.indicatorSizePx = indicatorSizePx
             this.realChildrenCount = realChildrenCount
             this.indicatorHeightPx = indicatorHeightPx
+            this.indicatorMarginPx = indicatorMarginPx
             this.isCircular = isCircular
             this.indicatorEnable = indicatorEnable
             this.componentWidth = width
             this.componentHeight = height
             if (indicatorEnable) {
-                if (indicatorSelected != null) {
-                    Glide.with(this)
-                            .load(indicatorSelected)
-                            .override(0, 0)
-                            .into(selectedDrawable)
-                }
-                if (indicatorUnselected != null) {
-                    Glide.with(this)
-                            .load(indicatorUnselected)
-                            .override(0, 0)
-                            .into(unselectedDrawable)
-                }
+                this.indicatorSelected = indicatorSelected
+                this.indicatorUnselected = indicatorUnselected
             }
             if (componentTrees.isNullOrEmpty()) {
                 this.componentTrees = null
@@ -382,8 +495,6 @@ object BannerSpec {
                 viewPager2.unregisterOnPageChangeCallback(pos)
                 position = null
             }
-            Glide.with(this).clear(selectedDrawable)
-            Glide.with(this).clear(unselectedDrawable)
         }
 
         override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
@@ -396,6 +507,7 @@ object BannerSpec {
 
         override fun onLayout(changed: Boolean, l: Int, t: Int, r: Int, b: Int) {
             viewPager2.layout(0, 0, measuredWidth, measuredHeight)
+            indicators.layout(0, 0, measuredWidth, measuredHeight)
         }
 
         override fun obtainLithoViewChildren(lithoViews: MutableList<LithoView>) {
@@ -409,6 +521,7 @@ object BannerSpec {
         }
 
         fun bind(@Prop(optional = true) timeSpan: Long) {
+            indicators.rebind()
             this.timeSpan = timeSpan
             if (timeSpan <= 0 || componentTrees.isNullOrEmpty()
                     || realChildrenCount == 0) {
@@ -419,6 +532,7 @@ object BannerSpec {
         }
 
         fun unbind() {
+            indicators.unbind()
             removeCallbacks(autoNextPosition)
         }
 
@@ -455,22 +569,4 @@ object BannerSpec {
             }
         }
     }
-
-    class IndicatorDrawable : DrawableWrapper<Drawable>(NoOpDrawable()),
-            Target<Drawable> by DelegateTarget() {
-        private val cacheNoOpDrawable = wrappedDrawable
-
-        override fun onResourceReady(
-                resource: Drawable,
-                transition: Transition<in Drawable>?
-        ) {
-            wrappedDrawable = resource
-            invalidateSelf()
-        }
-
-        override fun onLoadCleared(placeholder: Drawable?) {
-            wrappedDrawable = cacheNoOpDrawable
-        }
-    }
 }
-

@@ -72,8 +72,7 @@ internal object GlideImageSpec {
     fun onMount(
             c: ComponentContext,
             image: GlideDrawable,
-            @Prop(optional = true) resId: Int,
-            @Prop(optional = true) url: String?,
+            @Prop(optional = true) model: Any,
             @Prop(optional = true) blurRadius: Float,
             @Prop(optional = true) blurSampling: Float,
             @Prop(optional = true) scaleType: ScaleType,
@@ -84,29 +83,18 @@ internal object GlideImageSpec {
             @FromBoundsDefined width: Int,
             @FromBoundsDefined height: Int
     ) {
-        val model: Any? = if (resId != 0) {
-            resId
-        } else {
-            if (url.isNullOrEmpty()) {
-                null
-            } else {
-                url
-            }
-        }
-        if (model != null) {
-            image.mount(
-                    model,
-                    width,
-                    height,
-                    blurRadius,
-                    blurSampling,
-                    scaleType,
-                    leftTopRadius,
-                    rightTopRadius,
-                    rightBottomRadius,
-                    leftBottomRadius
-            )
-        }
+        image.mount(
+                model,
+                width,
+                height,
+                blurRadius,
+                blurSampling,
+                scaleType,
+                leftTopRadius,
+                rightTopRadius,
+                rightBottomRadius,
+                leftBottomRadius
+        )
     }
 
     @OnUnmount
@@ -117,17 +105,15 @@ internal object GlideImageSpec {
 
     @ShouldUpdate(onMount = true)
     fun shouldUpdate(
-            @Prop(optional = true) resId: Diff<Int>,
             @Prop(optional = true) blurSampling: Diff<Float>,
             @Prop(optional = true) blurRadius: Diff<Float>,
             @Prop(optional = true) scaleType: Diff<ScaleType>,
-            @Prop(optional = true) url: Diff<String?>,
+            @Prop(optional = true) model: Diff<Any>,
             @Prop(optional = true) leftTopRadius: Diff<Float>,
             @Prop(optional = true) rightTopRadius: Diff<Float>,
             @Prop(optional = true) rightBottomRadius: Diff<Float>,
             @Prop(optional = true) leftBottomRadius: Diff<Float>): Boolean {
-        return url.next != url.previous
-                || resId.next != resId.previous
+        return model.next != model.previous
                 || blurSampling.next != blurSampling.previous
                 || blurRadius.next != blurRadius.previous
                 || scaleType.next != scaleType.previous

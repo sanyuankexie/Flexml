@@ -25,17 +25,10 @@ internal object ToGlideImage : ToComponent<GlideImage.Builder>(CommonAssigns) {
             imageAspectRatio(value)
         }
         register("src") { _, _, value: Any ->
-            if (value is String) {
-                url(value)
-                Glide.with(context!!.androidContext)
-                        .load(value)
-                        .preload()
-            } else if (value is Int) {
-                resId(value)
-                Glide.with(context!!.androidContext)
-                        .load(value)
-                        .preload()
-            }
+            Glide.with(context!!.androidContext)
+                    .load(value)
+                    .preload()
+            model(value)
         }
         register("borderLeftTopRadius") { _, _, value: Float ->
             leftTopRadius(value.toPxFloat())
