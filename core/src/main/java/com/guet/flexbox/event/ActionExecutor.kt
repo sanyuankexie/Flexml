@@ -1,6 +1,4 @@
-package com.guet.flexbox.transaction
-
-import com.guet.flexbox.event.ActionKey
+package com.guet.flexbox.event
 
 interface ActionExecutor {
     fun execute(
