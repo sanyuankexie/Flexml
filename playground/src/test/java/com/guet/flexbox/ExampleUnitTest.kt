@@ -1,9 +1,10 @@
 package com.guet.flexbox
 
+import okhttp3.OkHttpClient
+import okhttp3.Request
 import org.junit.Assert
 import org.junit.Test
-import java.net.DatagramSocket
-import java.net.InetAddress
+import java.util.concurrent.TimeUnit
 
 /**
  * Example local unit test, which will execute on the development machine (host).
@@ -14,7 +15,15 @@ class ExampleUnitTest {
     @Test
     fun addition_isCorrect() {
 
-        println(findHostAddress())
+        val okHttpClient = OkHttpClient.Builder()
+                .connectTimeout(500, TimeUnit.MILLISECONDS)
+                .build()
+        val o = okHttpClient.newCall(Request.Builder()
+                .url("http://localhost:8080/qrcode")
+                .get()
+                .build())
+                .execute()
+        println(o)
         Assert.assertEquals(4, 2 + 2.toLong())
     }
 

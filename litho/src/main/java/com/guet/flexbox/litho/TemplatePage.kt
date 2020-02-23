@@ -81,7 +81,7 @@ class TemplatePage @WorkerThread internal constructor(
     }
 
     @AnyThread
-    fun computeNewLayout() {
+    internal fun computeNewLayout() {
         InternalThreads.runOnAsyncThread(computeRunnable)
     }
 

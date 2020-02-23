@@ -9,13 +9,14 @@ import com.guet.flexbox.transaction.PageTransaction
 import com.guet.flexbox.transaction.dispatch.ActionKey
 import com.guet.flexbox.transaction.dispatch.Dispatcher
 import com.guet.flexbox.transaction.dispatch.HttpAction
+import java.util.*
 
 internal class HttpTransactionImpl(
         contextImpl: PageContextImpl
 ) : SendTransactionImpl(contextImpl), HttpTransaction {
 
     private var url: String = ""
-    private var method: String = "get"
+    private var method: String = "GET"
     private lateinit var prams: ArrayMap<String, String>
     private var success: LambdaExpression? = null
     private var error: LambdaExpression? = null
@@ -34,7 +35,7 @@ internal class HttpTransactionImpl(
     }
 
     override fun method(method: String): HttpTransaction {
-        this.method = method
+        this.method = method.toUpperCase(Locale.UK)
         return getWrapper()
     }
 
@@ -47,12 +48,12 @@ internal class HttpTransactionImpl(
     }
 
     override fun error(lambdaExpression: LambdaExpression): HttpTransaction {
-        success = lambdaExpression
+        error = lambdaExpression
         return getWrapper()
     }
 
     override fun success(lambdaExpression: LambdaExpression): HttpTransaction {
-        error = lambdaExpression
+        success = lambdaExpression
         return getWrapper()
     }
 
@@ -107,11 +108,11 @@ internal class HttpTransactionImpl(
         override fun onResponse(data: String?) {
             if (success != null) {
                 if (Looper.myLooper() == looper) {
-                    success.invoke()
+                    success.invoke(data)
                     contextImpl.dispatchQueue(dispatcher)
                 } else {
                     post {
-                        success.invoke()
+                        success.invoke(data)
                         contextImpl.dispatchQueue(dispatcher)
                     }
                 }

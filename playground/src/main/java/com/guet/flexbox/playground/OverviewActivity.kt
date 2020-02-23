@@ -111,18 +111,22 @@ class OverviewActivity : AppCompatActivity() {
             hostingView = findViewById(R.id.host)
             hostingView.httpClient = object : HttpClient {
                 override fun enqueue(action: HttpAction) {
+                    val body: FormBody? = if (action.formBody.isNotEmpty()) {
+                        val builder = FormBody.Builder()
+                        action.formBody.forEach {
+                            builder.add(it.key, it.value)
+                        }
+                        builder.build()
+                    } else {
+                        null
+                    }
                     val request = Request.Builder()
                             .url(action.url)
-                            .method(action.method, FormBody.Builder()
-                                    .apply {
-                                        action.prams.forEach {
-                                            add(it.key, it.value)
-                                        }
-                                    }
-                                    .build())
+                            .method(action.method, body)
                             .build()
                     httpClient.newCall(request).enqueue(object : Callback {
                         override fun onFailure(call: Call, e: IOException) {
+                            e.printStackTrace()
                             action.callback.onError()
                         }
 

@@ -5,6 +5,6 @@
         width="360"
         height="800"
         text="${html}"
-        onClick="${()->{pageContext.http().method('get').url('https://www.baidu.com').success((htmlData)->{pageContext.send(htmlData)}).commit()}}">
+        onClick="${()->{pageContext.http().method('get').url('http://192.168.0.5:8080/qrcode').success((htmlData)->{pageContext.refresh().update('html',htmlData).commit()}).commit()}}">
     </Text>
 </Flex>
