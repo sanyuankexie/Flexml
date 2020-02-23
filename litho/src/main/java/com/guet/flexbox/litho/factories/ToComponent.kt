@@ -9,7 +9,7 @@ import com.guet.flexbox.build.Child
 import com.guet.flexbox.build.RenderNodeFactory
 import com.guet.flexbox.litho.ChildComponent
 import com.guet.flexbox.litho.drawable.*
-import com.guet.flexbox.litho.resolve.MatcherProvider
+import com.guet.flexbox.litho.resolve.Matcher
 import com.guet.flexbox.litho.resolve.UrlType
 import com.guet.flexbox.litho.resolve.getFloatValue
 import com.guet.flexbox.litho.toPx
@@ -19,14 +19,14 @@ abstract class ToComponent<C : Component.Builder<*>>(
         private val parent: ToComponent<in C>? = null
 ) : RenderNodeFactory {
 
-    protected abstract val matcherProvider: MatcherProvider<C>
+    protected abstract val matcherProvider: Matcher.Provider<C>
 
     private fun assign(
             c: C,
             display: Boolean,
             attrs: Map<String, Any>
     ) {
-        val output = matcherProvider(c, display, attrs)
+        val output = matcherProvider.get(c, display, attrs)
                 .match()
         if (output.isNotEmpty() && parent != null) {
             parent.assign(c, display, attrs)

@@ -9,19 +9,19 @@ internal fun AttributeSet.getFloatValue(name: String): Float {
     return (this[name] as? Float) ?: 0f
 }
 
-typealias MatcherProvider<C> = (
-        component: C,
-        display: Boolean,
-        attrs: Map<String, Any>
-) -> Matcher<C>
-
 internal inline fun <C : Component.Builder<*>> createProvider(
         crossinline action: Matcher<C>.() -> Unit
-): MatcherProvider<C> {
-    return { component, display, attrs ->
-        object : Matcher<C>(component, display, attrs) {
-            override fun onMatch() {
-                action()
+): Matcher.Provider<C> {
+    return object : Matcher.Provider<C> {
+        override fun get(
+                component: C,
+                display: Boolean,
+                attrs: Map<String, Any>
+        ): Matcher<C> {
+            return object : Matcher<C>(component, display, attrs) {
+                override fun onMatch() {
+                    action()
+                }
             }
         }
     }

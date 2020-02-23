@@ -32,6 +32,14 @@ abstract class Matcher<C : Component.Builder<*>>(
             missMatch.remove(name)
         }
     }
+
+    interface Provider<C : Component.Builder<*>> {
+        fun get(
+                component: C,
+                display: Boolean,
+                attrs: Map<String, Any>
+        ): Matcher<C>
+    }
 }
 
 
