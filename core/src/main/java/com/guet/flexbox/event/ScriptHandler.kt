@@ -14,8 +14,8 @@ internal class ScriptHandler(
     override fun handleEvent(v: View?, args: Array<out Any?>?) {
         script.execute(dataContext, args)
         pageContext.executeTransaction(ComposeExecutor(
-                pageContext.newHostEventExecutor(v),
-                ScriptExecutor(dataContext)
+                ScriptExecutor(dataContext),
+                pageContext.newHostEventExecutor(v)
         ))
     }
 }
