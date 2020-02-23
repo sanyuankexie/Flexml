@@ -69,6 +69,3 @@ internal object EnumMappings {
     }
 }
 
-fun <T> Enum<*>.mapping(): T {
-    return EnumMappings.get(this)
-}

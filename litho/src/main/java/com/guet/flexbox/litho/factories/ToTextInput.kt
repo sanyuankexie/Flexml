@@ -4,15 +4,16 @@ import android.graphics.Typeface
 import android.text.TextUtils.TruncateAt
 import com.facebook.litho.ComponentContext
 import com.facebook.litho.widget.TextInput
-import com.guet.flexbox.build.event.EventHandler
 import com.guet.flexbox.build.AttributeSet
+import com.guet.flexbox.build.event.EventHandler
 import com.guet.flexbox.enums.TextStyle
 import com.guet.flexbox.litho.EventAdapter
+import com.guet.flexbox.litho.resolve.createProvider
 import com.guet.flexbox.litho.resolve.mapping
 import com.guet.flexbox.litho.toPx
 
 internal object ToTextInput : ToComponent<TextInput.Builder>(CommonAssigns) {
-    override val attributeAssignSet: AttributeAssignSet<TextInput.Builder> by create {
+    override val matcherProvider = createProvider<TextInput.Builder> {
         register("maxLines") { _, _, value: Float ->
             maxLines(value.toInt())
         }

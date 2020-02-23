@@ -9,7 +9,9 @@ import com.guet.flexbox.build.Child
 import com.guet.flexbox.build.RenderNodeFactory
 import com.guet.flexbox.litho.ChildComponent
 import com.guet.flexbox.litho.drawable.*
+import com.guet.flexbox.litho.resolve.MatcherProvider
 import com.guet.flexbox.litho.resolve.UrlType
+import com.guet.flexbox.litho.resolve.getFloatValue
 import com.guet.flexbox.litho.toPx
 import com.guet.flexbox.litho.toPxFloat
 
@@ -17,21 +19,17 @@ abstract class ToComponent<C : Component.Builder<*>>(
         private val parent: ToComponent<in C>? = null
 ) : RenderNodeFactory {
 
-    protected abstract val attributeAssignSet: AttributeAssignSet<C>
+    protected abstract val matcherProvider: MatcherProvider<C>
 
     private fun assign(
             c: C,
-            name: String,
-            value: Any,
             display: Boolean,
-            other: Map<String, Any>
+            attrs: Map<String, Any>
     ) {
-        @Suppress("UNCHECKED_CAST")
-        val assignment = attributeAssignSet[name] as? Assignment<C, Any>
-        if (assignment != null) {
-            assignment(c, display, other, value)
-        } else {
-            parent?.assign(c, name, value, display, other)
+        val output = matcherProvider(c, display, attrs)
+                .match()
+        if (output.isNotEmpty() && parent != null) {
+            parent.assign(c, display, attrs)
         }
     }
 
@@ -56,9 +54,7 @@ abstract class ToComponent<C : Component.Builder<*>>(
     ): Component {
         val com = create(c, visibility, attrs)
         prepareAssign(attrs)
-        for ((key, value) in attrs) {
-            assign(com, key, value, visibility, attrs)
-        }
+        assign(com, visibility, attrs)
         createBackgroundWithBorder(com, attrs)
         onInstallChildren(com, visibility, attrs, children)
         return com.build()
