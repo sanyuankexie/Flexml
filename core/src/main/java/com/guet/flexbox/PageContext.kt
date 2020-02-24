@@ -33,7 +33,7 @@ class PageContext(
     }
 
     @NoJexl
-    override fun get(name: String?): Any {
+    override fun get(name: String?): Any? {
         return if (name != "pageContext") {
             data.get(name)
         } else {
