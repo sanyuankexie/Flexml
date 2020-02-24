@@ -1,38 +1,30 @@
 package com.guet.flexbox.transaction
 
-import androidx.annotation.CallSuper
-import com.guet.flexbox.PageContext
-import com.guet.flexbox.event.ActionExecutor
-import com.guet.flexbox.event.ActionKey
-import org.apache.commons.jexl3.annotations.NoJexl
+import com.guet.flexbox.eventsystem.EventTarget
+import com.guet.flexbox.eventsystem.event.SendObjectsEvent
+import org.apache.commons.jexl3.JexlContext
 import java.util.*
 
 open class SendTransaction(
-        context: PageContext
-) : PageTransaction(context) {
+        dataContext: JexlContext,
+        eventDispatcher: EventTarget
+) : PageTransaction(dataContext, eventDispatcher) {
 
-    private lateinit var pendingEvents: LinkedList<Array<out Any?>>
+    private lateinit var pendingSends: LinkedList<Array<out Any?>>
 
     fun send(vararg values: Any?): PageTransaction {
-        if (!this::pendingEvents.isInitialized) {
-            pendingEvents = LinkedList()
+        if (!this::pendingSends.isInitialized) {
+            pendingSends = LinkedList()
         }
-        pendingEvents.add(values)
+        pendingSends.add(values)
         return this
     }
 
-    @NoJexl
-    @CallSuper
-    override fun execute(executor: ActionExecutor) {
-        super.execute(executor)
-        if (this::pendingEvents.isInitialized) {
-            pendingEvents.forEach {
-                executor.execute(
-                        ActionKey.SendObjects,
-                        it
-                )
+    override fun commit() {
+        if (this::pendingSends.isInitialized) {
+            pendingSends.forEach {
+                eventDispatcher.dispatchEvent(SendObjectsEvent(it))
             }
         }
     }
-
 }

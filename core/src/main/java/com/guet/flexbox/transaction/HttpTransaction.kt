@@ -3,17 +3,18 @@ package com.guet.flexbox.transaction
 import android.os.Handler
 import android.os.Looper
 import android.util.ArrayMap
-import com.guet.flexbox.PageContext
-import com.guet.flexbox.event.ActionExecutor
-import com.guet.flexbox.event.ActionKey
-import com.guet.flexbox.event.HttpAction
+import com.guet.flexbox.HttpRequest
+import com.guet.flexbox.eventsystem.EventTarget
+import com.guet.flexbox.eventsystem.event.ExecuteEvent
+import com.guet.flexbox.eventsystem.event.HttpRequestEvent
+import org.apache.commons.jexl3.JexlContext
 import org.apache.commons.jexl3.JexlScript
-import org.apache.commons.jexl3.annotations.NoJexl
 import java.util.*
 
 class HttpTransaction(
-        context: PageContext
-) : SendTransaction(context) {
+        dataContext: JexlContext,
+        eventDispatcher: EventTarget
+) : SendTransaction(dataContext, eventDispatcher) {
 
     private var url: String = ""
     private var method: String = "GET"
@@ -49,56 +50,36 @@ class HttpTransaction(
         return this
     }
 
-    @NoJexl
-    override fun execute(executor: ActionExecutor) {
-        super.execute(executor)
-        val prams = if (this::prams.isInitialized) {
-            this.prams
-        } else {
-            emptyMap<String, String>()
-        }
-        executor.execute(
-                ActionKey.HttpRequest,
-                arrayOf(HttpAction(
-                        url,
-                        method,
-                        prams,
-                        newCallback(executor)
-                ))
+    override fun commit() {
+        super.commit()
+        eventDispatcher.dispatchEvent(
+                HttpRequestEvent(HttpRequest(url, method, prams, newCallback()))
         )
     }
 
-    private fun newCallback(executor: ActionExecutor): HttpAction.Callback {
+    private fun newCallback(): HttpRequest.Callback {
         return CallbackImpl(
-                context,
-                executor,
+                dataContext,
+                eventDispatcher,
                 success,
                 error
         )
     }
 
     private class CallbackImpl(
-            private val context: PageContext,
-            private val executor: ActionExecutor,
+            private val dataContext: JexlContext,
+            private val eventDispatcher: EventTarget,
             private val success: JexlScript?,
             private val error: JexlScript?
-    ) : Handler(Looper.getMainLooper()), HttpAction.Callback {
+    ) : Handler(Looper.getMainLooper()), HttpRequest.Callback {
 
         override fun onError() {
             if (error != null) {
                 if (Looper.myLooper() == looper) {
-                    executor.execute(
-                            ActionKey.ExecuteActions,
-                            arrayOf(error)
-                    )
-                    context.executeTransaction(executor)
+                    eventDispatcher.dispatchEvent(ExecuteEvent(dataContext, error))
                 } else {
                     post {
-                        executor.execute(
-                                ActionKey.ExecuteActions,
-                                arrayOf(error)
-                        )
-                        context.executeTransaction(executor)
+                        eventDispatcher.dispatchEvent(ExecuteEvent(dataContext, error))
                     }
                 }
             }
@@ -107,18 +88,10 @@ class HttpTransaction(
         override fun onResponse(data: String?) {
             if (success != null) {
                 if (Looper.myLooper() == looper) {
-                    executor.execute(
-                            ActionKey.ExecuteActions,
-                            arrayOf(success)
-                    )
-                    context.executeTransaction(executor)
+                    eventDispatcher.dispatchEvent(ExecuteEvent(dataContext, success))
                 } else {
                     post {
-                        executor.execute(
-                                ActionKey.ExecuteActions,
-                                arrayOf(success)
-                        )
-                        context.executeTransaction(executor)
+                        eventDispatcher.dispatchEvent(ExecuteEvent(dataContext, success))
                     }
                 }
             }

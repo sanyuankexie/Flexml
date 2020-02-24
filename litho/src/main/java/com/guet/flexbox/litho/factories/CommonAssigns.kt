@@ -5,10 +5,10 @@ import com.facebook.litho.Component
 import com.facebook.litho.ComponentContext
 import com.facebook.litho.VisibleEvent
 import com.facebook.yoga.YogaEdge
-import com.guet.flexbox.event.EventHandler
 import com.guet.flexbox.build.AttributeSet
 import com.guet.flexbox.enums.FlexAlign
-import com.guet.flexbox.litho.EventAdapter
+import com.guet.flexbox.eventsystem.EventAdapter
+import com.guet.flexbox.litho.LithoEventAdapter
 import com.guet.flexbox.litho.resolve.AttributeAssignSet
 import com.guet.flexbox.litho.resolve.mapping
 import com.guet.flexbox.litho.toPx
@@ -60,16 +60,16 @@ internal object CommonAssigns : ToComponent<Component.Builder<*>>() {
                 paddingPx(edge.second, value.toPx())
             }
         }
-        register("clickUrl") { _, other, value: EventHandler ->
+        register("clickUrl") { _, other, value: EventAdapter ->
             if (!other.containsKey("onClick")) {
-                clickHandler(EventAdapter<ClickEvent>(value))
+                clickHandler(LithoEventAdapter<ClickEvent>(value))
             }
         }
-        register("onClick") { _, _, value: EventHandler ->
-            clickHandler(EventAdapter<ClickEvent>(value))
+        register("onClick") { _, _, value: EventAdapter ->
+            clickHandler(LithoEventAdapter<ClickEvent>(value))
         }
-        register("onVisible") { _, _, value: EventHandler ->
-            visibleHandler(EventAdapter<VisibleEvent>(value))
+        register("onVisible") { _, _, value: EventAdapter ->
+            visibleHandler(LithoEventAdapter<VisibleEvent>(value))
         }
     }
 

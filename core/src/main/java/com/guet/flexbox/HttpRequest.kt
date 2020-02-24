@@ -1,6 +1,6 @@
-package com.guet.flexbox.event
+package com.guet.flexbox
 
-class HttpAction(
+class HttpRequest(
         val url: String,
         val method: String,
         val formBody: Map<String, String>,

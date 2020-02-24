@@ -1,8 +1,8 @@
 package com.guet.flexbox.build
 
-import com.guet.flexbox.PageContext
 import com.guet.flexbox.TemplateNode
 import com.guet.flexbox.enums.Visibility
+import com.guet.flexbox.eventsystem.EventTarget
 import org.apache.commons.jexl3.JexlContext
 
 abstract class Declaration {
@@ -15,7 +15,7 @@ abstract class Declaration {
             children: List<TemplateNode>,
             factory: RenderNodeFactory<*>?,
             dataContext: JexlContext,
-            pageContext: PageContext,
+            eventDispatcher: EventTarget,
             other: Any?,
             upperVisibility: Boolean = true
     ): List<Any> {
@@ -35,7 +35,7 @@ abstract class Declaration {
             buildTool.buildAll(
                     children,
                     dataContext,
-                    pageContext,
+                    eventDispatcher,
                     other,
                     visibility
             )
@@ -55,7 +55,7 @@ abstract class Declaration {
             children: List<TemplateNode>,
             factory: RenderNodeFactory<*>?,
             dataContext: JexlContext,
-            pageContext: PageContext,
+            eventDispatcher: EventTarget,
             other: Any?,
             upperVisibility: Boolean = true
     ): List<Any> {
@@ -65,7 +65,7 @@ abstract class Declaration {
             dataBinding.bind(
                     bindings.engine,
                     dataContext,
-                    pageContext,
+                    eventDispatcher,
                     rawAttrs
             )
         }
@@ -75,7 +75,7 @@ abstract class Declaration {
                 children,
                 factory,
                 dataContext,
-                pageContext,
+                eventDispatcher,
                 other,
                 upperVisibility
         )

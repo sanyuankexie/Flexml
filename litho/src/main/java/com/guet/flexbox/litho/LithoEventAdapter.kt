@@ -1,21 +1,17 @@
 package com.guet.flexbox.litho
 
-import com.facebook.litho.ClickEvent
-import com.facebook.litho.EventDispatcher
-import com.facebook.litho.HasEventDispatcher
-import com.facebook.litho.VisibleEvent
+import com.facebook.litho.*
 import com.facebook.litho.widget.TextChangedEvent
-import com.guet.flexbox.event.EventHandler
-import com.facebook.litho.EventHandler as BaseEventHandler
+import com.guet.flexbox.eventsystem.EventAdapter
 
-internal class EventAdapter<T>(
-        private val target: EventHandler
-) : BaseEventHandler<T>(EventSystemAdapter, 0) {
+internal class LithoEventAdapter<T>(
+        private val target: EventAdapter
+) : EventHandler<T>(EventSystemAdapter, 0) {
 
     override fun dispatchEvent(event: T) {
         when (event) {
             is ClickEvent -> {
-                target.handleEvent(event.view, emptyArray())
+                target.handleEvent(event.view, null)
             }
             is TextChangedEvent -> {
                 target.handleEvent(event.view, arrayOf(event.text))
@@ -26,8 +22,8 @@ internal class EventAdapter<T>(
         }
     }
 
-    override fun isEquivalentTo(other: BaseEventHandler<*>?): Boolean {
-        return other is EventAdapter && target == other.target
+    override fun isEquivalentTo(other: EventHandler<*>?): Boolean {
+        return other is LithoEventAdapter && target == other.target
     }
 
     private companion object EventSystemAdapter : HasEventDispatcher,
@@ -35,7 +31,7 @@ internal class EventAdapter<T>(
 
         override fun getEventDispatcher(): EventDispatcher = this
 
-        override fun dispatchOnEvent(eventHandler: BaseEventHandler<in Any?>?, eventState: Any?): Any? {
+        override fun dispatchOnEvent(eventHandler: EventHandler<in Any?>?, eventState: Any?): Any? {
             eventHandler?.dispatchEvent(eventState)
             return null
         }

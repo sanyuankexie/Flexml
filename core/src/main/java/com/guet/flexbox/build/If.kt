@@ -1,7 +1,7 @@
 package com.guet.flexbox.build
 
-import com.guet.flexbox.PageContext
 import com.guet.flexbox.TemplateNode
+import com.guet.flexbox.eventsystem.EventTarget
 import org.apache.commons.jexl3.JexlContext
 
 object If : Declaration() {
@@ -17,7 +17,7 @@ object If : Declaration() {
             children: List<TemplateNode>,
             factory: RenderNodeFactory<*>?,
             dataContext: JexlContext,
-            pageContext: PageContext,
+            eventDispatcher: EventTarget,
             other: Any?,
             upperVisibility: Boolean
     ): List<Any> {
@@ -27,7 +27,7 @@ object If : Declaration() {
             buildTool.buildAll(
                     children,
                     dataContext,
-                    pageContext,
+                    eventDispatcher,
                     other,
                     upperVisibility
             )

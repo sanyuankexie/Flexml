@@ -12,18 +12,18 @@ class FlexBoxAdapter(
         private val onClick: (v: View, url: String) -> Unit
 ) : BaseQuickAdapter<TemplatePage, BaseViewHolder>(R.layout.feed_item) {
 
-    private val callback = object : HostingView.PageEventListener {
-        override fun onEventDispatched(
-                h: HostingView,
-                source: View?,
-                values: Array<out Any?>?
-        ) {
-            val url = values!![0] as? String
-            if (url != null) {
-                onClick(h, url)
-            }
-        }
-    }
+//    private val callback = object : HostingView.PageEventListener {
+//        override fun onEventDispatched(
+//                h: HostingView,
+//                source: View?,
+//                values: Array<out Any?>?
+//        ) {
+//            val url = values!![0] as? String
+//            if (url != null) {
+//                onClick(h, url)
+//            }
+//        }
+//    }
 
 
     override fun onViewRecycled(holder: BaseViewHolder) {
@@ -34,7 +34,7 @@ class FlexBoxAdapter(
 
     override fun convert(helper: BaseViewHolder, item: TemplatePage) {
         val lithoView = helper.getView<HostingView>(R.id.litho)
-        lithoView.pageEventListener = callback
+        //lithoView.pageEventListener = callback
         lithoView.templatePage = item
     }
 }

@@ -1,15 +1,16 @@
 package com.guet.flexbox.transaction
 
-import com.guet.flexbox.PageContext
-import com.guet.flexbox.event.ActionExecutor
-import com.guet.flexbox.event.ActionKey
+import com.guet.flexbox.eventsystem.EventTarget
+import com.guet.flexbox.eventsystem.event.ExecuteEvent
+import com.guet.flexbox.eventsystem.event.RefreshPageEvent
+import org.apache.commons.jexl3.JexlContext
 import org.apache.commons.jexl3.JexlScript
-import org.apache.commons.jexl3.annotations.NoJexl
 import java.util.*
 
 class RefreshTransaction(
-        context: PageContext
-) : SendTransaction(context) {
+        dataContext: JexlContext,
+        eventDispatcher: EventTarget
+) : SendTransaction(dataContext, eventDispatcher) {
 
     private lateinit var paddingModify: LinkedList<JexlScript>
 
@@ -21,17 +22,13 @@ class RefreshTransaction(
         return this
     }
 
-    @NoJexl
-    override fun execute(executor: ActionExecutor) {
-        super.execute(executor)
+    override fun commit() {
+        super.commit()
         if (this::paddingModify.isInitialized) {
-            executor.execute(
-                    ActionKey.ExecuteActions,
-                    paddingModify.toTypedArray()
-            )
-            executor.execute(
-                    ActionKey.RefreshPage
-            )
+            paddingModify.forEach {
+                eventDispatcher.dispatchEvent(ExecuteEvent(dataContext, it))
+            }
+            eventDispatcher.dispatchEvent(RefreshPageEvent())
         }
     }
 }

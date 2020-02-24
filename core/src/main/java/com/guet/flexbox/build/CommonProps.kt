@@ -1,11 +1,15 @@
 package com.guet.flexbox.build
 
-import com.guet.flexbox.PageContext
+import android.view.View
 import com.guet.flexbox.enums.FlexAlign
 import com.guet.flexbox.enums.Visibility
-import com.guet.flexbox.event.ClickUrlHandler
+import com.guet.flexbox.eventsystem.*
+import com.guet.flexbox.eventsystem.event.ClickUrlEvent
+import com.guet.flexbox.eventsystem.event.ClickEvent
+import com.guet.flexbox.eventsystem.event.VisibleEvent
+import com.guet.flexbox.eventsystem.event.TemplateEvent
 import org.apache.commons.jexl3.JexlContext
-import org.apache.commons.jexl3.JexlEngine
+import org.apache.commons.jexl3.JexlScript
 
 object CommonProps : Declaration() {
 
@@ -47,32 +51,37 @@ object CommonProps : Declaration() {
             value("margin$edge")
             value("padding$edge")
         }
-        typed("clickUrl", TextToHandler)
-        event("onClick")
-        event("onVisible")
+        event("clickUrl", object : EventFactory {
+            override fun create(
+                    source: View?,
+                    args: Array<out Any?>?,
+                    dataContext: JexlContext,
+                    script: JexlScript
+            ): TemplateEvent<*, *> {
+                return ClickUrlEvent(source!!, args?.get(0) as? String)
+            }
+        })
+        event("onClick", object : EventFactory {
+            override fun create(
+                    source: View?,
+                    args: Array<out Any?>?,
+                    dataContext: JexlContext,
+                    script: JexlScript
+            ): TemplateEvent<*, *> {
+                return ClickEvent(source!!, dataContext, script)
+            }
+        })
+        event("onVisible", object : EventFactory {
+            override fun create(
+                    source: View?,
+                    args: Array<out Any?>?,
+                    dataContext: JexlContext,
+                    script: JexlScript
+            ): TemplateEvent<*, *> {
+                return VisibleEvent(dataContext, script)
+            }
+        })
     }
 
-    private object TextToHandler : TextToAttribute<ClickUrlHandler> {
-        override fun cast(
-                engine: JexlEngine,
-                dataContext: JexlContext,
-                pageContext: PageContext,
-                raw: String
-        ): ClickUrlHandler? {
-            return if (raw.isExpr) {
-                ClickUrlHandler(
-                        pageContext,
-                        engine.createExpression(raw.innerExpr)
-                                .evaluate(dataContext)
-                                .toString()
-                )
-            } else {
-                ClickUrlHandler(
-                        pageContext,
-                        raw
-                )
-            }
-        }
-    }
 
 }

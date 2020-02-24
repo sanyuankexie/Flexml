@@ -1,7 +1,7 @@
 package com.guet.flexbox.build
 
-import com.guet.flexbox.PageContext
 import com.guet.flexbox.TemplateNode
+import com.guet.flexbox.eventsystem.EventTarget
 import org.apache.commons.jexl3.JexlContext
 
 object Empty : Declaration() {
@@ -15,7 +15,7 @@ object Empty : Declaration() {
             children: List<TemplateNode>,
             factory: RenderNodeFactory<*>?,
             dataContext: JexlContext,
-            pageContext: PageContext,
+            eventDispatcher: EventTarget,
             other: Any?,
             upperVisibility: Boolean
     ): List<Any> {
@@ -25,7 +25,7 @@ object Empty : Declaration() {
                 children,
                 factory,
                 dataContext,
-                pageContext,
+                eventDispatcher,
                 other,
                 false
         )

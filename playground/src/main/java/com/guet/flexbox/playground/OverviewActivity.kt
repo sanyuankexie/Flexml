@@ -4,7 +4,6 @@ import android.os.Bundle
 import android.os.Handler
 import android.os.HandlerThread
 import android.os.Looper
-import android.view.View
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -18,19 +17,15 @@ import com.guet.flexbox.litho.HostingView
 import com.guet.flexbox.litho.TemplatePage
 import com.guet.flexbox.playground.model.MockService
 import com.guet.flexbox.playground.widget.MyRefreshViewImpl
-import com.guet.flexbox.event.HttpAction
-import com.guet.flexbox.HttpClient
 import es.dmoral.toasty.Toasty
 import io.iftech.android.library.refresh.RefreshViewLayout
 import io.iftech.android.library.slide.SlideLayout
 import io.iftech.android.library.slide.configSlideChildTypeHeader
 import io.iftech.android.library.slide.configSlideChildTypeSlider
 import kotlinx.android.synthetic.main.activity_overview.*
-import okhttp3.*
+import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
-import java.io.IOException
-import java.util.*
 import java.util.concurrent.TimeUnit
 
 class OverviewActivity : AppCompatActivity() {
@@ -109,43 +104,43 @@ class OverviewActivity : AppCompatActivity() {
             console.configSlideChildTypeSlider()
             console.adapter = adapter
             hostingView = findViewById(R.id.host)
-            hostingView.httpClient = object : HttpClient {
-                override fun enqueue(action: HttpAction) {
-                    val body: FormBody? = if (action.formBody.isNotEmpty()) {
-                        val builder = FormBody.Builder()
-                        action.formBody.forEach {
-                            builder.add(it.key, it.value)
-                        }
-                        builder.build()
-                    } else {
-                        null
-                    }
-                    val request = Request.Builder()
-                            .url(action.url)
-                            .method(action.method, body)
-                            .build()
-                    httpClient.newCall(request).enqueue(object : Callback {
-                        override fun onFailure(call: Call, e: IOException) {
-                            e.printStackTrace()
-                            action.callback.onError()
-                        }
-
-                        override fun onResponse(call: Call, response: Response) {
-                            action.callback.onResponse(response.body()?.string())
-                        }
-                    })
-                }
-            }
-
-            hostingView.pageEventListener = object : HostingView.PageEventListener {
-                override fun onEventDispatched(
-                        h: HostingView,
-                        source: View?,
-                        values: Array<out Any?>?
-                ) {
-                    adapter.addData("event dispatched:\nvalues=${Arrays.deepToString(values)}")
-                }
-            }
+//            hostingView.httpClient = object : HttpClient {
+//                override fun enqueue(request: HttpRequest) {
+//                    val body: FormBody? = if (request.formBody.isNotEmpty()) {
+//                        val builder = FormBody.Builder()
+//                        request.formBody.forEach {
+//                            builder.add(it.key, it.value)
+//                        }
+//                        builder.build()
+//                    } else {
+//                        null
+//                    }
+//                    val request = Request.Builder()
+//                            .url(request.url)
+//                            .method(request.method, body)
+//                            .build()
+//                    httpClient.newCall(request).enqueue(object : Callback {
+//                        override fun onFailure(call: Call, e: IOException) {
+//                            e.printStackTrace()
+//                            request.callback.onError()
+//                        }
+//
+//                        override fun onResponse(call: Call, response: Response) {
+//                            request.callback.onResponse(response.body()?.string())
+//                        }
+//                    })
+//                }
+//            }
+//
+//            hostingView.pageEventListener = object : HostingView.PageEventListener {
+//                override fun onEventDispatched(
+//                        h: HostingView,
+//                        source: View?,
+//                        values: Array<out Any?>?
+//                ) {
+//                    adapter.addData("event dispatched:\nvalues=${Arrays.deepToString(values)}")
+//                }
+//            }
             header = findViewById(R.id.header)
             header.configSlideChildTypeHeader()
             header.setOnScrollChangeListener { _: NestedScrollView?, _: Int, _: Int, _: Int, _: Int ->

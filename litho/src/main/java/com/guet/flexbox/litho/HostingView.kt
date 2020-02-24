@@ -7,10 +7,7 @@ import androidx.annotation.RestrictTo
 import com.facebook.litho.ComponentTree
 import com.facebook.litho.LithoView
 import com.facebook.litho.SizeSpec
-import com.guet.flexbox.HttpClient
-import com.guet.flexbox.event.ActionKey
-import com.guet.flexbox.event.ActionTarget
-import com.guet.flexbox.event.HttpAction
+import com.guet.flexbox.eventsystem.EventBus
 
 
 open class HostingView @JvmOverloads constructor(
@@ -21,16 +18,12 @@ open class HostingView @JvmOverloads constructor(
         super.suppressMeasureComponentTree(true)
     }
 
-    internal val target = ActionTargetImpl()
-
-    var httpClient: HttpClient? = null
-
-    var pageEventListener: PageEventListener? = null
+    val eventBus = EventBus()
 
     var templatePage: TemplatePage?
         set(value) {
-            templatePage?.actionTarget = null
-            value?.actionTarget = target
+            templatePage?.outerTarget = null
+            value?.outerTarget = eventBus
             super.setComponentTree(value)
             requestLayout()
         }
@@ -117,39 +110,4 @@ open class HostingView @JvmOverloads constructor(
             )
         }
     }
-
-    interface PageEventListener {
-        fun onEventDispatched(
-                h: HostingView,
-                source: View?,
-                values: Array<out Any?>?
-        )
-    }
-
-    internal inner class ActionTargetImpl : ActionTarget {
-
-        override fun dispatchAction(
-                key: ActionKey,
-                source: View?,
-                args: Array<out Any?>?
-        ) {
-            when (key) {
-                ActionKey.SendObjects -> {
-                    pageEventListener?.onEventDispatched(
-                            this@HostingView,
-                            source,
-                            args
-                    )
-                }
-                ActionKey.RefreshPage -> {
-                    templatePage?.computeNewLayout()
-                }
-                ActionKey.HttpRequest -> {
-                    httpClient?.enqueue(args!![0] as HttpAction)
-                }
-                else -> Unit
-            }
-        }
-    }
-
 }

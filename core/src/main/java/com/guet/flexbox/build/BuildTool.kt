@@ -2,8 +2,9 @@ package com.guet.flexbox.build
 
 import android.content.Context
 import androidx.annotation.RestrictTo
-import com.guet.flexbox.PageContext
 import com.guet.flexbox.TemplateNode
+import com.guet.flexbox.eventsystem.EventDispatcher
+import com.guet.flexbox.eventsystem.EventTarget
 import org.apache.commons.jexl3.JexlBuilder
 import org.apache.commons.jexl3.JexlContext
 import org.apache.commons.jexl3.JexlEngine
@@ -22,13 +23,13 @@ abstract class BuildTool {
     fun buildRoot(
             templateNode: TemplateNode,
             dataContext: JexlContext,
-            pageContext: PageContext,
+            eventDispatcher: EventTarget,
             other: Any?
     ): Any {
         return buildAll(
                 listOf(templateNode),
                 dataContext,
-                pageContext,
+                eventDispatcher,
                 other
         ).single()
     }
@@ -40,7 +41,7 @@ abstract class BuildTool {
     internal fun buildAll(
             templates: List<TemplateNode>,
             dataContext: JexlContext,
-            pageContext: PageContext,
+            eventDispatcher: EventTarget,
             other: Any?,
             upperVisibility: Boolean = true
     ): List<Any> {
@@ -54,7 +55,7 @@ abstract class BuildTool {
                     this@BuildTool,
                     templateNode,
                     dataContext,
-                    pageContext,
+                    eventDispatcher,
                     other,
                     upperVisibility
             )

@@ -27,18 +27,18 @@ import kotlin.collections.HashSet
 
 class SearchActivity : AppCompatActivity() {
 
-    private val handler = object : HostingView.PageEventListener {
-        override fun onEventDispatched(
-                h: HostingView,
-                source: View?,
-                values: Array<out Any?>?
-        ) {
-            val url = values!![0] as? String
-            if (url != null) {
-                handleEvent(url)
-            }
-        }
-    }
+//    private val handler = object : HostingView.PageEventListener {
+//        override fun onEventDispatched(
+//                h: HostingView,
+//                source: View?,
+//                values: Array<out Any?>?
+//        ) {
+//            val url = values!![0] as? String
+//            if (url != null) {
+//                handleEvent(url)
+//            }
+//        }
+//    }
     private lateinit var sharedPreferences: SharedPreferences
     private lateinit var list: HostingView
     private lateinit var editText: EditText
@@ -49,7 +49,7 @@ class SearchActivity : AppCompatActivity() {
         setContentView(R.layout.activity_search)
         sharedPreferences = getSharedPreferences("history", Context.MODE_PRIVATE)
         list = findViewById(R.id.list)
-        list.pageEventListener = handler
+//        list.pageEventListener = handler
         editText = findViewById(R.id.search)
         editText.apply {
             setOnFocusChangeListener { v, hasFocus ->

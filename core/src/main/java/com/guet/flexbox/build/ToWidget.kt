@@ -1,7 +1,8 @@
 package com.guet.flexbox.build
 
-import com.guet.flexbox.PageContext
 import com.guet.flexbox.TemplateNode
+import com.guet.flexbox.eventsystem.EventDispatcher
+import com.guet.flexbox.eventsystem.EventTarget
 import org.apache.commons.jexl3.JexlContext
 
 class ToWidget(
@@ -12,7 +13,7 @@ class ToWidget(
             bindings: BuildTool,
             template: TemplateNode,
             dataContext: JexlContext,
-            pageContext: PageContext,
+            eventDispatcher: EventTarget,
             other: Any?,
             upperVisibility: Boolean = true
     ): List<Any> {
@@ -22,7 +23,7 @@ class ToWidget(
                 template.children ?: emptyList(),
                 factory,
                 dataContext,
-                pageContext,
+                eventDispatcher,
                 other,
                 upperVisibility
         )

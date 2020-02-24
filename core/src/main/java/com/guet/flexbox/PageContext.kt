@@ -1,47 +1,28 @@
 package com.guet.flexbox
 
-import android.view.View
-import com.guet.flexbox.event.ActionExecutor
-import com.guet.flexbox.event.ActionTarget
-import com.guet.flexbox.event.HostEventExecutor
-import com.guet.flexbox.transaction.*
-import org.apache.commons.jexl3.annotations.NoJexl
+import com.guet.flexbox.eventsystem.EventTarget
+import com.guet.flexbox.transaction.HttpTransaction
+import com.guet.flexbox.transaction.RefreshTransaction
+import com.guet.flexbox.transaction.SendTransaction
+import org.apache.commons.jexl3.JexlContext
 
 class PageContext(
-        private val target: ActionTarget
+        private val dataContext: JexlContext,
+        private val target: EventTarget
 ) {
 
-    private val pendingQueue = LinkedHashSet<PageTransaction>()
-
     fun send(vararg values: Any) {
-        SendTransaction(this)
+        SendTransaction(dataContext, target)
                 .send(*values)
                 .commit()
     }
 
     fun http(): HttpTransaction {
-        return HttpTransaction(this)
+        return HttpTransaction(dataContext, target)
     }
 
     fun refresh(): RefreshTransaction {
-        return RefreshTransaction(this)
+        return RefreshTransaction(dataContext, target)
     }
 
-    @NoJexl
-    fun newHostEventExecutor(v: View?): ActionExecutor {
-        return HostEventExecutor(target, v)
-    }
-
-    @NoJexl
-    fun addToQueue(transaction: PageTransaction) {
-        pendingQueue.add(transaction)
-    }
-
-    @NoJexl
-    fun executeTransaction(executor: ActionExecutor) {
-        pendingQueue.forEach {
-            it.execute(executor)
-        }
-        pendingQueue.clear()
-    }
 }

@@ -1,20 +1,11 @@
 package com.guet.flexbox.transaction
 
-import androidx.annotation.CallSuper
-import com.guet.flexbox.PageContext
-import com.guet.flexbox.event.ActionExecutor
-import org.apache.commons.jexl3.annotations.NoJexl
+import com.guet.flexbox.eventsystem.EventTarget
+import org.apache.commons.jexl3.JexlContext
 
 abstract class PageTransaction(
-        protected val context: PageContext
+        protected val dataContext: JexlContext,
+        protected val eventDispatcher: EventTarget
 ) {
-
-    fun commit() {
-        context.addToQueue(this)
-    }
-
-    @NoJexl
-    @CallSuper
-    internal open fun execute(executor: ActionExecutor) {
-    }
+    abstract fun commit()
 }

@@ -2,10 +2,10 @@ package com.guet.flexbox.build
 
 import android.graphics.Color
 import android.util.ArrayMap
-import com.guet.flexbox.PageContext
 import com.guet.flexbox.el.ScopeContext
-import com.guet.flexbox.event.EventHandler
-import com.guet.flexbox.event.ScriptHandler
+import com.guet.flexbox.eventsystem.EventAdapter
+import com.guet.flexbox.eventsystem.EventFactory
+import com.guet.flexbox.eventsystem.EventTarget
 import org.apache.commons.jexl3.JexlContext
 import org.apache.commons.jexl3.JexlEngine
 
@@ -28,7 +28,7 @@ internal class DataBinding(
     fun bind(
             engine: JexlEngine,
             dataContext: JexlContext,
-            pageContext: PageContext,
+            eventDispatcher: EventTarget,
             map: Map<String, String>
     ): Map<String, Any> {
         val output = ArrayMap<String, Any>(map.size)
@@ -38,7 +38,7 @@ internal class DataBinding(
                 val o = binder?.cast(
                         engine,
                         dataContext,
-                        pageContext,
+                        eventDispatcher,
                         it.value
                 )
                 if (o != null) {
@@ -76,7 +76,7 @@ internal class DataBinding(
                 override fun cast(
                         engine: JexlEngine,
                         dataContext: JexlContext,
-                        pageContext: PageContext,
+                        eventDispatcher: EventTarget,
                         raw: String
                 ): String? {
                     return if (raw.isExpr) {
@@ -103,7 +103,7 @@ internal class DataBinding(
                 override fun cast(
                         engine: JexlEngine,
                         dataContext: JexlContext,
-                        pageContext: PageContext,
+                        eventDispatcher: EventTarget,
                         raw: String
                 ): Boolean? {
                     return if (raw.isExpr) {
@@ -126,7 +126,7 @@ internal class DataBinding(
                 override fun cast(
                         engine: JexlEngine,
                         dataContext: JexlContext,
-                        pageContext: PageContext,
+                        eventDispatcher: EventTarget,
                         raw: String
                 ): Float? {
                     return if (raw.isExpr) {
@@ -149,7 +149,7 @@ internal class DataBinding(
                 override fun cast(
                         engine: JexlEngine,
                         dataContext: JexlContext,
-                        pageContext: PageContext,
+                        eventDispatcher: EventTarget,
                         raw: String
                 ): Int? {
                     return if (raw.isExpr) {
@@ -190,7 +190,7 @@ internal class DataBinding(
                 override fun cast(
                         engine: JexlEngine,
                         dataContext: JexlContext,
-                        pageContext: PageContext,
+                        eventDispatcher: EventTarget,
                         raw: String
                 ): V? {
                     return if (raw.isExpr) {
@@ -205,20 +205,22 @@ internal class DataBinding(
         }
 
         fun event(
-                name: String
+                name: String,
+                factory: EventFactory
         ) {
-            value[name] = object : TextToAttribute<EventHandler> {
+            value[name] = object : TextToAttribute<EventAdapter> {
                 override fun cast(
                         engine: JexlEngine,
                         dataContext: JexlContext,
-                        pageContext: PageContext,
+                        eventDispatcher: EventTarget,
                         raw: String
-                ): EventHandler? {
+                ): EventAdapter? {
                     return if (raw.isExpr) {
-                        ScriptHandler(
-                                pageContext,
-                                engine.createScript(raw.innerExpr),
-                                dataContext
+                        return EventAdapter(
+                                factory,
+                                dataContext,
+                                eventDispatcher,
+                                engine.createScript(raw.innerExpr)
                         )
                     } else {
                         null
