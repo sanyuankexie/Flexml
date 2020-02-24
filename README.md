@@ -42,7 +42,7 @@ Flexml支持在真机上实时预览，为实现该功能，需要扩展IDE能�
 未来，Flexml的目标是向iOS进军，在iOS设备上完成一套等价的SDK，得益于facebook和google强大的开源生态，所以这是可行的。
 
 * facebook [litho](https://github.com/facebook/litho)在iOS上的等价物是facebook [AsyncDisplayKit（现在又叫Texture）](https://github.com/texturegroup/texture/)。
-* tomcat el完全满足google [j2objc](https://github.com/google/j2objc)项目的代码转制要求。
+* el完全满足google [j2objc](https://github.com/google/j2objc)项目的代码转制要求。
 
 剩下的就是时间问题。
 
