@@ -2,12 +2,11 @@ package com.guet.flexbox.el
 
 import org.apache.commons.jexl3.JexlContext
 import org.apache.commons.jexl3.MapContext
-import java.util.*
 
 class ScopeContext(
         scope: Map<String, Any?>,
         private val inner: JexlContext
-) : MapContext(Collections.unmodifiableMap(scope)), JexlContext.NamespaceResolver {
+) : MapContext(scope), JexlContext.NamespaceResolver {
 
     override fun has(name: String?): Boolean {
         var h = super.has(name)
@@ -17,7 +16,7 @@ class ScopeContext(
         return h
     }
 
-    override fun get(name: String?): Any {
+    override fun get(name: String?): Any? {
         val h = super.has(name)
         return if (h) {
             super.get(name)
@@ -28,18 +27,18 @@ class ScopeContext(
 
     override fun set(name: String?, value: Any?) {
         val h = super.has(name)
-        if (h) {
-            super.set(name, value)
-        } else {
+        if (!h) {
             inner.set(name, value)
+        } else {
+            throw IllegalArgumentException()
         }
     }
 
     override fun resolveNamespace(name: String?): Any? {
-        return if (inner is JexlContext.NamespaceResolver) {
-            inner.resolveNamespace(name)
+        if (inner is JexlContext.NamespaceResolver) {
+            return inner.resolveNamespace(name)
         } else {
-            null
+            return null
         }
     }
 }

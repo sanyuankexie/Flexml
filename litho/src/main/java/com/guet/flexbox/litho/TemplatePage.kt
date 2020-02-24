@@ -8,10 +8,11 @@ import androidx.annotation.WorkerThread
 import com.facebook.litho.*
 import com.guet.flexbox.PageContext
 import com.guet.flexbox.TemplateNode
+import com.guet.flexbox.el.DataContext
+import com.guet.flexbox.el.ScopeContext
 import com.guet.flexbox.event.ActionBridge
 import com.guet.flexbox.event.ActionTarget
 import com.guet.flexbox.litho.widget.ThreadChecker
-import org.apache.commons.jexl3.ObjectContext
 
 class TemplatePage @WorkerThread internal constructor(
         builder: Builder
@@ -23,10 +24,14 @@ class TemplatePage @WorkerThread internal constructor(
     private val computeRunnable = Runnable {
         val oldWidth = size.width
         val oldHeight = size.height
+        val pageContext = PageContext(actionBridge)
         val com = LithoBuildTool.buildRoot(
                 template,
-                ObjectContext<Any>(LithoBuildTool.engine, data),
-                PageContext(actionBridge),
+                ScopeContext(
+                        mapOf("pageContext" to pageContext),
+                        DataContext(LithoBuildTool.engine, data)
+                ),
+                pageContext,
                 context
         ) as Component
         setRootAndSizeSpec(
@@ -144,10 +149,14 @@ class TemplatePage @WorkerThread internal constructor(
         @WorkerThread
         override fun build(): TemplatePage {
             super.layoutThreadHandler(LayoutThreadHandler)
+            val pageContext = PageContext(actionBridge)
             val com = LithoBuildTool.buildRoot(
                     requireNotNull(template),
-                    ObjectContext<Any>(LithoBuildTool.engine, data),
-                    PageContext(actionBridge),
+                    ScopeContext(
+                            mapOf("pageContext" to pageContext),
+                            DataContext(LithoBuildTool.engine, data)
+                    ),
+                    pageContext,
                     context
             ) as Component
             super.withRoot(ThreadChecker.create(context)

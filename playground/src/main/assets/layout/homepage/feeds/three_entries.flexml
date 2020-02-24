@@ -59,7 +59,7 @@
                 marginLeft="10"
                 marginRight="10"
                 textSize="11"
-                text="${index*index+'分钟送达'}">
+                text="${time+'分钟送达'}">
             </Text>
         </Flex>
         <Flex

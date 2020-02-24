@@ -59,10 +59,19 @@ object CommonProps : Declaration() {
                 pageContext: PageContext,
                 raw: String
         ): ClickUrlHandler? {
-            return ClickUrlHandler(
-                    pageContext,
-                    raw
-            )
+            return if (raw.isExpr) {
+                ClickUrlHandler(
+                        pageContext,
+                        engine.createExpression(raw.innerExpr)
+                                .evaluate(dataContext)
+                                .toString()
+                )
+            } else {
+                ClickUrlHandler(
+                        pageContext,
+                        raw
+                )
+            }
         }
     }
 

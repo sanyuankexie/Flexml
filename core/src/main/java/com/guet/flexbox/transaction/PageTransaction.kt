@@ -15,6 +15,6 @@ abstract class PageTransaction(
 
     @NoJexl
     @CallSuper
-    open fun execute(actionExecutor: ActionExecutor) {
+    internal open fun execute(executor: ActionExecutor) {
     }
 }

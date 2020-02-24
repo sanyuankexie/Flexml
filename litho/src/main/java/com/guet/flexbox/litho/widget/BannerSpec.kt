@@ -17,7 +17,7 @@ import com.facebook.litho.widget.Image
 import com.facebook.yoga.YogaAlign
 import com.facebook.yoga.YogaEdge
 import com.facebook.yoga.YogaJustify
-import com.guet.flexbox.el.InternalFunctions
+import com.guet.flexbox.el.Functions
 import com.guet.flexbox.enums.Orientation
 import com.guet.flexbox.litho.drawable.ColorDrawable
 import com.guet.flexbox.litho.drawable.GradientDrawable
@@ -56,10 +56,10 @@ object BannerSpec {
     val indicatorSize = 5.toPx()
 
     @PropDefault
-    val indicatorSelected = InternalFunctions.drawable("indicator_light")
+    val indicatorSelected = Functions.Resource.drawable("indicator_light")
 
     @PropDefault
-    val indicatorUnselected = InternalFunctions.drawable("indicator_black")
+    val indicatorUnselected = Functions.Resource.drawable("indicator_black")
 
     @OnCreateMountContent
     fun onCreateMountContent(c: Context): BannerLithoView {
