@@ -12,6 +12,10 @@ class FlexBoxAdapter(
         private val onClick: (v: View, url: String) -> Unit
 ) : BaseQuickAdapter<TemplatePage, BaseViewHolder>(R.layout.feed_item) {
 
+    init {
+        closeLoadAnimation()
+    }
+
     private val callback = object : HostingView.PageEventListener {
         override fun onEventDispatched(
                 h: HostingView,

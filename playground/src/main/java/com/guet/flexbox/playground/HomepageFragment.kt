@@ -84,6 +84,7 @@ class HomepageFragment : Fragment() {
         appBarLayout = view.findViewById(R.id.appbar)
         coordinator = view.findViewById(R.id.coordinator)
         feed = view.findViewById(R.id.feed)
+        feed.itemAnimator = null
         val foot = layoutInflater.inflate(
                 R.layout.load_more,
                 feed,
