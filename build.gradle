@@ -31,6 +31,7 @@ allprojects {
         maven { url "https://maven.aliyun.com/repository/public" }
         maven { url "https://maven.aliyun.com/repository/jcenter" }
         maven { url "https://maven.aliyun.com/repository/gradle-plugin" }
+        maven { url "http://repository.atricore.org/m2-release-repository" }
         google()
         jcenter()
         mavenCentral()

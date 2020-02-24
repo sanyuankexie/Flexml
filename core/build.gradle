@@ -1,7 +1,7 @@
 apply plugin: 'com.android.library'
 apply plugin: 'kotlin-android'
 apply plugin: 'com.github.dcendents.android-maven'
-group='com.guet.flexbox'
+group = 'com.guet.flexbox'
 
 
 android {
@@ -34,8 +34,10 @@ dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
 
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:${kotlinVersion}"
-    api 'org.apache.commons:commons-jexl3:3.1'
-
+    implementation 'javax.script:script-api:1.0'
+    api('org.apache.commons:commons-jexl3:3.1') {
+        exclude group: 'commons-logging', module: 'commons-logging'
+    }
     api 'androidx.annotation:annotation:1.1.0'
 
     testImplementation 'junit:junit:4.12'
