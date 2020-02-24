@@ -2,26 +2,23 @@ package com.guet.flexbox.litho
 
 import android.content.Context
 import android.os.Looper
-import android.util.ArrayMap
 import androidx.annotation.AnyThread
 import androidx.annotation.RestrictTo
 import androidx.annotation.WorkerThread
 import com.facebook.litho.*
 import com.guet.flexbox.PageContext
 import com.guet.flexbox.TemplateNode
-import com.guet.flexbox.el.DataContext
-import com.guet.flexbox.el.ScopeContext
 import com.guet.flexbox.eventsystem.EventDispatcher
 import com.guet.flexbox.eventsystem.EventTarget
 import com.guet.flexbox.eventsystem.event.RefreshPageEvent
 import com.guet.flexbox.eventsystem.event.TemplateEvent
-import org.apache.commons.jexl3.JexlContext
+import org.apache.commons.jexl3.ObjectContext
 
 class TemplatePage @WorkerThread internal constructor(
         builder: Builder
 ) : TreeManager(builder) {
     private inner class LocalEventTarget(
-            private val dispatcher : EventDispatcher
+            private val dispatcher: EventDispatcher
     ) : EventTarget {
         override fun dispatchEvent(e: TemplateEvent<*, *>) {
             if (e is RefreshPageEvent) {
@@ -33,21 +30,8 @@ class TemplatePage @WorkerThread internal constructor(
     private val dispatcher = EventDispatcher()
     private val size = Size()
     private val template: TemplateNode = requireNotNull(builder.template)
-    private val dataContext: JexlContext
     private val localTarget = LocalEventTarget(dispatcher)
-
-    init {
-        val map = ArrayMap<String, Any>()
-        dataContext = ScopeContext(
-                map,
-                DataContext(LithoBuildTool.engine, builder.data)
-        )
-        dataContext.set(
-                "pageContext",
-                PageContext(dataContext, localTarget)
-        )
-    }
-
+    private val dataContext: PageContext = PageContext(ObjectContext<Any>(LithoBuildTool.engine, builder.data), localTarget)
     private val computeRunnable = Runnable {
         val oldWidth = size.width
         val oldHeight = size.height
@@ -88,6 +72,7 @@ class TemplatePage @WorkerThread internal constructor(
                 size
         )
     }
+
     internal var outerTarget: EventTarget?
         set(value) {
             dispatcher.target = value
