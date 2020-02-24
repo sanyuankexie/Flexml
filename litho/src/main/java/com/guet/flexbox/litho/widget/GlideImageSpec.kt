@@ -79,14 +79,10 @@ internal object GlideImageSpec {
             @Prop(optional = true) leftTopRadius: Float,
             @Prop(optional = true) rightTopRadius: Float,
             @Prop(optional = true) rightBottomRadius: Float,
-            @Prop(optional = true) leftBottomRadius: Float,
-            @FromBoundsDefined width: Int,
-            @FromBoundsDefined height: Int
+            @Prop(optional = true) leftBottomRadius: Float
     ) {
         image.mount(
                 model,
-                width,
-                height,
                 blurRadius,
                 blurSampling,
                 scaleType,

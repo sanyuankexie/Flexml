@@ -12,14 +12,18 @@ import com.guet.flexbox.litho.load.CornerRadius
 import com.guet.flexbox.litho.load.DelegateTarget
 import com.guet.flexbox.litho.load.DrawableLoaderModule
 import com.guet.flexbox.litho.transforms.FastBlur
+import kotlin.math.max
 
 class GlideDrawable(
         private val context: Context
 ) : DrawableWrapper<Drawable>(NoOpDrawable()),
         Target<BitmapDrawable> by DelegateTarget() {
+    private var blurSampling: Float = 1f
+        set(value) {
+            field = max(1f, value)
+        }
     private val cacheNoOpDrawable = wrappedDrawable
-    private var width: Int = 0
-    private var height: Int = 0
+    private val cbs = ArrayList<SizeReadyCallback>()
 
     fun unmount() {
         Glide.with(context).clear(this)
@@ -36,22 +40,22 @@ class GlideDrawable(
 
     override fun onBoundsChange(bounds: Rect) {
         super.onBoundsChange(bounds)
-        width = bounds.width()
-        height = bounds.height()
+        bind(bounds.width(), bounds.height())
     }
 
     fun unbind() {
     }
 
     fun bind(width: Int, height: Int) {
-        this.width = width
-        this.height = height
+        val w = (width / blurSampling).toInt()
+        val h = (height / blurSampling).toInt()
+        cbs.forEach {
+            it.onSizeReady(w, h)
+        }
     }
 
     fun mount(
             model: Any,
-            width: Int,
-            height: Int,
             blurRadius: Float,
             blurSampling: Float,
             scaleType: ScaleType,
@@ -60,8 +64,7 @@ class GlideDrawable(
             rightBottom: Float,
             leftBottom: Float
     ) {
-        this.width = width
-        this.height = height
+        this.blurSampling = blurSampling
         var request = Glide.with(context)
                 .`as`(BitmapDrawable::class.java)
                 .load(model)
@@ -72,12 +75,6 @@ class GlideDrawable(
                         rightBottom,
                         leftBottom
                 ))
-        if (blurSampling > 1) {
-            request = request.override(
-                    (width / blurSampling).toInt(),
-                    (height / blurSampling).toInt()
-            )
-        }
         if (blurRadius > 0) {
             request = request.transform(FastBlur(blurRadius))
         }
@@ -85,7 +82,11 @@ class GlideDrawable(
     }
 
     override fun getSize(cb: SizeReadyCallback) {
-        cb.onSizeReady(width, height)
+        cbs.add(cb)
+    }
+
+    override fun removeCallback(cb: SizeReadyCallback) {
+        cbs.remove(cb)
     }
 
     override fun onResourceReady(
