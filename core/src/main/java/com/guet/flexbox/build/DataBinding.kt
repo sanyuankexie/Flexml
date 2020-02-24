@@ -173,12 +173,20 @@ internal class DataBinding(
             }
         }
 
+
+        fun <T : Any> typed(
+                name: String,
+                obj: TextToAttribute<T>
+        ) {
+            value[name] = obj
+        }
+
         inline fun <reified V : Enum<V>> enum(
                 name: String,
                 scope: Map<String, V>,
                 fallback: V = enumValues<V>().first()
         ) {
-            value[name] = object : TextToAttribute<V> {
+            typed(name, object : TextToAttribute<V> {
                 override fun cast(
                         engine: JexlEngine,
                         dataContext: JexlContext,
@@ -193,14 +201,7 @@ internal class DataBinding(
                         scope[raw] ?: fallback
                     }
                 }
-            }
-        }
-
-        fun <T : Any> typed(
-                name: String,
-                obj: TextToAttribute<T>
-        ) {
-            value[name] = obj
+            })
         }
 
         fun event(
