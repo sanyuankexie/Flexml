@@ -35,7 +35,10 @@ class ScopeContext(
     }
 
     override fun resolveNamespace(name: String?): Any? {
-        return if (!name.isNullOrEmpty() && inner is JexlContext.NamespaceResolver) {
+        return Functions[name] ?: if (
+                !name.isNullOrEmpty()
+                && inner is JexlContext.NamespaceResolver
+        ) {
             inner.resolveNamespace(name)
         } else {
             null
