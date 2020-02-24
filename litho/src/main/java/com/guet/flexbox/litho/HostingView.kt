@@ -38,9 +38,6 @@ open class HostingView @JvmOverloads constructor(
             return super.getComponentTree() as? TemplatePage
         }
 
-    override fun setClipChildren(clipChildren: Boolean) {
-    }
-
     @Deprecated("", level = DeprecationLevel.HIDDEN)
     final override fun suppressMeasureComponentTree(suppress: Boolean) {
     }
