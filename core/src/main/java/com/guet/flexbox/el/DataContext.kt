@@ -12,7 +12,7 @@ class DataContext(
 ) {
 
     override fun resolveNamespace(name: String?): Any {
-        val obj = Functions.get(name)
+        val obj = Functions[name]
         if (obj != null) {
             return obj
         }
