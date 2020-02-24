@@ -2,6 +2,7 @@ package com.guet.flexbox.litho
 
 import android.os.Handler
 import android.os.Looper
+import android.os.Process
 import java.util.concurrent.LinkedBlockingQueue
 import java.util.concurrent.ThreadFactory
 import java.util.concurrent.ThreadPoolExecutor
@@ -30,7 +31,10 @@ internal object InternalThreads {
                 TimeUnit.SECONDS,
                 LinkedBlockingQueue<Runnable>(),
                 ThreadFactory {
-                    Thread(it, "flexbox-pool-${count.getAndIncrement()}")
+                    Thread(Runnable {
+                        Process.setThreadPriority(Process.THREAD_PRIORITY_BACKGROUND)
+                        it.run()
+                    }, "LayoutThread\$${count.getAndIncrement()}")
                 }
         )
     }
