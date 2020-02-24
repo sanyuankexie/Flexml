@@ -2,7 +2,6 @@ package com.guet.flexbox.build
 
 import android.graphics.Color
 import android.util.ArrayMap
-import android.util.Log
 import com.guet.flexbox.PageContext
 import com.guet.flexbox.el.ScopeContext
 import com.guet.flexbox.event.EventHandler
@@ -86,7 +85,6 @@ internal class DataBinding(
                             val o = expr.evaluate(ScopeContext(scope, dataContext))
                             o?.toString() ?: fallback
                         } catch (e: Throwable) {
-                            Log.d("adad", raw)
                             raw
                         }
                     } else {
