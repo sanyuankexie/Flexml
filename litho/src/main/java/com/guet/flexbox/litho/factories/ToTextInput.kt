@@ -7,7 +7,7 @@ import com.facebook.litho.widget.TextInput
 import com.guet.flexbox.build.AttributeSet
 import com.guet.flexbox.enums.TextStyle
 import com.guet.flexbox.eventsystem.EventAdapter
-import com.guet.flexbox.litho.LithoEventAdapter
+import com.guet.flexbox.litho.LithoEventTransfer
 import com.guet.flexbox.litho.resolve.AttributeAssignSet
 import com.guet.flexbox.litho.resolve.mapping
 import com.guet.flexbox.litho.toPx
@@ -30,7 +30,7 @@ internal object ToTextInput : ToComponent<TextInput.Builder>(CommonAssigns) {
             ellipsize(value)
         }
         register("onTextChanged") { _, _, value: EventAdapter ->
-            textChangedEventHandler(LithoEventAdapter<Any>(value))
+            textChangedEventHandler(LithoEventTransfer<Any>(value))
         }
     }
 
