@@ -11,8 +11,7 @@ class PropContext(
 ) : JexlContext, JexlContext.NamespaceResolver {
 
     private val pageContext = PageContext(eventTarget)
-
-
+    
     override fun has(name: String?): Boolean {
         return "pageContext" == name || inner.has(name)
     }
