@@ -30,7 +30,7 @@ object ToImage : RenderNodeFactory<Component> {
         )
     }
 
-    internal fun toComponent(
+    private fun toComponent(
             c: ComponentContext,
             attrs: AttributeSet,
             visibility: Boolean = true
