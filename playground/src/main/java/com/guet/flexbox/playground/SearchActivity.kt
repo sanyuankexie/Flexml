@@ -18,6 +18,8 @@ import android.widget.FrameLayout
 import android.widget.PopupWindow
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
+import com.guet.flexbox.eventsystem.EventHandler
+import com.guet.flexbox.eventsystem.event.ClickUrlEvent
 import com.guet.flexbox.litho.HostingView
 import com.guet.flexbox.litho.TemplatePage
 import com.guet.flexbox.playground.model.TemplateCompiler
@@ -27,18 +29,6 @@ import kotlin.collections.HashSet
 
 class SearchActivity : AppCompatActivity() {
 
-//    private val handler = object : HostingView.PageEventListener {
-//        override fun onEventDispatched(
-//                h: HostingView,
-//                source: View?,
-//                values: Array<out Any?>?
-//        ) {
-//            val url = values!![0] as? String
-//            if (url != null) {
-//                handleEvent(url)
-//            }
-//        }
-//    }
     private lateinit var sharedPreferences: SharedPreferences
     private lateinit var list: HostingView
     private lateinit var editText: EditText
@@ -49,7 +39,12 @@ class SearchActivity : AppCompatActivity() {
         setContentView(R.layout.activity_search)
         sharedPreferences = getSharedPreferences("history", Context.MODE_PRIVATE)
         list = findViewById(R.id.list)
-//        list.pageEventListener = handler
+        list.eventBus.subscribe(object : EventHandler<ClickUrlEvent> {
+            override fun handleEvent(e: ClickUrlEvent): Boolean {
+                handleEvent(e.url)
+                return true
+            }
+        })
         editText = findViewById(R.id.search)
         editText.apply {
             setOnFocusChangeListener { v, hasFocus ->

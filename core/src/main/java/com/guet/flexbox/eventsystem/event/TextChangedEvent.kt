@@ -3,19 +3,13 @@ package com.guet.flexbox.eventsystem.event
 import android.widget.EditText
 import org.apache.commons.jexl3.JexlContext
 import org.apache.commons.jexl3.JexlScript
+import java.util.concurrent.Callable
 
 class TextChangedEvent(
         source: EditText,
-        text: String?,
+        val text: String?,
         context: JexlContext,
         script: JexlScript
-) : ExecutableEvent<EditText>(
-        source,
-        context,
-        script
-) {
-    val text: String?
-        get() = args[0] as? String
-
-    override val args = arrayOf<Any?>(text)
-}
+) : TemplateEvent<EditText>(
+        source
+), Callable<Any> by script.callable(context, text)

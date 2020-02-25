@@ -32,23 +32,20 @@ class EventBus : EventTarget {
 
     @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
     override fun dispatchEvent(e: TemplateEvent<*>): Boolean {
+        val eventType = e.javaClass
         synchronized(handlers) {
-            for (h in handlers) {
-                @Suppress("UNCHECKED_CAST")
-                if ((h as EventHandler<TemplateEvent<*>>).handleEvent(e)) {
-                    return true
-                }
-            }
+            @Suppress("UNCHECKED_CAST")
+            return (handlers[eventType] as? EventHandler<TemplateEvent<*>>)
+                    ?.handleEvent(e) ?: false
         }
-        return false
     }
 
     private companion object {
         private fun getEventType(h: EventHandler<*>): Class<*> {
             return try {
-                val type = h.javaClass
-                        .genericSuperclass as ParameterizedType
-                type.actualTypeArguments[0] as Class<*>
+                (h.javaClass.genericInterfaces.find {
+                    (it as? ParameterizedType)?.rawType == EventHandler::class.java
+                } as ParameterizedType).actualTypeArguments[0] as Class<*>
             } catch (e: Throwable) {
                 throw IllegalArgumentException(e)
             }

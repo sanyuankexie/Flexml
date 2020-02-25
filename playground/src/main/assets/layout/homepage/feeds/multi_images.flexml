@@ -116,7 +116,7 @@
                     justifyContent="center"
                     width="25"
                     height="25"
-                    onClick="${()->{pageContext.refresh().with(()->{clicked=!clicked}).commit()}}">
+                    onClick="${()->{pageContext.begin().with(()->{clicked=!clicked}).commit()}}">
                     <Image
                         width="18"
                         height="18"

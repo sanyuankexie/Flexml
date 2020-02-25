@@ -13,6 +13,9 @@ import androidx.recyclerview.widget.RecyclerView
 import ch.ielse.view.SwitchView
 import com.chad.library.adapter.base.BaseQuickAdapter
 import com.chad.library.adapter.base.BaseViewHolder
+import com.guet.flexbox.eventsystem.EventHandler
+import com.guet.flexbox.eventsystem.event.HttpRequestEvent
+import com.guet.flexbox.eventsystem.event.SendObjectsEvent
 import com.guet.flexbox.litho.HostingView
 import com.guet.flexbox.litho.TemplatePage
 import com.guet.flexbox.playground.model.MockService
@@ -23,9 +26,10 @@ import io.iftech.android.library.slide.SlideLayout
 import io.iftech.android.library.slide.configSlideChildTypeHeader
 import io.iftech.android.library.slide.configSlideChildTypeSlider
 import kotlinx.android.synthetic.main.activity_overview.*
-import okhttp3.OkHttpClient
+import okhttp3.*
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import java.io.IOException
 import java.util.concurrent.TimeUnit
 
 class OverviewActivity : AppCompatActivity() {
@@ -104,43 +108,51 @@ class OverviewActivity : AppCompatActivity() {
             console.configSlideChildTypeSlider()
             console.adapter = adapter
             hostingView = findViewById(R.id.host)
-//            hostingView.httpClient = object : HttpClient {
-//                override fun enqueue(request: HttpRequest) {
-//                    val body: FormBody? = if (request.formBody.isNotEmpty()) {
-//                        val builder = FormBody.Builder()
-//                        request.formBody.forEach {
-//                            builder.add(it.key, it.value)
-//                        }
-//                        builder.build()
-//                    } else {
-//                        null
-//                    }
-//                    val request = Request.Builder()
-//                            .url(request.url)
-//                            .method(request.method, body)
-//                            .build()
-//                    httpClient.newCall(request).enqueue(object : Callback {
-//                        override fun onFailure(call: Call, e: IOException) {
-//                            e.printStackTrace()
-//                            request.callback.onError()
-//                        }
-//
-//                        override fun onResponse(call: Call, response: Response) {
-//                            request.callback.onResponse(response.body()?.string())
-//                        }
-//                    })
-//                }
-//            }
-//
-//            hostingView.pageEventListener = object : HostingView.PageEventListener {
-//                override fun onEventDispatched(
-//                        h: HostingView,
-//                        source: View?,
-//                        values: Array<out Any?>?
-//                ) {
-//                    adapter.addData("event dispatched:\nvalues=${Arrays.deepToString(values)}")
-//                }
-//            }
+            hostingView.eventBus.subscribe(object : EventHandler<HttpRequestEvent> {
+                override fun handleEvent(e: HttpRequestEvent): Boolean {
+                    val request = e.httpRequest
+                    val body: FormBody? = if (request.body.isNotEmpty()) {
+                        val builder = FormBody.Builder()
+                        request.body.forEach {
+                            builder.add(it.key, it.value)
+                        }
+                        builder.build()
+                    } else {
+                        null
+                    }
+                    httpClient.newCall(
+                            Request.Builder()
+                                    .url(request.url)
+                                    .method(request.method, body)
+                                    .build()
+                    ).enqueue(object : Callback {
+                        override fun onFailure(
+                                call: Call,
+                                e: IOException
+                        ) {
+                            e.printStackTrace()
+                            request.callback.onError()
+                        }
+
+                        override fun onResponse(
+                                call: Call,
+                                response: Response
+                        ) {
+                            request.callback.onResponse(response.body()?.string())
+                        }
+                    })
+                    return true
+                }
+            })
+            hostingView.eventBus.subscribe(object : EventHandler<SendObjectsEvent> {
+                override fun handleEvent(e: SendObjectsEvent): Boolean {
+                    adapter.addData("event dispatched:\nvalues=${
+                    e.values.contentDeepToString()
+                    }")
+                    return true
+                }
+            })
+
             header = findViewById(R.id.header)
             header.configSlideChildTypeHeader()
             header.setOnScrollChangeListener { _: NestedScrollView?, _: Int, _: Int, _: Int, _: Int ->

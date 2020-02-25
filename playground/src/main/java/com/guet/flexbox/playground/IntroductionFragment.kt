@@ -7,6 +7,8 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.guet.flexbox.eventsystem.EventHandler
+import com.guet.flexbox.eventsystem.event.ClickUrlEvent
 import com.guet.flexbox.litho.HostingView
 import com.guet.flexbox.playground.model.AppLoader
 import com.guet.flexbox.playground.model.Homepage
@@ -48,13 +50,11 @@ class IntroductionFragment : Fragment() {
             }
         })
         host.templatePage = homepageInfo.introduction
-//        host.pageEventListener = object : HostingView.PageEventListener {
-//            override fun onEventDispatched(h: HostingView, source: View?, values: Array<out Any?>?) {
-//                val url = values?.get(0) as? String
-//                if (url != null) {
-//                    (requireActivity() as MainActivity).showCodePanel(url)
-//                }
-//            }
-//        }
+        host.eventBus.subscribe(object : EventHandler<ClickUrlEvent> {
+            override fun handleEvent(e: ClickUrlEvent): Boolean {
+                (requireActivity() as MainActivity).showCodePanel(e.url)
+                return true
+            }
+        })
     }
 }

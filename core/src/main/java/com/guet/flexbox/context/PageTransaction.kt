@@ -4,6 +4,7 @@ import android.os.Handler
 import android.os.Looper
 import com.guet.flexbox.HttpRequest
 import com.guet.flexbox.eventsystem.EventTarget
+import com.guet.flexbox.eventsystem.event.HttpRequestEvent
 import com.guet.flexbox.eventsystem.event.RefreshPageEvent
 import com.guet.flexbox.eventsystem.event.SendObjectsEvent
 import org.apache.commons.jexl3.JexlContext
@@ -70,6 +71,16 @@ class PageTransaction(
             }
             eventDispatcher.dispatchEvent(RefreshPageEvent())
         }
+        if (this::httpRequests.isInitialized) {
+            httpRequests.forEach {
+                eventDispatcher.dispatchEvent(HttpRequestEvent(it))
+            }
+        }
+    }
+
+    private companion object {
+        private val mainLooper = Looper.getMainLooper()
+        private val mainThread = Handler(Looper.getMainLooper())
     }
 
     private fun newCallback(
@@ -87,15 +98,14 @@ class PageTransaction(
             private val dataContext: JexlContext,
             private val success: JexlScript?,
             private val error: JexlScript?
-    ) : Handler(Looper.getMainLooper()),
-            HttpRequest.Callback {
+    ) : HttpRequest.Callback {
 
         override fun onError() {
             if (error != null) {
-                if (Looper.myLooper() == looper) {
+                if (Looper.myLooper() == mainLooper) {
                     error.execute(dataContext)
                 } else {
-                    post {
+                    mainThread.post {
                         error.execute(dataContext)
                     }
                 }
@@ -104,10 +114,10 @@ class PageTransaction(
 
         override fun onResponse(data: String?) {
             if (success != null) {
-                if (Looper.myLooper() == looper) {
+                if (Looper.myLooper() == mainLooper) {
                     success.execute(dataContext, data)
                 } else {
-                    post {
+                    mainThread.post {
                         success.execute(dataContext, data)
                     }
                 }

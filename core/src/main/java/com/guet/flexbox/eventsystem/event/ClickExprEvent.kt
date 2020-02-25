@@ -1,10 +1,12 @@
 package com.guet.flexbox.eventsystem.event
 
+import android.view.View
 import org.apache.commons.jexl3.JexlContext
 import org.apache.commons.jexl3.JexlScript
 import java.util.concurrent.Callable
 
-class VisibleEvent(
+class ClickExprEvent(
+        source: View,
         context: JexlContext,
         script: JexlScript
-) : TemplateEvent<Unit>(Unit), Callable<Any> by script.callable(context)
+) : ClickEvent(source), Callable<Any> by script.callable(context)

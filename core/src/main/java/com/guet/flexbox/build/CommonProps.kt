@@ -6,8 +6,8 @@ import com.guet.flexbox.enums.Visibility
 import com.guet.flexbox.eventsystem.EventAdapter
 import com.guet.flexbox.eventsystem.EventFactory
 import com.guet.flexbox.eventsystem.EventTarget
-import com.guet.flexbox.eventsystem.event.ClickEvent
-import com.guet.flexbox.eventsystem.event.SendObjectsEvent
+import com.guet.flexbox.eventsystem.event.ClickExprEvent
+import com.guet.flexbox.eventsystem.event.ClickUrlEvent
 import com.guet.flexbox.eventsystem.event.TemplateEvent
 import com.guet.flexbox.eventsystem.event.VisibleEvent
 import org.apache.commons.jexl3.JexlContext
@@ -61,10 +61,16 @@ object CommonProps : Declaration() {
                     eventDispatcher: EventTarget,
                     raw: String
             ): EventAdapter? {
+                val url = if (raw.isExpr) {
+                    engine.createExpression(raw.innerExpr)
+                            .evaluate(dataContext) as? String ?: ""
+                } else {
+                    raw
+                }
                 return object : EventAdapter {
                     override fun handleEvent(v: View?, args: Array<out Any?>?) {
                         eventDispatcher.dispatchEvent(
-                                SendObjectsEvent(arrayOf(raw))
+                                ClickUrlEvent(v!!, url)
                         )
                     }
                 }
@@ -77,7 +83,7 @@ object CommonProps : Declaration() {
                     dataContext: JexlContext,
                     script: JexlScript
             ): TemplateEvent<*> {
-                return ClickEvent(source!!, dataContext, script)
+                return ClickExprEvent(source!!, dataContext, script)
             }
         })
         event("onVisible", object : EventFactory {
