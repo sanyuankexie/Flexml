@@ -2,11 +2,9 @@ package com.guet.flexbox.eventsystem.event
 
 import java.util.*
 
-abstract class TemplateEvent<T, V>(
+abstract class TemplateEvent<T>(
         source: T
 ) : EventObject(source) {
-
-    abstract val value: V?
 
     override fun getSource(): T {
         @Suppress("UNCHECKED_CAST")

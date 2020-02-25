@@ -2,7 +2,7 @@ package com.guet.flexbox.eventsystem
 
 import android.util.Log
 import androidx.annotation.RestrictTo
-import com.guet.flexbox.eventsystem.event.ConsumableEvent
+import com.guet.flexbox.eventsystem.event.ExecutableEvent
 import com.guet.flexbox.eventsystem.event.TemplateEvent
 import java.lang.ref.WeakReference
 
@@ -29,10 +29,12 @@ class EventDispatcher : EventTarget {
             return targetImpl?.get()
         }
 
-    override fun dispatchEvent(e: TemplateEvent<*, *>) {
-        target?.dispatchEvent(e)
-        if (e is ConsumableEvent<*, *> && !e.isConsumed) {
-            Log.v(EventDispatcher::class.java.name, e.value.toString())
+    override fun dispatchEvent(e: TemplateEvent<*>): Boolean {
+        val result = target?.dispatchEvent(e) ?: false
+        if (!result && e is ExecutableEvent<*>) {
+            e.call()
+            return true
         }
+        return false
     }
 }

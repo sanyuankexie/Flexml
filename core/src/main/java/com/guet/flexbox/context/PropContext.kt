@@ -1,11 +1,8 @@
-package com.guet.flexbox.el
+package com.guet.flexbox.context
 
 import android.content.res.Resources
 import android.net.Uri
 import com.guet.flexbox.eventsystem.EventTarget
-import com.guet.flexbox.transaction.HttpTransaction
-import com.guet.flexbox.transaction.RefreshTransaction
-import com.guet.flexbox.transaction.SendTransaction
 import org.apache.commons.jexl3.JexlContext
 
 class PropContext(
@@ -47,18 +44,15 @@ class PropContext(
     private inner class PageContext(
             private val target: EventTarget
     ) {
+
         fun send(vararg values: Any) {
-            SendTransaction(this@PropContext, target)
+            PageTransaction(this@PropContext, target)
                     .send(*values)
                     .commit()
         }
 
-        fun http(): HttpTransaction {
-            return HttpTransaction(this@PropContext, target)
-        }
-
-        fun refresh(): RefreshTransaction {
-            return RefreshTransaction(this@PropContext, target)
+        fun begin(): PageTransaction {
+            return PageTransaction(this@PropContext, target)
         }
     }
 
@@ -84,7 +78,7 @@ class PropContext(
                     .toString()
         }
 
-        private val functions = Functions::class.java
+        private val functions = Func::class.java
                 .declaredClasses
                 .filter {
                     it.isAnnotationPresent(Namespace::class.java)

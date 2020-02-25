@@ -6,13 +6,16 @@ import org.apache.commons.jexl3.JexlScript
 
 class TextChangedEvent(
         source: EditText,
-        val text: String?,
+        text: String?,
         context: JexlContext,
         script: JexlScript
-) : ConsumableEvent<EditText, Any?>(
+) : ExecutableEvent<EditText>(
         source,
         context,
         script
 ) {
-    override val args: Array<Any?> by lazy { arrayOf<Any?>(text) }
+    val text: String?
+        get() = args[0] as? String
+
+    override val args = arrayOf<Any?>(text)
 }

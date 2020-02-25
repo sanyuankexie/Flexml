@@ -11,5 +11,5 @@ interface EventFactory {
             args: Array<out Any?>?,
             dataContext: JexlContext,
             script: JexlScript
-    ): TemplateEvent<*, *>
+    ): TemplateEvent<*>
 }

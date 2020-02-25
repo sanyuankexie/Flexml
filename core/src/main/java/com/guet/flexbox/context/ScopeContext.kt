@@ -1,4 +1,4 @@
-package com.guet.flexbox.el
+package com.guet.flexbox.context
 
 import org.apache.commons.jexl3.JexlContext
 import org.apache.commons.jexl3.MapContext

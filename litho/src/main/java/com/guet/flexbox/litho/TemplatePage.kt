@@ -7,7 +7,7 @@ import androidx.annotation.RestrictTo
 import androidx.annotation.WorkerThread
 import com.facebook.litho.*
 import com.guet.flexbox.TemplateNode
-import com.guet.flexbox.el.PropContext
+import com.guet.flexbox.context.PropContext
 import com.guet.flexbox.eventsystem.EventDispatcher
 import com.guet.flexbox.eventsystem.EventTarget
 import com.guet.flexbox.eventsystem.event.RefreshPageEvent
@@ -17,21 +17,22 @@ import org.apache.commons.jexl3.ObjectContext
 class TemplatePage @WorkerThread internal constructor(
         builder: Builder
 ) : TreeManager(builder) {
-    private inner class LocalEventTarget(
+    private inner class LocalEventInterceptor(
             private val dispatcher: EventDispatcher
     ) : EventTarget {
-        override fun dispatchEvent(e: TemplateEvent<*, *>) {
+        override fun dispatchEvent(e: TemplateEvent<*>): Boolean {
             if (e is RefreshPageEvent) {
                 computeNewLayout()
+                return true
             }
-            dispatcher.dispatchEvent(e)
+            return dispatcher.dispatchEvent(e)
         }
     }
 
     private val dispatcher = EventDispatcher()
     private val size = Size()
     private val template: TemplateNode = requireNotNull(builder.template)
-    private val localTarget = LocalEventTarget(dispatcher)
+    private val localTarget = LocalEventInterceptor(dispatcher)
     private val dataContext = PropContext(
             localTarget,
             ObjectContext<Any>(

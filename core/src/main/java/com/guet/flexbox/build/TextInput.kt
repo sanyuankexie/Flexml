@@ -3,8 +3,8 @@ package com.guet.flexbox.build
 import android.view.View
 import android.widget.EditText
 import com.guet.flexbox.eventsystem.EventFactory
-import com.guet.flexbox.eventsystem.event.TextChangedEvent
 import com.guet.flexbox.eventsystem.event.TemplateEvent
+import com.guet.flexbox.eventsystem.event.TextChangedEvent
 import org.apache.commons.jexl3.JexlContext
 import org.apache.commons.jexl3.JexlScript
 
@@ -18,7 +18,7 @@ object TextInput : Declaration() {
                             args: Array<out Any?>?,
                             dataContext: JexlContext,
                             script: JexlScript
-                    ): TemplateEvent<*, *> {
+                    ): TemplateEvent<*> {
                         return TextChangedEvent(
                                 source as EditText,
                                 args?.get(0) as? String,

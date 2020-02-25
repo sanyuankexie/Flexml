@@ -17,7 +17,7 @@ import com.facebook.litho.widget.Image
 import com.facebook.yoga.YogaAlign
 import com.facebook.yoga.YogaEdge
 import com.facebook.yoga.YogaJustify
-import com.guet.flexbox.el.PropContext.Func.Resource
+import com.guet.flexbox.context.PropContext.Func.Resource
 import com.guet.flexbox.enums.Orientation
 import com.guet.flexbox.litho.drawable.ColorDrawable
 import com.guet.flexbox.litho.drawable.GradientDrawable

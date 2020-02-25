@@ -7,32 +7,40 @@ import java.lang.reflect.ParameterizedType
 
 class EventBus : EventTarget {
 
-    private val handlers = ArrayList<EventHandler<*>>()
+    private val handlers = HashMap<Class<*>, EventHandler<*>>()
 
-    fun <E : TemplateEvent<*, *>> subscribe(h: EventHandler<E>) {
+    fun <E : TemplateEvent<*>> subscribe(h: EventHandler<E>): EventHandler<E>? {
         val eventType = getEventType(h)
         if (Modifier.isAbstract(eventType.modifiers)) {
             throw IllegalArgumentException()
         }
-        synchronized(handlers) {
-            handlers.add(h)
+        return synchronized(handlers) {
+            @Suppress("UNCHECKED_CAST")
+            handlers.put(eventType, h) as? EventHandler<E>
         }
     }
 
     fun unsubscribe(h: EventHandler<*>) {
+        val eventType = getEventType(h)
         synchronized(handlers) {
-            handlers.remove(h)
+            val oldH = handlers[eventType]
+            if (oldH == h) {
+                handlers.remove(eventType)
+            }
         }
     }
 
     @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
-    override fun dispatchEvent(e: TemplateEvent<*, *>) {
+    override fun dispatchEvent(e: TemplateEvent<*>): Boolean {
         synchronized(handlers) {
-            handlers.forEach {
+            for (h in handlers) {
                 @Suppress("UNCHECKED_CAST")
-                (it as EventHandler<TemplateEvent<*, *>>).handle(e)
+                if ((h as EventHandler<TemplateEvent<*>>).handleEvent(e)) {
+                    return true
+                }
             }
         }
+        return false
     }
 
     private companion object {

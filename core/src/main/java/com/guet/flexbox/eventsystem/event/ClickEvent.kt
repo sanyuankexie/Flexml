@@ -8,7 +8,7 @@ class ClickEvent(
         source: View,
         context: JexlContext,
         script: JexlScript
-) : ConsumableEvent<View, Any?>(
+) : ExecutableEvent<View>(
         source,
         context,
         script

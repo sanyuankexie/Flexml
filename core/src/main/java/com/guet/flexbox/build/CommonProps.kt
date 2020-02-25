@@ -3,12 +3,15 @@ package com.guet.flexbox.build
 import android.view.View
 import com.guet.flexbox.enums.FlexAlign
 import com.guet.flexbox.enums.Visibility
-import com.guet.flexbox.eventsystem.*
-import com.guet.flexbox.eventsystem.event.ClickUrlEvent
+import com.guet.flexbox.eventsystem.EventAdapter
+import com.guet.flexbox.eventsystem.EventFactory
+import com.guet.flexbox.eventsystem.EventTarget
 import com.guet.flexbox.eventsystem.event.ClickEvent
-import com.guet.flexbox.eventsystem.event.VisibleEvent
+import com.guet.flexbox.eventsystem.event.SendObjectsEvent
 import com.guet.flexbox.eventsystem.event.TemplateEvent
+import com.guet.flexbox.eventsystem.event.VisibleEvent
 import org.apache.commons.jexl3.JexlContext
+import org.apache.commons.jexl3.JexlEngine
 import org.apache.commons.jexl3.JexlScript
 
 object CommonProps : Declaration() {
@@ -51,14 +54,20 @@ object CommonProps : Declaration() {
             value("margin$edge")
             value("padding$edge")
         }
-        event("clickUrl", object : EventFactory {
-            override fun create(
-                    source: View?,
-                    args: Array<out Any?>?,
+        typed("clickUrl", object : TextToAttribute<EventAdapter> {
+            override fun cast(
+                    engine: JexlEngine,
                     dataContext: JexlContext,
-                    script: JexlScript
-            ): TemplateEvent<*, *> {
-                return ClickUrlEvent(source!!, args?.get(0) as? String)
+                    eventDispatcher: EventTarget,
+                    raw: String
+            ): EventAdapter? {
+                return object : EventAdapter {
+                    override fun handleEvent(v: View?, args: Array<out Any?>?) {
+                        eventDispatcher.dispatchEvent(
+                                SendObjectsEvent(arrayOf(raw))
+                        )
+                    }
+                }
             }
         })
         event("onClick", object : EventFactory {
@@ -67,7 +76,7 @@ object CommonProps : Declaration() {
                     args: Array<out Any?>?,
                     dataContext: JexlContext,
                     script: JexlScript
-            ): TemplateEvent<*, *> {
+            ): TemplateEvent<*> {
                 return ClickEvent(source!!, dataContext, script)
             }
         })
@@ -77,7 +86,7 @@ object CommonProps : Declaration() {
                     args: Array<out Any?>?,
                     dataContext: JexlContext,
                     script: JexlScript
-            ): TemplateEvent<*, *> {
+            ): TemplateEvent<*> {
                 return VisibleEvent(dataContext, script)
             }
         })

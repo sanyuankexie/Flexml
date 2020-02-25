@@ -1,7 +1,7 @@
 package com.guet.flexbox
 
-import com.guet.flexbox.el.ELProcessor
-import com.guet.flexbox.el.LambdaExpression
+import com.guet.flexbox.context.ELProcessor
+import com.guet.flexbox.context.LambdaExpression
 import com.guet.flexbox.event.ActionBridge
 import org.junit.Assert
 import org.junit.Test

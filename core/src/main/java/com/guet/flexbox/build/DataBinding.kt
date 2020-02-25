@@ -2,10 +2,11 @@ package com.guet.flexbox.build
 
 import android.graphics.Color
 import android.util.ArrayMap
-import com.guet.flexbox.el.ScopeContext
+import com.guet.flexbox.context.ScopeContext
 import com.guet.flexbox.eventsystem.EventAdapter
 import com.guet.flexbox.eventsystem.EventFactory
 import com.guet.flexbox.eventsystem.EventTarget
+import com.guet.flexbox.eventsystem.GenericEventAdapter
 import org.apache.commons.jexl3.JexlContext
 import org.apache.commons.jexl3.JexlEngine
 
@@ -216,7 +217,7 @@ internal class DataBinding(
                         raw: String
                 ): EventAdapter? {
                     return if (raw.isExpr) {
-                        return EventAdapter(
+                        return GenericEventAdapter(
                                 factory,
                                 dataContext,
                                 eventDispatcher,

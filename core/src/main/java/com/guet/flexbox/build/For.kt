@@ -1,7 +1,7 @@
 package com.guet.flexbox.build
 
 import com.guet.flexbox.TemplateNode
-import com.guet.flexbox.el.ScopeContext
+import com.guet.flexbox.context.ScopeContext
 import com.guet.flexbox.eventsystem.EventTarget
 import org.apache.commons.jexl3.JexlContext
 
