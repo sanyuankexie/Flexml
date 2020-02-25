@@ -9,4 +9,6 @@ class ClickExprEvent(
         source: View,
         context: JexlContext,
         script: JexlScript
-) : ClickEvent(source), Callable<Any> by script.callable(context)
+) : ClickEvent(source), HasExprEvent {
+    override val expr: Callable<Any> = script.callable(context)
+}

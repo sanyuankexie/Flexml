@@ -2,9 +2,9 @@ package com.guet.flexbox.eventsystem
 
 import android.util.Log
 import androidx.annotation.RestrictTo
+import com.guet.flexbox.eventsystem.event.HasExprEvent
 import com.guet.flexbox.eventsystem.event.TemplateEvent
 import java.lang.ref.WeakReference
-import java.util.concurrent.Callable
 
 @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
 class EventDispatcher : EventTarget {
@@ -31,8 +31,8 @@ class EventDispatcher : EventTarget {
 
     override fun dispatchEvent(e: TemplateEvent<*>): Boolean {
         val result = target?.dispatchEvent(e) ?: false
-        if (!result && e is Callable<*>) {
-            e.call()
+        if (!result && e is HasExprEvent) {
+            e.expr.call()
             return true
         }
         return false

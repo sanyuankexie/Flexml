@@ -7,4 +7,6 @@ import java.util.concurrent.Callable
 class VisibleEvent(
         context: JexlContext,
         script: JexlScript
-) : TemplateEvent<Unit>(Unit), Callable<Any> by script.callable(context)
+) : HasExprEvent {
+    override val expr: Callable<Any> = script.callable(context)
+}

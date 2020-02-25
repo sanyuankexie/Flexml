@@ -12,4 +12,6 @@ class TextChangedEvent(
         script: JexlScript
 ) : TemplateEvent<EditText>(
         source
-), Callable<Any> by script.callable(context, text)
+), HasExprEvent {
+    override val expr: Callable<Any> = script.callable(context)
+}
