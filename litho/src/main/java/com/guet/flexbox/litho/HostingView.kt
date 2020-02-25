@@ -57,7 +57,6 @@ open class HostingView @JvmOverloads constructor(
 
     final override fun setClipToPadding(clipToPadding: Boolean) {
     }
-
     final override fun setPaddingRelative(start: Int, top: Int, end: Int, bottom: Int) {}
 
     final override fun setPadding(left: Int, top: Int, right: Int, bottom: Int) {}
