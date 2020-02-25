@@ -2,28 +2,28 @@ package com.guet.flexbox.litho
 
 import com.facebook.litho.*
 import com.facebook.litho.widget.TextChangedEvent
-import com.guet.flexbox.eventsystem.EventHandlerAdapter
+import com.guet.flexbox.eventsystem.EventAdapter
 
-internal class LithoEventTransfer<T>(
-        private val target: EventHandlerAdapter
-) : EventHandler<T>(LithoEventTransfer, 0) {
+internal class LithoEventAdapter<T>(
+        private val target: EventAdapter
+) : EventHandler<T>(LithoEventAdapter, 0) {
 
     override fun dispatchEvent(event: T) {
         when (event) {
             is ClickEvent -> {
-                target.handleEvent(event.view, null)
+                target.adapt(event.view, null)
             }
             is TextChangedEvent -> {
-                target.handleEvent(event.view, arrayOf(event.text))
+                target.adapt(event.view, arrayOf(event.text))
             }
             is VisibleEvent -> {
-                target.handleEvent(null, null)
+                target.adapt(null, null)
             }
         }
     }
 
     override fun isEquivalentTo(other: EventHandler<*>?): Boolean {
-        return other is LithoEventTransfer && target == other.target
+        return other is LithoEventAdapter && target == other.target
     }
 
     private companion object : HasEventDispatcher,

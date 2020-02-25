@@ -2,6 +2,7 @@ package com.guet.flexbox.build
 
 import android.content.Context
 import androidx.annotation.RestrictTo
+import com.guet.flexbox.BuildConfig
 import com.guet.flexbox.TemplateNode
 import com.guet.flexbox.context.PropContext
 import com.guet.flexbox.eventsystem.EventTarget
@@ -17,7 +18,10 @@ abstract class BuildTool {
 
     companion object {
         private val default = object : Config {
-            override val engine: JexlEngine = JexlBuilder().create()
+            override val engine: JexlEngine = JexlBuilder()
+                    .silent(!BuildConfig.DEBUG)
+                    .strict(false)
+                    .create()
         }
 
         private val fallback = ToWidget(CommonProps, null)

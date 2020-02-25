@@ -19,44 +19,23 @@ class PropContext(
             data ?: ArrayMap<String, Any>()
     )
 
-    private lateinit var extra: ArrayMap<String, Any?>
-
     private val pageContext = PageContext(eventTarget)
 
     override fun has(name: String?): Boolean {
         return "pageContext" == name || inner.has(name)
-                || (this::extra.isInitialized && extra.containsKey(name))
     }
 
     override fun get(name: String?): Any? {
         return if ("pageContext" == name) {
             pageContext
         } else {
-            val h = inner.has(name)
-            if (h) {
-                inner.get(name)
-            } else {
-                return if (this::extra.isInitialized) {
-                    extra[name]
-                } else {
-                    null
-                }
-            }
+            inner.get(name)
         }
     }
 
     override fun set(name: String?, value: Any?) {
         if ("pageContext" != name) {
-            val h = inner.has(name)
-            if (h) {
-                inner.set(name, value)
-
-            } else {
-                if (this::extra.isInitialized) {
-                    extra = ArrayMap()
-                }
-                extra[name] = value
-            }
+            inner.set(name, value)
         }
     }
 

@@ -49,12 +49,12 @@ class TemplatePage @WorkerThread internal constructor(
     private val computeRunnable = Runnable {
         val oldWidth = size.width
         val oldHeight = size.height
-        val com = LithoBuildTool.buildRoot(
+        val com = LithoBuildTool.buildRoot<Component>(
                 template,
                 dataContext,
                 localTarget,
                 context
-        ) as Component
+        )
         setRootAndSizeSpec(
                 com,
                 SizeSpec.makeSizeSpec(0, SizeSpec.UNSPECIFIED),
