@@ -3,10 +3,10 @@ package com.guet.flexbox.build
 import android.graphics.Color
 import android.util.ArrayMap
 import com.guet.flexbox.context.ScopeContext
-import com.guet.flexbox.eventsystem.EventAdapter
+import com.guet.flexbox.eventsystem.EventHandlerAdapter
 import com.guet.flexbox.eventsystem.EventFactory
 import com.guet.flexbox.eventsystem.EventTarget
-import com.guet.flexbox.eventsystem.GenericEventAdapter
+import com.guet.flexbox.eventsystem.GenericHandlerAdapter
 import org.apache.commons.jexl3.JexlContext
 import org.apache.commons.jexl3.JexlEngine
 
@@ -209,15 +209,15 @@ internal class DataBinding(
                 name: String,
                 factory: EventFactory
         ) {
-            value[name] = object : TextToAttribute<EventAdapter> {
+            value[name] = object : TextToAttribute<EventHandlerAdapter> {
                 override fun cast(
                         engine: JexlEngine,
                         dataContext: JexlContext,
                         eventDispatcher: EventTarget,
                         raw: String
-                ): EventAdapter? {
+                ): EventHandlerAdapter? {
                     return if (raw.isExpr) {
-                        return GenericEventAdapter(
+                        return GenericHandlerAdapter(
                                 factory,
                                 dataContext,
                                 eventDispatcher,

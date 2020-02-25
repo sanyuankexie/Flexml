@@ -2,10 +2,10 @@ package com.guet.flexbox.litho
 
 import com.facebook.litho.*
 import com.facebook.litho.widget.TextChangedEvent
-import com.guet.flexbox.eventsystem.EventAdapter
+import com.guet.flexbox.eventsystem.EventHandlerAdapter
 
 internal class LithoEventTransfer<T>(
-        private val target: EventAdapter
+        private val target: EventHandlerAdapter
 ) : EventHandler<T>(LithoEventTransfer, 0) {
 
     override fun dispatchEvent(event: T) {

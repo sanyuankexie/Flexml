@@ -3,8 +3,8 @@ package com.guet.flexbox.build
 import android.view.View
 import com.guet.flexbox.enums.FlexAlign
 import com.guet.flexbox.enums.Visibility
-import com.guet.flexbox.eventsystem.EventAdapter
 import com.guet.flexbox.eventsystem.EventFactory
+import com.guet.flexbox.eventsystem.EventHandlerAdapter
 import com.guet.flexbox.eventsystem.EventTarget
 import com.guet.flexbox.eventsystem.event.ClickExprEvent
 import com.guet.flexbox.eventsystem.event.ClickUrlEvent
@@ -54,20 +54,20 @@ object CommonProps : Declaration() {
             value("margin$edge")
             value("padding$edge")
         }
-        typed("clickUrl", object : TextToAttribute<EventAdapter> {
+        typed("clickUrl", object : TextToAttribute<EventHandlerAdapter> {
             override fun cast(
                     engine: JexlEngine,
                     dataContext: JexlContext,
                     eventDispatcher: EventTarget,
                     raw: String
-            ): EventAdapter? {
+            ): EventHandlerAdapter? {
                 val url = if (raw.isExpr) {
                     engine.createExpression(raw.innerExpr)
                             .evaluate(dataContext) as? String ?: ""
                 } else {
                     raw
                 }
-                return object : EventAdapter {
+                return object : EventHandlerAdapter {
                     override fun handleEvent(v: View?, args: Array<out Any?>?) {
                         eventDispatcher.dispatchEvent(
                                 ClickUrlEvent(v!!, url)
