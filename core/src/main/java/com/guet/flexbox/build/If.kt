@@ -3,6 +3,7 @@ package com.guet.flexbox.build
 import com.guet.flexbox.TemplateNode
 import com.guet.flexbox.eventsystem.EventTarget
 import org.apache.commons.jexl3.JexlContext
+import org.apache.commons.jexl3.JexlEngine
 
 object If : Declaration() {
 
@@ -16,6 +17,7 @@ object If : Declaration() {
             attrs: AttributeSet,
             children: List<TemplateNode>,
             factory: RenderNodeFactory<*>?,
+            engine: JexlEngine,
             dataContext: JexlContext,
             eventDispatcher: EventTarget,
             other: Any?,
@@ -26,6 +28,7 @@ object If : Declaration() {
         } else {
             buildTool.buildAll(
                     children,
+                    engine,
                     dataContext,
                     eventDispatcher,
                     other,

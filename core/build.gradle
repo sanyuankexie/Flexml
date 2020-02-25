@@ -35,7 +35,7 @@ dependencies {
 
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:${kotlinVersion}"
     implementation 'javax.script:script-api:1.0'
-    api('org.apache.commons:commons-jexl3:3.1') {
+    implementation('org.apache.commons:commons-jexl3:3.1') {
         exclude group: 'commons-logging', module: 'commons-logging'
     }
     api 'androidx.annotation:annotation:1.1.0'

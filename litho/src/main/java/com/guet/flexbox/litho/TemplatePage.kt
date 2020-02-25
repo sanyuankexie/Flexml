@@ -7,16 +7,25 @@ import androidx.annotation.RestrictTo
 import androidx.annotation.WorkerThread
 import com.facebook.litho.*
 import com.guet.flexbox.TemplateNode
-import com.guet.flexbox.context.PropContext
+import com.guet.flexbox.build.BuildTool
 import com.guet.flexbox.eventsystem.EventDispatcher
 import com.guet.flexbox.eventsystem.EventTarget
 import com.guet.flexbox.eventsystem.event.RefreshPageEvent
 import com.guet.flexbox.eventsystem.event.TemplateEvent
-import org.apache.commons.jexl3.ObjectContext
 
 class TemplatePage @WorkerThread internal constructor(
         builder: Builder
 ) : TreeManager(builder) {
+
+    companion object {
+
+        @JvmStatic
+        fun create(context: Context): Builder {
+            //由于预加载时间点于使用时间点不同，所以ctx必须是app
+            return Builder(ComponentContext(context.applicationContext))
+        }
+    }
+
     private inner class LocalEventInterceptor(
             private val dispatcher: EventDispatcher
     ) : EventTarget {
@@ -33,12 +42,9 @@ class TemplatePage @WorkerThread internal constructor(
     private val size = Size()
     private val template: TemplateNode = requireNotNull(builder.template)
     private val localTarget = LocalEventInterceptor(dispatcher)
-    private val dataContext = PropContext(
-            localTarget,
-            ObjectContext<Any>(
-                    LithoBuildTool.engine,
-                    builder.data
-            )
+    private val dataContext = BuildTool.newContext(
+            builder.data,
+            localTarget
     )
     private val computeRunnable = Runnable {
         val oldWidth = size.width
@@ -170,11 +176,5 @@ class TemplatePage @WorkerThread internal constructor(
         }
     }
 
-    companion object {
-        @JvmStatic
-        fun create(context: Context): Builder {
-            //由于预加载时间点于使用时间点不同，所以ctx必须是app
-            return Builder(ComponentContext(context.applicationContext))
-        }
-    }
+
 }

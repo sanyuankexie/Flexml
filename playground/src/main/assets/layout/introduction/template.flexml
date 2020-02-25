@@ -542,7 +542,7 @@
                             <Image
                                 width="18"
                                 height="18"
-                                src="${!clicked?res:drawable('ic_zan_w'):res:drawable('ic_zan_black')}">
+                                src="${!(clicked?:false)?res:drawable('ic_zan_w'):res:drawable('ic_zan_black')}">
                             </Image>
                         </Flex>
                     </Flex>

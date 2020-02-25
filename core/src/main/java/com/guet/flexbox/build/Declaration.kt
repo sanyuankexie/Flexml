@@ -4,6 +4,7 @@ import com.guet.flexbox.TemplateNode
 import com.guet.flexbox.enums.Visibility
 import com.guet.flexbox.eventsystem.EventTarget
 import org.apache.commons.jexl3.JexlContext
+import org.apache.commons.jexl3.JexlEngine
 
 abstract class Declaration {
 
@@ -14,6 +15,7 @@ abstract class Declaration {
             attrs: AttributeSet,
             children: List<TemplateNode>,
             factory: RenderNodeFactory<*>?,
+            engine: JexlEngine,
             dataContext: JexlContext,
             eventDispatcher: EventTarget,
             other: Any?,
@@ -34,6 +36,7 @@ abstract class Declaration {
         } else {
             buildTool.buildAll(
                     children,
+                    engine,
                     dataContext,
                     eventDispatcher,
                     other,
@@ -54,6 +57,7 @@ abstract class Declaration {
             rawAttrs: Map<String, String>,
             children: List<TemplateNode>,
             factory: RenderNodeFactory<*>?,
+            engine: JexlEngine,
             dataContext: JexlContext,
             eventDispatcher: EventTarget,
             other: Any?,
@@ -63,7 +67,7 @@ abstract class Declaration {
             emptyMap()
         } else {
             dataBinding.bind(
-                    bindings.engine,
+                    engine,
                     dataContext,
                     eventDispatcher,
                     rawAttrs
@@ -74,6 +78,7 @@ abstract class Declaration {
                 attrs,
                 children,
                 factory,
+                engine,
                 dataContext,
                 eventDispatcher,
                 other,

@@ -3,6 +3,7 @@ package com.guet.flexbox.build
 import com.guet.flexbox.TemplateNode
 import com.guet.flexbox.eventsystem.EventTarget
 import org.apache.commons.jexl3.JexlContext
+import org.apache.commons.jexl3.JexlEngine
 
 object When : Declaration() {
 
@@ -14,6 +15,7 @@ object When : Declaration() {
             attrs: AttributeSet,
             children: List<TemplateNode>,
             factory: RenderNodeFactory<*>?,
+            engine: JexlEngine,
             dataContext: JexlContext,
             eventDispatcher: EventTarget,
             other: Any?,
@@ -27,7 +29,7 @@ object When : Declaration() {
             if (item.type == "case") {
                 val itemAttrs = item.attrs
                 if (itemAttrs != null && If.dataBinding.bind(
-                                buildTool.engine,
+                                engine,
                                 dataContext,
                                 eventDispatcher,
                                 itemAttrs
@@ -35,6 +37,7 @@ object When : Declaration() {
                     return item.children?.let {
                         buildTool.buildAll(
                                 children,
+                                engine,
                                 dataContext,
                                 eventDispatcher,
                                 other,
@@ -49,6 +52,7 @@ object When : Declaration() {
         return elseItem?.children?.let {
             buildTool.buildAll(
                     it,
+                    engine,
                     dataContext,
                     eventDispatcher,
                     other,

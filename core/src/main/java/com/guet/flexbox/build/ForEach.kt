@@ -44,6 +44,7 @@ object ForEach : Declaration() {
             attrs: AttributeSet,
             children: List<TemplateNode>,
             factory: RenderNodeFactory<*>?,
+            engine: JexlEngine,
             dataContext: JexlContext,
             eventDispatcher: EventTarget,
             other: Any?,
@@ -57,6 +58,7 @@ object ForEach : Declaration() {
                 val scope = ScopeContext(mapOf(name to item), dataContext)
                 buildTool.buildAll(
                         children,
+                        engine,
                         scope,
                         eventDispatcher,
                         other,
@@ -69,6 +71,7 @@ object ForEach : Declaration() {
                 val scope = ScopeContext(mapOf(name to it), dataContext)
                 buildTool.buildAll(
                         children,
+                        engine,
                         scope,
                         eventDispatcher,
                         other,

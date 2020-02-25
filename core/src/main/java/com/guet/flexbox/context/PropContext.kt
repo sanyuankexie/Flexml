@@ -5,13 +5,22 @@ import android.net.Uri
 import android.util.ArrayMap
 import com.guet.flexbox.eventsystem.EventTarget
 import org.apache.commons.jexl3.JexlContext
+import org.apache.commons.jexl3.JexlEngine
+import org.apache.commons.jexl3.ObjectContext
 
 class PropContext(
+        data: Any?,
         eventTarget: EventTarget,
-        private val inner: JexlContext
+        engine: JexlEngine
 ) : JexlContext, JexlContext.NamespaceResolver {
 
+    private val inner = ObjectContext<Any>(
+            engine,
+            data ?: ArrayMap<String, Any>()
+    )
+
     private lateinit var extra: ArrayMap<String, Any?>
+
     private val pageContext = PageContext(eventTarget)
 
     override fun has(name: String?): Boolean {
@@ -24,10 +33,10 @@ class PropContext(
             pageContext
         } else {
             val h = inner.has(name)
-            return if (h) {
+            if (h) {
                 inner.get(name)
             } else {
-                if (this::extra.isInitialized) {
+                return if (this::extra.isInitialized) {
                     extra[name]
                 } else {
                     null
@@ -41,6 +50,7 @@ class PropContext(
             val h = inner.has(name)
             if (h) {
                 inner.set(name, value)
+
             } else {
                 if (this::extra.isInitialized) {
                     extra = ArrayMap()
@@ -51,13 +61,7 @@ class PropContext(
     }
 
     override fun resolveNamespace(name: String?): Any? {
-        return functions[name] ?: if (
-                inner is JexlContext.NamespaceResolver
-        ) {
-            inner.resolveNamespace(name)
-        } else {
-            null
-        }
+        return functions[name] ?: inner.resolveNamespace(name)
     }
 
     inner class PageContext(
