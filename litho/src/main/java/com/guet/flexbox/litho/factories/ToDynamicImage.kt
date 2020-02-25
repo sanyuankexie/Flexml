@@ -3,46 +3,34 @@ package com.guet.flexbox.litho.factories
 import com.bumptech.glide.Glide
 import com.facebook.litho.ComponentContext
 import com.guet.flexbox.build.AttributeSet
-import com.guet.flexbox.enums.ScaleType
-import com.guet.flexbox.litho.resolve.AttributeAssignSet
-import com.guet.flexbox.litho.resolve.mapping
-import com.guet.flexbox.litho.toPxFloat
+import com.guet.flexbox.litho.resolve.Assignment
+import com.guet.flexbox.litho.resolve.AttrsAssigns
 import com.guet.flexbox.litho.widget.DynamicImage
 
-internal object ToDynamicImage : ToComponent<DynamicImage.Builder>(CommonAssigns) {
+internal object ToDynamicImage : ToComponent<DynamicImage.Builder>() {
 
-    override val attributeAssignSet: AttributeAssignSet<DynamicImage.Builder> by com.guet.flexbox.litho.resolve.create {
-        register("scaleType") { _, _, value: ScaleType ->
-            scaleType(value.mapping())
-        }
-        register("blurRadius") { _, _, value: Float ->
-            blurRadius(value)
-        }
-        register("blurSampling") { _, _, value: Float ->
-            blurSampling(value)
-        }
-        register("aspectRatio") { _, _, value: Float ->
-            imageAspectRatio(value)
-        }
-        register("src") { _, _, value: Any ->
-            Glide.with(context!!.androidContext)
-                    .load(value)
-                    .preload()
-            model(value)
-        }
-        register("borderLeftTopRadius") { _, _, value: Float ->
-            leftTopRadius(value.toPxFloat())
-        }
-        register("borderRightTopRadius") { _, _, value: Float ->
-            rightTopRadius(value.toPxFloat())
-        }
-        register("borderRightBottomRadius") { _, _, value: Float ->
-            rightBottomRadius(value.toPxFloat())
-        }
-        register("borderLeftBottomRadius") { _, _, value: Float ->
-            leftBottomRadius(value.toPxFloat())
-        }
-    }
+    override val attrsAssigns by AttrsAssigns
+            .create<DynamicImage.Builder>(CommonAssigns.attrsAssigns) {
+                enum("scaleType", DynamicImage.Builder::scaleType)
+                value("blurRadius", DynamicImage.Builder::blurRadius)
+                value("blurSampling", DynamicImage.Builder::blurSampling)
+                value("aspectRatio", DynamicImage.Builder::imageAspectRatio)
+                pt("borderLeftTopRadius", DynamicImage.Builder::leftTopRadius)
+                pt("borderRightTopRadius", DynamicImage.Builder::rightTopRadius)
+                pt("borderRightBottomRadius", DynamicImage.Builder::rightBottomRadius)
+                pt("borderLeftBottomRadius", DynamicImage.Builder::leftBottomRadius)
+                register("src", object : Assignment<DynamicImage.Builder, Any> {
+                    override fun assign(c: DynamicImage.Builder,
+                                        display: Boolean,
+                                        other: Map<String, Any>,
+                                        value: Any) {
+                        Glide.with(c.context!!.androidContext)
+                                .load(value)
+                                .preload()
+                        c.model(value)
+                    }
+                })
+            }
 
     override fun create(
             c: ComponentContext,

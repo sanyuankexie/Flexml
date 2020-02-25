@@ -11,8 +11,8 @@ import com.guet.flexbox.build.AttributeSet
 import com.guet.flexbox.build.RenderNodeFactory
 import com.guet.flexbox.litho.drawable.ColorDrawable
 import com.guet.flexbox.litho.drawable.lazyDrawable
+import com.guet.flexbox.litho.getFloatValue
 import com.guet.flexbox.litho.resolve.UrlType
-import com.guet.flexbox.litho.resolve.getFloatValue
 import com.guet.flexbox.litho.toPxFloat
 
 object ToImage : RenderNodeFactory<Component> {

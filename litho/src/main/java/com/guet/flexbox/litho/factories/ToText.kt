@@ -7,85 +7,76 @@ import android.graphics.Typeface
 import android.graphics.drawable.Drawable
 import android.graphics.drawable.GradientDrawable
 import android.text.Html
-import android.text.TextUtils.TruncateAt
 import androidx.core.text.HtmlCompat
 import com.facebook.litho.ComponentContext
 import com.facebook.litho.widget.Text
 import com.guet.flexbox.build.AttributeSet
-import com.guet.flexbox.enums.Horizontal
 import com.guet.flexbox.enums.TextStyle
-import com.guet.flexbox.enums.Vertical
 import com.guet.flexbox.litho.drawable.ColorDrawable
 import com.guet.flexbox.litho.drawable.LazyImageDrawable
 import com.guet.flexbox.litho.drawable.lazyDrawable
-import com.guet.flexbox.litho.resolve.AttributeAssignSet
+import com.guet.flexbox.litho.resolve.Assignment
+import com.guet.flexbox.litho.resolve.AttrsAssigns
+import com.guet.flexbox.litho.resolve.EnumMappings
 import com.guet.flexbox.litho.resolve.UrlType
-import com.guet.flexbox.litho.resolve.mapping
-import com.guet.flexbox.litho.toPx
 import java.util.regex.Pattern
 
 
-internal object ToText : ToComponent<Text.Builder>(CommonAssigns) {
+internal object ToText : ToComponent<Text.Builder>() {
 
     private val invisibleColor = ColorStateList.valueOf(Color.TRANSPARENT)
 
     private val htmlTester = Pattern.compile(".*<(.*)>.*")
 
-    override val attributeAssignSet: AttributeAssignSet<Text.Builder> by com.guet.flexbox.litho.resolve.create {
-        register("verticalGravity") { _, _, value: Vertical ->
-            verticalGravity(value.mapping())
-        }
-        register("horizontalGravity") { _, _, value: Horizontal ->
-            textAlignment(value.mapping())
-        }
-        register("text") { display, _, value: String ->
-            val htmlText = if (htmlTester.matcher(value).find()) {
-                try {
-                    HtmlCompat.fromHtml(
-                            value,
-                            HtmlCompat.FROM_HTML_MODE_COMPACT,
-                            GlideImageGetter(context!!.androidContext),
-                            null
-                    )
-                } catch (e: Throwable) {
-                    value
-                }
-            } else {
-                value
+    override val attrsAssigns by AttrsAssigns
+            .create<Text.Builder>(CommonAssigns.attrsAssigns) {
+                enum("verticalGravity", Text.Builder::verticalGravity)
+                enum("horizontalGravity", Text.Builder::textAlignment)
+                bool("clipToBounds", Text.Builder::clipToBounds)
+                value("maxLines", Text.Builder::maxLines)
+                value("minLines", Text.Builder::minLines)
+                pt("textSize", Text.Builder::textSizePx)
+                enum("ellipsize", Text.Builder::ellipsize)
+                register("textStyle", object : Assignment<Text.Builder, TextStyle> {
+                    override fun assign(c: Text.Builder, display: Boolean, other: Map<String, Any>, value: TextStyle) {
+                        c.typeface(Typeface.defaultFromStyle(EnumMappings.get(value)))
+                    }
+                })
+                register("textColor", object : Assignment<Text.Builder, Int> {
+                    override fun assign(c: Text.Builder, display: Boolean, other: Map<String, Any>, value: Int) {
+                        if (display) {
+                            c.textColor(value)
+                        } else {
+                            c.textColor(Color.TRANSPARENT)
+                            c.textColorStateList(invisibleColor)
+                        }
+                    }
+                })
+                register("text", object : Assignment<Text.Builder, String> {
+                    override fun assign(c: Text.Builder, display: Boolean, other: Map<String, Any>, value: String) {
+                        val htmlText = if (htmlTester.matcher(value).find()) {
+                            try {
+                                HtmlCompat.fromHtml(
+                                        value,
+                                        HtmlCompat.FROM_HTML_MODE_COMPACT,
+                                        GlideImageGetter(c.context
+                                        !!.androidContext),
+                                        null
+                                )
+                            } catch (e: Throwable) {
+                                value
+                            }
+                        } else {
+                            value
+                        }
+                        c.text(htmlText)
+                        if (!display) {
+                            c.textColor(Color.TRANSPARENT)
+                            c.textColorStateList(invisibleColor)
+                        }
+                    }
+                })
             }
-            text(htmlText)
-            if (!display) {
-                textColor(Color.TRANSPARENT)
-                textColorStateList(invisibleColor)
-            }
-        }
-        register("clipToBounds") { _, _, value: Boolean ->
-            clipToBounds(value)
-        }
-        register("maxLines") { _, _, value: Float ->
-            maxLines(value.toInt())
-        }
-        register("minLines") { _, _, value: Float ->
-            minLines(value.toInt())
-        }
-        register("textSize") { _, _, value: Float ->
-            textSizePx(value.toPx())
-        }
-        register("textStyle") { _, _, value: TextStyle ->
-            typeface(Typeface.defaultFromStyle(value.mapping()))
-        }
-        register("ellipsize") { _, _, value: TruncateAt ->
-            ellipsize(value)
-        }
-        register("textColor") { display, _, value: Int ->
-            if (display) {
-                textColor(value)
-            } else {
-                textColor(Color.TRANSPARENT)
-                textColorStateList(invisibleColor)
-            }
-        }
-    }
 
     override fun create(
             c: ComponentContext,

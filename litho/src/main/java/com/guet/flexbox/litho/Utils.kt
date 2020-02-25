@@ -2,6 +2,7 @@ package com.guet.flexbox.litho
 
 import android.content.res.Resources
 import com.facebook.litho.Component
+import com.guet.flexbox.build.AttributeSet
 
 val pt = Resources.getSystem().displayMetrics.widthPixels / 360f
 
@@ -13,6 +14,11 @@ inline fun <reified T : Number> T.toPxFloat(): Float {
     return (this.toFloat() * pt)
 }
 
-internal typealias ChildComponent = Component
+internal typealias Widget = Component
+
+internal fun AttributeSet.getFloatValue(name: String): Float {
+    return (this[name] as? Float) ?: 0f
+}
+
 
 

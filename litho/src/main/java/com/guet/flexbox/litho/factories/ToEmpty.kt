@@ -3,11 +3,11 @@ package com.guet.flexbox.litho.factories
 import com.facebook.litho.ComponentContext
 import com.facebook.litho.widget.EmptyComponent
 import com.guet.flexbox.build.AttributeSet
-import com.guet.flexbox.litho.resolve.AttributeAssignSet
+import com.guet.flexbox.litho.resolve.AttrsAssigns
 
-internal object ToEmpty : ToComponent<EmptyComponent.Builder>(CommonAssigns) {
-    override val attributeAssignSet: AttributeAssignSet<EmptyComponent.Builder>
-        get() = emptyMap()
+internal object ToEmpty : ToComponent<EmptyComponent.Builder>() {
+    override val attrsAssigns = AttrsAssigns
+            .use<EmptyComponent.Builder>(CommonAssigns.attrsAssigns)
 
     override fun create(
             c: ComponentContext,

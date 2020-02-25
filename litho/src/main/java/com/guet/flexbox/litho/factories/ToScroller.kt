@@ -10,29 +10,35 @@ import com.facebook.litho.widget.VerticalScroll
 import com.facebook.litho.widget.VerticalScrollSpec
 import com.guet.flexbox.build.AttributeSet
 import com.guet.flexbox.enums.Orientation
-import com.guet.flexbox.litho.ChildComponent
-import com.guet.flexbox.litho.resolve.AttributeAssignSet
+import com.guet.flexbox.litho.Widget
+import com.guet.flexbox.litho.resolve.Assignment
+import com.guet.flexbox.litho.resolve.AttrsAssigns
 import com.guet.flexbox.litho.widget.HorizontalScroll
 import com.guet.flexbox.litho.widget.HorizontalScrollSpec
 
-internal object ToScroller : ToComponent<Component.Builder<*>>(CommonAssigns) {
+internal object ToScroller : ToComponent<Component.Builder<*>>() {
 
-    override val attributeAssignSet: AttributeAssignSet<Component.Builder<*>> by com.guet.flexbox.litho.resolve.create {
-        register("scrollBarEnable") { _, _, value: Boolean ->
-            if (this is HorizontalScroll.Builder) {
-                scrollbarEnabled(value)
-            } else if (this is VerticalScroll.Builder) {
-                scrollbarEnabled(value)
+    override val attrsAssigns by AttrsAssigns
+            .create(CommonAssigns.attrsAssigns) {
+                register("scrollBarEnable", object : Assignment<Component.Builder<*>, Boolean> {
+                    override fun assign(c: Component.Builder<*>, display: Boolean, other: Map<String, Any>, value: Boolean) {
+                        if (c is HorizontalScroll.Builder) {
+                            c.scrollbarEnabled(value)
+                        } else if (c is VerticalScroll.Builder) {
+                            c.scrollbarEnabled(value)
+                        }
+                    }
+                })
+                register("fillViewport", object : Assignment<Component.Builder<*>, Boolean> {
+                    override fun assign(c: Component.Builder<*>, display: Boolean, other: Map<String, Any>, value: Boolean) {
+                        if (c is HorizontalScroll.Builder) {
+                            c.fillViewport(value)
+                        } else if (c is VerticalScroll.Builder) {
+                            c.fillViewport(value)
+                        }
+                    }
+                })
             }
-        }
-        register("fillViewport") { _, _, value: Boolean ->
-            if (this is HorizontalScroll.Builder) {
-                fillViewport(value)
-            } else if (this is VerticalScroll.Builder) {
-                fillViewport(value)
-            }
-        }
-    }
 
     private object TouchInterceptHandler : HorizontalScrollSpec.OnInterceptTouchListener,
             VerticalScrollSpec.OnInterceptTouchListener {
@@ -74,7 +80,7 @@ internal object ToScroller : ToComponent<Component.Builder<*>>(CommonAssigns) {
             owner: Component.Builder<*>,
             visibility: Boolean,
             attrs: AttributeSet,
-            children: List<ChildComponent>
+            children: List<Widget>
     ) {
         if (children.isNullOrEmpty()) {
             return

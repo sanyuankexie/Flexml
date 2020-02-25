@@ -2,23 +2,17 @@ package com.guet.flexbox.litho.factories
 
 import com.facebook.litho.ComponentContext
 import com.guet.flexbox.build.AttributeSet
-import com.guet.flexbox.enums.Orientation
-import com.guet.flexbox.litho.ChildComponent
-import com.guet.flexbox.litho.resolve.AttributeAssignSet
+import com.guet.flexbox.litho.Widget
+import com.guet.flexbox.litho.resolve.AttrsAssigns
 import com.guet.flexbox.litho.widget.Banner
 
-internal object ToBanner : ToComponent<Banner.Builder>(CommonAssigns) {
-    override val attributeAssignSet: AttributeAssignSet<Banner.Builder> by com.guet.flexbox.litho.resolve.create {
-        register("isCircular") { _, _, value: Boolean ->
-            isCircular(value)
-        }
-        register("timeSpan") { _, _, value: Float ->
-            timeSpan(value.toLong())
-        }
-        register("orientation") { _, _, value: Orientation ->
-            orientation(value)
-        }
-    }
+internal object ToBanner : ToComponent<Banner.Builder>() {
+    override val attrsAssigns by AttrsAssigns
+            .create<Banner.Builder>(CommonAssigns.attrsAssigns) {
+                bool("isCircular", Banner.Builder::isCircular)
+                value("timeSpan", Banner.Builder::timeSpan)
+                enum("orientation", Banner.Builder::orientation)
+            }
 
     override fun create(
             c: ComponentContext,
@@ -32,9 +26,9 @@ internal object ToBanner : ToComponent<Banner.Builder>(CommonAssigns) {
             owner: Banner.Builder,
             visibility: Boolean,
             attrs: AttributeSet,
-            children: List<ChildComponent>
+            children: List<Widget>
     ) {
         owner.children(children)
     }
-    
+
 }

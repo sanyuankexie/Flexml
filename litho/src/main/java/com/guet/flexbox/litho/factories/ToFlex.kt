@@ -5,30 +5,19 @@ import com.facebook.litho.Component
 import com.facebook.litho.ComponentContext
 import com.facebook.litho.Row
 import com.guet.flexbox.build.AttributeSet
-import com.guet.flexbox.enums.FlexAlign
 import com.guet.flexbox.enums.FlexDirection
-import com.guet.flexbox.enums.FlexJustify
-import com.guet.flexbox.enums.FlexWrap
-import com.guet.flexbox.litho.ChildComponent
-import com.guet.flexbox.litho.resolve.AttributeAssignSet
-import com.guet.flexbox.litho.resolve.mapping
+import com.guet.flexbox.litho.Widget
+import com.guet.flexbox.litho.resolve.AttrsAssigns
 
-internal object ToFlex : ToComponent<Component.ContainerBuilder<*>>(CommonAssigns) {
+internal object ToFlex : ToComponent<Component.ContainerBuilder<*>>() {
 
-    override val attributeAssignSet: AttributeAssignSet<Component.ContainerBuilder<*>> by com.guet.flexbox.litho.resolve.create {
-        register("flexWrap") { _, _, value: FlexWrap ->
-            wrap(value.mapping())
-        }
-        register("justifyContent") { _, _, value: FlexJustify ->
-            justifyContent(value.mapping())
-        }
-        register("alignItems") { _, _, value: FlexAlign ->
-            alignItems(value.mapping())
-        }
-        register("alignContent") { _, _, value: FlexAlign ->
-            alignContent(value.mapping())
-        }
-    }
+    override val attrsAssigns by AttrsAssigns
+            .create<Component.ContainerBuilder<*>>(CommonAssigns.attrsAssigns) {
+                enum("flexWrap", Component.ContainerBuilder<*>::wrap)
+                enum("justifyContent", Component.ContainerBuilder<*>::justifyContent)
+                enum("alignItems", Component.ContainerBuilder<*>::alignItems)
+                enum("alignContent", Component.ContainerBuilder<*>::alignContent)
+            }
 
     override fun create(
             c: ComponentContext,
@@ -59,7 +48,7 @@ internal object ToFlex : ToComponent<Component.ContainerBuilder<*>>(CommonAssign
             owner: Component.ContainerBuilder<*>,
             visibility: Boolean,
             attrs: AttributeSet,
-            children: List<ChildComponent>
+            children: List<Widget>
     ) {
         children.forEach {
             owner.child(it)

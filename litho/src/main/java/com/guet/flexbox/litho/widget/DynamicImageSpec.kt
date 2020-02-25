@@ -110,7 +110,7 @@ object DynamicImageSpec {
 
     class DynamicImageTarget : DelegateTarget<BitmapDrawable>() {
 
-        var wrapper: DynamicImageDrawable? = null
+        internal var wrapper: DynamicImageDrawable? = null
 
         override fun onLoadFailed(errorDrawable: Drawable?) {
             val wrapper = this.wrapper
