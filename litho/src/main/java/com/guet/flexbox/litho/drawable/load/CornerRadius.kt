@@ -1,4 +1,4 @@
-package com.guet.flexbox.litho.load
+package com.guet.flexbox.litho.drawable.load
 
 class CornerRadius private constructor(
         private val array: FloatArray

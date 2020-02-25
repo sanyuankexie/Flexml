@@ -9,9 +9,9 @@ import com.bumptech.glide.request.target.SizeReadyCallback
 import com.bumptech.glide.request.target.Target
 import com.bumptech.glide.request.transition.Transition
 import com.facebook.litho.drawable.ComparableDrawable
-import com.guet.flexbox.litho.load.CornerRadius
-import com.guet.flexbox.litho.load.DelegateTarget
-import com.guet.flexbox.litho.load.DrawableLoaderModule
+import com.guet.flexbox.litho.drawable.load.CornerRadius
+import com.guet.flexbox.litho.drawable.load.DelegateTarget
+import com.guet.flexbox.litho.drawable.load.DrawableLoaderModule
 import java.util.concurrent.atomic.AtomicBoolean
 
 class LazyImageDrawable private constructor(

@@ -4,7 +4,7 @@ import android.util.ArrayMap
 import com.facebook.yoga.YogaNodeManager
 import com.guet.flexbox.build.*
 import com.guet.flexbox.litho.factories.*
-import com.guet.flexbox.litho.load.DrawableLoaderModule
+import com.guet.flexbox.litho.drawable.load.DrawableLoaderModule
 import com.guet.flexbox.litho.widget.ComponentTreePool
 
 object LithoBuildTool : BuildTool() {
