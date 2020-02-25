@@ -41,7 +41,7 @@ class PropContext(
         }
     }
 
-    private inner class PageContext(
+    inner class PageContext(
             private val target: EventTarget
     ) {
 
