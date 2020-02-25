@@ -2,6 +2,7 @@ package com.guet.flexbox.context
 
 import android.content.res.Resources
 import android.net.Uri
+import android.util.ArrayMap
 import com.guet.flexbox.eventsystem.EventTarget
 import org.apache.commons.jexl3.JexlContext
 
@@ -10,23 +11,42 @@ class PropContext(
         private val inner: JexlContext
 ) : JexlContext, JexlContext.NamespaceResolver {
 
+    private lateinit var extra: ArrayMap<String, Any?>
     private val pageContext = PageContext(eventTarget)
-    
+
     override fun has(name: String?): Boolean {
         return "pageContext" == name || inner.has(name)
+                || (this::extra.isInitialized && extra.containsKey(name))
     }
 
     override fun get(name: String?): Any? {
         return if ("pageContext" == name) {
             pageContext
         } else {
-            inner.get(name)
+            val h = inner.has(name)
+            return if (h) {
+                inner.get(name)
+            } else {
+                if (this::extra.isInitialized) {
+                    extra[name]
+                } else {
+                    null
+                }
+            }
         }
     }
 
     override fun set(name: String?, value: Any?) {
         if ("pageContext" != name) {
-            inner.set(name, value)
+            val h = inner.has(name)
+            if (h) {
+                inner.set(name, value)
+            } else {
+                if (this::extra.isInitialized) {
+                    extra = ArrayMap()
+                }
+                extra[name] = value
+            }
         }
     }
 
