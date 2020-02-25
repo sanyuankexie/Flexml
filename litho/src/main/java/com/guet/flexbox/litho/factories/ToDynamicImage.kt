@@ -7,11 +7,11 @@ import com.guet.flexbox.enums.ScaleType
 import com.guet.flexbox.litho.resolve.AttributeAssignSet
 import com.guet.flexbox.litho.resolve.mapping
 import com.guet.flexbox.litho.toPxFloat
-import com.guet.flexbox.litho.widget.GlideImage
+import com.guet.flexbox.litho.widget.DynamicImage
 
-internal object ToGlideImage : ToComponent<GlideImage.Builder>(CommonAssigns) {
+internal object ToDynamicImage : ToComponent<DynamicImage.Builder>(CommonAssigns) {
 
-    override val attributeAssignSet: AttributeAssignSet<GlideImage.Builder> by com.guet.flexbox.litho.resolve.create {
+    override val attributeAssignSet: AttributeAssignSet<DynamicImage.Builder> by com.guet.flexbox.litho.resolve.create {
         register("scaleType") { _, _, value: ScaleType ->
             scaleType(value.mapping())
         }
@@ -48,7 +48,7 @@ internal object ToGlideImage : ToComponent<GlideImage.Builder>(CommonAssigns) {
             c: ComponentContext,
             visibility: Boolean,
             attrs: AttributeSet
-    ): GlideImage.Builder {
-        return GlideImage.create(c)
+    ): DynamicImage.Builder {
+        return DynamicImage.create(c)
     }
 }

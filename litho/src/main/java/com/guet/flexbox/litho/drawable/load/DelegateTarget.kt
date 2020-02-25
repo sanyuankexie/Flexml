@@ -4,7 +4,7 @@ import com.bumptech.glide.request.target.BaseTarget
 import com.bumptech.glide.request.target.SizeReadyCallback
 import com.bumptech.glide.request.transition.Transition
 
-internal class DelegateTarget<T> : BaseTarget<T>() {
+open class DelegateTarget<T> : BaseTarget<T>() {
     override fun getSize(cb: SizeReadyCallback) {
     }
 

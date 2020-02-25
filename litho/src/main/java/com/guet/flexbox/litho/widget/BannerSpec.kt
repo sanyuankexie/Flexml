@@ -1,6 +1,7 @@
 package com.guet.flexbox.litho.widget
 
 import android.content.Context
+import android.graphics.Rect
 import android.graphics.drawable.Drawable
 import android.util.AttributeSet
 import android.view.ViewGroup
@@ -29,6 +30,7 @@ import kotlin.collections.ArrayList
 import kotlin.math.max
 import kotlin.math.min
 import android.graphics.drawable.GradientDrawable.Orientation as GradientOrientation
+
 
 @MountSpec(isPureRender = true, hasChildLithoViews = true)
 object BannerSpec {
@@ -372,7 +374,6 @@ object BannerSpec {
         private val indicators = LithoView(context)
         private val viewPager2 = ViewPager2(context)
         private val adapter = InternalAdapter()
-
         private val autoNextPosition = object : Runnable {
             override fun run() {
                 val trees = componentTrees
@@ -534,6 +535,7 @@ object BannerSpec {
             }
         }
 
+
         override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
             viewPager2.measure(
                     MeasureSpec.makeMeasureSpec(componentWidth, MeasureSpec.EXACTLY),
@@ -588,6 +590,7 @@ object BannerSpec {
                     holder: LithoViewHolder,
                     position: Int
             ) {
+
                 val trees = componentTrees
                 if (!trees.isNullOrEmpty()) {
                     val pos = if (isCircular) {
@@ -597,6 +600,9 @@ object BannerSpec {
                     }
                     val tree = trees[pos]
                     holder.lithoView.componentTree = tree
+                    holder.lithoView.performIncrementalMount(Rect(
+                            0, 0, measuredWidth, measuredHeight
+                    ), false)
                 }
             }
 

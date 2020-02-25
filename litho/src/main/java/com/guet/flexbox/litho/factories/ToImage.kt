@@ -95,11 +95,11 @@ object ToImage : RenderNodeFactory<Component> {
                             .build()
                 }
                 UrlType.URL -> {
-                    return ToGlideImage.toComponent(c, visibility, attrs, emptyList())
+                    return ToDynamicImage.toComponent(c, visibility, attrs, emptyList())
                 }
                 UrlType.RESOURCE -> {
                     val id = prams[0] as Int
-                    return ToGlideImage.toComponent(c, visibility,
+                    return ToDynamicImage.toComponent(c, visibility,
                             (attrs as MutableMap).apply {
                                 this["src"] = id
                             }, emptyList())
