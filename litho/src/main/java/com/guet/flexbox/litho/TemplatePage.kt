@@ -2,19 +2,16 @@ package com.guet.flexbox.litho
 
 import android.content.Context
 import android.os.Looper
-import android.util.ArrayMap
 import androidx.annotation.AnyThread
 import androidx.annotation.RestrictTo
 import androidx.annotation.WorkerThread
 import com.facebook.litho.*
-import com.guet.flexbox.PageContext
 import com.guet.flexbox.TemplateNode
-import com.guet.flexbox.el.ScopeContext
+import com.guet.flexbox.el.PropContext
 import com.guet.flexbox.eventsystem.EventDispatcher
 import com.guet.flexbox.eventsystem.EventTarget
 import com.guet.flexbox.eventsystem.event.RefreshPageEvent
 import com.guet.flexbox.eventsystem.event.TemplateEvent
-import org.apache.commons.jexl3.JexlContext
 import org.apache.commons.jexl3.ObjectContext
 
 class TemplatePage @WorkerThread internal constructor(
@@ -35,19 +32,13 @@ class TemplatePage @WorkerThread internal constructor(
     private val size = Size()
     private val template: TemplateNode = requireNotNull(builder.template)
     private val localTarget = LocalEventTarget(dispatcher)
-    private val dataContext: JexlContext
-
-    init {
-        dataContext = ScopeContext(
-                ArrayMap(),
-                ObjectContext<Any>(
-                        LithoBuildTool.engine,
-                        builder.data
-                )
-        )
-        dataContext.set("pageContext", PageContext(dataContext, localTarget))
-    }
-
+    private val dataContext = PropContext(
+            localTarget,
+            ObjectContext<Any>(
+                    LithoBuildTool.engine,
+                    builder.data
+            )
+    )
     private val computeRunnable = Runnable {
         val oldWidth = size.width
         val oldHeight = size.height
