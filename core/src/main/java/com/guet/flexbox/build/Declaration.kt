@@ -98,22 +98,18 @@ abstract class Declaration {
         }
     }
 
-    protected fun bindAttrs(
+    fun bindAttrs(
             rawAttrs: Map<String, String>,
             engine: JexlEngine,
             dataContext: JexlContext,
             eventDispatcher: EventTarget
     ): AttributeSet {
-        return if (rawAttrs.isNullOrEmpty()) {
-            emptyMap()
-        } else {
-            dataBinding.bind(
-                    engine,
-                    dataContext,
-                    eventDispatcher,
-                    rawAttrs
-            )
-        }
+        return dataBinding.bind(
+                engine,
+                dataContext,
+                eventDispatcher,
+                rawAttrs
+        )
     }
 
 }

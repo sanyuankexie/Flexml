@@ -1,10 +1,10 @@
-package com.guet.flexbox
+package com.guet.flexbox.log
 
 import android.util.Log.*
 import org.apache.commons.logging.Log
 
 
-internal class AndroidLog(private val tag: String) : Log {
+class AndroidLog(private val tag: String) : Log {
     override fun debug(message: Any) {
         d(tag, message.toString())
     }
@@ -75,5 +75,12 @@ internal class AndroidLog(private val tag: String) : Log {
 
     override fun isWarnEnabled(): Boolean {
         return isLoggable(tag, WARN)
+    }
+
+    companion object {
+        @JvmStatic
+        fun getLog(tag: String): Log {
+            return AndroidLog(tag)
+        }
     }
 }

@@ -1,13 +1,15 @@
 package com.guet.flexbox.build
 
+import androidx.annotation.RestrictTo
 import com.guet.flexbox.enums.FlexAlign
 import com.guet.flexbox.enums.FlexDirection
 import com.guet.flexbox.enums.FlexJustify
 import com.guet.flexbox.enums.FlexWrap
 
+@RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
 object Flex : Declaration() {
     override val dataBinding by DataBinding
-            .create(CommonProps.dataBinding) {
+            .create(CommonProps) {
                 enum("flexWrap", mapOf(
                         "wrap" to FlexWrap.WRAP,
                         "noWrap" to FlexWrap.NO_WRAP,

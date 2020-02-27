@@ -8,12 +8,12 @@ import androidx.annotation.AnyThread
 import androidx.annotation.MainThread
 import com.facebook.litho.ComponentContext
 import com.facebook.litho.ComponentTree
-import com.guet.flexbox.build.Kit
+import com.guet.flexbox.build.BuildKit
 import com.guet.flexbox.litho.LayoutThreadHandler
 import java.util.*
 import java.util.concurrent.atomic.AtomicReference
 
-internal object ComponentTreePool : ComponentCallbacks, Kit {
+internal object ComponentTreePool : ComponentCallbacks, BuildKit {
 
     override fun onConfigurationChanged(newConfig: Configuration?) {}
 

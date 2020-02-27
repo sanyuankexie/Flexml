@@ -3,8 +3,8 @@ package com.guet.flexbox.litho.factories.assign
 import android.util.ArrayMap
 import com.facebook.litho.Component
 import com.facebook.litho.EventHandler
-import com.guet.flexbox.eventsystem.EventAdapter
-import com.guet.flexbox.litho.LithoEventAdapter
+import com.guet.flexbox.eventsystem.ExternalEventReceiver
+import com.guet.flexbox.litho.LithoEventHandler
 import com.guet.flexbox.litho.toPx
 
 class AttrsAssigns<C : Component.Builder<*>>(
@@ -76,9 +76,9 @@ class AttrsAssigns<C : Component.Builder<*>>(
         }
 
         inline fun <reified T : EventHandler<*>> event(name: String, crossinline method: (C, T) -> C) {
-            register(name, object : Assignment<C, EventAdapter> {
-                override fun assign(c: C, display: Boolean, other: Map<String, Any>, value: EventAdapter) {
-                    method(c, LithoEventAdapter<Any>(value) as T)
+            register(name, object : Assignment<C, ExternalEventReceiver> {
+                override fun assign(c: C, display: Boolean, other: Map<String, Any>, value: ExternalEventReceiver) {
+                    method(c, LithoEventHandler<Any>(value) as T)
                 }
             })
         }

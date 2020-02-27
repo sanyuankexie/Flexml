@@ -5,8 +5,8 @@ import com.facebook.litho.Component
 import com.facebook.litho.ComponentContext
 import com.facebook.yoga.YogaEdge
 import com.guet.flexbox.build.AttributeSet
-import com.guet.flexbox.eventsystem.EventAdapter
-import com.guet.flexbox.litho.LithoEventAdapter
+import com.guet.flexbox.eventsystem.ExternalEventReceiver
+import com.guet.flexbox.litho.LithoEventHandler
 import com.guet.flexbox.litho.factories.assign.Assignment
 import com.guet.flexbox.litho.factories.assign.AttrsAssigns
 import com.guet.flexbox.litho.toPx
@@ -27,15 +27,15 @@ internal object CommonAssigns : ToComponent<Component.Builder<*>>() {
                 enum("alignSelf", Component.Builder<*>::alignSelf)
                 event("onClick", Component.Builder<*>::clickHandler)
                 event("onVisible", Component.Builder<*>::visibleHandler)
-                register("clickUrl", object : Assignment<Component.Builder<*>, EventAdapter> {
+                register("clickUrl", object : Assignment<Component.Builder<*>, ExternalEventReceiver> {
                     override fun assign(
                             c: Component.Builder<*>,
                             display: Boolean,
                             other: Map<String, Any>,
-                            value: EventAdapter
+                            value: ExternalEventReceiver
                     ) {
                         if (!other.containsKey("onClick")) {
-                            c.clickHandler(LithoEventAdapter<ClickEvent>(value))
+                            c.clickHandler(LithoEventHandler<ClickEvent>(value))
                         }
                     }
                 })

@@ -1,10 +1,12 @@
 package com.guet.flexbox.build
 
+import androidx.annotation.RestrictTo
 import com.guet.flexbox.TemplateNode
 import com.guet.flexbox.eventsystem.EventTarget
 import org.apache.commons.jexl3.JexlContext
 import org.apache.commons.jexl3.JexlEngine
 
+@RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
 object When : Declaration() {
 
     override val dataBinding: DataBinding
@@ -28,11 +30,11 @@ object When : Declaration() {
         for (item in children) {
             if (item.type == "case") {
                 val itemAttrs = item.attrs
-                if (itemAttrs != null && If.dataBinding.bind(
+                if (itemAttrs != null && If.bindAttrs(
+                                itemAttrs,
                                 engine,
                                 dataContext,
-                                eventDispatcher,
-                                itemAttrs
+                                eventDispatcher
                         )["test"] == true) {
                     return item.children?.let {
                         buildTool.buildAll(

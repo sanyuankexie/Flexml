@@ -8,7 +8,7 @@ import com.bumptech.glide.Registry
 import com.bumptech.glide.annotation.GlideModule
 import com.bumptech.glide.load.Option
 import com.bumptech.glide.module.LibraryGlideModule
-import com.guet.flexbox.build.Kit
+import com.guet.flexbox.build.BuildKit
 import com.guet.flexbox.litho.drawable.BitmapDrawable
 import java.io.File
 import java.nio.ByteBuffer
@@ -18,7 +18,7 @@ import java.util.concurrent.atomic.AtomicBoolean
 @GlideModule
 class DrawableLoaderModule : LibraryGlideModule() {
 
-    companion object : Kit {
+    companion object : BuildKit {
 
         val scaleType = Option.memory(
                 BitmapDrawable::class.java.name + ".scaleType",

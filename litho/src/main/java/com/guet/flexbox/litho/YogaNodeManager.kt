@@ -5,12 +5,12 @@ package com.facebook.yoga
 import android.content.Context
 import com.facebook.litho.NodeConfig
 import com.facebook.soloader.SoLoader
-import com.guet.flexbox.build.Kit
+import com.guet.flexbox.build.BuildKit
 import java.lang.ref.PhantomReference
 import java.lang.ref.ReferenceQueue
 import kotlin.concurrent.thread
 
-internal object YogaNodeManager : Kit, NodeConfig.InternalYogaNodeFactory {
+internal object YogaNodeManager : BuildKit, NodeConfig.InternalYogaNodeFactory {
 
     private val queue = ReferenceQueue<YogaNode>()
     private val entries = HashMap<PhantomReference<RefQueueFreeYogaNode>, Long>()

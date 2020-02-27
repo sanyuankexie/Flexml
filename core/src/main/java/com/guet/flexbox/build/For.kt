@@ -1,5 +1,6 @@
 package com.guet.flexbox.build
 
+import androidx.annotation.RestrictTo
 import com.guet.flexbox.TemplateNode
 import com.guet.flexbox.context.ScopeContext
 import com.guet.flexbox.eventsystem.EventTarget
@@ -7,6 +8,7 @@ import org.apache.commons.jexl3.JexlContext
 import org.apache.commons.jexl3.JexlEngine
 import java.util.*
 
+@RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
 object For : Declaration() {
 
     override val dataBinding by DataBinding

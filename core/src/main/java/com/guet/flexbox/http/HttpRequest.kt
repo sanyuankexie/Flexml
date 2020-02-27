@@ -1,4 +1,4 @@
-package com.guet.flexbox
+package com.guet.flexbox.http
 
 class HttpRequest(
         val url: String,

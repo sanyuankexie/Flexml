@@ -1,5 +1,6 @@
 package com.guet.flexbox.build
 
+import androidx.annotation.RestrictTo
 import com.guet.flexbox.TemplateNode
 import com.guet.flexbox.context.ScopeContext
 import com.guet.flexbox.eventsystem.EventTarget
@@ -9,6 +10,7 @@ import org.apache.commons.jexl3.MapContext
 import java.util.*
 import java.lang.reflect.Array as RArray
 
+@RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
 object ForEach : Declaration() {
 
     override val dataBinding by DataBinding.create {

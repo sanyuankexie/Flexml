@@ -1,12 +1,11 @@
 package com.guet.flexbox.context
 
-import android.os.Handler
-import android.os.Looper
-import com.guet.flexbox.HttpRequest
 import com.guet.flexbox.eventsystem.EventTarget
 import com.guet.flexbox.eventsystem.event.HttpRequestEvent
 import com.guet.flexbox.eventsystem.event.RefreshPageEvent
 import com.guet.flexbox.eventsystem.event.SendObjectsEvent
+import com.guet.flexbox.http.CallbackImpl
+import com.guet.flexbox.http.HttpRequest
 import org.apache.commons.jexl3.JexlContext
 import org.apache.commons.jexl3.JexlScript
 import java.util.*
@@ -78,11 +77,6 @@ class PageTransaction(
         }
     }
 
-    private companion object {
-        private val mainLooper = Looper.getMainLooper()
-        private val mainThread = Handler(Looper.getMainLooper())
-    }
-
     private fun newCallback(
             success: JexlScript?,
             error: JexlScript?
@@ -92,37 +86,6 @@ class PageTransaction(
                 success,
                 error
         )
-    }
-
-    private class CallbackImpl(
-            private val dataContext: JexlContext,
-            private val success: JexlScript?,
-            private val error: JexlScript?
-    ) : HttpRequest.Callback {
-
-        override fun onError() {
-            if (error != null) {
-                if (Looper.myLooper() == mainLooper) {
-                    error.execute(dataContext)
-                } else {
-                    mainThread.post {
-                        error.execute(dataContext)
-                    }
-                }
-            }
-        }
-
-        override fun onResponse(data: String?) {
-            if (success != null) {
-                if (Looper.myLooper() == mainLooper) {
-                    success.execute(dataContext, data)
-                } else {
-                    mainThread.post {
-                        success.execute(dataContext, data)
-                    }
-                }
-            }
-        }
     }
 
 }

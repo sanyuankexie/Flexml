@@ -4,7 +4,7 @@ import com.guet.flexbox.enums.ScaleType
 
 internal object Graphic : Declaration() {
     override val dataBinding by DataBinding
-            .create(CommonProps.dataBinding) {
+            .create(CommonProps) {
                 enum("scaleType", mapOf(
                         "center" to ScaleType.CENTER,
                         "fitCenter" to ScaleType.FIT_CENTER,

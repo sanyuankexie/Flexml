@@ -20,19 +20,27 @@ abstract class BuildTool {
 
     protected abstract val widgets: Map<String, ToWidget>
 
-    protected abstract val kits: List<Kit>
+    protected abstract val kits: List<BuildKit>
 
     protected open val engine: JexlEngine by lazy {
         JexlBuilder().silent(!BuildConfig.DEBUG)
                 .strict(false)
                 .create()
     }
-    
+
+    @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
     fun newContext(
             data: Any?,
             target: EventTarget
     ): PropContext {
         return PropContext(data, target, engine)
+    }
+
+    @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
+    fun install(context: Context) {
+        kits.forEach {
+            it.init(context)
+        }
     }
 
     @Suppress("UNCHECKED_CAST")
@@ -96,9 +104,4 @@ abstract class BuildTool {
         return list
     }
 
-    fun install(context: Context) {
-        kits.forEach {
-            it.init(context)
-        }
-    }
 }

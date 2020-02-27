@@ -8,7 +8,7 @@ import com.guet.flexbox.enums.Vertical
 internal object AbsText : Declaration() {
 
     override val dataBinding by DataBinding
-            .create(CommonProps.dataBinding) {
+            .create(CommonProps) {
                 enum("verticalGravity", mapOf(
                         "top" to Vertical.TOP,
                         "bottom" to Vertical.BOTTOM,

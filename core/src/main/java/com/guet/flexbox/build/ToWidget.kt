@@ -1,10 +1,12 @@
 package com.guet.flexbox.build
 
+import androidx.annotation.RestrictTo
 import com.guet.flexbox.TemplateNode
 import com.guet.flexbox.eventsystem.EventTarget
 import org.apache.commons.jexl3.JexlContext
 import org.apache.commons.jexl3.JexlEngine
 
+@RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
 class ToWidget(
         private val declaration: Declaration,
         private val factory: RenderNodeFactory<*>?

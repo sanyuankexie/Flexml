@@ -17,7 +17,7 @@
 
 package org.apache.commons.logging;
 
-import com.guet.flexbox.AndroidLog;
+import com.guet.flexbox.log.AndroidLog;
 
 @SuppressWarnings("WeakerAccess")
 public abstract class LogFactory {
@@ -27,6 +27,6 @@ public abstract class LogFactory {
     }
 
     public static Log getLog(String name) {
-        return new AndroidLog(name);
+        return AndroidLog.getLog(name);
     }
 }

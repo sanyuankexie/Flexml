@@ -28,7 +28,7 @@ object LithoBuildTool : BuildTool() {
         arr.toMap(ArrayMap<String, ToWidget>(arr.size))
     }
 
-    override val kits: List<Kit> by lazy {
+    override val kits: List<BuildKit> by lazy {
         return@lazy listOf(
                 YogaNodeManager,
                 DrawableLoaderModule,

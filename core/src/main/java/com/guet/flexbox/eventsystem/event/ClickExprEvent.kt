@@ -11,4 +11,15 @@ class ClickExprEvent(
         script: JexlScript
 ) : ClickEvent(source), HasExprEvent {
     override val expr: Callable<Any> = script.callable(context)
+
+    companion object Factory : TemplateEvent.Factory {
+        override fun create(
+                source: View?,
+                args: Array<out Any?>?,
+                dataContext: JexlContext,
+                script: JexlScript
+        ): TemplateEvent<*> {
+            return ClickExprEvent(source!!, dataContext, script)
+        }
+    }
 }

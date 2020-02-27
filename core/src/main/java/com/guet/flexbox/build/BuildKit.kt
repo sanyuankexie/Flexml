@@ -2,6 +2,6 @@ package com.guet.flexbox.build
 
 import android.content.Context
 
-interface Kit {
+interface BuildKit {
     fun init(c: Context)
 }

@@ -1,18 +1,12 @@
 package com.guet.flexbox.build
 
-import android.view.View
+import androidx.annotation.RestrictTo
 import com.guet.flexbox.enums.FlexAlign
-import com.guet.flexbox.eventsystem.EventAdapter
-import com.guet.flexbox.eventsystem.EventFactory
-import com.guet.flexbox.eventsystem.EventTarget
+import com.guet.flexbox.eventsystem.ClickUrlEventReceiver
 import com.guet.flexbox.eventsystem.event.ClickExprEvent
-import com.guet.flexbox.eventsystem.event.ClickUrlEvent
-import com.guet.flexbox.eventsystem.event.TemplateEvent
 import com.guet.flexbox.eventsystem.event.VisibleEvent
-import org.apache.commons.jexl3.JexlContext
-import org.apache.commons.jexl3.JexlEngine
-import org.apache.commons.jexl3.JexlScript
 
+@RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
 object CommonProps : Declaration() {
 
     override val dataBinding by DataBinding.create {
@@ -48,49 +42,9 @@ object CommonProps : Declaration() {
             value("margin$edge")
             value("padding$edge")
         }
-        typed("clickUrl", object : TextToAttribute<EventAdapter> {
-            override fun cast(
-                    engine: JexlEngine,
-                    dataContext: JexlContext,
-                    eventDispatcher: EventTarget,
-                    raw: String
-            ): EventAdapter? {
-                val url = if (raw.isExpr) {
-                    engine.createExpression(raw.innerExpr)
-                            .evaluate(dataContext) as? String ?: ""
-                } else {
-                    raw
-                }
-                return object : EventAdapter {
-                    override fun adapt(v: View?, args: Array<out Any?>?) {
-                        eventDispatcher.dispatchEvent(
-                                ClickUrlEvent(v!!, url)
-                        )
-                    }
-                }
-            }
-        })
-        event("onClick", object : EventFactory {
-            override fun create(
-                    source: View?,
-                    args: Array<out Any?>?,
-                    dataContext: JexlContext,
-                    script: JexlScript
-            ): TemplateEvent<*> {
-                return ClickExprEvent(source!!, dataContext, script)
-            }
-        })
-        event("onVisible", object : EventFactory {
-            override fun create(
-                    source: View?,
-                    args: Array<out Any?>?,
-                    dataContext: JexlContext,
-                    script: JexlScript
-            ): TemplateEvent<*> {
-                return VisibleEvent(dataContext, script)
-            }
-        })
+        typed("clickUrl", ClickUrlEventReceiver.Covertor)
+        event("onClick", ClickExprEvent.Factory)
+        event("onVisible", VisibleEvent.Factory)
     }
-
 
 }

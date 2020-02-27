@@ -3,10 +3,10 @@ package com.guet.flexbox.build
 import android.graphics.Color
 import android.util.ArrayMap
 import com.guet.flexbox.context.ScopeContext
-import com.guet.flexbox.eventsystem.EventAdapter
-import com.guet.flexbox.eventsystem.EventFactory
 import com.guet.flexbox.eventsystem.EventTarget
-import com.guet.flexbox.eventsystem.ExprEventAdapter
+import com.guet.flexbox.eventsystem.ExternalEventReceiver
+import com.guet.flexbox.eventsystem.ReceiveEventToExpr
+import com.guet.flexbox.eventsystem.event.TemplateEvent
 import org.apache.commons.jexl3.JexlContext
 import org.apache.commons.jexl3.JexlEngine
 
@@ -32,6 +32,9 @@ internal class DataBinding(
             eventDispatcher: EventTarget,
             map: Map<String, String>
     ): Map<String, Any> {
+        if (map.isEmpty()) {
+            return emptyMap()
+        }
         val output = ArrayMap<String, Any>(map.size)
         map.forEach {
             val binder = find(it.key)
@@ -64,11 +67,11 @@ internal class DataBinding(
         val empty = DataBinding(null, emptyMap())
 
         inline fun create(
-                parent: DataBinding? = null,
+                parent: Declaration? = null,
                 crossinline action: Builder.() -> Unit
         ): Lazy<DataBinding> {
             return lazy {
-                Builder().apply(action).build(parent)
+                Builder().apply(action).build(parent?.dataBinding)
             }
         }
     }
@@ -216,17 +219,17 @@ internal class DataBinding(
 
         fun event(
                 name: String,
-                factory: EventFactory
+                factory: TemplateEvent.Factory
         ) {
-            value[name] = object : TextToAttribute<EventAdapter> {
+            value[name] = object : TextToAttribute<ExternalEventReceiver> {
                 override fun cast(
                         engine: JexlEngine,
                         dataContext: JexlContext,
                         eventDispatcher: EventTarget,
                         raw: String
-                ): EventAdapter? {
+                ): ExternalEventReceiver? {
                     return if (raw.isExpr) {
-                        return ExprEventAdapter(
+                        return ReceiveEventToExpr(
                                 factory,
                                 dataContext,
                                 eventDispatcher,
