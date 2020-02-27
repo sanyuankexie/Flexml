@@ -11,14 +11,14 @@ import java.util.*
 import java.lang.reflect.Array as RArray
 
 @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
-object ForEach : Declaration() {
+object ForEach : Definition() {
 
     override val dataBinding by DataBinding.create {
         text("var")
         typed("items", TextToItems)
     }
 
-    private object TextToItems : TextToAttribute<Any> {
+    private object TextToItems : DataBinder<Any> {
         override fun cast(
                 engine: JexlEngine,
                 dataContext: JexlContext,
@@ -44,7 +44,7 @@ object ForEach : Declaration() {
 
     override fun onBuildWidget(
             buildTool: BuildTool,
-            rawAttrs: Map<String, String>,
+            rawProps: Map<String, String>,
             children: List<TemplateNode>,
             factory: RenderNodeFactory<*>?,
             engine: JexlEngine,
@@ -53,7 +53,7 @@ object ForEach : Declaration() {
             other: Any?,
             upperDisplay: Boolean
     ): List<Any> {
-        val attrs = bindAttrs(rawAttrs, engine, dataContext, eventDispatcher)
+        val attrs = bindProps(rawProps, engine, dataContext, eventDispatcher)
         val name = attrs.getValue("var") as String
         val items = attrs.getValue("items")
         if (items.javaClass.isArray) {

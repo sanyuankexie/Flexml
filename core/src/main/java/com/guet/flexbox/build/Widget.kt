@@ -1,6 +1,7 @@
 package com.guet.flexbox.build
 
 import android.util.ArrayMap
+import androidx.annotation.RestrictTo
 import com.guet.flexbox.TemplateNode
 import com.guet.flexbox.context.ScopeContext
 import com.guet.flexbox.enums.Visibility
@@ -8,11 +9,10 @@ import com.guet.flexbox.eventsystem.EventTarget
 import org.apache.commons.jexl3.JexlContext
 import org.apache.commons.jexl3.JexlEngine
 
-abstract class Declaration {
+@RestrictTo(RestrictTo.Scope.LIBRARY)
+abstract class Widget : Definition() {
 
-    internal abstract val dataBinding: DataBinding
-
-    companion object {
+    private companion object {
         private val visibility: Map<String, Visibility>
 
         init {
@@ -24,22 +24,22 @@ abstract class Declaration {
         }
     }
 
-    open fun onBuildWidget(
+    override fun onBuildWidget(
             buildTool: BuildTool,
-            rawAttrs: Map<String, String>,
+            rawProps: Map<String, String>,
             children: List<TemplateNode>,
             factory: RenderNodeFactory<*>?,
             engine: JexlEngine,
             dataContext: JexlContext,
             eventDispatcher: EventTarget,
             other: Any?,
-            upperDisplay: Boolean = true
+            upperDisplay: Boolean
     ): List<Any> {
         if (factory == null) {
             return emptyList()
         }
         val selfVisibility = parseSelfVisibility(
-                rawAttrs, engine, dataContext, upperDisplay
+                rawProps, engine, dataContext, upperDisplay
         )
         if (selfVisibility == Visibility.GONE) {
             return emptyList()
@@ -57,8 +57,8 @@ abstract class Declaration {
                     display
             )
         }
-        val attrs = bindAttrs(
-                rawAttrs,
+        val attrs = bindProps(
+                rawProps,
                 engine,
                 dataContext,
                 eventDispatcher
@@ -97,19 +97,4 @@ abstract class Declaration {
             }
         }
     }
-
-    fun bindAttrs(
-            rawAttrs: Map<String, String>,
-            engine: JexlEngine,
-            dataContext: JexlContext,
-            eventDispatcher: EventTarget
-    ): AttributeSet {
-        return dataBinding.bind(
-                engine,
-                dataContext,
-                eventDispatcher,
-                rawAttrs
-        )
-    }
-
 }

@@ -7,14 +7,14 @@ import org.apache.commons.jexl3.JexlContext
 import org.apache.commons.jexl3.JexlEngine
 
 @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
-object When : Declaration() {
+object When : Definition() {
 
     override val dataBinding: DataBinding
         get() = DataBinding.empty
 
     override fun onBuildWidget(
             buildTool: BuildTool,
-            rawAttrs: Map<String, String>,
+            rawProps: Map<String, String>,
             children: List<TemplateNode>,
             factory: RenderNodeFactory<*>?,
             engine: JexlEngine,
@@ -30,7 +30,7 @@ object When : Declaration() {
         for (item in children) {
             if (item.type == "case") {
                 val itemAttrs = item.attrs
-                if (itemAttrs != null && If.bindAttrs(
+                if (itemAttrs != null && If.bindProps(
                                 itemAttrs,
                                 engine,
                                 dataContext,

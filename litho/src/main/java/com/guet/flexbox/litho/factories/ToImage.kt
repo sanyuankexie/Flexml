@@ -7,7 +7,7 @@ import com.facebook.litho.Component
 import com.facebook.litho.ComponentContext
 import com.facebook.litho.Row
 import com.facebook.litho.widget.Image
-import com.guet.flexbox.build.AttributeSet
+import com.guet.flexbox.build.PropSet
 import com.guet.flexbox.build.RenderNodeFactory
 import com.guet.flexbox.build.UrlType
 import com.guet.flexbox.litho.drawable.ColorDrawable
@@ -19,7 +19,7 @@ object ToImage : RenderNodeFactory<Component> {
 
     override fun create(
             display: Boolean,
-            attrs: AttributeSet,
+            attrs: PropSet,
             children: List<Component>,
             other: Any?
     ): Component {
@@ -32,7 +32,7 @@ object ToImage : RenderNodeFactory<Component> {
 
     private fun toComponent(
             c: ComponentContext,
-            attrs: AttributeSet,
+            attrs: PropSet,
             visibility: Boolean = true
     ): Component {
         if (!visibility) {

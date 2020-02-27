@@ -19,7 +19,7 @@ import com.facebook.yoga.YogaAlign
 import com.facebook.yoga.YogaEdge
 import com.facebook.yoga.YogaJustify
 import com.guet.flexbox.build.UrlType
-import com.guet.flexbox.context.PropContext.Func.Resource
+import com.guet.flexbox.context.PropsContext.Functions.Resource
 import com.guet.flexbox.enums.Orientation
 import com.guet.flexbox.litho.drawable.ColorDrawable
 import com.guet.flexbox.litho.drawable.GradientDrawable
@@ -125,7 +125,6 @@ object BannerSpec {
             }
         }
     }
-
 
     //ViewPager2如果无限循环，小于3的话会显示异常
     private fun getCompatCountChildren(

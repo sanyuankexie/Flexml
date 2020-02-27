@@ -7,7 +7,7 @@ import org.apache.commons.jexl3.JexlContext
 import org.apache.commons.jexl3.JexlEngine
 
 @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
-object If : Declaration() {
+object If : Definition() {
 
     override val dataBinding by DataBinding
             .create {
@@ -16,7 +16,7 @@ object If : Declaration() {
 
     override fun onBuildWidget(
             buildTool: BuildTool,
-            rawAttrs: Map<String, String>,
+            rawProps: Map<String, String>,
             children: List<TemplateNode>,
             factory: RenderNodeFactory<*>?,
             engine: JexlEngine,
@@ -25,7 +25,7 @@ object If : Declaration() {
             other: Any?,
             upperDisplay: Boolean
     ): List<Any> {
-        val attrs = bindAttrs(rawAttrs, engine, dataContext, eventDispatcher)
+        val attrs = bindProps(rawProps, engine, dataContext, eventDispatcher)
         return if (attrs.getValue("test") as? Boolean != true) {
             emptyList()
         } else {

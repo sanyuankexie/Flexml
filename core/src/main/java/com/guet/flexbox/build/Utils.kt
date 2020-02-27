@@ -1,6 +1,6 @@
 package com.guet.flexbox.build
 
-typealias AttributeSet = Map<String, Any>
+typealias PropSet = Map<String, Any>
 
 inline val String.isExpr: Boolean
     get() {

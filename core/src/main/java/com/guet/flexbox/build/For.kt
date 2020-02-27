@@ -9,7 +9,7 @@ import org.apache.commons.jexl3.JexlEngine
 import java.util.*
 
 @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
-object For : Declaration() {
+object For : Definition() {
 
     override val dataBinding by DataBinding
             .create {
@@ -20,7 +20,7 @@ object For : Declaration() {
 
     override fun onBuildWidget(
             buildTool: BuildTool,
-            rawAttrs: Map<String, String>,
+            rawProps: Map<String, String>,
             children: List<TemplateNode>,
             factory: RenderNodeFactory<*>?,
             engine: JexlEngine,
@@ -29,7 +29,7 @@ object For : Declaration() {
             other: Any?,
             upperDisplay: Boolean
     ): List<Any> {
-        val attrs = bindAttrs(rawAttrs, engine, dataContext, eventDispatcher)
+        val attrs = bindProps(rawProps, engine, dataContext, eventDispatcher)
         val name = attrs.getValue("var") as String
         val from = (attrs.getValue("from") as Float).toInt()
         val to = (attrs.getValue("to") as Float).toInt()

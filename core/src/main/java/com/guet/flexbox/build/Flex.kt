@@ -7,9 +7,9 @@ import com.guet.flexbox.enums.FlexJustify
 import com.guet.flexbox.enums.FlexWrap
 
 @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
-object Flex : Declaration() {
+object Flex : Widget() {
     override val dataBinding by DataBinding
-            .create(CommonProps) {
+            .create(CommonDefine) {
                 enum("flexWrap", mapOf(
                         "wrap" to FlexWrap.WRAP,
                         "noWrap" to FlexWrap.NO_WRAP,

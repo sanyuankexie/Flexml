@@ -1,7 +1,7 @@
 package com.guet.flexbox.eventsystem
 
 import android.view.View
-import com.guet.flexbox.build.TextToAttribute
+import com.guet.flexbox.build.DataBinder
 import com.guet.flexbox.build.innerExpr
 import com.guet.flexbox.build.isExpr
 import com.guet.flexbox.eventsystem.event.ClickUrlEvent
@@ -19,7 +19,7 @@ internal class ClickUrlEventReceiver(
         )
     }
 
-    companion object Covertor : TextToAttribute<ClickUrlEventReceiver> {
+    companion object Covertor : DataBinder<ClickUrlEventReceiver> {
         override fun cast(
                 engine: JexlEngine,
                 dataContext: JexlContext,

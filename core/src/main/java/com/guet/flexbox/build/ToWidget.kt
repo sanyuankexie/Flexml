@@ -8,7 +8,7 @@ import org.apache.commons.jexl3.JexlEngine
 
 @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
 class ToWidget(
-        private val declaration: Declaration,
+        private val definition: Definition,
         private val factory: RenderNodeFactory<*>?
 ) {
     fun toWidget(
@@ -18,9 +18,9 @@ class ToWidget(
             dataContext: JexlContext,
             eventDispatcher: EventTarget,
             other: Any?,
-            upperVisibility: Boolean = true
+            upperDisplay: Boolean = true
     ): List<Any> {
-        return declaration.onBuildWidget(
+        return definition.onBuildWidget(
                 bindings,
                 template.attrs ?: emptyMap(),
                 template.children ?: emptyList(),
@@ -29,7 +29,7 @@ class ToWidget(
                 dataContext,
                 eventDispatcher,
                 other,
-                upperVisibility
+                upperDisplay
         )
     }
 }

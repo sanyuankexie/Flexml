@@ -7,5 +7,5 @@ void external(String... names) {
     })
 }
 
-external 'el', 'compiler', 'beans', 'handshake'
+external 'compiler', 'beans', 'handshake'
 

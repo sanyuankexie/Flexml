@@ -4,9 +4,9 @@ import androidx.annotation.RestrictTo
 import com.guet.flexbox.enums.Orientation
 
 @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
-object Scroller : Declaration() {
+object Scroller : Widget() {
     override val dataBinding: DataBinding by DataBinding
-            .create(CommonProps) {
+            .create(CommonDefine) {
         bool("scrollBarEnable")
         enum("orientation", mapOf(
                 "vertical" to Orientation.VERTICAL,

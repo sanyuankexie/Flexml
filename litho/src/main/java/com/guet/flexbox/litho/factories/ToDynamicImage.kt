@@ -1,16 +1,15 @@
 package com.guet.flexbox.litho.factories
 
-import com.bumptech.glide.Glide
 import com.facebook.litho.ComponentContext
-import com.guet.flexbox.build.AttributeSet
-import com.guet.flexbox.litho.factories.assign.Assignment
-import com.guet.flexbox.litho.factories.assign.AttrsAssigns
+import com.guet.flexbox.build.PropSet
+import com.guet.flexbox.litho.factories.filler.GlideModelFiller
+import com.guet.flexbox.litho.factories.filler.PropsFiller
 import com.guet.flexbox.litho.widget.DynamicImage
 
 internal object ToDynamicImage : ToComponent<DynamicImage.Builder>() {
 
-    override val attrsAssigns by AttrsAssigns
-            .create<DynamicImage.Builder>(CommonAssigns.attrsAssigns) {
+    override val propsFiller by PropsFiller
+            .create<DynamicImage.Builder>(CommonProps) {
                 enum("scaleType", DynamicImage.Builder::scaleType)
                 value("blurRadius", DynamicImage.Builder::blurRadius)
                 value("blurSampling", DynamicImage.Builder::blurSampling)
@@ -19,23 +18,13 @@ internal object ToDynamicImage : ToComponent<DynamicImage.Builder>() {
                 pt("borderRightTopRadius", DynamicImage.Builder::rightTopRadius)
                 pt("borderRightBottomRadius", DynamicImage.Builder::rightBottomRadius)
                 pt("borderLeftBottomRadius", DynamicImage.Builder::leftBottomRadius)
-                register("src", object : Assignment<DynamicImage.Builder, Any> {
-                    override fun assign(c: DynamicImage.Builder,
-                                        display: Boolean,
-                                        other: Map<String, Any>,
-                                        value: Any) {
-                        Glide.with(c.context!!.androidContext)
-                                .load(value)
-                                .preload()
-                        c.model(value)
-                    }
-                })
+                register("src", GlideModelFiller)
             }
 
     override fun create(
             c: ComponentContext,
             visibility: Boolean,
-            attrs: AttributeSet
+            attrs: PropSet
     ): DynamicImage.Builder {
         return DynamicImage.create(c)
     }

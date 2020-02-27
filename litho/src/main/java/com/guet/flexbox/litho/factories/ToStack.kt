@@ -1,20 +1,20 @@
 package com.guet.flexbox.litho.factories
 
 import com.facebook.litho.ComponentContext
-import com.guet.flexbox.build.AttributeSet
+import com.guet.flexbox.build.PropSet
 import com.guet.flexbox.litho.Widget
-import com.guet.flexbox.litho.factories.assign.AttrsAssigns
+import com.guet.flexbox.litho.factories.filler.PropsFiller
 import com.guet.flexbox.litho.widget.Stack
 
 internal object ToStack : ToComponent<Stack.Builder>() {
 
-    override val attrsAssigns = AttrsAssigns
-            .use<Stack.Builder>(CommonAssigns.attrsAssigns)
+    override val propsFiller = PropsFiller
+            .use<Stack.Builder>(CommonProps)
 
     override fun create(
             c: ComponentContext,
             visibility: Boolean,
-            attrs: AttributeSet
+            attrs: PropSet
     ): Stack.Builder {
         return Stack.create(c)
     }
@@ -22,7 +22,7 @@ internal object ToStack : ToComponent<Stack.Builder>() {
     override fun onInstallChildren(
             owner: Stack.Builder,
             visibility: Boolean,
-            attrs: AttributeSet,
+            attrs: PropSet,
             children: List<Widget>
     ) {
         if (children.isEmpty()) {

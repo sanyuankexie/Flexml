@@ -4,23 +4,24 @@ import android.graphics.Color
 import android.graphics.drawable.GradientDrawable.Orientation
 import com.facebook.litho.Component
 import com.facebook.litho.ComponentContext
-import com.guet.flexbox.build.AttributeSet
+import com.guet.flexbox.build.PropSet
 import com.guet.flexbox.build.RenderNodeFactory
 import com.guet.flexbox.build.UrlType
 import com.guet.flexbox.litho.Widget
 import com.guet.flexbox.litho.drawable.*
-import com.guet.flexbox.litho.factories.assign.AttrsAssigns
+import com.guet.flexbox.litho.factories.filler.PropsFiller
 import com.guet.flexbox.litho.getFloatValue
 import com.guet.flexbox.litho.toPx
 import com.guet.flexbox.litho.toPxFloat
 
-abstract class ToComponent<C : Component.Builder<*>> : RenderNodeFactory<Component> {
+internal abstract class ToComponent<C : Component.Builder<*>>
+    : RenderNodeFactory<Component> {
 
-    abstract val attrsAssigns: AttrsAssigns<C>
+    abstract val propsFiller: PropsFiller<C>
 
     override fun create(
             display: Boolean,
-            attrs: AttributeSet,
+            attrs: PropSet,
             children: List<Component>,
             other: Any?
     ): Component {
@@ -35,18 +36,18 @@ abstract class ToComponent<C : Component.Builder<*>> : RenderNodeFactory<Compone
     fun toComponent(
             c: ComponentContext,
             visibility: Boolean,
-            attrs: AttributeSet,
+            attrs: PropSet,
             children: List<Widget>
     ): Component {
         val com = create(c, visibility, attrs)
         prepareAssign(attrs)
-        attrsAssigns.assign(com, visibility, attrs)
+        propsFiller.fill(com, visibility, attrs)
         createBackgroundWithBorder(com, attrs)
         onInstallChildren(com, visibility, attrs, children)
         return com.build()
     }
 
-    private fun prepareAssign(attrs: AttributeSet) {
+    private fun prepareAssign(attrs: PropSet) {
         val borderRadius = attrs["borderRadius"]
         if (borderRadius != null) {
             for (lr in arrayOf("Left", "Right")) {
@@ -65,7 +66,7 @@ abstract class ToComponent<C : Component.Builder<*>> : RenderNodeFactory<Compone
         }
     }
 
-    private fun createBackgroundWithBorder(c: C, attrs: AttributeSet) {
+    private fun createBackgroundWithBorder(c: C, attrs: PropSet) {
         val background = attrs["background"] as? CharSequence
         val context = c.getContext()!!.androidContext
         val lt = attrs.getFloatValue("borderLeftTopRadius").toPxFloat()
@@ -151,7 +152,7 @@ abstract class ToComponent<C : Component.Builder<*>> : RenderNodeFactory<Compone
     protected open fun onInstallChildren(
             owner: C,
             visibility: Boolean,
-            attrs: AttributeSet,
+            attrs: PropSet,
             children: List<Widget>
     ) {
 
@@ -160,6 +161,6 @@ abstract class ToComponent<C : Component.Builder<*>> : RenderNodeFactory<Compone
     protected abstract fun create(
             c: ComponentContext,
             visibility: Boolean,
-            attrs: AttributeSet
+            attrs: PropSet
     ): C
 }

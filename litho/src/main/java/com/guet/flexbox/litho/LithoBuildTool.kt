@@ -19,7 +19,7 @@ object LithoBuildTool : BuildTool() {
                 "Scroller" to ToWidget(Scroller, ToScroller),
                 "TextInput" to ToWidget(TextInput, ToTextInput),
                 "Text" to ToWidget(Text, ToText),
-                "Stack" to ToWidget(CommonProps, ToStack),
+                "Stack" to ToWidget(CommonDefine, ToStack),
                 "for" to ToWidget(For, null),
                 "foreach" to ToWidget(ForEach, null),
                 "when" to ToWidget(When, null),

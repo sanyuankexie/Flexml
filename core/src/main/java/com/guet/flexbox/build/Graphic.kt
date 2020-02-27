@@ -2,9 +2,9 @@ package com.guet.flexbox.build
 
 import com.guet.flexbox.enums.ScaleType
 
-internal object Graphic : Declaration() {
+internal object Graphic : Widget() {
     override val dataBinding by DataBinding
-            .create(CommonProps) {
+            .create(CommonDefine) {
                 enum("scaleType", mapOf(
                         "center" to ScaleType.CENTER,
                         "fitCenter" to ScaleType.FIT_CENTER,

@@ -8,7 +8,7 @@ import org.apache.commons.jexl3.JexlContext
 import org.apache.commons.jexl3.JexlEngine
 import org.apache.commons.jexl3.ObjectContext
 
-class PropContext(
+class PropsContext(
         data: Any?,
         eventTarget: EventTarget,
         engine: JexlEngine
@@ -48,17 +48,17 @@ class PropContext(
     ) {
 
         fun send(vararg values: Any) {
-            PageTransaction(this@PropContext, target)
+            PageTransaction(this@PropsContext, target)
                     .send(*values)
                     .commit()
         }
 
         fun begin(): PageTransaction {
-            return PageTransaction(this@PropContext, target)
+            return PageTransaction(this@PropsContext, target)
         }
     }
 
-    companion object Func {
+    companion object Functions {
         @Target(AnnotationTarget.CLASS)
         @Retention(AnnotationRetention.RUNTIME)
         private annotation class Namespace(val value: String)
@@ -80,7 +80,7 @@ class PropContext(
                     .toString()
         }
 
-        private val functions = Func::class.java
+        private val functions = Functions::class.java
                 .declaredClasses
                 .filter {
                     it.isAnnotationPresent(Namespace::class.java)

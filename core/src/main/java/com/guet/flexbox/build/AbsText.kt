@@ -5,10 +5,10 @@ import com.guet.flexbox.enums.Horizontal
 import com.guet.flexbox.enums.TextStyle
 import com.guet.flexbox.enums.Vertical
 
-internal object AbsText : Declaration() {
+internal object AbsText : Widget() {
 
     override val dataBinding by DataBinding
-            .create(CommonProps) {
+            .create(CommonDefine) {
                 enum("verticalGravity", mapOf(
                         "top" to Vertical.TOP,
                         "bottom" to Vertical.BOTTOM,

@@ -12,11 +12,11 @@ import org.apache.commons.jexl3.JexlEngine
 
 internal class DataBinding(
         private val parent: DataBinding? = null,
-        private val data: Map<String, TextToAttribute<*>>
+        private val binders: Map<String, DataBinder<*>>
 ) {
 
-    private fun find(name: String): TextToAttribute<*>? {
-        val v = data[name]
+    private fun find(name: String): DataBinder<*>? {
+        val v = binders[name]
         if (v != null) {
             return v
         }
@@ -67,7 +67,7 @@ internal class DataBinding(
         val empty = DataBinding(null, emptyMap())
 
         inline fun create(
-                parent: Declaration? = null,
+                parent: Definition? = null,
                 crossinline action: Builder.() -> Unit
         ): Lazy<DataBinding> {
             return lazy {
@@ -78,14 +78,14 @@ internal class DataBinding(
 
     class Builder {
 
-        private val value = ArrayMap<String, TextToAttribute<*>>()
+        private val value = ArrayMap<String, DataBinder<*>>()
 
         fun text(
                 name: String,
                 scope: (Map<String, String>) = emptyMap(),
                 fallback: String = ""
         ) {
-            value[name] = object : TextToAttribute<String> {
+            value[name] = object : DataBinder<String> {
                 override fun cast(
                         engine: JexlEngine,
                         dataContext: JexlContext,
@@ -112,7 +112,7 @@ internal class DataBinding(
                 scope: Map<String, Boolean> = emptyMap(),
                 fallback: Boolean = false
         ) {
-            value[name] = object : TextToAttribute<Boolean> {
+            value[name] = object : DataBinder<Boolean> {
                 override fun cast(
                         engine: JexlEngine,
                         dataContext: JexlContext,
@@ -135,7 +135,7 @@ internal class DataBinding(
                 scope: Map<String, Float> = emptyMap(),
                 fallback: Float = 0f
         ) {
-            value[name] = object : TextToAttribute<Float> {
+            value[name] = object : DataBinder<Float> {
                 override fun cast(
                         engine: JexlEngine,
                         dataContext: JexlContext,
@@ -158,7 +158,7 @@ internal class DataBinding(
                 scope: Map<String, Int> = emptyMap(),
                 fallback: Int = Color.TRANSPARENT
         ) {
-            value[name] = object : TextToAttribute<Int> {
+            value[name] = object : DataBinder<Int> {
                 override fun cast(
                         engine: JexlEngine,
                         dataContext: JexlContext,
@@ -189,7 +189,7 @@ internal class DataBinding(
 
         fun <T : Any> typed(
                 name: String,
-                obj: TextToAttribute<T>
+                obj: DataBinder<T>
         ) {
             value[name] = obj
         }
@@ -199,7 +199,7 @@ internal class DataBinding(
                 scope: Map<String, V>,
                 fallback: V = enumValues<V>().first()
         ) {
-            typed(name, object : TextToAttribute<V> {
+            typed(name, object : DataBinder<V> {
                 override fun cast(
                         engine: JexlEngine,
                         dataContext: JexlContext,
@@ -221,7 +221,7 @@ internal class DataBinding(
                 name: String,
                 factory: TemplateEvent.Factory
         ) {
-            value[name] = object : TextToAttribute<ExternalEventReceiver> {
+            value[name] = object : DataBinder<ExternalEventReceiver> {
                 override fun cast(
                         engine: JexlEngine,
                         dataContext: JexlContext,

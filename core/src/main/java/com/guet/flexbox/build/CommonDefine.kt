@@ -7,7 +7,7 @@ import com.guet.flexbox.eventsystem.event.ClickExprEvent
 import com.guet.flexbox.eventsystem.event.VisibleEvent
 
 @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
-object CommonProps : Declaration() {
+object CommonDefine : Widget() {
 
     override val dataBinding by DataBinding.create {
         value("width")

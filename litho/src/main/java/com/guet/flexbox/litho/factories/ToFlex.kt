@@ -4,15 +4,15 @@ import com.facebook.litho.Column
 import com.facebook.litho.Component
 import com.facebook.litho.ComponentContext
 import com.facebook.litho.Row
-import com.guet.flexbox.build.AttributeSet
+import com.guet.flexbox.build.PropSet
 import com.guet.flexbox.enums.FlexDirection
 import com.guet.flexbox.litho.Widget
-import com.guet.flexbox.litho.factories.assign.AttrsAssigns
+import com.guet.flexbox.litho.factories.filler.PropsFiller
 
 internal object ToFlex : ToComponent<Component.ContainerBuilder<*>>() {
 
-    override val attrsAssigns by AttrsAssigns
-            .create<Component.ContainerBuilder<*>>(CommonAssigns.attrsAssigns) {
+    override val propsFiller by PropsFiller
+            .create<Component.ContainerBuilder<*>>(CommonProps) {
                 enum("flexWrap", Component.ContainerBuilder<*>::wrap)
                 enum("justifyContent", Component.ContainerBuilder<*>::justifyContent)
                 enum("alignItems", Component.ContainerBuilder<*>::alignItems)
@@ -22,7 +22,7 @@ internal object ToFlex : ToComponent<Component.ContainerBuilder<*>>() {
     override fun create(
             c: ComponentContext,
             visibility: Boolean,
-            attrs: AttributeSet
+            attrs: PropSet
     ): Component.ContainerBuilder<*> {
         val component: Component.ContainerBuilder<*>
         when (attrs.getOrElse("flexDirection") { FlexDirection.ROW }) {
@@ -47,7 +47,7 @@ internal object ToFlex : ToComponent<Component.ContainerBuilder<*>>() {
     override fun onInstallChildren(
             owner: Component.ContainerBuilder<*>,
             visibility: Boolean,
-            attrs: AttributeSet,
+            attrs: PropSet,
             children: List<Widget>
     ) {
         children.forEach {

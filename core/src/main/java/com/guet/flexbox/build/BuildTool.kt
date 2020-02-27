@@ -4,7 +4,7 @@ import android.content.Context
 import androidx.annotation.RestrictTo
 import com.guet.flexbox.BuildConfig
 import com.guet.flexbox.TemplateNode
-import com.guet.flexbox.context.PropContext
+import com.guet.flexbox.context.PropsContext
 import com.guet.flexbox.eventsystem.EventTarget
 import org.apache.commons.jexl3.JexlBuilder
 import org.apache.commons.jexl3.JexlContext
@@ -15,7 +15,7 @@ import java.util.*
 abstract class BuildTool {
 
     private companion object {
-        private val fallback = ToWidget(CommonProps, null)
+        private val fallback = ToWidget(CommonDefine, null)
     }
 
     protected abstract val widgets: Map<String, ToWidget>
@@ -32,8 +32,8 @@ abstract class BuildTool {
     fun newContext(
             data: Any?,
             target: EventTarget
-    ): PropContext {
-        return PropContext(data, target, engine)
+    ): PropsContext {
+        return PropsContext(data, target, engine)
     }
 
     @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
@@ -46,7 +46,7 @@ abstract class BuildTool {
     @Suppress("UNCHECKED_CAST")
     fun <T> buildRoot(
             templateNode: TemplateNode,
-            dataContext: PropContext,
+            dataContext: PropsContext,
             eventDispatcher: EventTarget,
             other: Any?
     ): T {

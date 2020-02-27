@@ -1,7 +1,7 @@
 <idea-plugin>
     <id>com.guet.flexbox.intellij</id>
     <name>flexml intellij support</name>
-    <version>1.0.5</version>
+    <version>1.1.0</version>
     <vendor email="imlkluo@qq.com"
         url="https://github.com/sanyuankexie/Gbox">sanyuankexie
     </vendor>
