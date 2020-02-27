@@ -22,12 +22,12 @@ abstract class BuildTool {
 
     protected abstract val kits: List<Kit>
 
-    protected open val engine: JexlEngine = JexlBuilder()
-            .silent(!BuildConfig.DEBUG)
-            .strict(false)
-            .create()
-
-
+    protected open val engine: JexlEngine by lazy {
+        JexlBuilder().silent(!BuildConfig.DEBUG)
+                .strict(false)
+                .create()
+    }
+    
     fun newContext(
             data: Any?,
             target: EventTarget
