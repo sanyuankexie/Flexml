@@ -1,8 +1,6 @@
 package com.guet.flexbox.build
 
 import android.content.Context
-import android.os.Build
-import androidx.annotation.RequiresApi
 import androidx.annotation.RestrictTo
 import com.guet.flexbox.BuildConfig
 import com.guet.flexbox.TemplateNode
@@ -11,7 +9,7 @@ import com.guet.flexbox.eventsystem.EventTarget
 import org.apache.commons.jexl3.JexlBuilder
 import org.apache.commons.jexl3.JexlContext
 import org.apache.commons.jexl3.JexlEngine
-import java.util.stream.Collectors
+import java.util.*
 
 abstract class BuildTool {
 
@@ -83,94 +81,22 @@ abstract class BuildTool {
         if (templates.isEmpty()) {
             return emptyList()
         }
-        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-            BuildAllMapperApi21.map(
+        val list = LinkedList<Any>()
+        for (templateNode in templates) {
+            val type = templateNode.type
+            val toWidget: ToWidget = widgets[type] ?: fallback
+            val subList = toWidget.toWidget(
                     this,
-                    templates,
+                    templateNode,
                     engine,
                     dataContext,
                     eventDispatcher,
                     other,
                     upperDisplay
             )
-        } else {
-            BuildAllMapper0.map(
-                    this,
-                    templates,
-                    engine,
-                    dataContext,
-                    eventDispatcher,
-                    other,
-                    upperDisplay
-            )
+            list.addAll(subList)
         }
-    }
-
-    private interface BuildAllMapper {
-        fun map(
-                buildTool: BuildTool,
-                templates: List<TemplateNode>,
-                engine: JexlEngine,
-                dataContext: JexlContext,
-                eventDispatcher: EventTarget,
-                other: Any?,
-                upperDisplay: Boolean = true
-        ): List<Any>
-    }
-
-    private object BuildAllMapper0 : BuildAllMapper {
-        override fun map(
-                buildTool: BuildTool,
-                templates: List<TemplateNode>,
-                engine: JexlEngine,
-                dataContext: JexlContext,
-                eventDispatcher: EventTarget,
-                other: Any?,
-                upperDisplay: Boolean
-        ): List<Any> {
-            return templates.asSequence().map { templateNode ->
-                val type = templateNode.type
-                val toWidget: ToWidget = buildTool.widgets[type] ?: fallback
-                toWidget.toWidget(
-                        buildTool,
-                        templateNode,
-                        engine,
-                        dataContext,
-                        eventDispatcher,
-                        other,
-                        upperDisplay
-                )
-            }.flatten().toList()
-        }
-    }
-
-    @RequiresApi(Build.VERSION_CODES.N)
-    private object BuildAllMapperApi21 : BuildAllMapper {
-        override fun map(
-                buildTool: BuildTool,
-                templates: List<TemplateNode>,
-                engine: JexlEngine,
-                dataContext: JexlContext,
-                eventDispatcher: EventTarget,
-                other: Any?,
-                upperDisplay: Boolean
-        ): List<Any> {
-            return templates.stream().map { templateNode ->
-                val type = templateNode.type
-                val toWidget: ToWidget = buildTool.widgets[type] ?: fallback
-                toWidget.toWidget(
-                        buildTool,
-                        templateNode,
-                        engine,
-                        dataContext,
-                        eventDispatcher,
-                        other,
-                        upperDisplay
-                )
-            }.flatMap {
-                it.stream()
-            }.collect(Collectors.toList())
-        }
+        return list
     }
 
     fun init(context: Context) {

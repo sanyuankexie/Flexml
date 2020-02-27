@@ -52,6 +52,15 @@ internal class DataBinding(
 
     companion object {
 
+        private val colorScope: Map<String, String> by lazy {
+            @Suppress("UNCHECKED_CAST")
+            (Color::class.java.getDeclaredField("sColorNameMap")
+                    .apply { isAccessible = true }
+                    .get(null) as Map<String, Int>).map {
+                it.key to "#" + String.format("%08x", it.value)
+            }.toMap()
+        }
+
         val empty = DataBinding(null, emptyMap())
 
         inline fun create(

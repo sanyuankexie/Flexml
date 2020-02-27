@@ -1,15 +1,12 @@
 package com.guet.flexbox.build
 
-import android.os.Build
-import androidx.annotation.RequiresApi
 import com.guet.flexbox.TemplateNode
 import com.guet.flexbox.context.ScopeContext
 import com.guet.flexbox.eventsystem.EventTarget
 import org.apache.commons.jexl3.JexlContext
 import org.apache.commons.jexl3.JexlEngine
 import org.apache.commons.jexl3.MapContext
-import java.util.stream.Collectors
-import java.util.stream.IntStream
+import java.util.*
 import java.lang.reflect.Array as RArray
 
 object ForEach : Declaration() {
@@ -36,7 +33,7 @@ object ForEach : Declaration() {
                     null
                 }
             } else if (trim.startsWith("[") && trim.endsWith("]")) {
-                engine.createExpression(trim).evaluate(MapContext()) as Array<*>
+                engine.createExpression(trim).evaluate(MapContext(emptyMap())) as Array<*>
             } else {
                 null
             }
@@ -57,131 +54,45 @@ object ForEach : Declaration() {
         val attrs = bindAttrs(rawAttrs, engine, dataContext, eventDispatcher)
         val name = attrs.getValue("var") as String
         val items = attrs.getValue("items")
-        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-            ForEachMapperApi24.map(
-                    buildTool,
-                    name,
-                    items,
-                    children,
-                    engine,
-                    dataContext,
-                    eventDispatcher,
-                    other,
-                    upperDisplay
-            )
+        if (items.javaClass.isArray) {
+            val length = RArray.getLength(items)
+            if (length == 0) {
+                return emptyList()
+            }
+            val list = LinkedList<Any>()
+            for (index in 0 until length) {
+                val item = RArray.get(items, index)
+                val scope = ScopeContext(mapOf(name to item), dataContext)
+                val subList = buildTool.buildAll(
+                        children,
+                        engine,
+                        scope,
+                        eventDispatcher,
+                        other,
+                        upperDisplay
+                )
+                list.addAll(subList)
+            }
+            return list
         } else {
-            ForEachMapper0.map(
-                    buildTool,
-                    name,
-                    items,
-                    children,
-                    engine,
-                    dataContext,
-                    eventDispatcher,
-                    other,
-                    upperDisplay
-            )
-        }
-    }
-
-    private interface ForEachMapper {
-        fun map(
-                buildTool: BuildTool,
-                name: String,
-                items: Any,
-                children: List<TemplateNode>,
-                engine: JexlEngine,
-                dataContext: JexlContext,
-                eventDispatcher: EventTarget,
-                other: Any?,
-                upperVisibility: Boolean
-        ): List<Any>
-    }
-
-    private object ForEachMapper0 : ForEachMapper {
-        override fun map(
-                buildTool: BuildTool,
-                name: String,
-                items: Any,
-                children: List<TemplateNode>,
-                engine: JexlEngine,
-                dataContext: JexlContext,
-                eventDispatcher: EventTarget,
-                other: Any?,
-                upperVisibility: Boolean
-        ): List<Any> {
-            return if (items.javaClass.isArray) {
-                (0 until RArray.getLength(items)).asSequence().map {
-                    val item = RArray.get(items, it)
-                    val scope = ScopeContext(mapOf(name to item), dataContext)
-                    buildTool.buildAll(
-                            children,
-                            engine,
-                            scope,
-                            eventDispatcher,
-                            other,
-                            upperVisibility
-                    )
-                }.flatten().toList()
-            } else {
-                val collection = items as Collection<*>
-                collection.asSequence().map {
-                    val scope = ScopeContext(mapOf(name to it), dataContext)
-                    buildTool.buildAll(
-                            children,
-                            engine,
-                            scope,
-                            eventDispatcher,
-                            other,
-                            upperVisibility
-                    )
-                }.flatten().toList()
+            val collection = items as Collection<*>
+            if (collection.isEmpty()) {
+                return emptyList()
             }
-        }
-    }
-
-    @RequiresApi(Build.VERSION_CODES.N)
-    private object ForEachMapperApi24 : ForEachMapper {
-        override fun map(
-                buildTool: BuildTool,
-                name: String,
-                items: Any,
-                children: List<TemplateNode>,
-                engine: JexlEngine,
-                dataContext: JexlContext,
-                eventDispatcher: EventTarget,
-                other: Any?,
-                upperVisibility: Boolean
-        ): List<Any> {
-            return if (items.javaClass.isArray) {
-                IntStream.range(0, RArray.getLength(items) - 1).mapToObj {
-                    val item = RArray.get(items, it)
-                    val scope = ScopeContext(mapOf(name to item), dataContext)
-                    buildTool.buildAll(
-                            children,
-                            engine,
-                            scope,
-                            eventDispatcher,
-                            other,
-                            upperVisibility
-                    )
-                }.flatMap {
-                    it.stream()
-                }.collect(Collectors.toList())
-            } else {
-                val collection = items as Collection<*>
-                collection.stream().map {
-                    val scope = ScopeContext(mapOf(name to it), dataContext)
-                    buildTool.buildAll(
-                            children,
-                            engine,
-                            scope,
-                            eventDispatcher,
-                            other,
-                            upperVisibility
-                    )
-                }.collect(Collectors.toList())
+            val list = LinkedList<Any>()
+            for (item in collection) {
+                val scope = ScopeContext(mapOf(name to item), dataContext)
+                val subList = buildTool.buildAll(
+                        children,
+                        engine,
+                        scope,
+                        eventDispatcher,
+                        other,
+                        upperDisplay
+                )
+                list.addAll(subList)
             }
+            return list
         }
     }
 }

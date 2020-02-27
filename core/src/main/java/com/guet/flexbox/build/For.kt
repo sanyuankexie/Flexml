@@ -1,14 +1,11 @@
 package com.guet.flexbox.build
 
-import android.os.Build
-import androidx.annotation.RequiresApi
 import com.guet.flexbox.TemplateNode
 import com.guet.flexbox.context.ScopeContext
 import com.guet.flexbox.eventsystem.EventTarget
 import org.apache.commons.jexl3.JexlContext
 import org.apache.commons.jexl3.JexlEngine
-import java.util.stream.Collectors
-import java.util.stream.IntStream
+import java.util.*
 
 object For : Declaration() {
 
@@ -34,105 +31,19 @@ object For : Declaration() {
         val name = attrs.getValue("var") as String
         val from = (attrs.getValue("from") as Float).toInt()
         val to = (attrs.getValue("to") as Float).toInt()
-        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-            ForMapperApi24.map(
-                    buildTool,
-                    name,
-                    from,
-                    to,
+        val list = LinkedList<Any>()
+        for (index in from..to) {
+            val scope = ScopeContext(mapOf(name to index), dataContext)
+            val subList = buildTool.buildAll(
                     children,
                     engine,
-                    dataContext,
+                    scope,
                     eventDispatcher,
                     other,
                     upperDisplay
             )
-        } else {
-            ForMapper0.map(
-                    buildTool,
-                    name,
-                    from,
-                    to,
-                    children,
-                    engine,
-                    dataContext,
-                    eventDispatcher,
-                    other,
-                    upperDisplay
-            )
+            list.addAll(subList)
         }
+        return list
     }
-
-    private interface ForMapper {
-        fun map(
-                buildTool: BuildTool,
-                name: String,
-                form: Int,
-                to: Int,
-                children: List<TemplateNode>,
-                engine: JexlEngine,
-                dataContext: JexlContext,
-                eventDispatcher: EventTarget,
-                other: Any?,
-                upperVisibility: Boolean
-        ): List<Any>
-    }
-
-    private object ForMapper0 : ForMapper {
-        override fun map(
-                buildTool: BuildTool,
-                name: String,
-                form: Int,
-                to: Int,
-                children: List<TemplateNode>,
-                engine: JexlEngine,
-                dataContext: JexlContext,
-                eventDispatcher: EventTarget,
-                other: Any?,
-                upperVisibility: Boolean
-        ): List<Any> {
-            return (form..to).asSequence().map { index ->
-                val scope = ScopeContext(mapOf(name to index), dataContext)
-                buildTool.buildAll(
-                        children,
-                        engine,
-                        scope,
-                        eventDispatcher,
-                        other,
-                        upperVisibility
-                )
-            }.flatten().toList()
-        }
-    }
-
-    @RequiresApi(Build.VERSION_CODES.N)
-    private object ForMapperApi24 : ForMapper {
-        override fun map(
-                buildTool: BuildTool,
-                name: String,
-                form: Int,
-                to: Int,
-                children: List<TemplateNode>,
-                engine: JexlEngine,
-                dataContext: JexlContext,
-                eventDispatcher: EventTarget,
-                other: Any?,
-                upperVisibility: Boolean
-        ): List<Any> {
-            return IntStream.range(form, to + 1).mapToObj { index ->
-                val scope = ScopeContext(mapOf(name to index), dataContext)
-                buildTool.buildAll(
-                        children,
-                        engine,
-                        scope,
-                        eventDispatcher,
-                        other,
-                        upperVisibility
-                )
-            }.flatMap {
-                it.stream()
-            }.collect(Collectors.toList())
-        }
-    }
-
 }

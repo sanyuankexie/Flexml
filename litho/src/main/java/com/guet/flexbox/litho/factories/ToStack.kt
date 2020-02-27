@@ -28,8 +28,6 @@ internal object ToStack : ToComponent<Stack.Builder>() {
         if (children.isEmpty()) {
             return
         }
-        owner.children(children.map {
-            it
-        })
+        owner.children(children)
     }
 }
