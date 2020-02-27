@@ -12,6 +12,11 @@ internal object ToBanner : ToComponent<Banner.Builder>() {
                 bool("isCircular", Banner.Builder::isCircular)
                 value("timeSpan", Banner.Builder::timeSpan)
                 enum("orientation", Banner.Builder::orientation)
+                bool("indicatorEnable", Banner.Builder::indicatorEnable)
+                pt("indicatorSize", Banner.Builder::indicatorSizePx)
+                pt("indicatorHeight", Banner.Builder::indicatorHeightPx)
+                text("indicatorSelected", Banner.Builder::indicatorSelected)
+                text("indicatorUnselected", Banner.Builder::indicatorUnselected)
             }
 
     override fun create(

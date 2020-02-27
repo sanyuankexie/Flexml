@@ -14,6 +14,7 @@ object Banner : Declaration() {
                         "horizontal" to Orientation.HORIZONTAL
                 ))
                 bool("indicatorEnable")
+                value("indicatorSize")
                 value("indicatorHeight", fallback = 5.0f)
                 text("indicatorSelected")
                 text("indicatorUnselected")

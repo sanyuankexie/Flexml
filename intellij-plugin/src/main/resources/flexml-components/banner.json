@@ -23,12 +23,13 @@
       ]
     },
     "indicatorHeight": null,
-    "indicatorSelectedColor": {
+    "indicatorSize": null,
+    "indicatorSelected": {
       "support": [
         "colors"
       ]
     },
-    "indicatorUnselectedColor": {
+    "indicatorUnselected": {
       "support": [
         "colors"
       ]

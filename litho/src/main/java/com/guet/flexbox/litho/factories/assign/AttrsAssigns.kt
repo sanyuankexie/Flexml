@@ -91,6 +91,14 @@ class AttrsAssigns<C : Component.Builder<*>>(
             })
         }
 
+        inline fun text(name: String, crossinline method: (C, String) -> C) {
+            register(name, object : Assignment<C, String> {
+                override fun assign(c: C, display: Boolean, other: Map<String, Any>, value: String) {
+                    method(c, value)
+                }
+            })
+        }
+
         inline fun color(name: String, crossinline method: (C, Int) -> C) {
             register(name, object : Assignment<C, Int> {
                 override fun assign(c: C, display: Boolean, other: Map<String, Any>, value: Int) {
