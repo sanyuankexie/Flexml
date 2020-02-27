@@ -1,6 +1,8 @@
 package com.guet.flexbox.build
 
 import android.content.Context
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.annotation.RestrictTo
 import com.guet.flexbox.BuildConfig
 import com.guet.flexbox.TemplateNode
@@ -9,6 +11,7 @@ import com.guet.flexbox.eventsystem.EventTarget
 import org.apache.commons.jexl3.JexlBuilder
 import org.apache.commons.jexl3.JexlContext
 import org.apache.commons.jexl3.JexlEngine
+import java.util.stream.Collectors
 
 abstract class BuildTool {
 
@@ -75,24 +78,99 @@ abstract class BuildTool {
             dataContext: JexlContext,
             eventDispatcher: EventTarget,
             other: Any?,
-            upperVisibility: Boolean = true
+            upperDisplay: Boolean = true
     ): List<Any> {
         if (templates.isEmpty()) {
             return emptyList()
         }
-        return templates.map { templateNode ->
-            val type = templateNode.type
-            val toWidget: ToWidget = widgets[type] ?: fallback
-            toWidget.toWidget(
-                    this@BuildTool,
-                    templateNode,
+        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            BuildAllMapperApi21.map(
+                    this,
+                    templates,
                     engine,
                     dataContext,
                     eventDispatcher,
                     other,
-                    upperVisibility
+                    upperDisplay
             )
-        }.flatten()
+        } else {
+            BuildAllMapper0.map(
+                    this,
+                    templates,
+                    engine,
+                    dataContext,
+                    eventDispatcher,
+                    other,
+                    upperDisplay
+            )
+        }
+    }
+
+    private interface BuildAllMapper {
+        fun map(
+                buildTool: BuildTool,
+                templates: List<TemplateNode>,
+                engine: JexlEngine,
+                dataContext: JexlContext,
+                eventDispatcher: EventTarget,
+                other: Any?,
+                upperDisplay: Boolean = true
+        ): List<Any>
+    }
+
+    private object BuildAllMapper0 : BuildAllMapper {
+        override fun map(
+                buildTool: BuildTool,
+                templates: List<TemplateNode>,
+                engine: JexlEngine,
+                dataContext: JexlContext,
+                eventDispatcher: EventTarget,
+                other: Any?,
+                upperDisplay: Boolean
+        ): List<Any> {
+            return templates.asSequence().map { templateNode ->
+                val type = templateNode.type
+                val toWidget: ToWidget = buildTool.widgets[type] ?: fallback
+                toWidget.toWidget(
+                        buildTool,
+                        templateNode,
+                        engine,
+                        dataContext,
+                        eventDispatcher,
+                        other,
+                        upperDisplay
+                )
+            }.flatten().toList()
+        }
+    }
+
+    @RequiresApi(Build.VERSION_CODES.N)
+    private object BuildAllMapperApi21 : BuildAllMapper {
+        override fun map(
+                buildTool: BuildTool,
+                templates: List<TemplateNode>,
+                engine: JexlEngine,
+                dataContext: JexlContext,
+                eventDispatcher: EventTarget,
+                other: Any?,
+                upperDisplay: Boolean
+        ): List<Any> {
+            return templates.stream().map { templateNode ->
+                val type = templateNode.type
+                val toWidget: ToWidget = buildTool.widgets[type] ?: fallback
+                toWidget.toWidget(
+                        buildTool,
+                        templateNode,
+                        engine,
+                        dataContext,
+                        eventDispatcher,
+                        other,
+                        upperDisplay
+                )
+            }.flatMap {
+                it.stream()
+            }.collect(Collectors.toList())
+        }
     }
 
     fun init(context: Context) {

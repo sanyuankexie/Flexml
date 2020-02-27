@@ -14,15 +14,16 @@ object If : Declaration() {
 
     override fun onBuildWidget(
             buildTool: BuildTool,
-            attrs: AttributeSet,
+            rawAttrs: Map<String, String>,
             children: List<TemplateNode>,
             factory: RenderNodeFactory<*>?,
             engine: JexlEngine,
             dataContext: JexlContext,
             eventDispatcher: EventTarget,
             other: Any?,
-            upperVisibility: Boolean
+            upperDisplay: Boolean
     ): List<Any> {
+        val attrs = bindAttrs(rawAttrs, engine, dataContext, eventDispatcher)
         return if (attrs.getValue("test") as? Boolean != true) {
             emptyList()
         } else {
@@ -32,7 +33,7 @@ object If : Declaration() {
                     dataContext,
                     eventDispatcher,
                     other,
-                    upperVisibility
+                    upperDisplay
             )
         }
     }

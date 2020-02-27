@@ -1,4 +1,4 @@
-package com.guet.flexbox.litho.resolve
+package com.guet.flexbox.litho.factories.assign
 
 import android.graphics.Typeface
 import android.text.Layout

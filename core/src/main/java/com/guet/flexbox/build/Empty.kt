@@ -12,18 +12,18 @@ object Empty : Declaration() {
 
     override fun onBuildWidget(
             buildTool: BuildTool,
-            attrs: AttributeSet,
+            rawAttrs: Map<String, String>,
             children: List<TemplateNode>,
             factory: RenderNodeFactory<*>?,
             engine: JexlEngine,
             dataContext: JexlContext,
             eventDispatcher: EventTarget,
             other: Any?,
-            upperVisibility: Boolean
+            upperDisplay: Boolean
     ): List<Any> {
         return super.onBuildWidget(
                 buildTool,
-                attrs,
+                rawAttrs,
                 children,
                 factory,
                 engine,

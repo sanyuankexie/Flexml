@@ -11,14 +11,14 @@ import androidx.core.text.HtmlCompat
 import com.facebook.litho.ComponentContext
 import com.facebook.litho.widget.Text
 import com.guet.flexbox.build.AttributeSet
+import com.guet.flexbox.build.UrlType
 import com.guet.flexbox.enums.TextStyle
 import com.guet.flexbox.litho.drawable.ColorDrawable
 import com.guet.flexbox.litho.drawable.LazyImageDrawable
 import com.guet.flexbox.litho.drawable.lazyDrawable
-import com.guet.flexbox.litho.resolve.Assignment
-import com.guet.flexbox.litho.resolve.AttrsAssigns
-import com.guet.flexbox.litho.resolve.EnumMappings
-import com.guet.flexbox.litho.resolve.UrlType
+import com.guet.flexbox.litho.factories.assign.Assignment
+import com.guet.flexbox.litho.factories.assign.AttrsAssigns
+import com.guet.flexbox.litho.factories.assign.EnumMappings
 import java.util.regex.Pattern
 
 

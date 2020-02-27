@@ -6,11 +6,11 @@ import com.facebook.litho.Component
 import com.facebook.litho.ComponentContext
 import com.guet.flexbox.build.AttributeSet
 import com.guet.flexbox.build.RenderNodeFactory
+import com.guet.flexbox.build.UrlType
 import com.guet.flexbox.litho.Widget
 import com.guet.flexbox.litho.drawable.*
+import com.guet.flexbox.litho.factories.assign.AttrsAssigns
 import com.guet.flexbox.litho.getFloatValue
-import com.guet.flexbox.litho.resolve.AttrsAssigns
-import com.guet.flexbox.litho.resolve.UrlType
 import com.guet.flexbox.litho.toPx
 import com.guet.flexbox.litho.toPxFloat
 
@@ -19,14 +19,14 @@ abstract class ToComponent<C : Component.Builder<*>> : RenderNodeFactory<Compone
     abstract val attrsAssigns: AttrsAssigns<C>
 
     override fun create(
-            visibility: Boolean,
+            display: Boolean,
             attrs: AttributeSet,
             children: List<Component>,
             other: Any?
     ): Component {
         return toComponent(
                 other as ComponentContext,
-                visibility,
+                display,
                 attrs,
                 children
         )
@@ -75,9 +75,7 @@ abstract class ToComponent<C : Component.Builder<*>> : RenderNodeFactory<Compone
         val needCorners = lt != 0f || rb != 0f || lb != 0f || rt != 0f
         val isSameCorners = lt == rt && lt == rb && lt == lb
         if (background != null) {
-            val (type, prams) = UrlType.parseUrl(
-                    context, background
-            )
+            val (type, prams) = UrlType.parseUrl(context, background)
             when (type) {
                 UrlType.GRADIENT -> {
                     val orientation = prams[0] as Orientation

@@ -18,7 +18,7 @@ class ToWidget(
             other: Any?,
             upperVisibility: Boolean = true
     ): List<Any> {
-        return declaration.transform(
+        return declaration.onBuildWidget(
                 bindings,
                 template.attrs ?: emptyMap(),
                 template.children ?: emptyList(),

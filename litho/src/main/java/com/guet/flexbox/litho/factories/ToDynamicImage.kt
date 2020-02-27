@@ -3,8 +3,8 @@ package com.guet.flexbox.litho.factories
 import com.bumptech.glide.Glide
 import com.facebook.litho.ComponentContext
 import com.guet.flexbox.build.AttributeSet
-import com.guet.flexbox.litho.resolve.Assignment
-import com.guet.flexbox.litho.resolve.AttrsAssigns
+import com.guet.flexbox.litho.factories.assign.Assignment
+import com.guet.flexbox.litho.factories.assign.AttrsAssigns
 import com.guet.flexbox.litho.widget.DynamicImage
 
 internal object ToDynamicImage : ToComponent<DynamicImage.Builder>() {

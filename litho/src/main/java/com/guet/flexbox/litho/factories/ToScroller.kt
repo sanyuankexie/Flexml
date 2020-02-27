@@ -11,8 +11,8 @@ import com.facebook.litho.widget.VerticalScrollSpec
 import com.guet.flexbox.build.AttributeSet
 import com.guet.flexbox.enums.Orientation
 import com.guet.flexbox.litho.Widget
-import com.guet.flexbox.litho.resolve.Assignment
-import com.guet.flexbox.litho.resolve.AttrsAssigns
+import com.guet.flexbox.litho.factories.assign.Assignment
+import com.guet.flexbox.litho.factories.assign.AttrsAssigns
 import com.guet.flexbox.litho.widget.HorizontalScroll
 import com.guet.flexbox.litho.widget.HorizontalScrollSpec
 

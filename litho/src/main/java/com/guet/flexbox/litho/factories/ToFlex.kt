@@ -7,7 +7,7 @@ import com.facebook.litho.Row
 import com.guet.flexbox.build.AttributeSet
 import com.guet.flexbox.enums.FlexDirection
 import com.guet.flexbox.litho.Widget
-import com.guet.flexbox.litho.resolve.AttrsAssigns
+import com.guet.flexbox.litho.factories.assign.AttrsAssigns
 
 internal object ToFlex : ToComponent<Component.ContainerBuilder<*>>() {
 

@@ -18,12 +18,12 @@ import com.facebook.litho.widget.Image
 import com.facebook.yoga.YogaAlign
 import com.facebook.yoga.YogaEdge
 import com.facebook.yoga.YogaJustify
+import com.guet.flexbox.build.UrlType
 import com.guet.flexbox.context.PropContext.Func.Resource
 import com.guet.flexbox.enums.Orientation
 import com.guet.flexbox.litho.drawable.ColorDrawable
 import com.guet.flexbox.litho.drawable.GradientDrawable
 import com.guet.flexbox.litho.drawable.LazyImageDrawable
-import com.guet.flexbox.litho.resolve.UrlType
 import com.guet.flexbox.litho.toPx
 import java.util.*
 import kotlin.collections.ArrayList

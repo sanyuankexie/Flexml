@@ -1,4 +1,4 @@
-package com.guet.flexbox.litho.resolve
+package com.guet.flexbox.build
 
 import android.content.Context
 import android.graphics.Color
@@ -25,10 +25,9 @@ enum class UrlType {
                 "tl2br" to Orientation.TL_BR
         )
 
-        internal fun parseUrl(
+        fun parseUrl(
                 c: Context,
                 url: CharSequence
-
         ): Pair<UrlType, Array<Any>> {
             when {
                 TextUtils.isEmpty(url) -> {

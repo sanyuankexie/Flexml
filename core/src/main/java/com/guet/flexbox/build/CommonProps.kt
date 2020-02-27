@@ -2,7 +2,6 @@ package com.guet.flexbox.build
 
 import android.view.View
 import com.guet.flexbox.enums.FlexAlign
-import com.guet.flexbox.enums.Visibility
 import com.guet.flexbox.eventsystem.EventAdapter
 import com.guet.flexbox.eventsystem.EventFactory
 import com.guet.flexbox.eventsystem.EventTarget
@@ -17,11 +16,6 @@ import org.apache.commons.jexl3.JexlScript
 object CommonProps : Declaration() {
 
     override val dataBinding by DataBinding.create {
-        enum("visibility", mapOf(
-                "visible" to Visibility.VISIBLE,
-                "invisible" to Visibility.INVISIBLE,
-                "gone" to Visibility.GONE
-        ))
         value("width")
         value("height")
         value("flexGrow")

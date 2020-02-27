@@ -1,4 +1,4 @@
-package com.guet.flexbox.litho.resolve
+package com.guet.flexbox.litho.factories.assign
 
 import android.util.ArrayMap
 import com.facebook.litho.Component

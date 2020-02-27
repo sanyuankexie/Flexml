@@ -9,16 +9,16 @@ import com.facebook.litho.Row
 import com.facebook.litho.widget.Image
 import com.guet.flexbox.build.AttributeSet
 import com.guet.flexbox.build.RenderNodeFactory
+import com.guet.flexbox.build.UrlType
 import com.guet.flexbox.litho.drawable.ColorDrawable
 import com.guet.flexbox.litho.drawable.lazyDrawable
 import com.guet.flexbox.litho.getFloatValue
-import com.guet.flexbox.litho.resolve.UrlType
 import com.guet.flexbox.litho.toPxFloat
 
 object ToImage : RenderNodeFactory<Component> {
 
     override fun create(
-            visibility: Boolean,
+            display: Boolean,
             attrs: AttributeSet,
             children: List<Component>,
             other: Any?
@@ -26,7 +26,7 @@ object ToImage : RenderNodeFactory<Component> {
         return toComponent(
                 other as ComponentContext,
                 attrs,
-                visibility
+                display
         )
     }
 
@@ -46,9 +46,7 @@ object ToImage : RenderNodeFactory<Component> {
         val needCorners = lt != 0f || rb != 0f || lb != 0f || rt != 0f
         val isSameCorners = lt == rt && lt == rb && lt == lb
         if (url != null) {
-            val (type, prams) = UrlType.parseUrl(
-                    c.androidContext, url
-            )
+            val (type, prams) = UrlType.parseUrl(c.androidContext, url)
             when (type) {
                 UrlType.GRADIENT -> {
                     val orientation = prams[0] as Orientation

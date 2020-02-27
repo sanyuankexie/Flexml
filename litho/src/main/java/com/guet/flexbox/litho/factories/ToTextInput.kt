@@ -5,9 +5,9 @@ import com.facebook.litho.ComponentContext
 import com.facebook.litho.widget.TextInput
 import com.guet.flexbox.build.AttributeSet
 import com.guet.flexbox.enums.TextStyle
-import com.guet.flexbox.litho.resolve.Assignment
-import com.guet.flexbox.litho.resolve.AttrsAssigns
-import com.guet.flexbox.litho.resolve.EnumMappings
+import com.guet.flexbox.litho.factories.assign.Assignment
+import com.guet.flexbox.litho.factories.assign.AttrsAssigns
+import com.guet.flexbox.litho.factories.assign.EnumMappings
 
 internal object ToTextInput : ToComponent<TextInput.Builder>() {
     override val attrsAssigns by AttrsAssigns

@@ -3,7 +3,7 @@ package com.guet.flexbox.litho.factories
 import com.facebook.litho.ComponentContext
 import com.guet.flexbox.build.AttributeSet
 import com.guet.flexbox.litho.Widget
-import com.guet.flexbox.litho.resolve.AttrsAssigns
+import com.guet.flexbox.litho.factories.assign.AttrsAssigns
 import com.guet.flexbox.litho.widget.Banner
 
 internal object ToBanner : ToComponent<Banner.Builder>() {

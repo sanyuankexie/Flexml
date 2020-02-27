@@ -7,8 +7,8 @@ import com.facebook.yoga.YogaEdge
 import com.guet.flexbox.build.AttributeSet
 import com.guet.flexbox.eventsystem.EventAdapter
 import com.guet.flexbox.litho.LithoEventAdapter
-import com.guet.flexbox.litho.resolve.Assignment
-import com.guet.flexbox.litho.resolve.AttrsAssigns
+import com.guet.flexbox.litho.factories.assign.Assignment
+import com.guet.flexbox.litho.factories.assign.AttrsAssigns
 import com.guet.flexbox.litho.toPx
 import java.util.*
 

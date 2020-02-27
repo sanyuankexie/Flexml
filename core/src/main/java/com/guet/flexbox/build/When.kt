@@ -12,14 +12,14 @@ object When : Declaration() {
 
     override fun onBuildWidget(
             buildTool: BuildTool,
-            attrs: AttributeSet,
+            rawAttrs: Map<String, String>,
             children: List<TemplateNode>,
             factory: RenderNodeFactory<*>?,
             engine: JexlEngine,
             dataContext: JexlContext,
             eventDispatcher: EventTarget,
             other: Any?,
-            upperVisibility: Boolean
+            upperDisplay: Boolean
     ): List<Any> {
         var elseItem: TemplateNode? = null
         if (children.isNullOrEmpty()) {
@@ -41,7 +41,7 @@ object When : Declaration() {
                                 dataContext,
                                 eventDispatcher,
                                 other,
-                                upperVisibility
+                                upperDisplay
                         )
                     } ?: emptyList()
                 }
@@ -56,7 +56,7 @@ object When : Declaration() {
                     dataContext,
                     eventDispatcher,
                     other,
-                    upperVisibility
+                    upperDisplay
             )
         } ?: emptyList()
     }
