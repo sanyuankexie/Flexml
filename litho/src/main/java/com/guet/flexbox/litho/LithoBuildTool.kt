@@ -1,10 +1,11 @@
 package com.guet.flexbox.litho
 
+import android.content.Context
 import android.util.ArrayMap
 import com.facebook.yoga.YogaNodeManager
 import com.guet.flexbox.build.*
-import com.guet.flexbox.litho.factories.*
 import com.guet.flexbox.litho.drawable.load.DrawableLoaderModule
+import com.guet.flexbox.litho.factories.*
 import com.guet.flexbox.litho.widget.ComponentTreePool
 
 object LithoBuildTool : BuildTool() {
@@ -33,6 +34,11 @@ object LithoBuildTool : BuildTool() {
                 DrawableLoaderModule,
                 ComponentTreePool
         )
+    }
+
+    @JvmStatic
+    fun init(c: Context) {
+        install(c)
     }
 
 }

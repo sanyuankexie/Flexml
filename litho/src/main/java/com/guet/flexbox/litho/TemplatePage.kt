@@ -7,7 +7,6 @@ import androidx.annotation.RestrictTo
 import androidx.annotation.WorkerThread
 import com.facebook.litho.*
 import com.guet.flexbox.TemplateNode
-import com.guet.flexbox.build.BuildTool
 import com.guet.flexbox.eventsystem.EventDispatcher
 import com.guet.flexbox.eventsystem.EventTarget
 import com.guet.flexbox.eventsystem.event.RefreshPageEvent
@@ -42,7 +41,7 @@ class TemplatePage @WorkerThread internal constructor(
     private val size = Size()
     private val template: TemplateNode = requireNotNull(builder.template)
     private val localTarget = LocalEventInterceptor(dispatcher)
-    private val dataContext = BuildTool.newContext(
+    private val dataContext = LithoBuildTool.newContext(
             builder.data,
             localTarget
     )

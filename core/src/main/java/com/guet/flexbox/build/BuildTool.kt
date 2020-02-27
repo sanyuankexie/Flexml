@@ -11,43 +11,40 @@ import org.apache.commons.jexl3.JexlContext
 import org.apache.commons.jexl3.JexlEngine
 import java.util.*
 
+@RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
 abstract class BuildTool {
+
+    private companion object {
+        private val fallback = ToWidget(CommonProps, null)
+    }
 
     protected abstract val widgets: Map<String, ToWidget>
 
     protected abstract val kits: List<Kit>
 
-    companion object {
-        private val default = object : Config {
-            override val engine: JexlEngine = JexlBuilder()
-                    .silent(!BuildConfig.DEBUG)
-                    .strict(false)
-                    .create()
-        }
+    protected open val engine: JexlEngine = JexlBuilder()
+            .silent(!BuildConfig.DEBUG)
+            .strict(false)
+            .create()
 
-        private val fallback = ToWidget(CommonProps, null)
 
-        fun newContext(
-                data: Any?,
-                target: EventTarget,
-                config: Config = default
-        ): PropContext {
-            return PropContext(data, target, config.engine)
-        }
+    fun newContext(
+            data: Any?,
+            target: EventTarget
+    ): PropContext {
+        return PropContext(data, target, engine)
     }
 
     @Suppress("UNCHECKED_CAST")
-    @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
     fun <T> buildRoot(
             templateNode: TemplateNode,
             dataContext: PropContext,
             eventDispatcher: EventTarget,
-            other: Any?,
-            config: Config = default
+            other: Any?
     ): T {
         return buildRoot(
                 templateNode,
-                config.engine,
+                engine,
                 dataContext,
                 eventDispatcher,
                 other
@@ -99,13 +96,9 @@ abstract class BuildTool {
         return list
     }
 
-    fun init(context: Context) {
+    fun install(context: Context) {
         kits.forEach {
             it.init(context)
         }
-    }
-
-    interface Config {
-        val engine: JexlEngine
     }
 }
