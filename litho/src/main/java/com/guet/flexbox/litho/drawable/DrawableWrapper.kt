@@ -6,11 +6,11 @@ import android.graphics.drawable.Drawable
 import androidx.core.graphics.drawable.DrawableCompat
 
 
-open class DrawableWrapper<T : Drawable>(
-        drawable: T
-) : Drawable(), Drawable.Callback {
+open class DrawableWrapper : Drawable(), Drawable.Callback {
 
-    open var wrappedDrawable: T = drawable.apply { callback = this@DrawableWrapper }
+    val cacheNoOpDrawable = NoOpDrawable()
+
+    open var wrappedDrawable: Drawable = cacheNoOpDrawable
         set(value) {
             value.bounds = bounds
             field.callback = null

@@ -18,11 +18,9 @@ class LazyImageDrawable private constructor(
         private val context: Context,
         private val model: Any,
         private val radius: CornerRadius
-) : DrawableWrapper<Drawable>(NoOpDrawable()),
+) : DrawableWrapper(),
         Target<BitmapDrawable> by DelegateTarget(),
         ComparableDrawable {
-
-    private val cacheNoOpDrawable = wrappedDrawable
 
     constructor(
             context: Context,
@@ -92,12 +90,5 @@ class LazyImageDrawable private constructor(
     override fun onLoadFailed(errorDrawable: Drawable?) {
         onLoadCleared(null)
     }
-
-//    private fun wrappedToTransition(target: Drawable): Drawable {
-//        val transitionDrawable = TransitionDrawable(arrayOf(cacheNoOpDrawable, target))
-//        transitionDrawable.isCrossFadeEnabled = true
-//        transitionDrawable.startTransition(200)
-//        return transitionDrawable
-//    }
 
 }

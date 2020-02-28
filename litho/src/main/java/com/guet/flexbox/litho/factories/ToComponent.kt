@@ -81,7 +81,7 @@ internal abstract class ToComponent<C : Component.Builder<*>>
                 UrlType.GRADIENT -> {
                     val orientation = prams[0] as Orientation
                     val colors = prams[1] as IntArray
-                    val drawable = lazyDrawable {
+                    val drawable = LazyDrawableLoader.from {
                         GradientDrawable(
                                 orientation, colors
                         ).apply {
@@ -101,7 +101,7 @@ internal abstract class ToComponent<C : Component.Builder<*>>
                 }
                 UrlType.COLOR -> {
                     val color = prams[0] as Int
-                    val drawable = lazyDrawable {
+                    val drawable = LazyDrawableLoader.from {
                         ColorDrawable(
                                 color
                         ).apply {

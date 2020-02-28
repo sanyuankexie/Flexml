@@ -10,7 +10,6 @@ import com.facebook.litho.annotations.*
 import com.facebook.litho.utils.MeasureUtils
 import com.guet.flexbox.litho.drawable.BitmapDrawable
 import com.guet.flexbox.litho.drawable.DrawableWrapper
-import com.guet.flexbox.litho.drawable.NoOpDrawable
 import com.guet.flexbox.litho.drawable.load.CornerRadius
 import com.guet.flexbox.litho.drawable.load.DelegateTarget
 import com.guet.flexbox.litho.drawable.load.DrawableLoaderModule
@@ -138,9 +137,9 @@ object DynamicImageSpec {
         }
     }
 
-    class DynamicImageDrawable(private val c: Context) : DrawableWrapper<Drawable>(NoOpDrawable()) {
-
-        val cacheNoOpDrawable = wrappedDrawable
+    class DynamicImageDrawable(
+            private val c: Context
+    ) : DrawableWrapper() {
 
         fun mount(
                 target: DynamicImageTarget,
