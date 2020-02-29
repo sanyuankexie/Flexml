@@ -3,7 +3,7 @@
 # Flexml  ![](https://img.shields.io/badge/language-kotlin%20%7C%20java-orange) ![](https://jitpack.io/v/LukeXeon/flexbox.svg) ![](https://img.shields.io/badge/platform-android-brightgreen) ![](https://img.shields.io/badge/license-Apache--2.0-blue) ![](https://img.shields.io/badge/email-imlkluo%40qq.com-green) ![](https://img.shields.io/badge/doc-%E6%8E%98%E9%87%91-blue) ![](https://img.shields.io/badge/API-19%2B-green)
 
 ### 0 注意
-**Gbox**已经被重命名为**Flexml**！目前SDK和playground app最新版本为**0.3.0**，插件最新版本为**0.3.1**，**MacOS**用户请一定使用**0.3.1**版本的插件。
+**Gbox**已经被重命名为**Flexml**！**MacOS**用户请一定使用**0.3.1**版本以上的插件。
 
 ### 1 适用的业务范围
 
