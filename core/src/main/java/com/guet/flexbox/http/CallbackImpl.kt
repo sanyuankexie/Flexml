@@ -37,6 +37,6 @@ internal class CallbackImpl(
 
     private companion object {
         private val mainLooper = Looper.getMainLooper()
-        private val mainThread = Handler(Looper.getMainLooper())
+        private val mainThread = Handler(mainLooper)
     }
 }

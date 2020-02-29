@@ -9,7 +9,7 @@ import androidx.annotation.MainThread
 import com.facebook.litho.ComponentContext
 import com.facebook.litho.ComponentTree
 import com.guet.flexbox.build.BuildKit
-import com.guet.flexbox.litho.LayoutThreadHandler
+import com.guet.flexbox.litho.ThreadPool
 import java.util.*
 import java.util.concurrent.atomic.AtomicReference
 
@@ -56,7 +56,7 @@ internal object ComponentTreePool : ComponentCallbacks, BuildKit {
                 //必须使用Application创建tree
                 ComponentTree.create(
                         ComponentContext(application.get())
-                ).layoutThreadHandler(LayoutThreadHandler)
+                ).layoutThreadHandler(ThreadPool.lithoHandler)
                         .isReconciliationEnabled(false)
                         .build()
             } else {

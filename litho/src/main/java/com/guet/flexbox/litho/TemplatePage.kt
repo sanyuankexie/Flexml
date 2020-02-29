@@ -66,11 +66,8 @@ class TemplatePage @WorkerThread internal constructor(
                     ?: return@Runnable
             hostingView.post { hostingView.requestLayout() }
         }
-    }
+    }.apply { run() }
 
-    init {
-        computeRunnable.run()
-    }
 
     val width: Int
         get() = size.width
@@ -113,7 +110,7 @@ class TemplatePage @WorkerThread internal constructor(
 
     @AnyThread
     private fun computeNewLayout() {
-        InternalThreads.runOnAsyncThread(computeRunnable)
+        ThreadPool.executor.execute(computeRunnable)
     }
 
     class Builder(
@@ -168,7 +165,7 @@ class TemplatePage @WorkerThread internal constructor(
 
         @WorkerThread
         override fun build(): TemplatePage {
-            super.layoutThreadHandler(LayoutThreadHandler)
+            super.layoutThreadHandler(ThreadPool.lithoHandler)
             super.withRoot(Row.create(context).build())
             isReconciliationEnabled(false)
             return TemplatePage(this)

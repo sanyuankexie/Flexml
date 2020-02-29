@@ -1,29 +1,20 @@
 package com.guet.flexbox.litho.widget
 
-import android.util.Log
 import android.view.ViewGroup.LayoutParams
 import android.view.ViewGroup.getChildMeasureSpec
 import com.facebook.litho.Component
 import com.facebook.litho.ComponentContext
 import com.facebook.litho.Row
 import com.facebook.litho.Size
-import com.facebook.litho.annotations.*
+import com.facebook.litho.annotations.LayoutSpec
+import com.facebook.litho.annotations.OnCreateLayoutWithSizeSpec
+import com.facebook.litho.annotations.Prop
 import com.facebook.yoga.YogaEdge
 import com.facebook.yoga.YogaPositionType
 import kotlin.math.max
 
 @LayoutSpec
 object StackSpec {
-
-    @OnAttached
-    fun onAtt(c: ComponentContext){
-        Log.v("StackSpec","OnAttached")
-    }
-
-    @OnDetached
-    fun onD(c:ComponentContext){
-        Log.v("StackSpec","OnDetached")
-    }
 
     @OnCreateLayoutWithSizeSpec
     fun onCreateLayoutWithSizeSpec(
