@@ -12,7 +12,7 @@ internal object ThreadPool {
     private val count = AtomicInteger(0)
 
     private val factory = ThreadFactory {
-        thread(name = "LayoutThread\$${count.getAndIncrement()}") {
+        thread(name = "LayoutThread\$${count.getAndIncrement()}",start = false) {
             Process.setThreadPriority(Process.THREAD_PRIORITY_BACKGROUND)
             it.run()
         }
