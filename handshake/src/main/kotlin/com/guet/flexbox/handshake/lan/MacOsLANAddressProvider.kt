@@ -6,6 +6,7 @@ import java.net.NetworkInterface
 import java.util.*
 
 class MacOsLANAddressProvider : LANAddressProvider {
+    private val interfaceName = "Netif"
     override fun get(): InetAddress? {
         var net: Process? = null
         try {
@@ -15,17 +16,29 @@ class MacOsLANAddressProvider : LANAddressProvider {
                     .inputStream
                     .bufferedReader()
             var line: String?
+            var interfaceIndex = -1
             do {
                 line = output.readLine()
-                if (line.trim().startsWith("default")) {
+
+                if (line.contains(interfaceName)) {
+                    val strArray = line.split(" ")
+                    for (item in strArray) {
+                        if (item.trim().isNotEmpty()) {
+                            interfaceIndex++
+                        }
+                        if (item.trim() == interfaceName) {
+                            break
+                        }
+                    }
+                }
+
+                if (line.trim().startsWith("default") && interfaceIndex >= 0) {
                     val tokenizer = StringTokenizer(line)
-                    // default
-                    tokenizer.nextToken()
-                    // gateway
-                    tokenizer.nextToken()
-                    // flags
-                    tokenizer.nextToken()
-                    // interface name
+
+                    repeat(interfaceIndex){
+                        tokenizer.nextToken()
+                    }
+
                     val name = tokenizer.nextToken()
                     return Iterable {
                         Iterable {
