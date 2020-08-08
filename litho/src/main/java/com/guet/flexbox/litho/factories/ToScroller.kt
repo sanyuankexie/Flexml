@@ -62,17 +62,20 @@ internal object ToScroller : ToComponent<Component.Builder<*>>(),
             owner.childComponent(children.single())
         }
     }
-
-    private fun onInterceptTouch(view: ViewGroup): Boolean {
-        view.requestDisallowInterceptTouchEvent(true)
-        return true
+    
+    private fun onInterceptTouchEvent(view: ViewGroup, event: MotionEvent?): Boolean {
+        view.requestDisallowInterceptTouchEvent(event?.action == MotionEvent.ACTION_MOVE)
+        return when (event?.action) {
+            MotionEvent.ACTION_MOVE -> true
+            else -> false
+        }
     }
 
     override fun onInterceptTouch(nestedScrollView: HorizontalScrollView, event: MotionEvent?): Boolean {
-        return onInterceptTouch(nestedScrollView)
+        return onInterceptTouchEvent(nestedScrollView, event)
     }
 
     override fun onInterceptTouch(nestedScrollView: NestedScrollView, event: MotionEvent?): Boolean {
-        return onInterceptTouch(nestedScrollView)
+        return onInterceptTouchEvent(nestedScrollView, event)
     }
 }
