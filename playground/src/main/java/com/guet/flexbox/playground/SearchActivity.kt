@@ -145,7 +145,7 @@ class SearchActivity : AppCompatActivity() {
     }
 
     private fun handleEvent(key: String) {
-        if (key.isEmpty() || key.startsWith("http://")) {
+        if (key.isEmpty() || !key.startsWith("http://")) {
             Toasty.warning(this, "地址格式错误，应该为http://开头").show()
             return
         }

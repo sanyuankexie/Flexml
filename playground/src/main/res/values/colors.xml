@@ -49,8 +49,7 @@
     <color name="notice2">#C6B183</color>
     <color name="notice3">#AF8862</color>
     <color name="bgColor">#F0F0F0</color>
-
-
+    <color name="sss">#FF9800</color>
     <array name="progress_color">
         <item>@color/deeppurplea100</item>
         <item>@color/deeppurplea200</item>
