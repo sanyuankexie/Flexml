@@ -17,7 +17,7 @@ class AndroidLog(private val tag: String) : Log {
         e(tag, message.toString())
     }
 
-    override fun error(message: Any, t: Throwable) {
+    override fun error(message: Any, t: Throwable?) {
         e(tag, message.toString(), t)
     }
 
@@ -25,7 +25,7 @@ class AndroidLog(private val tag: String) : Log {
         wtf(tag, message.toString())
     }
 
-    override fun fatal(message: Any, t: Throwable) {
+    override fun fatal(message: Any, t: Throwable?) {
         wtf(tag, message.toString(), t)
     }
 
@@ -33,7 +33,7 @@ class AndroidLog(private val tag: String) : Log {
         i(tag, message.toString())
     }
 
-    override fun info(message: Any, t: Throwable) {
+    override fun info(message: Any, t: Throwable?) {
         i(tag, message.toString(), t)
     }
 
@@ -41,7 +41,7 @@ class AndroidLog(private val tag: String) : Log {
         i(tag, message.toString())
     }
 
-    override fun trace(message: Any, t: Throwable) {
+    override fun trace(message: Any, t: Throwable?) {
         i(tag, message.toString(), t)
     }
 
@@ -49,7 +49,7 @@ class AndroidLog(private val tag: String) : Log {
         w(tag, message.toString())
     }
 
-    override fun warn(message: Any, t: Throwable) {
+    override fun warn(message: Any, t: Throwable?) {
         w(tag, message.toString(), t)
     }
 
