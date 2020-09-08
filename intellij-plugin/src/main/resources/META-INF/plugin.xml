@@ -67,7 +67,9 @@
             implementation="com.guet.flexbox.intellij.completion.FlexmlComponentNameProvider"/>
         <completion.contributor language="XML"
             implementationClass="com.guet.flexbox.intellij.completion.FlexmlCompletionContributor"/>
-        <fileTypeFactory
-            implementation="com.guet.flexbox.intellij.fileType.FlexmlFileTypeFactory"/>
+<!--         <fileTypeFactory
+            implementation="com.guet.flexbox.intellij.fileType.FlexmlFileTypeFactory"/> -->
+        <fileType name="flexml dsl" implementationClass="com.guet.flexbox.intellij.fileType.FlexmlFileType"
+                  extensions="flexml"/>
     </extensions>
 </idea-plugin>
