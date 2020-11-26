@@ -93,7 +93,7 @@ abstract class Widget : Definition() {
             return if (local == Visibility.VISIBLE && upperDisplay) {
                 Visibility.VISIBLE
             } else {
-                Visibility.INVISIBLE
+                local
             }
         }
     }
